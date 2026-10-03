@@ -11,6 +11,87 @@ refs = json.loads((root / "studies/refs_rerun/run.json").read_text())
 c05 = json.loads((root / "studies/c05/run.json").read_text())
 b16 = json.loads((root / "studies/b01_b06/run.json").read_text())
 hhs = json.loads((root / "studies/hhs/run.json").read_text())
+dg = json.loads((root / "studies/dark_grid/run.json").read_text())
+pic = sorted((json.loads(p.read_text()) for p in (root / "studies/c05_pic").glob("*.json")),
+             key=lambda r: (r["cells"], r["particles"]))
+hs = json.loads((root / "studies/hhs_scan/run.json").read_text())
+
+
+def third_round():
+    L = ["## Independent dark reference: grid Vlasov-Ampere-Proca (`python studies/dark_grid_reference.py`)", "",
+         "`studies/refs/code/slv_proca.py` extends the imported semi-Lagrangian solver with Ampere's law and the "
+         "longitudinal Proca fields (E_D, A_D, phi_D at every k including k = 0, exact per-k propagator, mid-step "
+         "current from the exact velocity shift). It shares no code with SPECTRAX or Dark-SPECTRAX; it shares the "
+         "field convention and the D_L equation. c = 10 (beta = 0.1), eta = 0.3, Omega_D = omega_pe.", "",
+         "| Verification alone | dt = 0.05 | dt = 0.025 | dt = 0.0125 | Richardson - root |", "|---|---|---|---|---|"]
+    for k, v in dg["linear_verification"].items():
+        f = v["fits"]
+        L.append(f"| Landau {k}: omega | " + " | ".join(f"{f[d]['w']:.6f}{f[d]['g']:+.6f}i" for d in ("0.05", "0.025", "0.0125"))
+                 + f" | {v['richardson_minus_root'][0]:.1e}, {v['richardson_minus_root'][1]:.1e} |")
+        L.append(f"| Landau {k}: dark ledger / U_E(0) | " + " | ".join(f"{f[d]['dark_ledger_defect_over_U_E0']:.1e}"
+                                                                     for d in ("0.05", "0.025", "0.0125")) + " | |")
+    b1, b6 = dg["B01_dark"], dg["B06_dark"]
+    L += ["", "Errors fall as dt^2 (Strang); Gauss residuals of both laws stay below 5e-9.", "",
+          "| Dark comparison | grid (dt = 0.0125) | Hermite | agreement |", "|---|---|---|---|",
+          f"| B01 first envelope minimum (prominence 0.2) | {b1['grid_dt0.0125']['env_min_prominence_0p2']} | "
+          f"N=1024: {b1['hermite_dark_N1024_nu0.0']['env_min_prominence_0p2']} | max log-envelope difference to t = 80: "
+          f"{b1['hermite_dark_N1024_nu0.0']['max_logenv_dev_t_le_80']:.3f} (N=1024), "
+          f"{b1['hermite_dark_N512_nu1.0']['max_logenv_dev_t_le_80']:.3f} (N=512, nu=1) |",
+          f"| B06 dark echo | t = {b6['grid_dt0.0125']['t_echo']:.2f}, {b6['grid_dt0.0125']['amp']:.6e} | "
+          f"N=512: {b6['hermite_dark_N512_nu0.0']['amp']:.6e} | {100 * b6['hermite_dark_N512_nu0.0']['amp_rel_to_grid']:+.4f}%, "
+          f"curve {b6['hermite_dark_N512_nu0.0']['max_abs_dev_over_grid_echo']:.1e}; N=512 nu=1: "
+          f"{100 * b6['hermite_dark_N512_nu1.0']['amp_rel_to_grid']:+.2f}% |", "",
+          "At prominence 0.3 (the B01 rule) the grid dark minimum (prominence 0.25) is not flagged while the Hermite one "
+          "(0.30) is; at 0.2 both give 30.5-30.55. The dark echo is reproduced by an independent solver to 2e-5.", "",
+          "## C05 rerun: Dark-JAX-in-Cell PIC on CPU (`python studies/c05_pic_rerun.py CELLS PARTICLES`)", "",
+          "Dark-JAX-in-Cell commit d547579, run here on CPU in its own environment with the construction of its "
+          "`dark_kinetic.py` physical preset (quiet start, current-neutral, displacement seed 0.01/k). Same fit rule as "
+          "the Hermite rows (maxima on 2 <= t <= 12). The 32/40000, 64/80000 and 128/160000 rows reproduce the published "
+          "GPU records exactly.", "",
+          "| cells | particles | per cell | ordinary | dark | dark slope stderr | energy drift | wall (s) |",
+          "|---|---|---|---|---|---|---|---|"]
+    for r in pic:
+        L.append(f"| {r['cells']} | {r['particles']} | {r['particles_per_cell']:.0f} | {r['ordinary'][0]:.5f}{r['ordinary'][1]:+.5f}i | "
+                 f"{r['dark'][0]:.5f}{r['dark'][1]:+.5f}i | {r['dark_slope_stderr']:.4f} | {r['max_closed_energy_drift']:.1e} | "
+                 f"{r['wall_parent_incl_compile'] + r['wall_dark_incl_compile']:.0f} |")
+    h = c05["spectrax"]
+    L += [f"| Hermite (Nn = 256) | | | {h['ordinary_Nn256']['maxima_fit'][0]:.5f}{h['ordinary_Nn256']['maxima_fit'][1]:+.5f}i | "
+          f"{h['self_consistent_Nn256']['maxima_fit'][0]:.5f}{h['self_consistent_Nn256']['maxima_fit'][1]:+.5f}i | | | |", "",
+          "From 64 cells / 80000 particles, doubling the particles at fixed mesh and doubling the mesh at fixed particles "
+          "per cell move the dark damping fit by similar amounts (about 5e-3, comparable to the slope standard error), so "
+          "neither refinement direction is converged yet. The finest PIC run (128 cells, 320000 particles) is within "
+          "0.1% in frequency and 1% in damping of the Hermite values for both ordinary and dark runs.", "",
+          "## H05/H06 pilots: drive-amplitude scan and swept drive (`python studies/hhs_scan.py`)", "",
+          "HHS-v1-inspired, nonrelativistic, mobile ions (1836), Nx = 8, declared seeds, omega = 1.000272 (total). Each run "
+          "had a 250000-step budget. Several runs exhausted it; before that, the Hermite state became inadmissible "
+          "(a species' moment kinetic energy went negative) while the work ledger still closed. Agreement time = first "
+          "time the electron kinetic-energy change differs by > 10% between Nn = 32 and 64 (nu = 0), or between nu = 0 "
+          "and 1 (Nn = 64). Values are reported only up to that time.", "",
+          "| v_q/v_te | resolved until | W_ext / (n T_e) | dK_e / (n T_e) | dK_i / (n T_e) | runs that failed |",
+          "|---|---|---|---|---|---|"]
+    for ratio in ("0.001", "0.003", "0.01", "0.03", "0.1"):
+        a = hs["H05"][f"vq{ratio}_agreement"]
+        v = a["Nn64_nu0_at_resolved"]
+        fails = [k.split("_", 1)[1] for k, r in hs["H05"].items()
+                 if k.startswith(f"vq{ratio}_Nn") and isinstance(r, dict) and r.get("status") == "failure"]
+        fails = ", ".join(f"{f} (t = {hs['H05'][f'vq{ratio}_' + f]['t_reached']:.0f})" for f in fails) or "none"
+        L.append(f"| {ratio} | {a['resolved_until']:.0f} | {v['W_ext'] / 1e-3:.3f} | {v['dK_electron'] / 1e-3:.3f} | "
+                 f"{v['dK_ion'] / 1e-3:.1e} | {fails} |")
+    L += ["", "Within the resolved windows W_ext follows the linear resonant estimate E0^2 t^2/8 and the ions receive "
+          "less than 0.1% of the kinetic-energy change: no saturation is resolved. Beyond v_q/v_te = 1e-3 the fixed "
+          "Hermite basis (width matched to the initial Maxwellian) cannot follow the growing quiver motion past these "
+          "times; this needs a moving/rescaled basis or a different closure, not a longer run.", "",
+          "| H06 swept drive, v_q/v_te = 0.1 | instantaneous frequency | homogeneous check vs solve_ivp | Nn32/nu0 vs Nn64/nu1 agree until | t reached |",
+          "|---|---|---|---|---|"]
+    for d in ("up", "down"):
+        r = hs["H06"][f"{d}_Nn64_nu1"]
+        L.append(f"| {d}: theta = ({r['omega0']} + ({r['a']:g}) t) t | {r['instantaneous_frequency']} | "
+                 f"{r['homogeneous_max_err_over_max']:.1e} | {hs['H06'][f'{d}_agreement']['Nn32nu0_vs_Nn64nu1'][0]:.0f} | "
+                 f"{r['t_reached']:.0f} (budget) |")
+    L += ["", "The homogeneous swept-drive mean field matches an independent ODE solution to 1e-9 over 0 <= t <= 1e4. "
+          "The kinetic swept runs lose resolution (t ~ 2400-2850) before the resonance crossing at t = 5000: no swept-drive "
+          "kinetic result is claimed."]
+    return "\n".join(L)
 
 
 def nonlinear_and_hhs():
@@ -246,6 +327,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 
 {nonlinear_and_hhs()}
 
+{third_round()}
+
 ## Test suite (local, CPU, float64)
 
 A00 moments and Lorentz operator by independent quadrature (agreement 1e-12 or better), A01 zero-mixing RHS equal
@@ -287,12 +370,18 @@ def readme_table():
         d = [r for r in rr if r["model"] == "dark" and r["Nn"] == top][0]
         L.append(f"| {name.split('_', 1)[1].replace('_', ' ')}, growth | {o['growth_fit']:.6f} / {o['root'][1]:.6f} | "
                  f"{d['growth_fit']:.6f} / {d['root'][1]:.6f} |")
+    pf = pic[-1]
+    L.append(f"| C05 Landau, same fit rule: Hermite / PIC rerun ({pf['cells']} cells, {pf['particles']} particles) | "
+             f"{c(c05['spectrax']['ordinary_Nn256']['maxima_fit'])} / {c(pf['ordinary'])} | "
+             f"{c(c05['spectrax']['self_consistent_Nn256']['maxima_fit'])} / {c(pf['dark'])} |")
     p = c05["pic"]["cells128"]
     h = c05["spectrax"]
-    L.append(f"| C05 Landau vs Dark-JAX-in-Cell PIC (128 cells), same fit rule | Hermite {c(h['ordinary_Nn256']['maxima_fit'])} / "
+    0 and L.append(f"| C05 Landau vs Dark-JAX-in-Cell PIC (128 cells), same fit rule | Hermite {c(h['ordinary_Nn256']['maxima_fit'])} / "
              f"PIC {c(p['ordinary'])} | Hermite {c(h['self_consistent_Nn256']['maxima_fit'])} / PIC {c(p['dark'])} |")
     o, d = b16["B06"]["ordinary_N512_nu0.0"], b16["B06"]["dark_N512_nu0.0"]
-    L.append(f"| B06 echo amplitude (N=512), grid {b16['B06']['grid']['amp']:.5e} | {o['amp']:.5e} | {d['amp']:.5e} (no reference) |")
+    g6 = dg["B06_dark"]["grid_dt0.0125"]["amp"]
+    L.append(f"| B06 echo amplitude (N=512) vs grid | {o['amp']:.5e} / {b16['B06']['grid']['amp']:.5e} | "
+             f"{d['amp']:.5e} / {g6:.5e} (grid Vlasov-Ampere-Proca) |")
     h = hhs["H00"]["weak_omega_e"]
     L.append(f"| H00 resonant mean field, t <= 1000 (HHS-v1-inspired) | error {h['max_abs_Ebar_err_over_max']:.0e}, W_ext {h['W_ext_rel_err']:.0e} | - |")
     return "\n".join(L) + ("\n\nLandau and growth references are independent kinetic roots; the ordinary Hermite runs also "

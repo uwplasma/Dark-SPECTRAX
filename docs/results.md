@@ -162,6 +162,65 @@ Seeds: 1e-3 density at k1 = 2 pi/40 (both species when ions move) and 1e-4 elect
 
 At matched initial effective force a finite reservoir follows the prescribed drive only while eta t is small: with eta = 0.03 it transfers essentially all of U_D(0) and the plasma field peaks at 7% of the prescribed secular value over t <= 1000; with eta = 1e-3 the beat period (about 2 pi/eta = 6300) exceeds the run.
 
+## Independent dark reference: grid Vlasov-Ampere-Proca (`python studies/dark_grid_reference.py`)
+
+`studies/refs/code/slv_proca.py` extends the imported semi-Lagrangian solver with Ampere's law and the longitudinal Proca fields (E_D, A_D, phi_D at every k including k = 0, exact per-k propagator, mid-step current from the exact velocity shift). It shares no code with SPECTRAX or Dark-SPECTRAX; it shares the field convention and the D_L equation. c = 10 (beta = 0.1), eta = 0.3, Omega_D = omega_pe.
+
+| Verification alone | dt = 0.05 | dt = 0.025 | dt = 0.0125 | Richardson - root |
+|---|---|---|---|---|
+| Landau k0.5: omega | 1.447540-0.139230i | 1.447747-0.139169i | 1.447799-0.139154i | -1.1e-06, 1.1e-07 |
+| Landau k0.5: dark ledger / U_E(0) | 6.1e-07 | 1.5e-07 | 3.8e-08 | |
+| Landau k0.3: omega | 1.191353-0.009659i | 1.191519-0.009647i | 1.191561-0.009644i | 2.4e-07, -7.7e-07 |
+| Landau k0.3: dark ledger / U_E(0) | 2.3e-06 | 5.8e-07 | 1.5e-07 | |
+
+Errors fall as dt^2 (Strang); Gauss residuals of both laws stay below 5e-9.
+
+| Dark comparison | grid (dt = 0.0125) | Hermite | agreement |
+|---|---|---|---|
+| B01 first envelope minimum (prominence 0.2) | [30.55] | N=1024: [30.5] | max log-envelope difference to t = 80: 0.080 (N=1024), 0.043 (N=512, nu=1) |
+| B06 dark echo | t = 29.00, 1.120988e-03 | N=512: 1.121005e-03 | +0.0016%, curve 3.6e-04; N=512 nu=1: -3.12% |
+
+At prominence 0.3 (the B01 rule) the grid dark minimum (prominence 0.25) is not flagged while the Hermite one (0.30) is; at 0.2 both give 30.5-30.55. The dark echo is reproduced by an independent solver to 2e-5.
+
+## C05 rerun: Dark-JAX-in-Cell PIC on CPU (`python studies/c05_pic_rerun.py CELLS PARTICLES`)
+
+Dark-JAX-in-Cell commit d547579, run here on CPU in its own environment with the construction of its `dark_kinetic.py` physical preset (quiet start, current-neutral, displacement seed 0.01/k). Same fit rule as the Hermite rows (maxima on 2 <= t <= 12). The 32/40000, 64/80000 and 128/160000 rows reproduce the published GPU records exactly.
+
+| cells | particles | per cell | ordinary | dark | dark slope stderr | energy drift | wall (s) |
+|---|---|---|---|---|---|---|---|
+| 32 | 20000 | 625 | 1.47465-0.22076i | 1.49358-0.19535i | 0.0184 | 6.4e-06 | 7 |
+| 32 | 40000 | 1250 | 1.38528-0.17775i | 1.41280-0.17364i | 0.0048 | 1.3e-06 | 10 |
+| 32 | 80000 | 2500 | 1.39586-0.15634i | 1.41436-0.15158i | 0.0039 | 1.3e-06 | 16 |
+| 64 | 40000 | 625 | 1.39055-0.17692i | 1.41671-0.17214i | 0.0050 | 8.0e-07 | 18 |
+| 64 | 80000 | 1250 | 1.39891-0.15525i | 1.41671-0.15038i | 0.0038 | 3.3e-07 | 30 |
+| 64 | 160000 | 2500 | 1.40892-0.15205i | 1.42380-0.14554i | 0.0034 | 3.3e-07 | 56 |
+| 128 | 160000 | 1250 | 1.41008-0.15175i | 1.42499-0.14522i | 0.0033 | 2.4e-07 | 111 |
+| 128 | 320000 | 2500 | 1.41436-0.15354i | 1.42897-0.14606i | 0.0019 | 8.5e-08 | 229 |
+| Hermite (Nn = 256) | | | 1.41354-0.15497i | 1.42962-0.14745i | | | |
+
+From 64 cells / 80000 particles, doubling the particles at fixed mesh and doubling the mesh at fixed particles per cell move the dark damping fit by similar amounts (about 5e-3, comparable to the slope standard error), so neither refinement direction is converged yet. The finest PIC run (128 cells, 320000 particles) is within 0.1% in frequency and 1% in damping of the Hermite values for both ordinary and dark runs.
+
+## H05/H06 pilots: drive-amplitude scan and swept drive (`python studies/hhs_scan.py`)
+
+HHS-v1-inspired, nonrelativistic, mobile ions (1836), Nx = 8, declared seeds, omega = 1.000272 (total). Each run had a 250000-step budget. Several runs exhausted it; before that, the Hermite state became inadmissible (a species' moment kinetic energy went negative) while the work ledger still closed. Agreement time = first time the electron kinetic-energy change differs by > 10% between Nn = 32 and 64 (nu = 0), or between nu = 0 and 1 (Nn = 64). Values are reported only up to that time.
+
+| v_q/v_te | resolved until | W_ext / (n T_e) | dK_e / (n T_e) | dK_i / (n T_e) | runs that failed |
+|---|---|---|---|---|---|
+| 0.001 | 1000 | 0.124 | 0.016 | 8.6e-06 | none |
+| 0.003 | 910 | 0.923 | 0.435 | 2.4e-04 | Nn32_nu0 (t = 974) |
+| 0.01 | 575 | 4.124 | 3.843 | 2.1e-03 | Nn32_nu0 (t = 606), Nn64_nu0 (t = 668) |
+| 0.03 | 365 | 15.015 | 9.154 | 5.0e-03 | Nn32_nu0 (t = 384), Nn64_nu0 (t = 412), Nn64_nu1 (t = 726) |
+| 0.1 | 210 | 54.931 | 45.297 | 2.5e-02 | Nn32_nu0 (t = 222), Nn64_nu0 (t = 239), Nn64_nu1 (t = 337) |
+
+Within the resolved windows W_ext follows the linear resonant estimate E0^2 t^2/8 and the ions receive less than 0.1% of the kinetic-energy change: no saturation is resolved. Beyond v_q/v_te = 1e-3 the fixed Hermite basis (width matched to the initial Maxwellian) cannot follow the growing quiver motion past these times; this needs a moving/rescaled basis or a different closure, not a longer run.
+
+| H06 swept drive, v_q/v_te = 0.1 | instantaneous frequency | homogeneous check vs solve_ivp | Nn32/nu0 vs Nn64/nu1 agree until | t reached |
+|---|---|---|---|---|
+| up: theta = (0.8 + (2e-05) t) t | 0.8 + 4e-05 t | 1.2e-09 | 2400 | 3712 (budget) |
+| down: theta = (1.2 + (-2e-05) t) t | 1.2 + -4e-05 t | 1.2e-09 | 2850 | 4458 (budget) |
+
+The homogeneous swept-drive mean field matches an independent ODE solution to 1e-9 over 0 <= t <= 1e4. The kinetic swept runs lose resolution (t ~ 2400-2850) before the resonance crossing at t = 5000: no swept-drive kinetic result is claimed.
+
 ## Test suite (local, CPU, float64)
 
 A00 moments and Lorentz operator by independent quadrature (agreement 1e-12 or better), A01 zero-mixing RHS equal

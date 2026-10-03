@@ -28,8 +28,8 @@ Electrons with $v_{te}=0.1c$ on fixed ions damp a $10^{-4}$ density seed at $k\l
 | two stream vt0.1 k0.6, growth | 0.349094 / 0.349094 | 0.362523 / 0.362524 |
 | two stream vt0.3 k0.4, growth | 0.261616 / 0.261616 | 0.266447 / 0.266447 |
 | bump on tail k0.3, growth | 0.198098 / 0.198098 | 0.208595 / 0.208595 |
-| C05 Landau vs Dark-JAX-in-Cell PIC (128 cells), same fit rule | Hermite 1.413540-0.154975i / PIC 1.410080-0.151746i | Hermite 1.429621-0.147445i / PIC 1.424993-0.145221i |
-| B06 echo amplitude (N=512), grid 1.15873e-03 | 1.15875e-03 | 1.12101e-03 (no reference) |
+| C05 Landau, same fit rule: Hermite / PIC rerun (128 cells, 320000 particles) | 1.413540-0.154975i / 1.414365-0.153538i | 1.429621-0.147445i / 1.428970-0.146058i |
+| B06 echo amplitude (N=512) vs grid | 1.15875e-03 / 1.15873e-03 | 1.12101e-03 / 1.12099e-03 (grid Vlasov-Ampere-Proca) |
 | H00 resonant mean field, t <= 1000 (HHS-v1-inspired) | error 1e-09, W_ext 3e-11 | - |
 
 Landau and growth references are independent kinetic roots; the ordinary Hermite runs also agree with an independent semi-Lagrangian solver to within 4.4e-06 (B00, B02). Details, windows and limitations: [docs/results.md](docs/results.md).
@@ -102,6 +102,10 @@ solutions, and the failure policy (a run is `success` only if the solver succeed
 
 Physical collisions, relativistic kinetics, nonlinear benchmarks (trapping, saturation, echoes), magnetized
 cases, HHS comparisons, GPU and gradient studies are planned and not yet validated.
+
+## Upstream status
+
+Open SPECTRAX pull requests and what this package needs from them: [docs/upstream-review.md](docs/upstream-review.md).
 
 ## Credit, citation and license
 

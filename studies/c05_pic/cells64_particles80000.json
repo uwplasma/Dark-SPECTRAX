@@ -1,0 +1,25 @@
+{
+ "cells": 64,
+ "particles": 80000,
+ "particles_per_cell": 1250.0,
+ "steps": 6000,
+ "ordinary": [
+  1.3989071038252052,
+  -0.15525157503992168
+ ],
+ "ordinary_slope_stderr": 0.004846049366735246,
+ "ordinary_maxima": 5,
+ "dark": [
+  1.4167127836193338,
+  -0.15037776053694643
+ ],
+ "dark_slope_stderr": 0.0037654040910165597,
+ "dark_maxima": 5,
+ "max_closed_energy_drift": 3.300824504998554e-07,
+ "wall_parent_incl_compile": 14.585992125008488,
+ "wall_dark_incl_compile": 15.606522916990798,
+ "backend": "cpu",
+ "jax": "0.11.2",
+ "python": "3.12.9",
+ "dark_jax_in_cell_commit": "d54757962f3b9f7ec18eb981804ef59f6db6076c"
+}

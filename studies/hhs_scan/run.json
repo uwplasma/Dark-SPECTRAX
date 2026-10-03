@@ -1,0 +1,471 @@
+{
+ "label": "HHS-v1-inspired, nonrelativistic pilot; not a reproduction",
+ "parent_commit": "ab87385fc84871122666df66a0fabe21dfa50dbd",
+ "repository_commit": "9ab09489eb6c0eb99241338e7e59b3d7c6b52a71",
+ "command": "python studies/hhs_scan.py",
+ "seeds": "density 1e-3 at k1 (electrons and ions), 1e-4 electrons at k2",
+ "omega_H05": 1.0002722940826503,
+ "H05": {
+  "vq0.001_Nn32_nu0": {
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "t_ledger_valid": 1000.0,
+   "max_ledger_over_W_ext_valid": 1.6562077290137037e-11,
+   "steps": 10597,
+   "run_time": 4.097235499997623,
+   "compile_time": 0.5784049580106512,
+   "at_valid": {
+    "t": 1000.0,
+    "W_ext": 0.00012385950226807908,
+    "dK_electron": 1.58080347986392e-05,
+    "dK_ion": 8.615013087891893e-09,
+    "ion_share": 0.0005446800169720127
+   },
+   "t_admissible": null
+  },
+  "vq0.001_Nn64_nu0": {
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "t_ledger_valid": 1000.0,
+   "max_ledger_over_W_ext_valid": 1.8004524939943744e-11,
+   "steps": 10369,
+   "run_time": 6.110283207992325,
+   "compile_time": 0.49651125000673346,
+   "at_valid": {
+    "t": 1000.0,
+    "W_ext": 0.0001238595022660389,
+    "dK_electron": 1.5808040096439808e-05,
+    "dK_ion": 8.615871555268939e-09,
+    "ion_share": 0.0005447340811296086
+   },
+   "t_admissible": null
+  },
+  "vq0.001_Nn64_nu1": {
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "t_ledger_valid": 1000.0,
+   "max_ledger_over_W_ext_valid": 1.7878184102199876e-11,
+   "steps": 10363,
+   "run_time": 6.130456209008116,
+   "compile_time": 0.46557137501076795,
+   "at_valid": {
+    "t": 1000.0,
+    "W_ext": 0.00012385950243914265,
+    "dK_electron": 1.5808038844807113e-05,
+    "dK_ion": 8.615872540158193e-09,
+    "ion_share": 0.0005447341864717158
+   },
+   "t_admissible": null
+  },
+  "vq0.001_Nn32_vs_64": {
+   "W_ext_rel_diff": 1.6471649697398153e-11,
+   "dK_ion_rel_diff": 9.963790332055443e-05
+  },
+  "vq0.003_Nn32_nu0": {
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 973.5,
+   "t_ledger_valid": 972.0,
+   "max_ledger_over_W_ext_valid": 8.329305667133758e-08,
+   "steps": 250000,
+   "run_time": 97.40033554201364,
+   "compile_time": 0.4719667499884963,
+   "at_valid": {
+    "t": 970.0,
+    "W_ext": 0.0010478107237076202,
+    "dK_electron": -0.6889495807553221,
+    "dK_ion": 9.867004691940687e-05,
+    "ion_share": -0.00014323860995978978
+   },
+   "t_admissible": 945.0
+  },
+  "vq0.003_Nn64_nu0": {
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "t_ledger_valid": 1000.0,
+   "max_ledger_over_W_ext_valid": 8.60812863275035e-11,
+   "steps": 15388,
+   "run_time": 9.126023958000587,
+   "compile_time": 0.5277479999931529,
+   "at_valid": {
+    "t": 1000.0,
+    "W_ext": 0.0011147183760580528,
+    "dK_electron": -0.00016971792536581804,
+    "dK_ion": 2.4882492904625478e-06,
+    "ion_share": -0.014879232854229268
+   },
+   "t_admissible": null
+  },
+  "vq0.003_Nn64_nu1": {
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "t_ledger_valid": 1000.0,
+   "max_ledger_over_W_ext_valid": 1.5256629088090925e-12,
+   "steps": 16999,
+   "run_time": 9.976595582993468,
+   "compile_time": 0.5255842090118676,
+   "at_valid": {
+    "t": 1000.0,
+    "W_ext": 0.0011147183917624725,
+    "dK_electron": 0.00014157545527276666,
+    "dK_ion": 7.7137530952575e-08,
+    "ion_share": 0.000544554317191077
+   },
+   "t_admissible": null
+  },
+  "vq0.01_Nn32_nu0": {
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 605.5,
+   "t_ledger_valid": 605.0,
+   "max_ledger_over_W_ext_valid": 5.9588914233029045e-08,
+   "steps": 250000,
+   "run_time": 97.7042996250093,
+   "compile_time": 0.5188658330007456,
+   "at_valid": {
+    "t": 605.0,
+    "W_ext": 0.004553394554826335,
+    "dK_electron": -29181.747677025734,
+    "dK_ion": 0.8347945360414281,
+    "ion_share": -2.8607553828185927e-05
+   },
+   "t_admissible": 585.0
+  },
+  "vq0.01_Nn64_nu0": {
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 668.0,
+   "t_ledger_valid": 665.0,
+   "max_ledger_over_W_ext_valid": 1.035703067570803e-07,
+   "steps": 250000,
+   "run_time": 141.79912016598973,
+   "compile_time": 0.4695193340012338,
+   "at_valid": {
+    "t": 665.0,
+    "W_ext": 0.005497339097945313,
+    "dK_electron": -82.45151975314124,
+    "dK_ion": 0.026567513722213946,
+    "ion_share": -0.000322323677483531
+   },
+   "t_admissible": 655.0
+  },
+  "vq0.01_Nn64_nu1": {
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "t_ledger_valid": 1000.0,
+   "max_ledger_over_W_ext_valid": 8.803012500537807e-13,
+   "steps": 31398,
+   "run_time": 18.526458833977813,
+   "compile_time": 0.47518000000854954,
+   "at_valid": {
+    "t": 1000.0,
+    "W_ext": 0.012385172502867086,
+    "dK_electron": 0.0015801230907490256,
+    "dK_ion": 8.913753933069771e-07,
+    "ion_share": 0.0005637996440867038
+   },
+   "t_admissible": null
+  },
+  "vq0.03_Nn32_nu0": {
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 384.0,
+   "t_ledger_valid": 383.0,
+   "max_ledger_over_W_ext_valid": 9.319802315442977e-08,
+   "steps": 250000,
+   "run_time": 96.36777366700699,
+   "compile_time": 0.5376137499988545,
+   "at_valid": {
+    "t": 380.0,
+    "W_ext": 0.016227516660771026,
+    "dK_electron": -0.9857459142089047,
+    "dK_ion": 0.007008411832985869,
+    "ion_share": -0.007160665465431445
+   },
+   "t_admissible": 375.0
+  },
+  "vq0.03_Nn64_nu0": {
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 412.5,
+   "t_ledger_valid": 412.5,
+   "max_ledger_over_W_ext_valid": 4.195190706636626e-07,
+   "steps": 250000,
+   "run_time": 141.8361984579824,
+   "compile_time": 0.4672520419990178,
+   "at_valid": {
+    "t": 410.0,
+    "W_ext": 0.018875209132863426,
+    "dK_electron": -105.92563045351906,
+    "dK_ion": 0.01746393476313093,
+    "ion_share": -0.00016489696061387424
+   },
+   "t_admissible": 405.0
+  },
+  "vq0.03_Nn64_nu1": {
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 726.0,
+   "t_ledger_valid": 725.5,
+   "max_ledger_over_W_ext_valid": 2.407939529301752e-07,
+   "steps": 250000,
+   "run_time": 142.43467266700463,
+   "compile_time": 0.5450420829874929,
+   "at_valid": {
+    "t": 725.0,
+    "W_ext": 0.058776886288478235,
+    "dK_electron": -16.264417936023573,
+    "dK_ion": 0.03969961044017446,
+    "ion_share": -0.0024468597632031287
+   },
+   "t_admissible": 715.0
+  },
+  "vq0.1_Nn32_nu0": {
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 222.5,
+   "t_ledger_valid": 222.5,
+   "max_ledger_over_W_ext_valid": 1.3238404585517863e-07,
+   "steps": 250000,
+   "run_time": 96.95797116699396,
+   "compile_time": 0.4842616670066491,
+   "at_valid": {
+    "t": 220.0,
+    "W_ext": 0.060578409507904815,
+    "dK_electron": -115.76428408674468,
+    "dK_ion": 0.015052898236488465,
+    "ion_share": -0.00013004750080778893
+   },
+   "t_admissible": 215.0
+  },
+  "vq0.1_Nn64_nu0": {
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 239.0,
+   "t_ledger_valid": 238.5,
+   "max_ledger_over_W_ext_valid": 5.447881558250034e-07,
+   "steps": 250000,
+   "run_time": 142.23229070799425,
+   "compile_time": 0.48153812502278015,
+   "at_valid": {
+    "t": 235.0,
+    "W_ext": 0.06876690968247483,
+    "dK_electron": -42.34325387669212,
+    "dK_ion": 0.0786051625381674,
+    "ion_share": -0.0018598323878140607
+   },
+   "t_admissible": 235.0
+  },
+  "vq0.1_Nn64_nu1": {
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 337.0,
+   "t_ledger_valid": 336.5,
+   "max_ledger_over_W_ext_valid": 1.513563017285298e-07,
+   "steps": 250000,
+   "run_time": 142.37561033299426,
+   "compile_time": 0.4734722079883795,
+   "at_valid": {
+    "t": 335.0,
+    "W_ext": 0.1398237402552768,
+    "dK_electron": -11.779367561173338,
+    "dK_ion": 0.061720939318809204,
+    "ion_share": -0.005267349435482528
+   },
+   "t_admissible": 330.0
+  },
+  "vq0.001_agreement": {
+   "Nn32_vs_Nn64_nu0": [
+    null,
+    1000.0
+   ],
+   "nu0_vs_nu1_Nn64": [
+    null,
+    1000.0
+   ],
+   "resolved_until": 1000.0,
+   "Nn64_nu0_at_resolved": {
+    "W_ext": 0.0001238595022660389,
+    "dK_electron": 1.5808040096439808e-05,
+    "dK_ion": 8.615871555268939e-09,
+    "W_ext_over_n_Te": 0.12385950226603891
+   }
+  },
+  "vq0.003_agreement": {
+   "Nn32_vs_Nn64_nu0": [
+    915.0,
+    970.0
+   ],
+   "nu0_vs_nu1_Nn64": [
+    1000.0,
+    1000.0
+   ],
+   "resolved_until": 910.0,
+   "Nn64_nu0_at_resolved": {
+    "W_ext": 0.0009231682560856453,
+    "dK_electron": 0.000435027362619043,
+    "dK_ion": 2.3695566511803406e-07,
+    "W_ext_over_n_Te": 0.9231682560856453
+   }
+  },
+  "vq0.01_agreement": {
+   "Nn32_vs_Nn64_nu0": [
+    580.0,
+    605.0
+   ],
+   "nu0_vs_nu1_Nn64": [
+    655.0,
+    665.0
+   ],
+   "resolved_until": 575.0,
+   "Nn64_nu0_at_resolved": {
+    "W_ext": 0.004124248464188545,
+    "dK_electron": 0.0038425615064896705,
+    "dK_ion": 2.0929099816516424e-06,
+    "W_ext_over_n_Te": 4.124248464188545
+   }
+  },
+  "vq0.03_agreement": {
+   "Nn32_vs_Nn64_nu0": [
+    370.0,
+    380.0
+   ],
+   "nu0_vs_nu1_Nn64": [
+    405.0,
+    410.0
+   ],
+   "resolved_until": 365.0,
+   "Nn64_nu0_at_resolved": {
+    "W_ext": 0.015015207252197856,
+    "dK_electron": 0.009153949629094764,
+    "dK_ion": 4.985822466564574e-06,
+    "W_ext_over_n_Te": 15.015207252197856
+   }
+  },
+  "vq0.1_agreement": {
+   "Nn32_vs_Nn64_nu0": [
+    215.0,
+    220.0
+   ],
+   "nu0_vs_nu1_Nn64": [
+    235.0,
+    235.0
+   ],
+   "resolved_until": 210.0,
+   "Nn64_nu0_at_resolved": {
+    "W_ext": 0.054931289183703026,
+    "dK_electron": 0.04529742514585575,
+    "dK_ion": 2.4671813368819977e-05,
+    "W_ext_over_n_Te": 54.93128918370302
+   }
+  }
+ },
+ "H06": {
+  "up_Nn32_nu0": {
+   "omega0": 0.8,
+   "a": 2e-05,
+   "instantaneous_frequency": "0.8 + 4e-05 t",
+   "homogeneous_max_err_over_max": 1.2205166800114394e-09,
+   "homogeneous_W_ext_final": 0.19920759293841125,
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 2477.5,
+   "t_ledger_valid": 2475.0,
+   "max_ledger_over_W_ext_valid": 6.14000602950998e-09,
+   "steps": 250000,
+   "run_time": 96.2924589579925,
+   "at_valid": {
+    "t": 2450.0,
+    "W_ext": 7.387584160294671e-05,
+    "dK_electron": -0.0031628232248732224,
+    "dK_ion": 1.9623687120035212e-05,
+    "ion_share": -0.006243220286950843
+   },
+   "t_admissible": 2450.0
+  },
+  "up_Nn64_nu1": {
+   "omega0": 0.8,
+   "a": 2e-05,
+   "instantaneous_frequency": "0.8 + 4e-05 t",
+   "homogeneous_max_err_over_max": 1.2205166800114394e-09,
+   "homogeneous_W_ext_final": 0.19920759293841125,
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 3712.5,
+   "t_ledger_valid": 3712.5,
+   "max_ledger_over_W_ext_valid": 4.4402751445516607e-08,
+   "steps": 250000,
+   "run_time": 142.1103342080023,
+   "at_valid": {
+    "t": 3700.0,
+    "W_ext": 0.0004937812131117968,
+    "dK_electron": -0.014071982518712497,
+    "dK_ion": 9.635135498291497e-05,
+    "ion_share": -0.006894239970569052
+   },
+   "t_admissible": 3700.0
+  },
+  "down_Nn32_nu0": {
+   "omega0": 1.2,
+   "a": -2e-05,
+   "instantaneous_frequency": "1.2 + -4e-05 t",
+   "homogeneous_max_err_over_max": 1.1962174514903806e-09,
+   "homogeneous_W_ext_final": 0.19909220131456362,
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 2985.0,
+   "t_ledger_valid": 2982.5,
+   "max_ledger_over_W_ext_valid": 5.916817028309026e-07,
+   "steps": 250000,
+   "run_time": 96.07418854199932,
+   "at_valid": {
+    "t": 2950.0,
+    "W_ext": 0.00015661831321192173,
+    "dK_electron": 0.0001396759410850503,
+    "dK_ion": 5.295358155562495e-06,
+    "ion_share": 0.036526941424272166
+   },
+   "t_admissible": null
+  },
+  "down_Nn64_nu1": {
+   "omega0": 1.2,
+   "a": -2e-05,
+   "instantaneous_frequency": "1.2 + -4e-05 t",
+   "homogeneous_max_err_over_max": 1.1962174514903806e-09,
+   "homogeneous_W_ext_final": 0.19909220131456362,
+   "status": "failure",
+   "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 4457.5,
+   "t_ledger_valid": 4457.5,
+   "max_ledger_over_W_ext_valid": 2.7020266614889294e-07,
+   "steps": 250000,
+   "run_time": 143.828164208011,
+   "at_valid": {
+    "t": 4450.0,
+    "W_ext": 0.002659317437126754,
+    "dK_electron": -0.0645009871728128,
+    "dK_ion": 1.9651372608979348e-05,
+    "ion_share": -0.00030476063135337887
+   },
+   "t_admissible": 4450.0
+  },
+  "up_agreement": {
+   "Nn32nu0_vs_Nn64nu1": [
+    2400.0,
+    2450.0
+   ]
+  },
+  "down_agreement": {
+   "Nn32nu0_vs_Nn64nu1": [
+    2850.0,
+    2950.0
+   ]
+  }
+ }
+}

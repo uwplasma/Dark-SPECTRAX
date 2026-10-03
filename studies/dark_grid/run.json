@@ -1,0 +1,165 @@
+{
+ "case_id": "dark_grid",
+ "command": "python studies/dark_grid_reference.py",
+ "c": 10.0,
+ "eta": 0.3,
+ "Omega_D": 1.0,
+ "solver": "NumPy semi-Lagrangian Vlasov-Ampere + exact per-k Proca propagator, Strang splitting",
+ "linear_verification": {
+  "k0.5": {
+   "root": [
+    1.4478174718121313,
+    -0.139149215520614
+   ],
+   "fits": {
+    "0.05": {
+     "w": 1.4475395143069199,
+     "g": -0.1392304689496196,
+     "fit_resid": 3.355077071803439e-05,
+     "wall": 0.23687741602770984,
+     "dark_ledger_defect_over_U_E0": 6.08594750511845e-07,
+     "max_gauss": 4.475194353310291e-09,
+     "max_dark_gauss": 1.3425583982375162e-09
+    },
+    "0.025": {
+     "w": 1.4477471705224025,
+     "g": -0.13916944964862563,
+     "fit_resid": 2.613512340815681e-05,
+     "wall": 0.4622478749952279,
+     "dark_ledger_defect_over_U_E0": 1.523058396245252e-07,
+     "max_gauss": 1.1187886907458892e-09,
+     "max_dark_gauss": 3.356366079239242e-10
+    },
+    "0.0125": {
+     "w": 1.4477990955669506,
+     "g": -0.1391541908479387,
+     "fit_resid": 2.5654942312162336e-05,
+     "wall": 0.9129018750099931,
+     "dark_ledger_defect_over_U_E0": 3.8086302124989536e-08,
+     "max_gauss": 2.796968121421553e-10,
+     "max_dark_gauss": 8.390904364281601e-11
+    }
+   },
+   "richardson": [
+    1.4478164039151333,
+    -0.13914910458104307
+   ],
+   "richardson_minus_root": [
+    -1.0678969979416308e-06,
+    1.1093957091867779e-07
+   ]
+  },
+  "k0.3": {
+   "root": [
+    1.1915744246180446,
+    -0.009641921345144517
+   ],
+   "fits": {
+    "0.05": {
+     "w": 1.1913527794599557,
+     "g": -0.00965920996035735,
+     "fit_resid": 0.00010612284340648796,
+     "wall": 0.2282801250112243,
+     "dark_ledger_defect_over_U_E0": 2.3295794032494106e-06,
+     "max_gauss": 2.105699316125375e-09,
+     "max_dark_gauss": 6.317098594743579e-10
+    },
+    "0.025": {
+     "w": 1.19151917651469,
+     "g": -0.009646819897861683,
+     "fit_resid": 0.00010646552852037217,
+     "wall": 0.444732666015625,
+     "dark_ledger_defect_over_U_E0": 5.829901851044352e-07,
+     "max_gauss": 5.264334841868017e-10,
+     "max_dark_gauss": 1.5793004576866486e-10
+    },
+    "0.0125": {
+     "w": 1.1915607913320232,
+     "g": -0.009643723091268356,
+     "fit_resid": 0.00010655189553444669,
+     "wall": 0.8797740000009071,
+     "dark_ledger_defect_over_U_E0": 1.4578479995269453e-07,
+     "max_gauss": 1.3160880900232704e-10,
+     "max_dark_gauss": 3.948264269730998e-11
+    }
+   },
+   "richardson": [
+    1.191574662937801,
+    -0.009642690822403913
+   ],
+   "richardson_minus_root": [
+    2.3831975637378378e-07,
+    -7.694772593963561e-07
+   ]
+  }
+ },
+ "B01_dark": {
+  "grid_dt0.025": {
+   "env_min": [],
+   "env_max": [],
+   "wall": 7.381558208988281,
+   "dark_ledger_defect_over_U_E0": 5.859977873726868e-07
+  },
+  "grid_dt0.0125": {
+   "env_min": [],
+   "env_max": [],
+   "wall": 14.595360374980373,
+   "dark_ledger_defect_over_U_E0": 1.4653694604613325e-07,
+   "env_min_prominence_0p2": [
+    30.55
+   ]
+  },
+  "hermite_dark_N1024_nu0.0": {
+   "env_min_prominence_0p2": [
+    30.5
+   ],
+   "first_t_logenv_dev_gt_0p1": null,
+   "max_logenv_dev_t_le_80": 0.08049387691138764
+  },
+  "hermite_dark_N512_nu0.0": {
+   "env_min_prominence_0p2": [
+    30.5
+   ],
+   "first_t_logenv_dev_gt_0p1": null,
+   "max_logenv_dev_t_le_80": 0.07815297499483766
+  },
+  "hermite_dark_N512_nu1.0": {
+   "env_min_prominence_0p2": [
+    30.5
+   ],
+   "first_t_logenv_dev_gt_0p1": null,
+   "max_logenv_dev_t_le_80": 0.04305201626879806
+  },
+  "grid_dt_halving_max_logenv_diff": 0.0006822819863585458
+ },
+ "B06_dark": {
+  "grid_dt0.025": {
+   "t_echo": 29.0,
+   "amp": 0.0011210010033825268,
+   "wall": 3.170298124983674
+  },
+  "grid_dt0.0125": {
+   "t_echo": 29.0,
+   "amp": 0.0011209876854773894,
+   "wall": 6.310965916985879
+  },
+  "hermite_dark_N256_nu0.0": {
+   "t_echo": 28.999999999999996,
+   "amp": 0.0011209881636688912,
+   "amp_rel_to_grid": 4.2658051291333265e-07,
+   "max_abs_dev_over_grid_echo": 0.08617498729988597
+  },
+  "hermite_dark_N512_nu0.0": {
+   "t_echo": 28.999999999999996,
+   "amp": 0.0011210052018422673,
+   "amp_rel_to_grid": 1.56258316703628e-05,
+   "max_abs_dev_over_grid_echo": 0.00036451160316818026
+  },
+  "hermite_dark_N512_nu1.0": {
+   "t_echo": 28.999999999999996,
+   "amp": 0.0010859703423532555,
+   "amp_rel_to_grid": -0.031237937381284664,
+   "max_abs_dev_over_grid_echo": 0.03319204043738402
+  }
+ }
+}
