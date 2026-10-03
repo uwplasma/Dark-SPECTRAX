@@ -91,15 +91,17 @@ def proca_mode(model: Model, y, index, A):
 
 
 def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
-        solver=None, max_steps=200_000, progress=False, fixed_dt=None):
-    """Integrate with Dopri8 (adaptive PID control, or constant ``fixed_dt``).
+        solver=None, max_steps=200_000, progress=False, fixed_dt=None, t0=0.0):
+    """Integrate from ``t0`` to ``t0 + t_max`` with Dopri8 (adaptive PID, or constant ``fixed_dt``).
+
+    Restart a run by passing its final state (including the work ledger ``W``) and final time as ``t0``.
 
     Returns a dict of saved states, diagnostics, solver statistics, timings and
     the work ledger. ``status`` is ``"success"`` only when Diffrax reports
     success *and* every saved array is finite; otherwise ``failure_reason`` says why.
     """
     solver = diffrax.Dopri8() if solver is None else solver
-    ts = jnp.linspace(0.0, t_max, n_save)
+    ts = jnp.linspace(t0, t0 + t_max, n_save)
     term = diffrax.ODETerm(lambda t, y, args: rhs(t, y, model))
     meter = diffrax.TqdmProgressMeter() if progress else diffrax.NoProgressMeter()
 
@@ -111,11 +113,11 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
     @jax.jit
     def solve(y0):
         return diffrax.diffeqsolve(
-            term, solver, 0.0, t_max, dt0, y0, saveat=diffrax.SaveAt(ts=ts),
+            term, solver, t0, t0 + t_max, dt0, y0, saveat=diffrax.SaveAt(ts=ts),
             stepsize_controller=controller,
             max_steps=max_steps, throw=False, progress_meter=meter)
 
-    t0 = _time.perf_counter()
+    tic = _time.perf_counter()
     with warnings.catch_warnings():  # complex states are used exactly as in the parent
         warnings.filterwarnings("ignore", message="Complex dtype support")
         compiled = solve.lower(y0).compile()
@@ -136,7 +138,7 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
         "num_steps": int(sol.stats["num_steps"]),
         "num_accepted": int(sol.stats["num_accepted_steps"]),
         "num_rejected": int(sol.stats["num_rejected_steps"]),
-        "compile_time": t1 - t0, "run_time": t2 - t1,
+        "compile_time": t1 - tic, "run_time": t2 - t1,
     })
     finite = all(np.isfinite(out[k]).all() for k in ("Ck", "Fk", "Dk", "W"))
     if sol.result != diffrax.RESULTS.successful:
@@ -186,5 +188,5 @@ def save_record(path, model: Model, out, extra=None):
     (path / "run.json").write_text(json.dumps(rec, indent=2, default=float) + "\n")
     np.savez_compressed(path / "run.npz", **{k: out[k] for k in (
         "t", "K", "U_gamma", "U_D", "W", "gauss", "ledger_defect")},
-        Ck_final=out["Ck"][-1], Fk=out["Fk"], Dk=out["Dk"])
+        Ck_final=out["Ck"][-1], Fk=out["Fk"], Dk=out["Dk"], W_final=out["W"][-1])
     return rec

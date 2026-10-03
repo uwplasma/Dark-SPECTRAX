@@ -31,17 +31,20 @@ def main(argv=None):
     ap.add_argument("--out", required=True, help="output directory for run.json/run.npz")
     ap.add_argument("--t-max", type=float, help="override [run] t_max")
     ap.add_argument("--resume", help="run.npz of a previous run of the same input: continue "
-                    "from its final kinetic and field state")
+                    "from its final state, time and work ledger")
     args = ap.parse_args(argv)
     with open(args.input, "rb") as fh:
         cfg = tomllib.load(fh)
     model, y = build(cfg)
     if args.resume:
         old = np.load(args.resume)
-        y = {**y, "Ck": old["Ck_final"], "Fk": old["Fk"][-1], "Dk": old["Dk"][-1]}
+        y = {**y, "Ck": old["Ck_final"], "Fk": old["Fk"][-1], "Dk": old["Dk"][-1],
+             "W": old["W_final"].astype(complex)}  # ledger and clock continue
     r = dict(cfg.get("run", {}))
     if args.t_max is not None:
         r["t_max"] = args.t_max
+    if args.resume:
+        r["t0"] = float(old["t"][-1])
     out = run(model, y, r.pop("t_max", 10.0), **r)
     rec = save_record(args.out, model, out, {"input": cfg, "resumed_from": args.resume})
     print(f"{rec['status']}: {out['num_steps']} steps, max ledger defect "
