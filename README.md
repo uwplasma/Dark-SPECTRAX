@@ -11,7 +11,11 @@ tested items below are claimed. Tested on CPU in float64; GPU and differentiatio
 
 ## Result: Landau damping with a dark field
 
-Validation in progress; the first measured comparison (B00) is being recorded.
+Electrons with $v_{te}=0.1c$ on fixed ions damp a $10^{-4}$ density seed at $k\lambda_{De}=0.3$ and $0.5$, with and without a mixed field ($\eta=0.3$, $\Omega_D=1.0\,\omega_{pe}$, Yukawa-consistent start). An independent SciPy root of $D_L=(Q-\Omega_D^2)(1+\chi)+\eta^2Q\chi$ predicts that mixing raises the frequency by 2.7% / 2.3% and lowers the damping rate by 23.6% / 9.3%. Fitted complex frequencies agree with the roots to a relative 3.0e-05 or better for all 16 runs (Hermite orders 64/128, grids 5/8), and the work ledger closes to roundoff. This is a linear, deliberately large-coupling verification; it does not address nonlinear or late-time behavior.
+
+<img src="docs/_static/b00/figure.png" width="860" alt="Ordinary and dark Landau damping against kinetic roots">
+
+[Script](examples/plasma.py) · [record](docs/_static/b00/run.json) · [table](docs/results.md)
 
 ## Install and run
 
