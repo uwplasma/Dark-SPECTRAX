@@ -86,7 +86,7 @@ for kl in k_lambdas:
                     "fit_window": windows[kl], "window_start_scan": scan,
                     "max_ledger_defect": float(np.abs(out["ledger_defect"]).max()),
                     "max_gauss": [float(v) for v in out["gauss"].max(axis=0)],
-                    "steps": out["num_steps"], "wall_time_incl_compile": out["wall_time_incl_compile"],
+                    "steps": out["num_steps"], "compile_time": out["compile_time"], "run_time": out["run_time"],
                 })
                 tag = f"k{kl}_{rows[-1]['model']}_Nn{Nn}_Nx{Nx}"
                 arrays[f"t_{tag}"], arrays[f"Ek_{tag}"] = t, z

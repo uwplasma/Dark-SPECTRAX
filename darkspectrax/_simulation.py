@@ -91,29 +91,37 @@ def proca_mode(model: Model, y, index, A):
 
 
 def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
-        solver=None, max_steps=200_000, progress=False):
-    """Integrate with an adaptive explicit solver (default Dopri8).
+        solver=None, max_steps=200_000, progress=False, fixed_dt=None):
+    """Integrate with Dopri8 (adaptive PID control, or constant ``fixed_dt``).
 
-    Returns a dict of saved states, diagnostics, solver statistics and the
-    work ledger. ``status`` is ``"success"`` only when Diffrax reports success.
+    Returns a dict of saved states, diagnostics, solver statistics, timings and
+    the work ledger. ``status`` is ``"success"`` only when Diffrax reports
+    success *and* every saved array is finite; otherwise ``failure_reason`` says why.
     """
     solver = diffrax.Dopri8() if solver is None else solver
     ts = jnp.linspace(0.0, t_max, n_save)
     term = diffrax.ODETerm(lambda t, y, args: rhs(t, y, model))
     meter = diffrax.TqdmProgressMeter() if progress else diffrax.NoProgressMeter()
 
+    if fixed_dt is None:
+        controller = diffrax.PIDController(rtol=rtol, atol=atol)
+    else:
+        controller, dt0 = diffrax.ConstantStepSize(), fixed_dt
+
     @jax.jit
     def solve(y0):
         return diffrax.diffeqsolve(
             term, solver, 0.0, t_max, dt0, y0, saveat=diffrax.SaveAt(ts=ts),
-            stepsize_controller=diffrax.PIDController(rtol=rtol, atol=atol),
+            stepsize_controller=controller,
             max_steps=max_steps, throw=False, progress_meter=meter)
 
     t0 = _time.perf_counter()
     with warnings.catch_warnings():  # complex states are used exactly as in the parent
         warnings.filterwarnings("ignore", message="Complex dtype support")
-        sol = jax.block_until_ready(solve(y0))
-    elapsed = _time.perf_counter() - t0
+        compiled = solve.lower(y0).compile()
+        t1 = _time.perf_counter()
+        sol = jax.block_until_ready(compiled(y0))
+    t2 = _time.perf_counter()
 
     ys = sol.ys
     states = [jax.tree_util.tree_map(lambda a, i=i: a[i], ys) for i in range(len(ts))]
@@ -124,12 +132,17 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
         "t": np.asarray(sol.ts), "Ck": np.asarray(ys["Ck"]), "Fk": np.asarray(ys["Fk"]),
         "Dk": np.asarray(ys["Dk"]), "W": np.asarray(ys["W"]).real,
         "gauss": np.array([[float(a), float(b)] for a, b in gs]),
-        "status": "success" if sol.result == diffrax.RESULTS.successful else "failure",
+        "status": "success", "failure_reason": None,
         "num_steps": int(sol.stats["num_steps"]),
         "num_accepted": int(sol.stats["num_accepted_steps"]),
         "num_rejected": int(sol.stats["num_rejected_steps"]),
-        "wall_time_incl_compile": elapsed,
+        "compile_time": t1 - t0, "run_time": t2 - t1,
     })
+    finite = all(np.isfinite(out[k]).all() for k in ("Ck", "Fk", "Dk", "W"))
+    if sol.result != diffrax.RESULTS.successful:
+        out["status"], out["failure_reason"] = "failure", str(sol.result)
+    elif not finite:
+        out["status"], out["failure_reason"] = "failure", "nonfinite state"
     W = out["W"]
     # Ledger: K gains W_em + W_D + W_ext; U_gamma loses W_em; U_D loses W_D.
     out["ledger_defect"] = ((out["K"] - out["K"][0]) - W.sum(axis=1),
@@ -164,7 +177,8 @@ def save_record(path, model: Model, out, extra=None):
         "backend": jax.default_backend(), "dtype": "complex128",
         "command": " ".join([Path(sys.argv[0]).name] + sys.argv[1:]),
         "solver": {k: out[k] for k in ("num_steps", "num_accepted", "num_rejected",
-                                       "wall_time_incl_compile")},
+                                       "compile_time", "run_time")},
+        "failure_reason": out["failure_reason"],
         "max_abs_ledger_defect": float(np.abs(out["ledger_defect"]).max()),
         "max_gauss_residual": [float(v) for v in out["gauss"].max(axis=0)],
         **(extra or {}),
