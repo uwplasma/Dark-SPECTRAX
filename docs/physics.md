@@ -105,8 +105,33 @@ E = exact identity, A = controlled approximation, N = numerical finding.
 | Imported references, `studies/refs` (6781d80 era) | all of `code/`, B00/B02 records | none (ordinary) | NumPy semi-Lagrangian 1D1V VP; wofz roots; Gkeyll p=2 records | B00, B02 against Hermite rerun on ab87385 (N) | non-Hermite continuum, ordinary only |
 | Plasma dispersion function (SciPy `wofz`, Faddeeva) | implementation used directly | - | linear Vlasov, Maxwellian populations | B00, B02, B03, C05 roots (E for the model) | linear, causal continuation, k > 0 |
 | Canonical kinetic mixing (derived here, Section "Independent re-derivation") | own derivation | Lagrangian rotation | - | eta, m_D mapping (E, algebra only) | not yet compared with [D10] |
+| HHS v1 (arXiv:2510.13956v1) | full text incl. App. A-C (literature check) | prescribed uniform drive, electron omega_p | 1D1V relativistic PIC | H00-H02, H07 inputs (studies/hhs_ladder.py) | nonrelativistic, deterministic seeds: inspired by, not a reproduction |
 
-Not yet inspected in this work, therefore not used for any claim: N1-N24 and D1-D13 of the planning reading map
-(Parker-Dellar, Issan et al., Pagliantini et al., Hakim et al., O'Neil, Gould-O'Neil-Malmberg, Benisti et al., Zakharov,
-SHARP, Hook-Huang-Shalaby and the cosmology/observation papers). Each must be read (equations, appendices, figures)
-before it sets a benchmark here.
+### Literature reading status (2026-10-03 check)
+
+Depth: F = full text read for the stated items; A = abstract and metadata; M = bibliographic metadata only.
+Only F sources may set a benchmark; A/M sources have not had their equations inspected and are not used for any claim.
+
+| Ref | Corrected citation | Depth |
+|---|---|---|
+| D1 | Hook, Huang, Shalaby, arXiv:2510.13956v1 (only version); PRL 137, 071004 (2026), DOI 10.1103/98cx-7t43 | F for v1 text, eqs. 1-47, App. A-C; published PRL text and supplement not accessed |
+| N1 | Parker, Dellar, arXiv:1407.1932; J. Plasma Phys., DOI 10.1017/S0022377814001287 | A |
+| N2 | Issan, Chapurin, Koshkarov, Delzanno, arXiv:2412.07073v3 | A |
+| N3 | Pagliantini et al., arXiv:2110.11511v3 | A |
+| N4 | Pagliantini, Delzanno, Markidis, arXiv:2208.14373; JCP, DOI 10.1016/j.jcp.2023.112252 | A |
+| N5 | Hakim, Francisquez, Juno, Hammett, "Conservative Discontinuous Galerkin Schemes for Nonlinear Fokker-Planck Collision Operators", arXiv:1903.08062; JPP, DOI 10.1017/S0022377820000586 | M |
+| N10 | Shalaby, Broderick, Chang, Pfrommer, Lamberts, Puchwein, "SHARP: A Spatially Higher-order, Relativistic Particle-in-Cell Code", arXiv:1702.04732; ApJ, DOI 10.3847/1538-4357/aa6d13 | M |
+| N11 | Juno, "A Deep Dive into the Distribution Function: Understanding Phase Space Dynamics with Continuum Vlasov-Maxwell Simulations", arXiv:2005.13539 | M |
+| N14, N15 | Shao, Wang, Wu, arXiv:2605.17820v1; Dai, arXiv:2608.09827v2 | A |
+| N18 | Koshkarov et al., arXiv:2004.12010; CPC, DOI 10.1016/j.cpc.2021.107866 | M |
+| N22 | Bell, Campos Pinto, Possanner, Sonnendruecker, arXiv:2504.04929; J. Comput. Phys. 555, 114765 (2026), DOI 10.1016/j.jcp.2026.114765 (use this DOI, not the SSRN DOI on the arXiv record) | A |
+| D3 | Witte, Rosauro-Alcaraz, McDermott, Poulin, "Dark Photon Dark Matter in the Presence of Inhomogeneous Structure", arXiv:2003.13698; JHEP 06 (2020) 132 | M |
+| D5 | Brahma, Schutz, arXiv:2410.14771; related application: Brahma, Iles, Scherer, Schutz, "Resonant axion and dark photon production in magnetic white dwarfs", PRD 113, 083010 (2026), DOI 10.1103/9swg-ndgx | M |
+| N6-N9, N12, N13, N16, N17, N19-N21, N23, N24, D2, D4, D6-D13 | as in the planning reading map (identifiers verified) | M |
+
+HHS v1 facts used here (F): uniform k = 0 drive A0 cos(omega t) with no stated ramp; v_q^D/v_te = 0.03 and 1e-3 for the
+resonant runs; m_i/m_e = 1836, T_e = T_i = 1e-3 m_e c^2, L = 40 c/omega_pe, 1000 cells; relativistic Vay pusher in 1D1V;
+quiet co-located start; timestep not stated; the resonant omega (electron-only or total omega_p) is not stated. Their
+eqs. (6), (7) give nu_ei tau_ei = m_p/(2 m_e), while footnote 5 states the opposite ordering (v1 only). The swept drive
+must be read as theta(t) = (0.8 + 0.1 t/5000) t, instantaneous frequency 0.8 + 0.2 t/5000 (`sweep_drive` in `Model`).
+Runs here are labelled HHS-v1-inspired and nonrelativistic; none is a reproduction.

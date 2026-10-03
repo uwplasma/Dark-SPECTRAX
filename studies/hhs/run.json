@@ -1,0 +1,208 @@
+{
+ "label": "HHS-v1-inspired, nonrelativistic; not a reproduction",
+ "parent_commit": "ab87385fc84871122666df66a0fabe21dfa50dbd",
+ "repository_commit": "7007e767b8049131e92624b07826b1924ec49c19",
+ "command": "python studies/hhs_ladder.py",
+ "inputs": {
+  "v_te": 0.03162277660168379,
+  "alpha_e": 0.044721359549995794,
+  "alpha_i": 0.0010437071518085825,
+  "mass_ratio": 1836,
+  "Lx": 40.0,
+  "E0": {
+   "strong": 0.0009486832980505137,
+   "weak": 3.1622776601683795e-05
+  },
+  "omega_electron": 1.0,
+  "omega_total": 1.0002722940826503
+ },
+ "H00": {
+  "strong_omega_e": {
+   "status": "success",
+   "max_abs_Ebar_err_over_max": 1.13557331150909e-09,
+   "W_ext_final": 0.11260470636563655,
+   "W_ext_exact": 0.11260470636384642,
+   "W_ext_rel_err": 1.5897413729061958e-11,
+   "ledger_defect": 1.8366053122775838e-10,
+   "max_quiver_over_vte": 14.947798989295787,
+   "steps": 7050,
+   "compile_time": 0.5048732089926489,
+   "run_time": 1.0351782079960685
+  },
+  "strong_omega_tot": {
+   "status": "success",
+   "max_abs_Ebar_err_over_max": 1.1612628872385562e-09,
+   "W_ext_final": 0.11187083232564297,
+   "W_ext_exact": 0.11187083232406772,
+   "W_ext_rel_err": 1.4081005598617625e-11,
+   "ledger_defect": 1.8802335383094615e-10,
+   "max_quiver_over_vte": 14.908597564778447,
+   "steps": 7046,
+   "compile_time": 0.414439374988433,
+   "run_time": 1.0557352500036359
+  },
+  "weak_omega_e": {
+   "status": "success",
+   "max_abs_Ebar_err_over_max": 1.3860210999724304e-09,
+   "W_ext_final": 0.0001251163404084184,
+   "W_ext_exact": 0.00012511634040427382,
+   "W_ext_rel_err": 3.312580620060051e-11,
+   "ledger_defect": 4.012226206655256e-13,
+   "max_quiver_over_vte": 0.4982599663098596,
+   "steps": 5895,
+   "compile_time": 0.41268220799975097,
+   "run_time": 0.8910972499870695
+  },
+  "weak_omega_tot": {
+   "status": "success",
+   "max_abs_Ebar_err_over_max": 1.3543470733339063e-09,
+   "W_ext_final": 0.000124300924808137,
+   "W_ext_exact": 0.00012430092480451965,
+   "W_ext_rel_err": 2.9101627675125872e-11,
+   "ledger_defect": 4.0676837576416117e-13,
+   "max_quiver_over_vte": 0.49695325215928154,
+   "steps": 5898,
+   "compile_time": 0.41685562499333173,
+   "run_time": 0.8898311250086408
+  }
+ },
+ "H01": {
+  "weak_omega_e": {
+   "status": "success",
+   "failure_reason": null,
+   "T": 1000.0,
+   "Nn": 32,
+   "max_identity_residual_over_wL2E0": 1.6457031883953284e-13,
+   "ledger_defect": 3.1060198426376313e-15,
+   "max_gauss": 3.361026739812404e-18,
+   "steps": 9015,
+   "compile_time": 0.4821533329959493,
+   "run_time": 2.6866113750147633,
+   "diagnostic_time": 13.919615374994464,
+   "max_abs_Ebar_err_over_max": 2.673131113642489e-11
+  },
+  "strong_omega_e": {
+   "status": "success",
+   "failure_reason": null,
+   "T": 100.0,
+   "Nn": 32,
+   "max_identity_residual_over_wL2E0": 7.314236392868128e-15,
+   "ledger_defect": 6.205109261700828e-16,
+   "max_gauss": 8.673630966961189e-19,
+   "steps": 2012,
+   "compile_time": 0.46597483300138265,
+   "run_time": 0.5789480829844251,
+   "diagnostic_time": 1.3430453750188462,
+   "max_abs_Ebar_err_over_max": 5.312391377295774e-13
+  }
+ },
+ "H02": {
+  "weak_omega_tot_T100": {
+   "status": "success",
+   "failure_reason": null,
+   "T": 100.0,
+   "Nn": 32,
+   "max_identity_residual_over_wL2E0": 1.3706727698665503e-14,
+   "ledger_defect": 5.193353883368433e-16,
+   "max_gauss": 6.284091470351629e-19,
+   "steps": 502,
+   "compile_time": 0.5519432919973042,
+   "run_time": 0.19703133299481124,
+   "diagnostic_time": 2.5554872499778867,
+   "Qi_max_abs": 1.8924928440761796e-08,
+   "Qi_over_n0E0_max": 0.0005984587842850622,
+   "Qi_pump_quadrature_fit": [
+    -1.142572242430441e-08,
+    2.6713565001921374e-09
+   ],
+   "Qi_phase_vs_pump_rad": 2.9119163196546634,
+   "Qi_fit_residual_rel": 0.3456334509499331
+  },
+  "gate_T100_to_T1000": {
+   "criterion": "status success and identity residual < 1e-6 (wL^2 E0)",
+   "passed": true
+  },
+  "weak_omega_tot_T1000": {
+   "status": "success",
+   "failure_reason": null,
+   "T": 1000.0,
+   "Nn": 32,
+   "max_identity_residual_over_wL2E0": 1.6448073238398603e-13,
+   "ledger_defect": 2.0513706496818294e-15,
+   "max_gauss": 2.677652598060814e-18,
+   "steps": 10597,
+   "compile_time": 0.4651010840025265,
+   "run_time": 4.15402762501617,
+   "diagnostic_time": 22.77043924998725,
+   "Qi_max_abs": 1.901522710466417e-06,
+   "Qi_over_n0E0_max": 0.06013142787610775,
+   "Qi_pump_quadrature_fit": [
+    -1.1256278085371906e-06,
+    3.534046359157913e-08
+   ],
+   "Qi_phase_vs_pump_rad": 3.110206738797947,
+   "Qi_fit_residual_rel": 0.34300424504887594
+  },
+  "weak_omega_e_T1000": {
+   "status": "success",
+   "failure_reason": null,
+   "T": 1000.0,
+   "Nn": 32,
+   "max_identity_residual_over_wL2E0": 1.6448073238398603e-13,
+   "ledger_defect": 2.2154273790378314e-15,
+   "max_gauss": 5.354792565785617e-18,
+   "steps": 10570,
+   "compile_time": 0.45818262500688434,
+   "run_time": 4.182026041002246,
+   "diagnostic_time": 22.727029917004984,
+   "Qi_max_abs": 1.8917847218434536e-06,
+   "Qi_over_n0E0_max": 0.05982348563733404,
+   "Qi_pump_quadrature_fit": [
+    -1.1051672234754676e-06,
+    1.975278812067202e-07
+   ],
+   "Qi_phase_vs_pump_rad": 2.96472895264429,
+   "Qi_fit_residual_rel": 0.3433820782778537
+  }
+ },
+ "H07": {
+  "eta0.001": {
+   "status": [
+    "success",
+    "success"
+   ],
+   "Ebar_vs_matrix_exponential_max_err_over_max": 9.749437073362052e-10,
+   "U_D0": 0.0004999999999999999,
+   "W_D_final": 0.00011502228521522179,
+   "max_fraction_of_reservoir_transferred": 0.23004457043044363,
+   "W_ext_prescribed_final": 0.0001251163404084184,
+   "max_abs_Ebar_prescribed": 0.015756363605386434,
+   "max_abs_Ebar_reservoir": 0.015111118065637317,
+   "beat_period_estimate_2pi_over_eta": 6283.185307179586,
+   "ledger_defect_reservoir": 1.8115929924187864e-12,
+   "run_time": [
+    0.932905749999918,
+    0.901841290993616
+   ]
+  },
+  "eta0.03": {
+   "status": [
+    "success",
+    "success"
+   ],
+   "Ebar_vs_matrix_exponential_max_err_over_max": 1.1069392497842106e-09,
+   "U_D0": 5.555555555555556e-07,
+   "W_D_final": 2.315508245649519e-07,
+   "max_fraction_of_reservoir_transferred": 0.9999949435623808,
+   "W_ext_prescribed_final": 0.0001251163404084184,
+   "max_abs_Ebar_prescribed": 0.015756363605386434,
+   "max_abs_Ebar_reservoir": 0.0010537907367478225,
+   "beat_period_estimate_2pi_over_eta": 209.43951023931956,
+   "ledger_defect_reservoir": 1.8287689220706314e-15,
+   "run_time": [
+    0.9351570419967175,
+    0.8272773329808842
+   ]
+  }
+ }
+}

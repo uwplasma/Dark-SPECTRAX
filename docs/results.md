@@ -102,6 +102,66 @@ Independent D_L roots agree with the Dark-JAX-in-Cell roots to 4e-14.
 
 The PIC values move toward the Hermite values under joint cell/particle refinement and the amplitude difference roughly halves from 32 to 128 cells, but the 128-cell PIC fits still differ from the Hermite fits by about 1-2% in damping. The maxima rule with a 1% seed is itself biased by about 1% relative to the linear root (Hermite rows); compare like with like. Not a claim of PIC convergence.
 
+## B01/B06: nonlinear Landau and echo, ordinary and dark (`python studies/b01_b06.py`)
+
+k = 0.3, eps = 0.05 (B01) and k1 = 1, k2 = 1.5 kick at tau = 10, echo at k3 = 0.5 (B06), electrostatic units, beta = 0.1. Dark: eta = 0.3, Omega_D = omega_pe. Ordinary runs are compared with the imported grid solver; there is no independent dark reference. nu is the parent numerical hypercollision coefficient.
+
+B01 grid: first envelope minimum t = 31.45, maximum t = 65.60 (not reached in t <= 100 here).
+
+| B01 run | envelope minima (t <= 100) | first t with abs(log env/env_grid) > 0.1 | dark-ordinary RMS log-env diff (t <= 60) | run time (s) |
+|---|---|---|---|---|
+| ordinary N=512 nu=0.0 | [] | 85.0 | - | 8.6 |
+| dark N=512 nu=0.0 | [30.5] | - | 0.093 | 8.9 |
+| ordinary N=1024 nu=0.0 | [31.45] | none | - | 18.8 |
+| dark N=1024 nu=0.0 | [30.5] | - | 0.090 | 19.3 |
+| ordinary N=512 nu=1.0 | [] | none | - | 8.2 |
+| dark N=512 nu=1.0 | [] | - | 0.088 | 8.1 |
+
+With nu = 0, N = 1024 reproduces the grid's first envelope minimum (31.45) and stays within 10% of the grid envelope through t = 100; N = 512 departs at t = 85 and its envelope minimum is not detected. The dark run reaches its first minimum earlier (30.5). The hypercollision closure nu = 1 removes the trapping minimum while staying within 10% of the grid envelope to t = 100: a closure can match an envelope and still erase the physical trapping signature.
+
+B06 grid echo: t = 29.05, abs(E_k3) = 1.15873e-03 (ballistic estimate 30).
+
+| B06 run | echo t | echo amplitude | vs grid | max dev of abs(E_k3) / grid echo | k1 after t = 20 | segment ledger defect |
+|---|---|---|---|---|---|---|
+| ordinary N=256 nu=0.0 | 29.05 | 1.15870e-03 | -0.002% | 8.0e-02 | 4.2e-03 | 6e-11 |
+| dark N=256 nu=0.0 | 29.00 | 1.12099e-03 | - | - | - | 7e-11 |
+| ordinary N=512 nu=0.0 | 29.05 | 1.15875e-03 | +0.002% | 2.9e-04 | 3.8e-03 | 6e-11 |
+| dark N=512 nu=0.0 | 29.00 | 1.12101e-03 | - | - | - | 7e-11 |
+| ordinary N=512 nu=1.0 | 29.05 | 1.12220e-03 | -3.153% | 3.3e-02 | 3.6e-06 | 6e-11 |
+| dark N=512 nu=1.0 | 29.00 | 1.08597e-03 | - | - | - | 6e-11 |
+
+Mixing lowers the echo amplitude by 3.3% at N = 512, nu = 0. The kick is an external velocity shift applied at a restart (exact in the truncated basis); its kinetic energy (6.25e-06) is an external term outside the ledger. N = 256 matches the echo peak but its k1 Hermite recurrence (about 27 in the imported t_c table) contaminates the curve (8% deviation); nu = 1 suppresses the recurrence and also lowers the physical echo by about 3%.
+
+## HHS-v1-inspired nonrelativistic ladder (`python studies/hhs_ladder.py`)
+
+Not a reproduction of HHS: nonrelativistic 1D3V Hermite, deterministic declared seeds, no quiet-start PIC noise. Inputs from arXiv:2510.13956v1 App. B: v_te = sqrt(1e-3)c, m_i/m_e = 1836, T_i = T_e, L = 40 c/omega_pe, uniform drive E0 cos(omega t), E0 = v_q omega_pe with v_q/v_te = 0.03 (strong) or 1e-3 (weak). In parent units the force is q_s Omega_cs[s] E, so with Omega_cs[0] = 1 the code field equals the electron acceleration amplitude. omega = 1 (electron omega_pe) and 1.000272 (with ions) are both run; v1 does not state which.
+
+| H00 homogeneous, fixed ions, t <= 1000 | max abs(Ebar - exact) / max abs(Ebar) | W_ext rel. error | max quiver / v_te |
+|---|---|---|---|
+| strong_omega_e | 1.1e-09 | 1.6e-11 | 14.95 |
+| strong_omega_tot | 1.2e-09 | 1.4e-11 | 14.91 |
+| weak_omega_e | 1.4e-09 | 3.3e-11 | 0.50 |
+| weak_omega_tot | 1.4e-09 | 2.9e-11 | 0.50 |
+
+The homogeneous mean field is exact in the Hermite system (only orders 0-1 enter), so H00 is meaningful even at quiver speeds of 15 v_te; finite-k strong-drive runs were limited to t = 100.
+
+| H01/H02 finite-k (Nx = 8, Nn = 32) | T | identity residual / (omega_L^2 E0) | Ebar error | max abs(Q_i) / E0 | Q_i phase vs pump (rad) | run + diag time (s) |
+|---|---|---|---|---|---|---|
+| H01 weak_omega_e | 1000 | 1.6e-13 | 2.7e-11 | 0.000 | nan | 16.6 |
+| H01 strong_omega_e | 100 | 7.3e-15 | 5.3e-13 | 0.000 | nan | 1.9 |
+| H02 weak_omega_tot_T100 | 100 | 1.4e-14 | nan | 0.001 | 2.91 | 2.8 |
+| H02 weak_omega_tot_T1000 | 1000 | 1.6e-13 | nan | 0.060 | 3.11 | 26.9 |
+| H02 weak_omega_e_T1000 | 1000 | 1.6e-13 | nan | 0.060 | 2.96 | 26.9 |
+
+Seeds: 1e-3 density at k1 = 2 pi/40 (both species when ions move) and 1e-4 electron-only at k2. The mean-pump identity, evaluated from the code's own RHS, holds to about 1e-13 with mobile ions; the gate (T = 100 residual < 1e-6) passed, so T = 1000 was run. The ion-density/field correlation reaches about 6% of the drive term by t = 1000 and is roughly in antiphase with the pump, but a single-frequency fit leaves 34% of Q_i unexplained, so it is not a pure pump-frequency response. This is a seed-dependent pilot, not a detuning measurement.
+
+| H07 homogeneous, eta E_D(0) = E0 (weak) | max Ebar error vs 4x4 exponential | max fraction of U_D(0) transferred | max abs(Ebar) reservoir / prescribed |
+|---|---|---|---|
+| eta0.001 | 9.7e-10 | 0.230 | 0.959 |
+| eta0.03 | 1.1e-09 | 1.000 | 0.067 |
+
+At matched initial effective force a finite reservoir follows the prescribed drive only while eta t is small: with eta = 0.03 it transfers essentially all of U_D(0) and the plasma field peaks at 7% of the prescribed secular value over t <= 1000; with eta = 1e-3 the beat period (about 2 pi/eta = 6300) exceeds the run.
+
 ## Test suite (local, CPU, float64)
 
 A00 moments and Lorentz operator by independent quadrature (agreement 1e-12 or better), A01 zero-mixing RHS equal
@@ -111,7 +171,9 @@ longitudinal branches from full determinants (relative 2e-5 / 1e-4, the size of 
 v_t = 0.005c), A05 static Yukawa, A06 eta-sign symmetry, A07 exact mean pump (1e-9), A08 eighth-order time
 convergence of fixed-step Dopri8 and Hermite-order convergence of exact free streaming, A09 one to three populations
 on odd/even grids with ledger closure, A10 failure policy (nonfinite state, step budget, short stiff transient
-without a step floor), rfft Parseval weights for even and odd grids. Deliberate sign/source/mass-potential/weight
+without a step floor), C00 random states satisfying both Gauss laws (exact energy-work theorems for particles,
+Maxwell and Proca, continuity, both constraints and B_D = curl A_D preserved by the RHS, zero magnetic work), C07
+chunked restart equal to a single run with a continuous ledger, rfft Parseval weights for even and odd grids. Deliberate sign/source/mass-potential/weight
 mutations of the companion were each caught by at least one test. A08 uses exact solutions; a manufactured-source
 hook is not implemented.
 

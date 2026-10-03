@@ -29,6 +29,8 @@ Electrons with $v_{te}=0.1c$ on fixed ions damp a $10^{-4}$ density seed at $k\l
 | two stream vt0.3 k0.4, growth | 0.261616 / 0.261616 | 0.266447 / 0.266447 |
 | bump on tail k0.3, growth | 0.198098 / 0.198098 | 0.208595 / 0.208595 |
 | C05 Landau vs Dark-JAX-in-Cell PIC (128 cells), same fit rule | Hermite 1.413540-0.154975i / PIC 1.410080-0.151746i | Hermite 1.429621-0.147445i / PIC 1.424993-0.145221i |
+| B06 echo amplitude (N=512), grid 1.15873e-03 | 1.15875e-03 | 1.12101e-03 (no reference) |
+| H00 resonant mean field, t <= 1000 (HHS-v1-inspired) | error 1e-09, W_ext 3e-11 | - |
 
 Landau and growth references are independent kinetic roots; the ordinary Hermite runs also agree with an independent semi-Lagrangian solver to within 4.4e-06 (B00, B02). Details, windows and limitations: [docs/results.md](docs/results.md).
 

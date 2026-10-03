@@ -111,3 +111,4 @@ def test_c07_chunked_restart_matches_single_run():
     led_full = full["K"] + full["U_gamma"] - full["W"][:, 2]
     led_b = b["K"] + b["U_gamma"] - b["W"][:, 2]
     assert np.max(np.abs(led_b - led_full[0])) < 1e-12        # ledger continues across the restart
+    assert np.abs(b["ledger_defect"]).max() < 1e-12           # segment ledger closes from its own start

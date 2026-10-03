@@ -9,6 +9,83 @@ rec = json.loads((root / "docs/_static/b00/run.json").read_text())
 inst = json.loads((root / "docs/_static/b02_b03/run.json").read_text())
 refs = json.loads((root / "studies/refs_rerun/run.json").read_text())
 c05 = json.loads((root / "studies/c05/run.json").read_text())
+b16 = json.loads((root / "studies/b01_b06/run.json").read_text())
+hhs = json.loads((root / "studies/hhs/run.json").read_text())
+
+
+def nonlinear_and_hhs():
+    B1, B6 = b16["B01"], b16["B06"]
+    L = ["## B01/B06: nonlinear Landau and echo, ordinary and dark (`python studies/b01_b06.py`)", "",
+         "k = 0.3, eps = 0.05 (B01) and k1 = 1, k2 = 1.5 kick at tau = 10, echo at k3 = 0.5 (B06), electrostatic units, "
+         "beta = 0.1. Dark: eta = 0.3, Omega_D = omega_pe. Ordinary runs are compared with the imported grid solver; "
+         "there is no independent dark reference. nu is the parent numerical hypercollision coefficient.", "",
+         f"B01 grid: first envelope minimum t = {B1['grid']['env_min'][0]:.2f}, maximum t = {B1['grid']['env_max'][0]:.2f} "
+         "(not reached in t <= 100 here).", "",
+         "| B01 run | envelope minima (t <= 100) | first t with abs(log env/env_grid) > 0.1 | dark-ordinary RMS log-env diff (t <= 60) | run time (s) |",
+         "|---|---|---|---|---|"]
+    for Nn, nu in ((512, 0.0), (1024, 0.0), (512, 1.0)):
+        for mdl in ("ordinary", "dark"):
+            r = B1[f"{mdl}_N{Nn}_nu{nu}"]
+            dev = r.get("first_t_logenv_dev_gt_0p1", "-")
+            dev = "none" if dev is None else dev
+            diff = B1[f"dark_vs_ordinary_N{Nn}_nu{nu}_rms_log_env_diff_t_le_60"] if mdl == "dark" else "-"
+            L.append(f"| {mdl} N={Nn} nu={nu} | {[round(x, 2) for x in r['env_min']]} | {dev} | {diff if isinstance(diff, str) else f'{diff:.3f}'} | {r['run_time']:.1f} |")
+    L += ["", "With nu = 0, N = 1024 reproduces the grid's first envelope minimum (31.45) and stays within 10% of the grid "
+          "envelope through t = 100; N = 512 departs at t = 85 and its envelope minimum is not detected. The dark run "
+          "reaches its first minimum earlier (30.5). The hypercollision closure nu = 1 removes the trapping minimum "
+          "while staying within 10% of the grid envelope to t = 100: a closure can match an envelope and still erase "
+          "the physical trapping signature.", "",
+          f"B06 grid echo: t = {B6['grid']['t_echo']:.2f}, abs(E_k3) = {B6['grid']['amp']:.5e} (ballistic estimate {B6['t_echo_ballistic']:.0f}).", "",
+          "| B06 run | echo t | echo amplitude | vs grid | max dev of abs(E_k3) / grid echo | k1 after t = 20 | segment ledger defect |",
+          "|---|---|---|---|---|---|---|"]
+    for Nn, nu in ((256, 0.0), (512, 0.0), (512, 1.0)):
+        for mdl in ("ordinary", "dark"):
+            r = B6[f"{mdl}_N{Nn}_nu{nu}"]
+            vs = f"{100 * r['amp_rel_to_grid']:+.3f}%" if "amp_rel_to_grid" in r else "-"
+            dv = f"{r['max_abs_dev_k3_over_grid_echo']:.1e}" if mdl == "ordinary" else "-"
+            k1 = f"{r['max_k1_after_t20']:.1e}" if mdl == "ordinary" else "-"
+            L.append(f"| {mdl} N={Nn} nu={nu} | {r['t_echo']:.2f} | {r['amp']:.5e} | {vs} | {dv} | {k1} | {r['ledger_defect_after_kick']:.0e} |")
+    o, d = B6["ordinary_N512_nu0.0"], B6["dark_N512_nu0.0"]
+    L += ["", f"Mixing lowers the echo amplitude by {100 * (1 - d['amp'] / o['amp']):.1f}% at N = 512, nu = 0. The kick is an "
+          "external velocity shift applied at a restart (exact in the truncated basis); its kinetic energy "
+          f"({o['kinetic_energy_from_kick']:.2e}) is an external term outside the ledger. N = 256 matches the echo peak "
+          "but its k1 Hermite recurrence (about 27 in the imported t_c table) contaminates the curve (8% deviation); "
+          "nu = 1 suppresses the recurrence and also lowers the physical echo by about 3%.", "",
+          "## HHS-v1-inspired nonrelativistic ladder (`python studies/hhs_ladder.py`)", "",
+          "Not a reproduction of HHS: nonrelativistic 1D3V Hermite, deterministic declared seeds, no quiet-start PIC "
+          "noise. Inputs from arXiv:2510.13956v1 App. B: v_te = sqrt(1e-3)c, m_i/m_e = 1836, T_i = T_e, L = 40 c/omega_pe, "
+          "uniform drive E0 cos(omega t), E0 = v_q omega_pe with v_q/v_te = 0.03 (strong) or 1e-3 (weak). In parent units "
+          "the force is q_s Omega_cs[s] E, so with Omega_cs[0] = 1 the code field equals the electron acceleration "
+          "amplitude. omega = 1 (electron omega_pe) and 1.000272 (with ions) are both run; v1 does not state which.", "",
+          "| H00 homogeneous, fixed ions, t <= 1000 | max abs(Ebar - exact) / max abs(Ebar) | W_ext rel. error | max quiver / v_te |",
+          "|---|---|---|---|"]
+    for k, v in hhs["H00"].items():
+        L.append(f"| {k} | {v['max_abs_Ebar_err_over_max']:.1e} | {v['W_ext_rel_err']:.1e} | {v['max_quiver_over_vte']:.2f} |")
+    L += ["", "The homogeneous mean field is exact in the Hermite system (only orders 0-1 enter), so H00 is meaningful even "
+          "at quiver speeds of 15 v_te; finite-k strong-drive runs were limited to t = 100.", "",
+          "| H01/H02 finite-k (Nx = 8, Nn = 32) | T | identity residual / (omega_L^2 E0) | Ebar error | max abs(Q_i) / E0 | Q_i phase vs pump (rad) | run + diag time (s) |",
+          "|---|---|---|---|---|---|---|"]
+    for grp in ("H01", "H02"):
+        for k, v in hhs[grp].items():
+            if "T" not in v:
+                continue
+            L.append(f"| {grp} {k} | {v['T']:g} | {v['max_identity_residual_over_wL2E0']:.1e} | "
+                     f"{v.get('max_abs_Ebar_err_over_max', float('nan')):.1e} | {v.get('Qi_over_n0E0_max', 0):.3f} | "
+                     f"{v.get('Qi_phase_vs_pump_rad', float('nan')):.2f} | {v['run_time'] + v['diagnostic_time']:.1f} |")
+    L += ["", "Seeds: 1e-3 density at k1 = 2 pi/40 (both species when ions move) and 1e-4 electron-only at k2. The mean-pump "
+          "identity, evaluated from the code's own RHS, holds to about 1e-13 with mobile ions; the gate (T = 100 residual "
+          "< 1e-6) passed, so T = 1000 was run. The ion-density/field correlation reaches about 6% of the drive term by "
+          "t = 1000 and is roughly in antiphase with the pump, but a single-frequency fit leaves 34% of Q_i unexplained, "
+          "so it is not a pure pump-frequency response. This is a seed-dependent pilot, not a detuning measurement.", "",
+          "| H07 homogeneous, eta E_D(0) = E0 (weak) | max Ebar error vs 4x4 exponential | max fraction of U_D(0) transferred | max abs(Ebar) reservoir / prescribed |",
+          "|---|---|---|---|"]
+    for k, v in hhs["H07"].items():
+        L.append(f"| {k} | {v['Ebar_vs_matrix_exponential_max_err_over_max']:.1e} | {v['max_fraction_of_reservoir_transferred']:.3f} | "
+                 f"{v['max_abs_Ebar_reservoir'] / v['max_abs_Ebar_prescribed']:.3f} |")
+    L += ["", "At matched initial effective force a finite reservoir follows the prescribed drive only while eta t is small: "
+          "with eta = 0.03 it transfers essentially all of U_D(0) and the plasma field peaks at 7% of the prescribed "
+          "secular value over t <= 1000; with eta = 1e-3 the beat period (about 2 pi/eta = 6300) exceeds the run."]
+    return "\n".join(L)
 
 
 def _times(key):
@@ -167,6 +244,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 
 {extra_sections()}
 
+{nonlinear_and_hhs()}
+
 ## Test suite (local, CPU, float64)
 
 A00 moments and Lorentz operator by independent quadrature (agreement 1e-12 or better), A01 zero-mixing RHS equal
@@ -176,7 +255,9 @@ longitudinal branches from full determinants (relative 2e-5 / 1e-4, the size of 
 v_t = 0.005c), A05 static Yukawa, A06 eta-sign symmetry, A07 exact mean pump (1e-9), A08 eighth-order time
 convergence of fixed-step Dopri8 and Hermite-order convergence of exact free streaming, A09 one to three populations
 on odd/even grids with ledger closure, A10 failure policy (nonfinite state, step budget, short stiff transient
-without a step floor), rfft Parseval weights for even and odd grids. Deliberate sign/source/mass-potential/weight
+without a step floor), C00 random states satisfying both Gauss laws (exact energy-work theorems for particles,
+Maxwell and Proca, continuity, both constraints and B_D = curl A_D preserved by the RHS, zero magnetic work), C07
+chunked restart equal to a single run with a continuous ledger, rfft Parseval weights for even and odd grids. Deliberate sign/source/mass-potential/weight
 mutations of the companion were each caught by at least one test. A08 uses exact solutions; a manufactured-source
 hook is not implemented.
 
@@ -210,6 +291,10 @@ def readme_table():
     h = c05["spectrax"]
     L.append(f"| C05 Landau vs Dark-JAX-in-Cell PIC (128 cells), same fit rule | Hermite {c(h['ordinary_Nn256']['maxima_fit'])} / "
              f"PIC {c(p['ordinary'])} | Hermite {c(h['self_consistent_Nn256']['maxima_fit'])} / PIC {c(p['dark'])} |")
+    o, d = b16["B06"]["ordinary_N512_nu0.0"], b16["B06"]["dark_N512_nu0.0"]
+    L.append(f"| B06 echo amplitude (N=512), grid {b16['B06']['grid']['amp']:.5e} | {o['amp']:.5e} | {d['amp']:.5e} (no reference) |")
+    h = hhs["H00"]["weak_omega_e"]
+    L.append(f"| H00 resonant mean field, t <= 1000 (HHS-v1-inspired) | error {h['max_abs_Ebar_err_over_max']:.0e}, W_ext {h['W_ext_rel_err']:.0e} | - |")
     return "\n".join(L) + ("\n\nLandau and growth references are independent kinetic roots; the ordinary Hermite runs also "
                            f"agree with an independent semi-Lagrangian solver to within {refmax:.1e} (B00, B02). "
                            "Details, windows and limitations: [docs/results.md](docs/results.md).\n\n"

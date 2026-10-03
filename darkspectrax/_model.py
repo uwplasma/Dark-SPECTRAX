@@ -71,6 +71,7 @@ class Model:
     E_drive: tuple = (0.0, 0.0, 0.0)
     omega_drive: float = 1.0
     phase_drive: float = 0.0
+    sweep_drive: float = 0.0
     _p: dict = field(default=None, repr=False)
 
     def __post_init__(self):
@@ -120,8 +121,12 @@ class Model:
                 "W": jnp.zeros(3, c)}
 
     def drive(self, t):
-        """Uniform prescribed electric force field E_drive(t) (zero outside that mode)."""
-        return jnp.asarray(self.E_drive) * jnp.cos(self.omega_drive * t + self.phase_drive)
+        """Uniform prescribed field E0 cos(theta), theta = (omega + sweep t) t + phase.
+
+        The instantaneous frequency is d theta/dt = omega + 2 sweep t (not omega + sweep t).
+        The electron acceleration amplitude is Omega_cs[0] |E0| in parent units."""
+        theta = (self.omega_drive + self.sweep_drive * t) * t + self.phase_drive
+        return jnp.asarray(self.E_drive) * jnp.cos(theta)
 
 
 def _weights(Nx, shape):

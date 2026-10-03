@@ -1,0 +1,173 @@
+{
+ "case_id": "B01_B06",
+ "parent_commit": "ab87385fc84871122666df66a0fabe21dfa50dbd",
+ "repository_commit": "7007e767b8049131e92624b07826b1924ec49c19",
+ "command": "python studies/b01_b06.py",
+ "beta": 0.1,
+ "eta": 0.3,
+ "Omega_D": 1.0,
+ "B01": {
+  "grid": {
+   "env_min": [
+    31.450000000000003
+   ],
+   "env_max": [
+    65.60000000000001
+   ]
+  },
+  "ordinary_N512_nu0.0": {
+   "status": "success",
+   "env_min": [],
+   "env_max": [],
+   "ledger_defect": 9.185496330568754e-16,
+   "compile_time": 0.5387582090042997,
+   "run_time": 8.644956750009442,
+   "steps": 3522,
+   "first_t_logenv_dev_gt_0p1": 85.0
+  },
+  "dark_N512_nu0.0": {
+   "status": "success",
+   "env_min": [
+    30.5
+   ],
+   "env_max": [],
+   "ledger_defect": 8.985189979202057e-16,
+   "compile_time": 0.4714725000085309,
+   "run_time": 8.88340262498241,
+   "steps": 3635
+  },
+  "ordinary_N1024_nu0.0": {
+   "status": "success",
+   "env_min": [
+    31.450000000000003
+   ],
+   "env_max": [],
+   "ledger_defect": 1.190684378350737e-15,
+   "compile_time": 0.5196659580105916,
+   "run_time": 18.828101499995682,
+   "steps": 4004,
+   "first_t_logenv_dev_gt_0p1": null
+  },
+  "dark_N1024_nu0.0": {
+   "status": "success",
+   "env_min": [
+    30.5
+   ],
+   "env_max": [],
+   "ledger_defect": 1.1141125999189483e-15,
+   "compile_time": 0.49885625002207235,
+   "run_time": 19.340941665985156,
+   "steps": 4116
+  },
+  "ordinary_N512_nu1.0": {
+   "status": "success",
+   "env_min": [],
+   "env_max": [],
+   "ledger_defect": 8.575361558002537e-16,
+   "compile_time": 0.46128116600448266,
+   "run_time": 8.181706584000494,
+   "steps": 3344,
+   "first_t_logenv_dev_gt_0p1": null
+  },
+  "dark_N512_nu1.0": {
+   "status": "success",
+   "env_min": [],
+   "env_max": [],
+   "ledger_defect": 8.73555242898727e-16,
+   "compile_time": 0.4790596670063678,
+   "run_time": 8.094765916001052,
+   "steps": 3305
+  },
+  "dark_vs_ordinary_N512_nu0.0_rms_log_env_diff_t_le_60": 0.09278372186221452,
+  "dark_vs_ordinary_N1024_nu0.0_rms_log_env_diff_t_le_60": 0.08986648930100849,
+  "dark_vs_ordinary_N512_nu1.0_rms_log_env_diff_t_le_60": 0.08841011013493644
+ },
+ "B06": {
+  "grid": {
+   "t_echo": 29.05,
+   "amp": 0.0011587258772158314
+  },
+  "t_echo_ballistic": 30.0,
+  "ordinary_N256_nu0.0": {
+   "status": [
+    "success",
+    "success"
+   ],
+   "t_echo": 29.049999999999997,
+   "amp": 0.0011586996266458405,
+   "kinetic_energy_from_kick": 6.249999999999312e-06,
+   "ledger_defect_after_kick": 6.101430130247126e-11,
+   "run_time": 8.335560707986588,
+   "compile_time": 1.0342282089986838,
+   "amp_rel_to_grid": -2.2654685208234326e-05,
+   "max_abs_dev_k3_over_grid_echo": 0.08027538606958946,
+   "max_k1_after_t20": 0.004177104732278238
+  },
+  "dark_N256_nu0.0": {
+   "status": [
+    "success",
+    "success"
+   ],
+   "t_echo": 28.999999999999996,
+   "amp": 0.0011209881636688912,
+   "kinetic_energy_from_kick": 6.249999999999312e-06,
+   "ledger_defect_after_kick": 6.649872367612983e-11,
+   "run_time": 9.454006999992998,
+   "compile_time": 1.029083375033224
+  },
+  "ordinary_N512_nu0.0": {
+   "status": [
+    "success",
+    "success"
+   ],
+   "t_echo": 29.049999999999997,
+   "amp": 0.0011587488444097733,
+   "kinetic_energy_from_kick": 6.249999999999312e-06,
+   "ledger_defect_after_kick": 5.99090625804379e-11,
+   "run_time": 15.067373249999946,
+   "compile_time": 1.0118702499894425,
+   "amp_rel_to_grid": 1.9821076229886714e-05,
+   "max_abs_dev_k3_over_grid_echo": 0.00028858177529279843,
+   "max_k1_after_t20": 0.003762230594216378
+  },
+  "dark_N512_nu0.0": {
+   "status": [
+    "success",
+    "success"
+   ],
+   "t_echo": 28.999999999999996,
+   "amp": 0.0011210052018422673,
+   "kinetic_energy_from_kick": 6.249999999999312e-06,
+   "ledger_defect_after_kick": 6.529470593912427e-11,
+   "run_time": 15.113119708985323,
+   "compile_time": 0.9651507090311497
+  },
+  "ordinary_N512_nu1.0": {
+   "status": [
+    "success",
+    "success"
+   ],
+   "t_echo": 29.049999999999997,
+   "amp": 0.0011221956864746925,
+   "kinetic_energy_from_kick": 6.249999999999312e-06,
+   "ledger_defect_after_kick": 5.8200167251734806e-11,
+   "run_time": 7.2834100000036415,
+   "compile_time": 1.0229048329638317,
+   "amp_rel_to_grid": -0.031526171512552326,
+   "max_abs_dev_k3_over_grid_echo": 0.03338054888185498,
+   "max_k1_after_t20": 3.6305114727377597e-06
+  },
+  "dark_N512_nu1.0": {
+   "status": [
+    "success",
+    "success"
+   ],
+   "t_echo": 28.999999999999996,
+   "amp": 0.0010859703423532555,
+   "kinetic_energy_from_kick": 6.249999999999312e-06,
+   "ledger_defect_after_kick": 6.343211687648866e-11,
+   "run_time": 7.304911415994866,
+   "compile_time": 0.9658270419749897
+  }
+ }
+}

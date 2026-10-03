@@ -145,7 +145,7 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
         out["status"], out["failure_reason"] = "failure", str(sol.result)
     elif not finite:
         out["status"], out["failure_reason"] = "failure", "nonfinite state"
-    W = out["W"]
+    W = out["W"] - out["W"][0]  # work done in this segment (a restart carries W(t0) != 0)
     # Ledger: K gains W_em + W_D + W_ext; U_gamma loses W_em; U_D loses W_D.
     out["ledger_defect"] = ((out["K"] - out["K"][0]) - W.sum(axis=1),
                             (out["U_gamma"] - out["U_gamma"][0]) + W[:, 0],
