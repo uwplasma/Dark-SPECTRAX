@@ -1,0 +1,20 @@
+# Short dark Landau run (k lambda_De = 0.5, v_te = 0.1 c) in parent units.
+[model]
+Nx = 5
+Nn = 64
+Lx = 1.2566370614359172   # 2 pi / k with k = 5
+alpha_s = [0.1414213562373095, 0.1414213562373095, 0.1414213562373095]
+rho_background = 1.0
+mode = "self_consistent"
+eta = 0.3
+Omega_D = 1.0
+
+[init]
+densities = [1.0]
+perturbations = [[0, [1, 0, 0], 5e-5, 0.0]]   # species, (ix, iy, iz), Re, Im
+
+[run]
+t_max = 14.0
+n_save = 141
+rtol = 1e-10
+atol = 1e-16

@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dark-spectrax"
+version = "0.1.0"
+description = "Kinetic Maxwell-Proca companion to SPECTRAX (Cartesian Hermite-Fourier)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+authors = [{name = "UWPlasma, UW-Madison group", email = "rogerio.jorge@wisc.edu"}]
+dependencies = [
+  # Exact public parent commit (SPECTRAX main). Its own dependency list omits these:
+  "spectrax @ git+https://github.com/uwplasma/SPECTRAX.git@ab87385fc84871122666df66a0fabe21dfa50dbd",
+  "jax",
+  "diffrax",
+  "orthax",
+  "jax_tqdm",
+  "matplotlib",
+]
+
+[project.scripts]
+darkspectrax = "darkspectrax.__main__:main"
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-cov", "pytest-xdist", "scipy", "flake8"]
+
+[project.urls]
+Source = "https://github.com/uwplasma/Dark-SPECTRAX"
+Parent = "https://github.com/uwplasma/SPECTRAX"
+
+[tool.setuptools]
+packages = ["darkspectrax"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore:Complex dtype support:UserWarning"]
+
+[tool.coverage.run]
+source = ["darkspectrax"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 95
+show_missing = true
+
+[tool.flake8]
+max-line-length = 110
