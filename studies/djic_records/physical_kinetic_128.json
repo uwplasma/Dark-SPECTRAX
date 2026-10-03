@@ -1,0 +1,80 @@
+{
+ "settings": {
+  "preset": "physical-full",
+  "cells": 128,
+  "particles": 160000,
+  "steps": 12000,
+  "length_m": 1.0,
+  "omega_p_rad_s": 188365156.73088533,
+  "eta": 0.3,
+  "mu_over_wp": 10.0,
+  "mu_over_kc": 1.0,
+  "sigma_over_c": 0.05,
+  "k_lambda_D": 0.5,
+  "seed_displacement_over_1_k": 0.01,
+  "background": "uniform fixed neutralizer",
+  "comparison": "same species arrays, grid, timestep, seed and ordinary initial field"
+ },
+ "results": {
+  "root_real_over_wp": 1.432427255324139,
+  "root_imag_over_wp": -0.14579836424081324,
+  "root_residual": 2.0355806818975792e-11,
+  "parent_root_real_over_wp": 1.415661888606129,
+  "parent_root_imag_over_wp": -0.15335946690965296,
+  "parent_root_residual": 7.525856932514626e-10,
+  "screened_root_over_wp": [
+   1.4326148923744733,
+   -0.14575842696024702
+  ],
+  "screened_root_residual": 2.5343305928506865e-14,
+  "effective_charge_root_over_wp": [
+   1.4492000220706256,
+   -0.13858880557793385
+  ],
+  "effective_charge_root_residual": 5.551444877325439e-15,
+  "maximum_initial_speed_over_c": 0.2237624414602439,
+  "fit_status": "resolved",
+  "maximum_sampled_closed_energy_drift": 2.437061901856687e-07,
+  "maximum_all_step_balance_over_initial": 2.437011588922101e-07,
+  "fit_window_sensitivity": {
+   "2_14": {
+    "mixed_gamma_over_wp": -0.14200995721997123,
+    "parent_gamma_over_wp": -0.14912278882347876
+   },
+   "3_16": {
+    "mixed_gamma_over_wp": -0.13965047727336552,
+    "parent_gamma_over_wp": -0.1481382569819183
+   }
+  },
+  "measured_real_over_wp": 1.424993042026013,
+  "measured_imag_over_wp": -0.1452214634819603,
+  "frequency_relative_error": 0.005189941248670116,
+  "damping_relative_error": 0.00395683972078098,
+  "damping_slope_stderr": 0.003338496982403386,
+  "frequency_estimated_stderr": 0.0029942837570208197,
+  "linear_window_wp_t": [
+   2.0,
+   12.0
+  ],
+  "fitted_maxima_interval_wp_t": [
+   2.4690954761806707,
+   11.287644229578564
+  ],
+  "maxima_used": 5,
+  "late_mode_floor_V_m": null,
+  "parent_measured_real_over_wp": 1.4100798678048623,
+  "parent_measured_imag_over_wp": -0.15174603400141926,
+  "parent_maxima_used": 5,
+  "parent_late_mode_floor_V_m": null,
+  "parent_frequency_relative_error": 0.003943046603283817,
+  "parent_damping_relative_error": 0.010520595439890368
+ },
+ "producer_git": "9e99dcbcb8ccbc1f55e661616123bc3934b79064",
+ "versions": {
+  "jaxincell": "0.7.dev302+g83d327118",
+  "jax": "0.6.2",
+  "backend": "gpu",
+  "platform": "Linux x86_64"
+ },
+ "source": "uwplasma/Dark-JAX-in-Cell@d54757962f3b9f7ec18eb981804ef59f6db6076c:docs/_static/figures/physical_kinetic_128"
+}

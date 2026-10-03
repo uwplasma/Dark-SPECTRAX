@@ -1,0 +1,165 @@
+{
+ "case_id": "C05",
+ "command": "python studies/c05_dark_jax_in_cell.py",
+ "repository_commit": "3e8baebce13355a10a7d93b6aa047f23c5db6efd",
+ "parent_commit": "ab87385fc84871122666df66a0fabe21dfa50dbd",
+ "dark_jax_in_cell_commit": "d54757962f3b9f7ec18eb981804ef59f6db6076c",
+ "physical_inputs": {
+  "sigma_over_c": 0.05,
+  "k_lambda_De": 0.5,
+  "eta": 0.3,
+  "Omega_D_over_wp": 10.0,
+  "density_seed": 0.01
+ },
+ "roots": {
+  "ordinary": [
+   1.4156618886045365,
+   -0.15335946690960478
+  ],
+  "dark": [
+   1.432427255324166,
+   -0.1457983642407795
+  ]
+ },
+ "spectrax": {
+  "ordinary_Nn128": {
+   "status": "success",
+   "maxima_fit": [
+    1.4135400016152049,
+    -0.15497455152769057
+   ],
+   "maxima_used": 5,
+   "complex_fit": [
+    1.4142070975835834,
+    -0.1563070092099369
+   ],
+   "complex_fit_resid": 0.005613961188298193,
+   "max_ledger_defect": 1.8235825260997035e-17,
+   "run_time": 0.07187091701780446,
+   "compile_time": 0.539709667005809
+  },
+  "ordinary_Nn256": {
+   "status": "success",
+   "maxima_fit": [
+    1.4135400016152049,
+    -0.15497455151366632
+   ],
+   "maxima_used": 5,
+   "complex_fit": [
+    1.4142070975881245,
+    -0.15630700920322088
+   ],
+   "complex_fit_resid": 0.005613961184922593,
+   "max_ledger_defect": 2.435759706859988e-17,
+   "run_time": 0.11254037500475533,
+   "compile_time": 0.44776429201010615
+  },
+  "self_consistent_Nn128": {
+   "status": "success",
+   "maxima_fit": [
+    1.4296212303025226,
+    -0.14744543931735915
+   ],
+   "maxima_used": 5,
+   "complex_fit": [
+    1.4311700669686518,
+    -0.14874111389845643
+   ],
+   "complex_fit_resid": 0.0055752834195580215,
+   "max_ledger_defect": 1.2105609593701249e-17,
+   "run_time": 0.17410316699533723,
+   "compile_time": 0.4856169169943314
+  },
+  "self_consistent_Nn256": {
+   "status": "success",
+   "maxima_fit": [
+    1.4296212303025226,
+    -0.14744543932010262
+   ],
+   "maxima_used": 5,
+   "complex_fit": [
+    1.4311700669683889,
+    -0.1487411138982763
+   ],
+   "complex_fit_resid": 0.005575283419373511,
+   "max_ledger_defect": 1.4226268246535084e-17,
+   "run_time": 0.28555666698957793,
+   "compile_time": 0.4847472079854924
+  }
+ },
+ "pic": {
+  "cells32": {
+   "particles": 40000,
+   "steps": 3000,
+   "dark": [
+    1.412803532008882,
+    -0.17364227683627442
+   ],
+   "ordinary": [
+    1.385281385281437,
+    -0.17774609655252788
+   ],
+   "damping_slope_stderr": 0.0047705863416595854,
+   "djic_root_dark": [
+    1.432427255324139,
+    -0.14579836424081324
+   ],
+   "djic_root_ordinary": [
+    1.415661888606129,
+    -0.15335946690965296
+   ],
+   "rms_log_amplitude_diff_parent_Ek_2_12": 0.27538416368778146,
+   "rms_log_amplitude_diff_ordinary_Ek_2_12": 0.22239511578436352
+  },
+  "cells64": {
+   "particles": 80000,
+   "steps": 6000,
+   "dark": [
+    1.4167127836193338,
+    -0.15037776053693522
+   ],
+   "ordinary": [
+    1.3989071038252052,
+    -0.15525157503992246
+   ],
+   "damping_slope_stderr": 0.0037654040910053478,
+   "djic_root_dark": [
+    1.432427255324139,
+    -0.14579836424081324
+   ],
+   "djic_root_ordinary": [
+    1.415661888606129,
+    -0.15335946690965296
+   ],
+   "rms_log_amplitude_diff_parent_Ek_2_12": 0.21929703168023262,
+   "rms_log_amplitude_diff_ordinary_Ek_2_12": 0.2034106578580519
+  },
+  "cells128": {
+   "particles": 160000,
+   "steps": 12000,
+   "dark": [
+    1.424993042026013,
+    -0.1452214634819603
+   ],
+   "ordinary": [
+    1.4100798678048623,
+    -0.15174603400141926
+   ],
+   "damping_slope_stderr": 0.003338496982403386,
+   "djic_root_dark": [
+    1.432427255324139,
+    -0.14579836424081324
+   ],
+   "djic_root_ordinary": [
+    1.415661888606129,
+    -0.15335946690965296
+   ],
+   "rms_log_amplitude_diff_parent_Ek_2_12": 0.115342215196681,
+   "rms_log_amplitude_diff_ordinary_Ek_2_12": 0.13088172176100152
+  }
+ },
+ "root_cross_check": {
+  "dark_abs_diff": 4.313898676629927e-14,
+  "ordinary_abs_diff": 1.5932326757999713e-12
+ }
+}

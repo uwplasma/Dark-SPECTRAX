@@ -1,0 +1,147 @@
+{
+ "case_id": "B06",
+ "spectrax_commit": "6781d8054b08834e477e3b47c3f8e5711129177c",
+ "spectrax_source": "uwplasma/SPECTRAX integration/dark-baseline-a1",
+ "reference_code": "c-refs/code (independent NumPy semi-Lagrangian + scipy wofz)",
+ "reference_code_sha256_16": "cac03bf1b1b4d0ca",
+ "gkeyll_changeset": "ce77f9f8a366+ (local build, unmodified)",
+ "command": "python b06.py",
+ "versions": {
+  "python": "3.12.9",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "jax": "0.11.2",
+  "jaxlib": "0.11.2",
+  "diffrax": "0.7.2",
+  "backend": "cpu",
+  "machine": "arm64",
+  "dtype": "float64/complex128"
+ },
+ "model": "ordinary VP/Ampere electrons, fixed ions; external impulsive kick at tau",
+ "params": {
+  "k0": 0.25,
+  "k1": 1.0,
+  "k2": 1.5,
+  "k3": 0.5,
+  "tau": 10.0,
+  "eps1": 0.01,
+  "kick_dv": 0.05,
+  "tmax": 45.0,
+  "t_echo_theory": 30.0
+ },
+ "observable": "|E_k3(t)| (k3 = k2-k1), echo peak = max for t>tau+5",
+ "spectrax_setup": "Ns=1, Nx=33 (keeps |m|<=10), nu=0, Dopri8 rtol=atol=1e-10, restart at tau with kick applied by exact truncated-basis shift expm(sR) on a 128-point padded x grid, beta=0.1",
+ "results": {
+  "grid": {
+   "Nv512_dt0.025": {
+    "t_echo": 29.05,
+    "amp": 0.0011586970817594714,
+    "wall": 3.0426080226898193,
+    "grid_recurrence_k2": 134.0412865531645
+   },
+   "Nv512_dt0.0125": {
+    "t_echo": 29.05,
+    "amp": 0.0011587258772154238,
+    "wall": 6.05033278465271,
+    "grid_recurrence_k2": 134.0412865531645
+   },
+   "Nv1024_dt0.0125": {
+    "t_echo": 29.05,
+    "amp": 0.0011587258772158314,
+    "wall": 12.863536834716797,
+    "grid_recurrence_k2": 268.082573106329
+   },
+   "half_kick_amp_ratio": 0.510873909181029
+  },
+  "spectrax": {
+   "N64": {
+    "Nn": 64,
+    "t_echo": 28.400000000000002,
+    "amp": 0.0009186878426629617,
+    "wall": 2.2340128421783447,
+    "max_abs_dev_k3_over_grid_echo": 0.5615080631616557,
+    "phase_mixing_index_k1_at_tau": 100.0,
+    "stats": [
+     {
+      "max_steps": 1000000,
+      "num_accepted_steps": 69,
+      "num_rejected_steps": 5,
+      "num_steps": 74
+     },
+     {
+      "max_steps": 1000000,
+      "num_accepted_steps": 1236,
+      "num_rejected_steps": 0,
+      "num_steps": 1236
+     }
+    ]
+   },
+   "N128": {
+    "Nn": 128,
+    "t_echo": 29.200000000000003,
+    "amp": 0.0010729702564356326,
+    "wall": 3.56917405128479,
+    "max_abs_dev_k3_over_grid_echo": 0.21583046304054443,
+    "phase_mixing_index_k1_at_tau": 100.0,
+    "stats": [
+     {
+      "max_steps": 1000000,
+      "num_accepted_steps": 99,
+      "num_rejected_steps": 9,
+      "num_steps": 108
+     },
+     {
+      "max_steps": 1000000,
+      "num_accepted_steps": 1802,
+      "num_rejected_steps": 0,
+      "num_steps": 1802
+     }
+    ]
+   },
+   "N256": {
+    "Nn": 256,
+    "t_echo": 29.05,
+    "amp": 0.0011586996269785858,
+    "wall": 3.2264673709869385,
+    "max_abs_dev_k3_over_grid_echo": 0.08027538656229376,
+    "phase_mixing_index_k1_at_tau": 100.0,
+    "stats": [
+     {
+      "max_steps": 1000000,
+      "num_accepted_steps": 123,
+      "num_rejected_steps": 15,
+      "num_steps": 138
+     },
+     {
+      "max_steps": 1000000,
+      "num_accepted_steps": 721,
+      "num_rejected_steps": 1,
+      "num_steps": 722
+     }
+    ]
+   },
+   "N512": {
+    "Nn": 512,
+    "t_echo": 29.05,
+    "amp": 0.0011587488448152514,
+    "wall": 6.407325267791748,
+    "max_abs_dev_k3_over_grid_echo": 0.00028858168775006273,
+    "phase_mixing_index_k1_at_tau": 100.0,
+    "stats": [
+     {
+      "max_steps": 1000000,
+      "num_accepted_steps": 133,
+      "num_rejected_steps": 19,
+      "num_steps": 152
+     },
+     {
+      "max_steps": 1000000,
+      "num_accepted_steps": 1018,
+      "num_rejected_steps": 6,
+      "num_steps": 1024
+     }
+    ]
+   }
+  }
+ }
+}

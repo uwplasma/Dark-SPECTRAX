@@ -20,14 +20,16 @@ from scipy.special import wofz
 import darkspectrax as ds
 
 out_dir = Path(__file__).resolve().parents[1] / "docs" / "_static" / "b00"
-k_lambdas = (0.3, 0.5)
+k_lambdas = (0.2, 0.3, 0.5, 0.7)
 vte, eta, Omega_D, seed = 0.1, 0.3, 1.0, 1e-4
 hermite_orders = (64, 128)
 grids = (5, 8)
 # Fit windows start after the initial ballistic transient and end before the Hermite
-# front n ~ (k v_te t)^2 reaches the smallest order (64): (0.3*24)^2 = 52, (0.5*14)^2 = 49.
-windows = {0.3: (8.0, 24.0), 0.5: (8.0, 14.0)}
-scan_starts = (2.0, 4.0, 6.0, 8.0)
+# front n ~ (k v_te t)^2 reaches the smallest order (64): (0.3*24)^2 = 52, (0.5*14)^2 = 49,
+# (0.2*34)^2 = 46, (0.7*10)^2 = 49.
+windows = {0.2: (8.0, 34.0), 0.3: (8.0, 24.0), 0.5: (8.0, 14.0), 0.7: (4.0, 10.0)}
+guess = {0.2: 1.06 - 0.0001j, 0.3: 1.16 - 0.013j, 0.5: 1.42 - 0.15j, 0.7: 1.74 - 0.38j}
+scan_starts = (2.0, 4.0, 6.0)
 
 
 def chi(w, k):
@@ -63,7 +65,7 @@ def simulate(kl, dark, Nn, Nx):
 rows, arrays = [], {}
 for kl in k_lambdas:
     k = kl / vte
-    w0, r0 = kinetic_root(k, 0.0, 1.2 - 0.05j)
+    w0, r0 = kinetic_root(k, 0.0, guess[kl])
     wd, rd = kinetic_root(k, eta, w0)
     wp, rp = kinetic_root(k, eta, np.sqrt(k ** 2 + Omega_D ** 2) + 0j)  # massive longitudinal branch
     for dark in (False, True):
@@ -117,8 +119,8 @@ import matplotlib  # noqa: E402
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), constrained_layout=True)
-for ax, kl in zip(axes, k_lambdas):
+fig, axes = plt.subplots(2, 2, figsize=(10, 7), constrained_layout=True)
+for ax, kl in zip(axes.ravel(), k_lambdas):
     root_row = [r for r in rows if r.get("roots") and r["k_lambda_De"] == kl][0]["roots"]
     for name, color in (("ordinary", "tab:blue"), ("dark", "tab:red")):
         tag = f"k{kl}_{name}_Nn{hermite_orders[-1]}_Nx{grids[-1]}"

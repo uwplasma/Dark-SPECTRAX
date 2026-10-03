@@ -92,3 +92,21 @@ Re-derived by hand and, where marked, checked numerically by the tests:
 | Midpoint phase error $-\omega^3\Delta t^2t/12$ | correct |
 | Free-streaming front $\lvert g_n\rvert^2\propto[(kv_tt)^2]^n e^{-(kv_tt)^2}/n!$ | correct only for a basis-matched Maxwellian, $a=\sqrt2v_t$; other widths change the prefactors |
 | "n_s = alpha_x alpha_y alpha_z C000", "Ampere source -J/Omega_cs[0]", "energy prefactor Omega_cs[0]^2" | correct, but the energy theorem additionally needs $m_s\Omega_{cs}=\Omega_0$ (above) |
+
+## Source-to-model table
+
+Only sources whose equations or code were actually read for this repository are entered as used. Classification:
+E = exact identity, A = controlled approximation, N = numerical finding.
+
+| Source (version) | What was inspected | Field basis / mixing | Kinetic model, dims | Comparison made here | Applicability |
+|---|---|---|---|---|---|
+| SPECTRAX, uwplasma, commit ab87385 | `_model.py`, `_simulation.py`, `_initialization.py`, `_diagnostics.py` | ordinary Maxwell, parent normalization | Hermite-Fourier Vlasov, 3V Cartesian, 1-3D | A01 RHS (E) and trajectory (N) regression | parent; not an independent check |
+| Dark-JAX-in-Cell, commit d547579 | README equations, `examples/dark_kinetic.py`, `physical_kinetic_{32,64,128}` records | canonical Proca, same eta convention | 1D3V PIC, quadratic shapes, Boris | C05 same-input Landau fits and roots (N) | independent kinetic discretization, same group conventions |
+| Imported references, `studies/refs` (6781d80 era) | all of `code/`, B00/B02 records | none (ordinary) | NumPy semi-Lagrangian 1D1V VP; wofz roots; Gkeyll p=2 records | B00, B02 against Hermite rerun on ab87385 (N) | non-Hermite continuum, ordinary only |
+| Plasma dispersion function (SciPy `wofz`, Faddeeva) | implementation used directly | - | linear Vlasov, Maxwellian populations | B00, B02, B03, C05 roots (E for the model) | linear, causal continuation, k > 0 |
+| Canonical kinetic mixing (derived here, Section "Independent re-derivation") | own derivation | Lagrangian rotation | - | eta, m_D mapping (E, algebra only) | not yet compared with [D10] |
+
+Not yet inspected in this work, therefore not used for any claim: N1-N24 and D1-D13 of the planning reading map
+(Parker-Dellar, Issan et al., Pagliantini et al., Hakim et al., O'Neil, Gould-O'Neil-Malmberg, Benisti et al., Zakharov,
+SHARP, Hook-Huang-Shalaby and the cosmology/observation papers). Each must be read (equations, appendices, figures)
+before it sets a benchmark here.

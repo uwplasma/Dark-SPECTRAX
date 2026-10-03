@@ -1,0 +1,466 @@
+{
+ "case_id": "B01",
+ "spectrax_commit": "6781d8054b08834e477e3b47c3f8e5711129177c",
+ "spectrax_source": "uwplasma/SPECTRAX integration/dark-baseline-a1",
+ "reference_code": "c-refs/code (independent NumPy semi-Lagrangian + scipy wofz)",
+ "reference_code_sha256_16": "f431768aa54e7411",
+ "gkeyll_changeset": "ce77f9f8a366+ (local build, unmodified)",
+ "command": "python b01.py",
+ "versions": {
+  "python": "3.12.9",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "jax": "0.11.2",
+  "jaxlib": "0.11.2",
+  "diffrax": "0.7.2",
+  "backend": "cpu",
+  "machine": "arm64",
+  "dtype": "float64/complex128"
+ },
+ "model": "ordinary VP/Ampere electrons, fixed ions",
+ "seed": "n=1+eps cos(kx), Gauss-consistent E",
+ "observable": "|E_k1(t)|, envelope = running max over ~one plasma period; extrema = find_peaks(log env, prominence 0.3); SPECTRAX-vs-grid agreement = |log(env_sx/env_grid)|, first time > 0.1",
+ "spectrax_setup": "Ns=1, Nx=16 (keeps |m|<=5), Dopri8 rtol=atol=1e-10, beta=0.1; nu = parent hypercollision coefficient (numerical closure, col=n(n-1)(n-2)/((N-1)(N-2)(N-3)))",
+ "results": {
+  "k0.5_eps0.05": {
+   "k": 0.5,
+   "eps": 0.05,
+   "tmax": 100.0,
+   "tauB_oneil": 28.099258924162907,
+   "gammaL": 0.15335946690960475,
+   "gammaL_tauB": 4.309287369164577,
+   "grid": {
+    "Nx32_Nv1024_dt0.025": {
+     "env_min_times": [],
+     "env_max_times": [],
+     "wall": 7.400635719299316,
+     "energy_err_rel_total": 8.137046590079467e-07,
+     "mass_err": 1.6653345369377348e-15,
+     "fmin": -4.2627419141954855e-10
+    },
+    "Nx64_Nv2048_dt0.0125": {
+     "env_min_times": [],
+     "env_max_times": [],
+     "wall": 69.065838098526,
+     "energy_err_rel_total": 2.0339792129894692e-07,
+     "mass_err": 1.9984014443252818e-15,
+     "fmin": -1.354405334440425e-12
+    }
+   },
+   "spectrax": {
+    "N256_nu0.0": {
+     "env_min_times": [
+      40.1
+     ],
+     "env_max_times": [
+      67.05
+     ],
+     "wall_compile_run": 3.3639731407165527,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 2006,
+      "num_rejected_steps": 22,
+      "num_steps": 2028
+     },
+     "first_t_logenv_dev_gt_0p1": 39.85,
+     "max_logenv_dev": 7.01339535693554
+    },
+    "N512_nu0.0": {
+     "env_min_times": [
+      56.1
+     ],
+     "env_max_times": [],
+     "wall_compile_run": 7.519560098648071,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 2812,
+      "num_rejected_steps": 28,
+      "num_steps": 2840
+     },
+     "first_t_logenv_dev_gt_0p1": 58.25,
+     "max_logenv_dev": 7.948589753166287
+    },
+    "N1024_nu0.0": {
+     "env_min_times": [
+      74.60000000000001
+     ],
+     "env_max_times": [],
+     "wall_compile_run": 18.416909217834473,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 3870,
+      "num_rejected_steps": 35,
+      "num_steps": 3905
+     },
+     "first_t_logenv_dev_gt_0p1": 74.5,
+     "max_logenv_dev": 2.8633497667654306
+    },
+    "N256_nu1.0": {
+     "env_min_times": [],
+     "env_max_times": [],
+     "wall_compile_run": 2.0485031604766846,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 1673,
+      "num_rejected_steps": 16,
+      "num_steps": 1689
+     },
+     "first_t_logenv_dev_gt_0p1": 46.900000000000006,
+     "max_logenv_dev": 2.7415238100631654
+    },
+    "N512_nu1.0": {
+     "env_min_times": [],
+     "env_max_times": [],
+     "wall_compile_run": 5.612746000289917,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 2403,
+      "num_rejected_steps": 24,
+      "num_steps": 2427
+     },
+     "first_t_logenv_dev_gt_0p1": 65.3,
+     "max_logenv_dev": 1.3631297373431817
+    }
+   }
+  },
+  "k0.3_eps0.01": {
+   "k": 0.3,
+   "eps": 0.01,
+   "tmax": 200.0,
+   "tauB_oneil": 62.83185307179586,
+   "gammaL": 0.012620368421116593,
+   "gammaL_tauB": 0.7929611343475301,
+   "grid": {
+    "Nx32_Nv1024_dt0.025": {
+     "env_min_times": [
+      72.10000000000001
+     ],
+     "env_max_times": [
+      155.0
+     ],
+     "wall": 14.929571151733398,
+     "energy_err_rel_total": 8.74717652742573e-08,
+     "mass_err": 1.9984014443252818e-15,
+     "fmin": -0.00047397630718682955
+    },
+    "Nx64_Nv2048_dt0.0125": {
+     "env_min_times": [
+      72.10000000000001
+     ],
+     "env_max_times": [
+      155.0
+     ],
+     "wall": 127.2033839225769,
+     "energy_err_rel_total": 2.1865014266968928e-08,
+     "mass_err": 3.1086244689504383e-15,
+     "fmin": -0.00047040371960418536
+    }
+   },
+   "spectrax": {
+    "N256_nu0.0": {
+     "env_min_times": [
+      91.10000000000001,
+      107.35000000000001
+     ],
+     "env_max_times": [
+      100.4
+     ],
+     "wall_compile_run": 3.750020980834961,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 2507,
+      "num_rejected_steps": 79,
+      "num_steps": 2586
+     },
+     "first_t_logenv_dev_gt_0p1": 79.2,
+     "max_logenv_dev": 0.6168509982805371
+    },
+    "N512_nu0.0": {
+     "env_min_times": [
+      74.8
+     ],
+     "env_max_times": [
+      143.9
+     ],
+     "wall_compile_run": 8.64738416671753,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 3430,
+      "num_rejected_steps": 37,
+      "num_steps": 3467
+     },
+     "first_t_logenv_dev_gt_0p1": 140.45000000000002,
+     "max_logenv_dev": 0.3730708788770997
+    },
+    "N1024_nu0.0": {
+     "env_min_times": [
+      72.10000000000001
+     ],
+     "env_max_times": [
+      149.75
+     ],
+     "wall_compile_run": 22.993966102600098,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 4782,
+      "num_rejected_steps": 35,
+      "num_steps": 4817
+     },
+     "first_t_logenv_dev_gt_0p1": null,
+     "max_logenv_dev": 0.09319002734448426
+    },
+    "N256_nu1.0": {
+     "env_min_times": [],
+     "env_max_times": [],
+     "wall_compile_run": 2.576608896255493,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 1942,
+      "num_rejected_steps": 18,
+      "num_steps": 1960
+     },
+     "first_t_logenv_dev_gt_0p1": 89.55000000000001,
+     "max_logenv_dev": 0.7223508943326891
+    },
+    "N512_nu1.0": {
+     "env_min_times": [],
+     "env_max_times": [],
+     "wall_compile_run": 7.033639907836914,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 2805,
+      "num_rejected_steps": 25,
+      "num_steps": 2830
+     },
+     "first_t_logenv_dev_gt_0p1": 119.5,
+     "max_logenv_dev": 0.26367448969906815
+    }
+   }
+  },
+  "k0.3_eps0.02": {
+   "k": 0.3,
+   "eps": 0.02,
+   "tmax": 200.0,
+   "tauB_oneil": 44.42882938158366,
+   "gammaL": 0.012620368421116593,
+   "gammaL_tauB": 0.5607081953145155,
+   "grid": {
+    "Nx32_Nv1024_dt0.025": {
+     "env_min_times": [
+      50.400000000000006
+     ],
+     "env_max_times": [
+      106.25
+     ],
+     "wall": 15.400644302368164,
+     "energy_err_rel_total": 3.4930478824996386e-07,
+     "mass_err": 1.6653345369377348e-15,
+     "fmin": -0.0012046834699950236
+    },
+    "Nx64_Nv2048_dt0.0125": {
+     "env_min_times": [
+      50.400000000000006
+     ],
+     "env_max_times": [
+      106.25
+     ],
+     "wall": 135.8731689453125,
+     "energy_err_rel_total": 8.731492003003367e-08,
+     "mass_err": 1.7763568394002505e-15,
+     "fmin": -0.0009062741904888001
+    }
+   },
+   "spectrax": {
+    "N256_nu0.0": {
+     "env_min_times": [
+      80.35000000000001,
+      107.25
+     ],
+     "env_max_times": [
+      100.55000000000001
+     ],
+     "wall_compile_run": 4.720224857330322,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 3446,
+      "num_rejected_steps": 276,
+      "num_steps": 3722
+     },
+     "first_t_logenv_dev_gt_0p1": 65.3,
+     "max_logenv_dev": 1.0250869354583503
+    },
+    "N512_nu0.0": {
+     "env_min_times": [
+      50.400000000000006
+     ],
+     "env_max_times": [],
+     "wall_compile_run": 10.127384901046753,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 3996,
+      "num_rejected_steps": 259,
+      "num_steps": 4255
+     },
+     "first_t_logenv_dev_gt_0p1": 125.55000000000001,
+     "max_logenv_dev": 0.6286103581697461
+    },
+    "N1024_nu0.0": {
+     "env_min_times": [
+      50.400000000000006
+     ],
+     "env_max_times": [
+      109.0
+     ],
+     "wall_compile_run": 22.259578227996826,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 4733,
+      "num_rejected_steps": 52,
+      "num_steps": 4785
+     },
+     "first_t_logenv_dev_gt_0p1": 100.65,
+     "max_logenv_dev": 0.1279356766978334
+    },
+    "N256_nu1.0": {
+     "env_min_times": [],
+     "env_max_times": [],
+     "wall_compile_run": 2.9553301334381104,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 2088,
+      "num_rejected_steps": 235,
+      "num_steps": 2323
+     },
+     "first_t_logenv_dev_gt_0p1": 92.5,
+     "max_logenv_dev": 0.20529704818927488
+    },
+    "N512_nu1.0": {
+     "env_min_times": [],
+     "env_max_times": [],
+     "wall_compile_run": 6.956021070480347,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 2810,
+      "num_rejected_steps": 35,
+      "num_steps": 2845
+     },
+     "first_t_logenv_dev_gt_0p1": 109.2,
+     "max_logenv_dev": 0.13198981784970562
+    }
+   }
+  },
+  "k0.3_eps0.05": {
+   "k": 0.3,
+   "eps": 0.05,
+   "tmax": 200.0,
+   "tauB_oneil": 28.099258924162907,
+   "gammaL": 0.012620368421116593,
+   "gammaL_tauB": 0.35462299998328417,
+   "grid": {
+    "Nx32_Nv1024_dt0.025": {
+     "env_min_times": [
+      31.450000000000003
+     ],
+     "env_max_times": [
+      65.60000000000001
+     ],
+     "wall": 15.603499174118042,
+     "energy_err_rel_total": 2.158002704838473e-06,
+     "mass_err": 1.3322676295501878e-15,
+     "fmin": -0.0030963681922306615
+    },
+    "Nx64_Nv2048_dt0.0125": {
+     "env_min_times": [
+      31.450000000000003
+     ],
+     "env_max_times": [
+      65.60000000000001
+     ],
+     "wall": 135.60467720031738,
+     "energy_err_rel_total": 5.394317266799998e-07,
+     "mass_err": 1.9984014443252818e-15,
+     "fmin": -0.002156984872464458
+    }
+   },
+   "spectrax": {
+    "N256_nu0.0": {
+     "env_min_times": [
+      91.10000000000001,
+      146.05,
+      175.8
+     ],
+     "env_max_times": [
+      129.35,
+      164.9,
+      193.05
+     ],
+     "wall_compile_run": 6.130316972732544,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 4764,
+      "num_rejected_steps": 244,
+      "num_steps": 5008
+     },
+     "first_t_logenv_dev_gt_0p1": 49.050000000000004,
+     "max_logenv_dev": 1.559046249626144
+    },
+    "N512_nu0.0": {
+     "env_min_times": [
+      102.60000000000001
+     ],
+     "env_max_times": [],
+     "wall_compile_run": 11.005988121032715,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 4444,
+      "num_rejected_steps": 298,
+      "num_steps": 4742
+     },
+     "first_t_logenv_dev_gt_0p1": 85.0,
+     "max_logenv_dev": 0.17361526396154037
+    },
+    "N1024_nu0.0": {
+     "env_min_times": [
+      31.450000000000003
+     ],
+     "env_max_times": [],
+     "wall_compile_run": 23.242021322250366,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 4942,
+      "num_rejected_steps": 165,
+      "num_steps": 5107
+     },
+     "first_t_logenv_dev_gt_0p1": 101.0,
+     "max_logenv_dev": 0.26978137146246944
+    },
+    "N256_nu1.0": {
+     "env_min_times": [],
+     "env_max_times": [],
+     "wall_compile_run": 3.7696139812469482,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 2838,
+      "num_rejected_steps": 258,
+      "num_steps": 3096
+     },
+     "first_t_logenv_dev_gt_0p1": 76.85000000000001,
+     "max_logenv_dev": 0.19659630870217074
+    },
+    "N512_nu1.0": {
+     "env_min_times": [],
+     "env_max_times": [],
+     "wall_compile_run": 7.206014156341553,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 2897,
+      "num_rejected_steps": 193,
+      "num_steps": 3090
+     },
+     "first_t_logenv_dev_gt_0p1": 153.20000000000002,
+     "max_logenv_dev": 0.11894349815757858
+    }
+   }
+  }
+ }
+}

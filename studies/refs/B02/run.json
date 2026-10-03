@@ -1,0 +1,690 @@
+{
+ "case_id": "B02",
+ "spectrax_commit": "6781d8054b08834e477e3b47c3f8e5711129177c",
+ "spectrax_source": "uwplasma/SPECTRAX integration/dark-baseline-a1",
+ "reference_code": "c-refs/code (independent NumPy semi-Lagrangian + scipy wofz)",
+ "reference_code_sha256_16": "8d481e69b3a0202b",
+ "gkeyll_changeset": "ce77f9f8a366+ (local build, unmodified)",
+ "command": "python b02.py",
+ "versions": {
+  "python": "3.12.9",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "jax": "0.11.2",
+  "jaxlib": "0.11.2",
+  "diffrax": "0.7.2",
+  "backend": "cpu",
+  "machine": "arm64",
+  "dtype": "float64/complex128"
+ },
+ "model": "two electron beams (+-u, sd vt, density 1/2 each), fixed ions, omega_pe=1 total; units: u=1",
+ "seed": "n = 1 + 1e-12 sum_{m=1..4} cos(m k0 x), k0=0.2, Gauss-consistent E",
+ "observable": "|E_k|; growth = slope of log|E_k| on [25, t(|E_k|=1e-5)] (variants shift ends by 5); early [1,20] 4-term matrix-pencil kept as a diagnostic (biased at k=0.2)",
+ "spectrax_setup": "Ns=2 electron species each with its own drifting basis (u=+-beta u, a=sqrt2 beta vt), Nx=16, nu=0, Dopri8 1e-10, beta=0.1",
+ "results": {
+  "vt0.1": {
+   "u": 1.0,
+   "vt": 0.1,
+   "roots": {
+    "k0.2": {
+     "cold_growth": 0.18562398728020796,
+     "warm_root": [
+      -1.7093989985928785e-25,
+      0.18281440865268767
+     ]
+    },
+    "k0.4": {
+     "cold_growth": 0.30819384083247836,
+     "warm_root": [
+      0.0,
+      0.3036246121806987
+     ]
+    },
+    "k0.6": {
+     "cold_growth": 0.3533918224571849,
+     "warm_root": [
+      -8.367436337466971e-30,
+      0.34909444095672304
+     ]
+    },
+    "k0.8": {
+     "cold_growth": 0.311338541920685,
+     "warm_root": [
+      0.0,
+      0.3120087654713067
+     ]
+    }
+   },
+   "grid": {
+    "Nv1024_dt0.025": {
+     "fits": {
+      "k0.2": {
+       "g": 0.18679596448258798,
+       "g_win_std": 0.0015667636158068806,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.18350900845789941,
+       "max_amp_in_window": 6.067659550388373e-09
+      },
+      "k0.4": {
+       "g": 0.30360994017151705,
+       "g_win_std": 2.3925014739288185e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.30350206872421215,
+       "max_amp_in_window": 8.498712537284276e-06
+      },
+      "k0.6": {
+       "g": 0.3491067570609261,
+       "g_win_std": 8.27886235036074e-06,
+       "window": [
+        25.0,
+        52.800000000000004
+       ],
+       "g_matrix_pencil_early": 0.3491147845332655,
+       "max_amp_in_window": 1.01678639896937e-05
+      },
+      "k0.8": {
+       "g": 0.3120305745925947,
+       "g_win_std": 7.514151096302596e-06,
+       "window": [
+        25.0,
+        59.400000000000006
+       ],
+       "g_matrix_pencil_early": 0.3120732977247096,
+       "max_amp_in_window": 1.0099128858621303e-05
+      }
+     },
+     "wall": 4.558183193206787
+    },
+    "Nv2048_dt0.0125": {
+     "fits": {
+      "k0.2": {
+       "g": 0.18679236588681644,
+       "g_win_std": 0.0015697644278198917,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.18320826721317693,
+       "max_amp_in_window": 6.0671564253194345e-09
+      },
+      "k0.4": {
+       "g": 0.30360733541819185,
+       "g_win_std": 2.385174639237061e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.3035026795686008,
+       "max_amp_in_window": 8.491259951737725e-06
+      },
+      "k0.6": {
+       "g": 0.34910035887358715,
+       "g_win_std": 8.280044695603889e-06,
+       "window": [
+        25.0,
+        52.800000000000004
+       ],
+       "g_matrix_pencil_early": 0.34910412363406357,
+       "max_amp_in_window": 1.0164503027007262e-05
+      },
+      "k0.8": {
+       "g": 0.3120175610704759,
+       "g_win_std": 7.5322649232428e-06,
+       "window": [
+        25.0,
+        59.400000000000006
+       ],
+       "g_matrix_pencil_early": 0.3120618610021073,
+       "max_amp_in_window": 1.0076987797209212e-05
+      }
+     },
+     "wall": 17.787535190582275
+    }
+   },
+   "spectrax": {
+    "N8": {
+     "fits": {
+      "k0.2": {
+       "g": 0.18679408985070556,
+       "g_win_std": 0.0015697300560042866,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.1834854430339437,
+       "max_amp_in_window": 6.0653874732224855e-09
+      },
+      "k0.4": {
+       "g": 0.30360642159411116,
+       "g_win_std": 2.3872204148917346e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.3034980845462787,
+       "max_amp_in_window": 8.499506109268775e-06
+      },
+      "k0.6": {
+       "g": 0.3490982156560475,
+       "g_win_std": 8.25951111094931e-06,
+       "window": [
+        25.0,
+        52.800000000000004
+       ],
+       "g_matrix_pencil_early": 0.34910450609271604,
+       "max_amp_in_window": 1.0161729728187261e-05
+      },
+      "k0.8": {
+       "g": 0.31201316289818964,
+       "g_win_std": 7.477066336112651e-06,
+       "window": [
+        25.0,
+        59.400000000000006
+       ],
+       "g_matrix_pencil_early": 0.312056870697358,
+       "max_amp_in_window": 1.0083840561750537e-05
+      }
+     },
+     "wall_compile_run": 0.7410590648651123,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 41,
+      "num_rejected_steps": 7,
+      "num_steps": 48
+     }
+    },
+    "N16": {
+     "fits": {
+      "k0.2": {
+       "g": 0.18679391140117826,
+       "g_win_std": 0.0015696937789544682,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.18348855775578526,
+       "max_amp_in_window": 6.065387398316679e-09
+      },
+      "k0.4": {
+       "g": 0.3036064281416192,
+       "g_win_std": 2.3868133767948584e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.3034978257757344,
+       "max_amp_in_window": 8.499506105587924e-06
+      },
+      "k0.6": {
+       "g": 0.34909821310455924,
+       "g_win_std": 8.253009706300188e-06,
+       "window": [
+        25.0,
+        52.800000000000004
+       ],
+       "g_matrix_pencil_early": 0.34910556634185397,
+       "max_amp_in_window": 1.0161729699543109e-05
+      },
+      "k0.8": {
+       "g": 0.3120131668406694,
+       "g_win_std": 7.456179340844873e-06,
+       "window": [
+        25.0,
+        59.400000000000006
+       ],
+       "g_matrix_pencil_early": 0.3120550959014308,
+       "max_amp_in_window": 1.0083840612798447e-05
+      }
+     },
+     "wall_compile_run": 0.6318788528442383,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 40,
+      "num_rejected_steps": 7,
+      "num_steps": 47
+     }
+    },
+    "N32": {
+     "fits": {
+      "k0.2": {
+       "g": 0.1867936645421316,
+       "g_win_std": 0.0015694051544113804,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.18348019833780668,
+       "max_amp_in_window": 6.0653872213801326e-09
+      },
+      "k0.4": {
+       "g": 0.30360643618515315,
+       "g_win_std": 2.386102805921232e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.30349888839309686,
+       "max_amp_in_window": 8.499506098345384e-06
+      },
+      "k0.6": {
+       "g": 0.34909820962714955,
+       "g_win_std": 8.244385139785177e-06,
+       "window": [
+        25.0,
+        52.800000000000004
+       ],
+       "g_matrix_pencil_early": 0.3491042903096717,
+       "max_amp_in_window": 1.0161729594130716e-05
+      },
+      "k0.8": {
+       "g": 0.31201317045528126,
+       "g_win_std": 7.436476867384341e-06,
+       "window": [
+        25.0,
+        59.400000000000006
+       ],
+       "g_matrix_pencil_early": 0.3120547683384304,
+       "max_amp_in_window": 1.0083840602165986e-05
+      }
+     },
+     "wall_compile_run": 0.683905839920044,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 39,
+      "num_rejected_steps": 7,
+      "num_steps": 46
+     }
+    },
+    "N64": {
+     "fits": {
+      "k0.2": {
+       "g": 0.1867932972391413,
+       "g_win_std": 0.0015695186693712175,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.1834979863804509,
+       "max_amp_in_window": 6.065386855757189e-09
+      },
+      "k0.4": {
+       "g": 0.3036064489367211,
+       "g_win_std": 2.3855050316761596e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.30349846460080865,
+       "max_amp_in_window": 8.499506087066209e-06
+      },
+      "k0.6": {
+       "g": 0.3490982028014684,
+       "g_win_std": 8.237425808477924e-06,
+       "window": [
+        25.0,
+        52.800000000000004
+       ],
+       "g_matrix_pencil_early": 0.3491030648184503,
+       "max_amp_in_window": 1.0161729539189613e-05
+      },
+      "k0.8": {
+       "g": 0.3120131685238529,
+       "g_win_std": 7.409196441324962e-06,
+       "window": [
+        25.0,
+        59.400000000000006
+       ],
+       "g_matrix_pencil_early": 0.31205533783925826,
+       "max_amp_in_window": 1.0083840587289616e-05
+      }
+     },
+     "wall_compile_run": 0.7032968997955322,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 37,
+      "num_rejected_steps": 7,
+      "num_steps": 44
+     }
+    }
+   }
+  },
+  "vt0.3": {
+   "u": 1.0,
+   "vt": 0.3,
+   "roots": {
+    "k0.2": {
+     "cold_growth": 0.18562398728020796,
+     "warm_root": [
+      1.834236853201775e-25,
+      0.15864489592096806
+     ]
+    },
+    "k0.4": {
+     "cold_growth": 0.30819384083247836,
+     "warm_root": [
+      5.683885337332323e-25,
+      0.26161555019861893
+     ]
+    },
+    "k0.6": {
+     "cold_growth": 0.3533918224571849,
+     "warm_root": [
+      3.591284686154223e-26,
+      0.30071719829854554
+     ]
+    },
+    "k0.8": {
+     "cold_growth": 0.311338541920685,
+     "warm_root": [
+      -8.254363723785134e-25,
+      0.28239678729669465
+     ]
+    }
+   },
+   "grid": {
+    "Nv1024_dt0.025": {
+     "fits": {
+      "k0.2": {
+       "g": 0.16236668978277882,
+       "g_win_std": 0.004972316525576499,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.16310368472921385,
+       "max_amp_in_window": 1.0401388206083285e-09
+      },
+      "k0.4": {
+       "g": 0.2615637446123102,
+       "g_win_std": 4.3079607247283394e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.26156035870130423,
+       "max_amp_in_window": 6.35219963319101e-07
+      },
+      "k0.6": {
+       "g": 0.3007164205926396,
+       "g_win_std": 4.478272290536826e-06,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.30071964778617377,
+       "max_amp_in_window": 6.098703735293806e-06
+      },
+      "k0.8": {
+       "g": 0.28240400261896975,
+       "g_win_std": 1.2930716121889003e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.282380068244875,
+       "max_amp_in_window": 1.6557615371022646e-06
+      }
+     },
+     "wall": 4.41587495803833
+    },
+    "Nv2048_dt0.0125": {
+     "fits": {
+      "k0.2": {
+       "g": 0.16236199146137748,
+       "g_win_std": 0.004926742282674747,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.16369514064765142,
+       "max_amp_in_window": 1.0404491908379968e-09
+      },
+      "k0.4": {
+       "g": 0.26156139460815797,
+       "g_win_std": 4.309960099128998e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.2615624726671178,
+       "max_amp_in_window": 6.348263026359568e-07
+      },
+      "k0.6": {
+       "g": 0.3007111679466826,
+       "g_win_std": 4.478233316377448e-06,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.3007192144675334,
+       "max_amp_in_window": 6.1010233148933455e-06
+      },
+      "k0.8": {
+       "g": 0.28239485779583995,
+       "g_win_std": 1.2971550512709873e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.2823698584720101,
+       "max_amp_in_window": 1.6534449851526313e-06
+      }
+     },
+     "wall": 17.81353998184204
+    }
+   },
+   "spectrax": {
+    "N8": {
+     "fits": {
+      "k0.2": {
+       "g": 0.1623558676982893,
+       "g_win_std": 0.0048676185477365295,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.1630271238939121,
+       "max_amp_in_window": 1.0399742864299823e-09
+      },
+      "k0.4": {
+       "g": 0.2615406157258608,
+       "g_win_std": 4.6860219869093305e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.2615697107039936,
+       "max_amp_in_window": 6.347682849397222e-07
+      },
+      "k0.6": {
+       "g": 0.30054732533778683,
+       "g_win_std": 9.792109562551647e-06,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.5532395656941856,
+       "max_amp_in_window": 6.0513047462737755e-06
+      },
+      "k0.8": {
+       "g": 0.2819771213160968,
+       "g_win_std": 2.09181856943704e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.2876101173898945,
+       "max_amp_in_window": 1.6096857800178913e-06
+      }
+     },
+     "wall_compile_run": 0.010786771774291992,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 27,
+      "num_rejected_steps": 3,
+      "num_steps": 30
+     }
+    },
+    "N16": {
+     "fits": {
+      "k0.2": {
+       "g": 0.16235447297725522,
+       "g_win_std": 0.004864491613666375,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.1631455106379108,
+       "max_amp_in_window": 1.040053600233383e-09
+      },
+      "k0.4": {
+       "g": 0.2615607149467044,
+       "g_win_std": 4.275450602043121e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.26154557973710474,
+       "max_amp_in_window": 6.350178121100746e-07
+      },
+      "k0.6": {
+       "g": 0.300708283702964,
+       "g_win_std": 4.571362532809661e-06,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.3007416054433461,
+       "max_amp_in_window": 6.097252957072669e-06
+      },
+      "k0.8": {
+       "g": 0.2824244254108903,
+       "g_win_std": 1.9148343282024446e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.28228702547540707,
+       "max_amp_in_window": 1.6567074623850899e-06
+      }
+     },
+     "wall_compile_run": 0.01765894889831543,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 35,
+      "num_rejected_steps": 8,
+      "num_steps": 43
+     }
+    },
+    "N32": {
+     "fits": {
+      "k0.2": {
+       "g": 0.16235904432661682,
+       "g_win_std": 0.004885488830233584,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.16320329691531235,
+       "max_amp_in_window": 1.0400470884076262e-09
+      },
+      "k0.4": {
+       "g": 0.2615606963555285,
+       "g_win_std": 4.2906043866188784e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.26156513529778075,
+       "max_amp_in_window": 6.350199446594624e-07
+      },
+      "k0.6": {
+       "g": 0.30070921274567086,
+       "g_win_std": 4.399292046753475e-06,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.30073197846772054,
+       "max_amp_in_window": 6.097503932415074e-06
+      },
+      "k0.8": {
+       "g": 0.28239089929454403,
+       "g_win_std": 1.489573599053053e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.2822432278880607,
+       "max_amp_in_window": 1.6546697848392628e-06
+      }
+     },
+     "wall_compile_run": 0.030651330947875977,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 46,
+      "num_rejected_steps": 12,
+      "num_steps": 58
+     }
+    },
+    "N64": {
+     "fits": {
+      "k0.2": {
+       "g": 0.16235757883878565,
+       "g_win_std": 0.004879645411948106,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.16319768624362843,
+       "max_amp_in_window": 1.0400462213270035e-09
+      },
+      "k0.4": {
+       "g": 0.26156071512234175,
+       "g_win_std": 4.2869487578216516e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.2615667131141538,
+       "max_amp_in_window": 6.35019945608321e-07
+      },
+      "k0.6": {
+       "g": 0.30070913909659197,
+       "g_win_std": 4.436168007101448e-06,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.3007434746149524,
+       "max_amp_in_window": 6.097504369368385e-06
+      },
+      "k0.8": {
+       "g": 0.28239168035152384,
+       "g_win_std": 1.5565115197910985e-05,
+       "window": [
+        25.0,
+        60.0
+       ],
+       "g_matrix_pencil_early": 0.28210060154995736,
+       "max_amp_in_window": 1.6546945547793499e-06
+      }
+     },
+     "wall_compile_run": 0.059713125228881836,
+     "stats": {
+      "max_steps": 1000000,
+      "num_accepted_steps": 59,
+      "num_rejected_steps": 15,
+      "num_steps": 74
+     }
+    }
+   }
+  }
+ }
+}

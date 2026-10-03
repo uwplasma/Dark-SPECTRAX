@@ -1,0 +1,141 @@
+{
+ "case_id": "B07",
+ "spectrax_commit": "6781d8054b08834e477e3b47c3f8e5711129177c",
+ "spectrax_source": "uwplasma/SPECTRAX integration/dark-baseline-a1",
+ "reference_code": "c-refs/code (independent NumPy semi-Lagrangian + scipy wofz)",
+ "reference_code_sha256_16": "bb886170a96bb4af",
+ "gkeyll_changeset": "ce77f9f8a366+ (local build, unmodified)",
+ "command": "python b07.py",
+ "versions": {
+  "python": "3.12.9",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "jax": "0.11.2",
+  "jaxlib": "0.11.2",
+  "diffrax": "0.7.2",
+  "backend": "cpu",
+  "machine": "arm64",
+  "dtype": "float64/complex128"
+ },
+ "model": "free streaming, force off (qs=0), Ns=1, Nx=4, Nm=Np=1, nu=0, Dopri8 rtol=atol=1e-12, beta=0.1",
+ "k_lambdaD": 0.5,
+ "seed": "n = 1 + 1e-4 cos(kx); f1 = (eps/2) f_M e^{ikx}",
+ "exact": "C_n(t)=C_0(0)(-i b)^n e^{-b^2/4}/sqrt(2^n n!), b=sqrt(2) k v_t t",
+ "contamination_definition": "first t with max_{n<=3}|C_n-exact|/C_0(0) > threshold",
+ "results": {
+  "N16": {
+   "Nn": 16,
+   "tmax": 24.0,
+   "contamination_time_lowmodes": {
+    "1e-08": 4.7,
+    "1e-06": 5.65,
+    "0.001": 7.7
+   },
+   "sqrtN_over_kvt": 8.0,
+   "tc1e6_times_k_over_sqrtN": 0.70625,
+   "max_err_all_before_half_front": 0.0008847782392847501,
+   "wall_compile_run": 0.7076020240783691,
+   "stats": {
+    "max_steps": 1000000,
+    "num_accepted_steps": 75,
+    "num_rejected_steps": 0,
+    "num_steps": 75
+   }
+  },
+  "N32": {
+   "Nn": 32,
+   "tmax": 34.0,
+   "contamination_time_lowmodes": {
+    "1e-08": 10.55,
+    "1e-06": 11.700000000000001,
+    "0.001": 14.05
+   },
+   "sqrtN_over_kvt": 11.313708498984761,
+   "tc1e6_times_k_over_sqrtN": 1.0341436674853257,
+   "max_err_all_before_half_front": 5.436763040271551e-06,
+   "wall_compile_run": 0.6056680679321289,
+   "stats": {
+    "max_steps": 1000000,
+    "num_accepted_steps": 101,
+    "num_rejected_steps": 0,
+    "num_steps": 101
+   }
+  },
+  "N64": {
+   "Nn": 64,
+   "tmax": 48.0,
+   "contamination_time_lowmodes": {
+    "1e-08": 19.400000000000002,
+    "1e-06": 20.700000000000003,
+    "0.001": 23.200000000000003
+   },
+   "sqrtN_over_kvt": 16.0,
+   "tc1e6_times_k_over_sqrtN": 1.2937500000000002,
+   "max_err_all_before_half_front": 1.0759583271795085e-08,
+   "wall_compile_run": 0.6769869327545166,
+   "stats": {
+    "max_steps": 1000000,
+    "num_accepted_steps": 137,
+    "num_rejected_steps": 0,
+    "num_steps": 137
+   }
+  },
+  "N128": {
+   "Nn": 128,
+   "tmax": 68.0,
+   "contamination_time_lowmodes": {
+    "1e-08": 32.35,
+    "1e-06": 33.7,
+    "0.001": 36.35
+   },
+   "sqrtN_over_kvt": 22.627416997969522,
+   "tc1e6_times_k_over_sqrtN": 1.4893436578741657,
+   "max_err_all_before_half_front": 1.4041376773847991e-08,
+   "wall_compile_run": 0.6730239391326904,
+   "stats": {
+    "max_steps": 1000000,
+    "num_accepted_steps": 185,
+    "num_rejected_steps": 0,
+    "num_steps": 185
+   }
+  },
+  "N256": {
+   "Nn": 256,
+   "tmax": 96.0,
+   "contamination_time_lowmodes": {
+    "1e-08": 0.2,
+    "1e-06": 52.300000000000004,
+    "0.001": 55.0
+   },
+   "sqrtN_over_kvt": 32.0,
+   "tc1e6_times_k_over_sqrtN": 1.6343750000000001,
+   "max_err_all_before_half_front": 1.887502353219938e-08,
+   "wall_compile_run": 0.8117849826812744,
+   "stats": {
+    "max_steps": 1000000,
+    "num_accepted_steps": 322,
+    "num_rejected_steps": 8,
+    "num_steps": 330
+   }
+  },
+  "N512": {
+   "Nn": 512,
+   "tmax": 136.0,
+   "contamination_time_lowmodes": {
+    "1e-08": 0.2,
+    "1e-06": 78.7,
+    "0.001": 81.45
+   },
+   "sqrtN_over_kvt": 45.254833995939045,
+   "tc1e6_times_k_over_sqrtN": 1.7390407399806653,
+   "max_err_all_before_half_front": 2.5432111116693712e-08,
+   "wall_compile_run": 1.2559471130371094,
+   "stats": {
+    "max_steps": 1000000,
+    "num_accepted_steps": 627,
+    "num_rejected_steps": 12,
+    "num_steps": 639
+   }
+  }
+ }
+}
