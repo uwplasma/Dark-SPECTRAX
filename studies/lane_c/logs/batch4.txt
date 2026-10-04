@@ -1,0 +1,6 @@
+studies/lane_c_grid_mobile.py 0.1 700 16 4096 0.02 exit=0
+studies/lane_c_run.py --vq 0.1 --Nn 64 --real 0 exit=0
+studies/lane_c_run.py --vq 0.1 --Nn 64 --real 0 --Nx 16 exit=0
+studies/lane_c_grid_mobile.py 0.1 700 32 4096 0.02 exit=0
+studies/lane_c_grid_mobile.py 0.03 1000 16 4096 0.02 exit=0
+DONE

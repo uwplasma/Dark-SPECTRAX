@@ -1,0 +1,4 @@
+0.01 64 -1 exit=0
+0.1 64 -1 exit=0
+grid exit=0
+DONE

@@ -1,0 +1,28 @@
+{
+ "case": "vq0.1_Nn64_r0",
+ "vq_over_vte": 0.1,
+ "Nn": 64,
+ "Nx": 8,
+ "nu": 0.0,
+ "realization": 0,
+ "phases": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "T_requested": 1000.0,
+ "status": "failure",
+ "failure_reason": "segment 31: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+ "t_reached": 632.5,
+ "events": 17,
+ "max_event_moment_defect": 2.220446049250313e-16,
+ "max_ledger_over_W_ext": 7.211319100693823e-07,
+ "steps": 206137,
+ "rejected": 199271,
+ "compile_time": 18.097150416171644,
+ "run_time": 165.91802558396012,
+ "wall_time": 209.54119433299638,
+ "repository_commit": "80c34b1f59e5fd60fc68f7b479c903854e36768a",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830",
+ "command": "python studies/lane_c_run.py --vq 0.1 --Nn 64 --real 0 --T 1000 --Nx 8"
+}

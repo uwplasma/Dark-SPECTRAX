@@ -1,0 +1,28 @@
+{
+ "case": "vq0.001_Nn64_r0",
+ "vq_over_vte": 0.001,
+ "Nn": 64,
+ "Nx": 8,
+ "nu": 0.0,
+ "realization": 0,
+ "phases": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "T_requested": 1000.0,
+ "status": "success",
+ "failure_reason": null,
+ "t_reached": 1000.0,
+ "events": 0,
+ "max_event_moment_defect": 0.0,
+ "max_ledger_over_W_ext": 6.578327485044142e-10,
+ "steps": 5697,
+ "rejected": 926,
+ "compile_time": 28.19598911999492,
+ "run_time": 5.009323250909802,
+ "wall_time": 72.78957783401711,
+ "repository_commit": "80c34b1f59e5fd60fc68f7b479c903854e36768a",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830",
+ "command": "python studies/lane_c_run.py --vq 0.001 --Nn 64 --real 0 --T 1000 --Nx 8"
+}
