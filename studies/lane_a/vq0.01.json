@@ -1,0 +1,196 @@
+{
+ "label": "Lane A H05 v_q/v_te = 0.01",
+ "parent_commit": "ae2dd9d2a9de9c43a34626bc56d7ac0abd88ba2b",
+ "repository_commit": "03484b518c867bb3444770e222f4b1a15716e85c",
+ "command": "python studies/lane_a_h05.py 0.01",
+ "base": {
+  "Nn": 32,
+  "c": 1.3,
+  "rate": 1.0
+ },
+ "refinements": {
+  "Nn64": {
+   "Nn": 64
+  },
+  "rate0.5": {
+   "rate": 0.5
+  },
+  "rate2": {
+   "rate": 2.0
+  },
+  "c1.1": {
+   "c": 1.1
+  },
+  "c1.5": {
+   "c": 1.5
+  }
+ },
+ "tau": 10.0,
+ "filter_order": 16,
+ "omega": 1.0002722940826503,
+ "runs": {
+  "base": {
+   "Nn": 32,
+   "c": 1.3,
+   "rate": 1.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 13183,
+    "num_rejected": 4255,
+    "compile_time": 30.327759246865753,
+    "run_time": 7.167261581576895
+   },
+   "wall_time": 49.01542833301937,
+   "max_ledger_over_W_ext": 7.102947731185933e-11,
+   "final_a_e_over_a0": 1.1695285670568238,
+   "W_ext_final": 0.012385181510979223,
+   "dK_electron_final": 0.0015799287445642128,
+   "first_negative_K": null,
+   "first_negative_Tx": null
+  },
+  "Nn64": {
+   "Nn": 64,
+   "c": 1.3,
+   "rate": 1.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 13434,
+    "num_rejected": 4352,
+    "compile_time": 30.873871454328764,
+    "run_time": 12.753992461541202
+   },
+   "wall_time": 54.46677650004858,
+   "max_ledger_over_W_ext": 6.279983155233846e-11,
+   "final_a_e_over_a0": 1.1695285678973246,
+   "W_ext_final": 0.012385181511022924,
+   "dK_electron_final": 0.0015799287278938255,
+   "first_negative_K": null,
+   "first_negative_Tx": null
+  },
+  "rate0.5": {
+   "Nn": 32,
+   "c": 1.3,
+   "rate": 0.5,
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 12917,
+    "num_rejected": 4235,
+    "compile_time": 31.442418327904306,
+    "run_time": 7.049412168969866
+   },
+   "wall_time": 49.12704108300386,
+   "max_ledger_over_W_ext": 1.082652577376686e-10,
+   "final_a_e_over_a0": 1.1695285683828667,
+   "W_ext_final": 0.012385181511008127,
+   "dK_electron_final": 0.0015799287281293658,
+   "first_negative_K": null,
+   "first_negative_Tx": null
+  },
+  "rate2": {
+   "Nn": 32,
+   "c": 1.3,
+   "rate": 2.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 13691,
+    "num_rejected": 4296,
+    "compile_time": 31.4191902919556,
+    "run_time": 7.478977914783172
+   },
+   "wall_time": 49.508633958990686,
+   "max_ledger_over_W_ext": 5.1018471191762966e-11,
+   "final_a_e_over_a0": 1.169528566840931,
+   "W_ext_final": 0.012385181511016526,
+   "dK_electron_final": 0.0015799287361886074,
+   "first_negative_K": null,
+   "first_negative_Tx": null
+  },
+  "c1.1": {
+   "Nn": 32,
+   "c": 1.1,
+   "rate": 1.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 8985,
+    "num_rejected": 1640,
+    "compile_time": 30.697735917172395,
+    "run_time": 4.938605832925532
+   },
+   "wall_time": 46.25348650000524,
+   "max_ledger_over_W_ext": 7.975948357595522e-11,
+   "final_a_e_over_a0": 1.00607235602222,
+   "W_ext_final": 0.012385181510974298,
+   "dK_electron_final": 0.0015799287475488683,
+   "first_negative_K": null,
+   "first_negative_Tx": null
+  },
+  "c1.5": {
+   "Nn": 32,
+   "c": 1.5,
+   "rate": 1.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 21553,
+    "num_rejected": 9386,
+    "compile_time": 32.90992992010433,
+    "run_time": 11.782471252139658
+   },
+   "wall_time": 55.26695079100318,
+   "max_ledger_over_W_ext": 8.087089488331721e-11,
+   "final_a_e_over_a0": 1.34945235752781,
+   "W_ext_final": 0.012385181511058982,
+   "dK_electron_final": 0.0015799287279718013,
+   "first_negative_K": null,
+   "first_negative_Tx": null
+  }
+ },
+ "agreement": {
+  "Nn64": {
+   "dK_e": null,
+   "W_ext": null,
+   "common_end": 1000.0
+  },
+  "rate0.5": {
+   "dK_e": null,
+   "W_ext": null,
+   "common_end": 1000.0
+  },
+  "rate2": {
+   "dK_e": null,
+   "W_ext": null,
+   "common_end": 1000.0
+  },
+  "c1.1": {
+   "dK_e": null,
+   "W_ext": null,
+   "common_end": 1000.0
+  },
+  "c1.5": {
+   "dK_e": null,
+   "W_ext": null,
+   "common_end": 1000.0
+  },
+  "t_res_dK_e": 1000.0,
+  "t_res_W_ext": 1000.0,
+  "t_res": 1000.0,
+  "first_negative": null
+ }
+}

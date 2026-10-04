@@ -1,0 +1,196 @@
+{
+ "label": "Lane A H05 v_q/v_te = 0.03",
+ "parent_commit": "ae2dd9d2a9de9c43a34626bc56d7ac0abd88ba2b",
+ "repository_commit": "03484b518c867bb3444770e222f4b1a15716e85c",
+ "command": "python studies/lane_a_h05.py 0.03",
+ "base": {
+  "Nn": 32,
+  "c": 1.3,
+  "rate": 1.0
+ },
+ "refinements": {
+  "Nn64": {
+   "Nn": 64
+  },
+  "rate0.5": {
+   "rate": 0.5
+  },
+  "rate2": {
+   "rate": 2.0
+  },
+  "c1.1": {
+   "c": 1.1
+  },
+  "c1.5": {
+   "c": 1.5
+  }
+ },
+ "tau": 10.0,
+ "filter_order": 16,
+ "omega": 1.0002722940826503,
+ "runs": {
+  "base": {
+   "Nn": 32,
+   "c": 1.3,
+   "rate": 1.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 19384,
+    "num_rejected": 7616,
+    "compile_time": 31.86396612180397,
+    "run_time": 11.46652037621243
+   },
+   "wall_time": 55.820630458998494,
+   "max_ledger_over_W_ext": 5.902103399282481e-11,
+   "final_a_e_over_a0": 3.1973670868597623,
+   "W_ext_final": 0.1111493278607721,
+   "dK_electron_final": 0.017026057600010844,
+   "first_negative_K": null,
+   "first_negative_Tx": null
+  },
+  "Nn64": {
+   "Nn": 64,
+   "c": 1.3,
+   "rate": 1.0,
+   "status": "failure",
+   "failure_reason": "segment 48: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 978.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 218392,
+    "num_rejected": 205378,
+    "compile_time": 31.573801001068205,
+    "run_time": 197.05182983301347
+   },
+   "wall_time": 239.48780254198937,
+   "max_ledger_over_W_ext": 1.6613009125387683e-05,
+   "final_a_e_over_a0": 2.3699079845584086,
+   "W_ext_final": 0.1067217238162308,
+   "dK_electron_final": -14186.62320271473,
+   "first_negative_K": 958.0,
+   "first_negative_Tx": 936.0
+  },
+  "rate0.5": {
+   "Nn": 32,
+   "c": 1.3,
+   "rate": 0.5,
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 19140,
+    "num_rejected": 7613,
+    "compile_time": 31.261987417005002,
+    "run_time": 10.434575290128123
+   },
+   "wall_time": 52.3247597499867,
+   "max_ledger_over_W_ext": 8.570319401700398e-11,
+   "final_a_e_over_a0": 2.937220435131865,
+   "W_ext_final": 0.11120397777305882,
+   "dK_electron_final": -0.032884908435016666,
+   "first_negative_K": 994.0,
+   "first_negative_Tx": 991.9999999999999
+  },
+  "rate2": {
+   "Nn": 32,
+   "c": 1.3,
+   "rate": 2.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 20157,
+    "num_rejected": 7685,
+    "compile_time": 31.150849329831544,
+    "run_time": 11.009050628112163
+   },
+   "wall_time": 52.796327084011864,
+   "max_ledger_over_W_ext": 9.419157182153904e-11,
+   "final_a_e_over_a0": 2.8448164836764076,
+   "W_ext_final": 0.11124538545732256,
+   "dK_electron_final": 0.003072739147104643,
+   "first_negative_K": null,
+   "first_negative_Tx": 996.0
+  },
+  "c1.1": {
+   "Nn": 32,
+   "c": 1.1,
+   "rate": 1.0,
+   "status": "failure",
+   "failure_reason": "segment 49: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 986.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 216268,
+    "num_rejected": 204493,
+    "compile_time": 30.537213046394754,
+    "run_time": 115.61855116579682
+   },
+   "wall_time": 156.86635891604237,
+   "max_ledger_over_W_ext": 2.0455117863731888e-09,
+   "final_a_e_over_a0": 2.3093537268500435,
+   "W_ext_final": 0.10799631565042087,
+   "dK_electron_final": -42.26795669913856,
+   "first_negative_K": 971.9999999999999,
+   "first_negative_Tx": 964.0
+  },
+  "c1.5": {
+   "Nn": 32,
+   "c": 1.5,
+   "rate": 1.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 26271,
+    "num_rejected": 11910,
+    "compile_time": 32.93945486994926,
+    "run_time": 14.386624794802628
+   },
+   "wall_time": 58.11938604101306,
+   "max_ledger_over_W_ext": 4.216119153715007e-11,
+   "final_a_e_over_a0": 3.572477937024309,
+   "W_ext_final": 0.1111994520429873,
+   "dK_electron_final": 0.018148174632771543,
+   "first_negative_K": null,
+   "first_negative_Tx": null
+  }
+ },
+ "agreement": {
+  "Nn64": {
+   "dK_e": 952.0,
+   "W_ext": null,
+   "common_end": 978.0
+  },
+  "rate0.5": {
+   "dK_e": 994.0,
+   "W_ext": null,
+   "common_end": 1000.0
+  },
+  "rate2": {
+   "dK_e": 1000.0,
+   "W_ext": null,
+   "common_end": 1000.0
+  },
+  "c1.1": {
+   "dK_e": 970.0,
+   "W_ext": null,
+   "common_end": 986.0
+  },
+  "c1.5": {
+   "dK_e": null,
+   "W_ext": null,
+   "common_end": 1000.0
+  },
+  "t_res_dK_e": 952.0,
+  "t_res_W_ext": 978.0,
+  "t_res": 952.0,
+  "first_negative": 936.0
+ }
+}

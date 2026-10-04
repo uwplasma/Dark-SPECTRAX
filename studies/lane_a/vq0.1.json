@@ -1,0 +1,196 @@
+{
+ "label": "Lane A H05 v_q/v_te = 0.1",
+ "parent_commit": "ae2dd9d2a9de9c43a34626bc56d7ac0abd88ba2b",
+ "repository_commit": "03484b518c867bb3444770e222f4b1a15716e85c",
+ "command": "python studies/lane_a_h05.py 0.1",
+ "base": {
+  "Nn": 32,
+  "c": 1.3,
+  "rate": 1.0
+ },
+ "refinements": {
+  "Nn64": {
+   "Nn": 64
+  },
+  "rate0.5": {
+   "rate": 0.5
+  },
+  "rate2": {
+   "rate": 2.0
+  },
+  "c1.1": {
+   "c": 1.1
+  },
+  "c1.5": {
+   "c": 1.5
+  }
+ },
+ "tau": 10.0,
+ "filter_order": 16,
+ "omega": 1.0002722940826503,
+ "runs": {
+  "base": {
+   "Nn": 32,
+   "c": 1.3,
+   "rate": 1.0,
+   "status": "failure",
+   "failure_reason": "segment 36: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 724.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 215823,
+    "num_rejected": 74574,
+    "compile_time": 24.805192212807015,
+    "run_time": 126.03912866505561
+   },
+   "wall_time": 160.94144695898285,
+   "max_ledger_over_W_ext": 7.092399353857011e-11,
+   "final_a_e_over_a0": 4.3287551858213495,
+   "W_ext_final": 0.6510362717001106,
+   "dK_electron_final": -5436.048474914161,
+   "first_negative_K": 714.0,
+   "first_negative_Tx": 694.0
+  },
+  "Nn64": {
+   "Nn": 64,
+   "c": 1.3,
+   "rate": 1.0,
+   "status": "failure",
+   "failure_reason": "segment 33: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 666.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 214697,
+    "num_rejected": 204161,
+    "compile_time": 23.32703612477053,
+    "run_time": 199.09465300035663
+   },
+   "wall_time": 230.92310325003928,
+   "max_ledger_over_W_ext": 2.0310716505874954e-10,
+   "final_a_e_over_a0": 3.203510501386134,
+   "W_ext_final": 0.5522396698510927,
+   "dK_electron_final": -306.4356630850064,
+   "first_negative_K": 652.0,
+   "first_negative_Tx": 638.0
+  },
+  "rate0.5": {
+   "Nn": 32,
+   "c": 1.3,
+   "rate": 0.5,
+   "status": "failure",
+   "failure_reason": "segment 35: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 710.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 214967,
+    "num_rejected": 71980,
+    "compile_time": 23.58812454470899,
+    "run_time": 124.88477137614973
+   },
+   "wall_time": 156.47562745795585,
+   "max_ledger_over_W_ext": 2.585003267760029e-10,
+   "final_a_e_over_a0": 3.8369498705030423,
+   "W_ext_final": 0.6269810179672259,
+   "dK_electron_final": -21.520796883901898,
+   "first_negative_K": 706.0,
+   "first_negative_Tx": 666.0
+  },
+  "rate2": {
+   "Nn": 32,
+   "c": 1.3,
+   "rate": 2.0,
+   "status": "failure",
+   "failure_reason": "segment 37: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 740.0,
+   "remap_events": 1,
+   "cost": {
+    "num_steps": 217125,
+    "num_rejected": 205124,
+    "compile_time": 25.325473250064533,
+    "run_time": 125.50839987373911
+   },
+   "wall_time": 159.6064893330331,
+   "max_ledger_over_W_ext": 9.809650887808753e-11,
+   "final_a_e_over_a0": 4.476842949368821,
+   "W_ext_final": 0.6792884132421915,
+   "dK_electron_final": -263.04352788814094,
+   "first_negative_K": 730.0,
+   "first_negative_Tx": 710.0
+  },
+  "c1.1": {
+   "Nn": 32,
+   "c": 1.1,
+   "rate": 1.0,
+   "status": "failure",
+   "failure_reason": "segment 36: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 730.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 214411,
+    "num_rejected": 71901,
+    "compile_time": 23.869237876089755,
+    "run_time": 124.59519999899203
+   },
+   "wall_time": 156.76618108298862,
+   "max_ledger_over_W_ext": 1.4342362740326863e-07,
+   "final_a_e_over_a0": 4.079628975196879,
+   "W_ext_final": 0.662033505805263,
+   "dK_electron_final": -44172.71182550246,
+   "first_negative_K": 718.0,
+   "first_negative_Tx": 694.0
+  },
+  "c1.5": {
+   "Nn": 32,
+   "c": 1.5,
+   "rate": 1.0,
+   "status": "failure",
+   "failure_reason": "segment 36: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 728.0,
+   "remap_events": 0,
+   "cost": {
+    "num_steps": 221192,
+    "num_rejected": 77995,
+    "compile_time": 25.304640207788907,
+    "run_time": 129.54415683599655
+   },
+   "wall_time": 163.18536879098974,
+   "max_ledger_over_W_ext": 5.551844214306453e-07,
+   "final_a_e_over_a0": 5.877448230566963,
+   "W_ext_final": 0.6575804996626222,
+   "dK_electron_final": -63084600.112132385,
+   "first_negative_K": 720.0,
+   "first_negative_Tx": 694.0
+  }
+ },
+ "agreement": {
+  "Nn64": {
+   "dK_e": 648.0,
+   "W_ext": null,
+   "common_end": 666.0
+  },
+  "rate0.5": {
+   "dK_e": 700.0,
+   "W_ext": null,
+   "common_end": 710.0
+  },
+  "rate2": {
+   "dK_e": 710.0,
+   "W_ext": null,
+   "common_end": 724.0
+  },
+  "c1.1": {
+   "dK_e": 710.0,
+   "W_ext": null,
+   "common_end": 724.0
+  },
+  "c1.5": {
+   "dK_e": 710.0,
+   "W_ext": null,
+   "common_end": 724.0
+  },
+  "t_res_dK_e": 648.0,
+  "t_res_W_ext": 666.0,
+  "t_res": 648.0,
+  "first_negative": 638.0
+ }
+}

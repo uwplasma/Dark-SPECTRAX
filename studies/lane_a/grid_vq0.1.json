@@ -1,0 +1,47 @@
+{
+ "label": "Lane A fixed-ion grid comparison v_q/v_te = 0.1",
+ "parent_commit": "ae2dd9d2a9de9c43a34626bc56d7ac0abd88ba2b",
+ "repository_commit": "03484b518c867bb3444770e222f4b1a15716e85c",
+ "command": "python studies/lane_a_h05.py grid 0.1 300",
+ "t_max": 300.0,
+ "grid": {
+  "Nx": 16,
+  "Nv": 2048,
+  "vmax_over_vte": 48.0,
+  "dt": 0.02,
+  "wall_time": 28.553022207983304,
+  "max_edge_f_over_max": 1.4043037883142835e-13
+ },
+ "hermite": {
+  "Nn": 32,
+  "c": 1.3,
+  "rate": 1.0,
+  "status": "success",
+  "failure_reason": null,
+  "events": 0,
+  "cost": {
+   "num_steps": 30560,
+   "num_rejected": 12293,
+   "compile_time": 9.008376416168176,
+   "run_time": 13.442293290805537
+  },
+  "wall_time": 25.227733750012703,
+  "final_a_e_over_a0": 1.0
+ },
+ "dK_e_final": {
+  "hermite": 3.687092294676702e-05,
+  "grid": 2.2346454444601435e-05
+ },
+ "W_ext_final": {
+  "hermite": 0.11239406450814045,
+  "grid": 0.11236657929234442
+ },
+ "first_disagreement_10pct": {
+  "dK_e": null,
+  "W_ext": null
+ },
+ "max_diff_over_running_max_t_gt_50": {
+  "dK_e": 0.0053198390613873195,
+  "W_ext": 0.00027141122535936875
+ }
+}
