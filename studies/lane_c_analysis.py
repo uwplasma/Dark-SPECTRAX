@@ -197,4 +197,23 @@ for g in sorted(D.glob("gridm_*.npz")):
                                 if (G["edge"] > 1e-6).any() else None,
                                 "U_k_at": {f"{T}": float(np.interp(T, G["t"], G["U_k"])) for T in (100, 300, 400, 500, 600, 700, 900)
                                            if T <= G["t"][-1]}}
+# x-resolution and k-spectra at v_q/v_te = 0.1 (Hermite Nx 8 vs 16, grid Nx 16)
+a, b = load(0.1, 64, 0), None
+pb = D / "runs" / "vq0.1_Nn64_r0_Nx16"
+if Path(f"{pb}.json").exists():
+    b = json.loads(Path(f"{pb}.json").read_text()), dict(np.load(f"{pb}.npz"))
+gp = D / "gridm_vq0.1_Nx16_Nv4096_dt0.02.npz"
+if a and b and gp.exists() and "Ek2" in a[1]:
+    G = dict(np.load(gp))
+    spec = {}
+    for T in (100, 300, 400, 450, 500, 550, 600):
+        row = {}
+        for nm, d in (("hermite_Nx8", a[1]), ("hermite_Nx16", b[1]), ("grid_Nx16", G)):
+            i = np.argmin(np.abs(d["t"] - T))
+            if abs(d["t"][i] - T) < 1 and np.isfinite(d["Ek2"][i]).all():
+                row[nm] = [float(x) for x in d["Ek2"][i, 1:]]
+        spec[str(T)] = row
+    S["x_resolution_vq0.1"] = {"t_reached": {"Nx8": a[0]["t_reached"], "Nx16": b[0]["t_reached"]},
+                               "t_pos": {"Nx8": t_pos(a[1]), "Nx16": t_pos(b[1])},
+                               "Ek2_by_k_index": spec}
 (D / "summary.json").write_text(json.dumps(S, indent=1, default=float) + "\n")
