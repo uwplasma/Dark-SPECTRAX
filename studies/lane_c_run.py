@@ -9,6 +9,7 @@ Declared seed realizations (same amplitudes, phases rotated; chosen before any r
   r0: the gate seeds  [(e, k1, 5e-4), (e, k2, 5e-5j), (i, k1, 5e-4)]
   r1: phases multiplied by exp(i*(2pi/3, pi/2, 4pi/3))
   r2: phases multiplied by exp(i*(4pi/3, 5pi/3, pi/3))
+  r-1: no seeds (homogeneous control; W_ext must equal the uniform two-fluid oscillator)
 
 Run: python studies/lane_c_run.py --vq 0.03 --Nn 64 --real 0 [--T 1000]  ->  studies/lane_c/runs/<case>.{json,npz}
 """
@@ -34,6 +35,8 @@ SEG, NSAVE = 20.0, 41
 
 
 def seeds(r):
+    if r < 0:  # unseeded homogeneous control (H00-like): the exact uniform driven two-fluid oscillator
+        return []
     return [(s, k, A * np.exp(1j * ph)) for (s, k, A), ph in zip(BASE, PHASES[r])]
 
 
@@ -70,7 +73,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--vq", type=float, required=True)
     ap.add_argument("--Nn", type=int, required=True)
-    ap.add_argument("--real", type=int, default=0, choices=(0, 1, 2))
+    ap.add_argument("--real", type=int, default=0, choices=(-1, 0, 1, 2))
     ap.add_argument("--T", type=float, default=1000.0)
     a = ap.parse_args(argv)
     stats = []
@@ -94,7 +97,7 @@ def main(argv=None):
     st = np.array(stats)
     case = f"vq{a.vq:g}_Nn{a.Nn}_r{a.real}"
     scale = max(np.abs(out["W"][:, 2]).max(), 1e-300)
-    rec = {"case": case, "vq_over_vte": a.vq, "Nn": a.Nn, "nu": 0.0, "realization": a.real, "phases": PHASES[a.real],
+    rec = {"case": case, "vq_over_vte": a.vq, "Nn": a.Nn, "nu": 0.0, "realization": a.real, "phases": PHASES.get(a.real),
            "T_requested": a.T, "status": out["status"], "failure_reason": out["failure_reason"],
            "t_reached": float(out["t"][-1]), "events": len(out["events"]),
            "max_event_moment_defect": max([e["moment_defect"] for e in out["events"] if "moment_defect" in e],

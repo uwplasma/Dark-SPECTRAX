@@ -27,9 +27,10 @@ VQ = (0.001, 0.002, 0.005, 0.01, 0.02, 0.03, 0.05, 0.1)
 
 def load(vq, Nn, r):
     p = D / "runs" / f"vq{vq:g}_Nn{Nn}_r{r}"
-    if not p.with_suffix(".json").exists():
+    j, z = Path(f"{p}.json"), Path(f"{p}.npz")
+    if not j.exists():
         return None
-    return json.loads(p.with_suffix(".json").read_text()), dict(np.load(p.with_suffix(".npz")))
+    return json.loads(j.read_text()), dict(np.load(z))
 
 
 def W_lin(t, vq):
