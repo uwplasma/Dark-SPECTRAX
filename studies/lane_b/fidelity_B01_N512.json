@@ -1,0 +1,122 @@
+{
+ "grid": {
+  "t_min": 31.45,
+  "t_max": 65.6,
+  "R": 0.3209443841958654
+ },
+ "nu0_o2": {
+  "status": "success",
+  "R": 0.28363034276702886,
+  "erased_fraction": 0.1162632632514442,
+  "env_ratio_t65p6": 0.9633552111860716,
+  "first_t_logenv_dev_gt_0p1": 85.0,
+  "steps": 3522,
+  "rejected": 363,
+  "run_time": 10.451098082994577
+ },
+ "nu0.25_o2": {
+  "status": "success",
+  "R": 0.29479602739567357,
+  "erased_fraction": 0.08147317132750975,
+  "env_ratio_t65p6": 0.974171505109953,
+  "first_t_logenv_dev_gt_0p1": null,
+  "steps": 3526,
+  "rejected": 336,
+  "run_time": 10.437951084051747
+ },
+ "nu0.5_o2": {
+  "status": "success",
+  "R": 0.30118638538750836,
+  "erased_fraction": 0.061562064274348405,
+  "env_ratio_t65p6": 0.980416236405803,
+  "first_t_logenv_dev_gt_0p1": null,
+  "steps": 3458,
+  "rejected": 307,
+  "run_time": 10.228241250035353
+ },
+ "nu1_o2": {
+  "status": "success",
+  "R": 0.29981348055785223,
+  "erased_fraction": 0.06583976750662646,
+  "env_ratio_t65p6": 0.9790701269127846,
+  "first_t_logenv_dev_gt_0p1": null,
+  "steps": 3344,
+  "rejected": 276,
+  "run_time": 9.876658125023823
+ },
+ "nu2_o2": {
+  "status": "success",
+  "R": 0.29219663961719444,
+  "erased_fraction": 0.08957235581703415,
+  "env_ratio_t65p6": 0.9716390093794436,
+  "first_t_logenv_dev_gt_0p1": null,
+  "steps": 2928,
+  "rejected": 199,
+  "run_time": 8.66844574996503
+ },
+ "nu4_o2": {
+  "status": "success",
+  "R": 0.28145957419723094,
+  "erased_fraction": 0.12302695402371566,
+  "env_ratio_t65p6": 0.9612582155279493,
+  "first_t_logenv_dev_gt_0p1": null,
+  "steps": 1950,
+  "rejected": 103,
+  "run_time": 5.802735707955435
+ },
+ "nu0.25_o3": {
+  "status": "success",
+  "R": 0.28939758656005016,
+  "erased_fraction": 0.09829365830736247,
+  "env_ratio_t65p6": 0.9689271717347318,
+  "first_t_logenv_dev_gt_0p1": null,
+  "steps": 3523,
+  "rejected": 345,
+  "run_time": 10.392288959003054
+ },
+ "nu0.5_o3": {
+  "status": "success",
+  "R": 0.29954652943550364,
+  "erased_fraction": 0.06667153505107948,
+  "env_ratio_t65p6": 0.9788108320041012,
+  "first_t_logenv_dev_gt_0p1": null,
+  "steps": 3525,
+  "rejected": 339,
+  "run_time": 10.393942792026792
+ },
+ "nu1_o3": {
+  "status": "success",
+  "R": 0.30809970624554417,
+  "erased_fraction": 0.04002150709850838,
+  "env_ratio_t65p6": 0.9872186883502744,
+  "first_t_logenv_dev_gt_0p1": null,
+  "steps": 3443,
+  "rejected": 313,
+  "run_time": 9.996276083984412
+ },
+ "nu2_o3": {
+  "status": "success",
+  "R": 0.30956619004099933,
+  "erased_fraction": 0.035452230090812886,
+  "env_ratio_t65p6": 0.9886675078299365,
+  "first_t_logenv_dev_gt_0p1": null,
+  "steps": 3232,
+  "rejected": 263,
+  "run_time": 8.824625207984354
+ },
+ "nu4_o3": {
+  "status": "success",
+  "R": 0.3064210552240746,
+  "erased_fraction": 0.04525185573251078,
+  "env_ratio_t65p6": 0.9855629343241504,
+  "first_t_logenv_dev_gt_0p1": null,
+  "steps": 2635,
+  "rejected": 172,
+  "run_time": 7.715437875012867
+ },
+ "case": "B01",
+ "Nn": 512,
+ "wall": 378.4370515840128,
+ "repository_commit": "5e91b2e4a0d3b01f912b688b3f05830b05f6de41",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830"
+}
