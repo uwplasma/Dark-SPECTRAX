@@ -156,8 +156,12 @@ for n in range(int(round(Tc / dt))):
     f = s.adv_x(f, dt / 2)
 tg.append(Tc), Kg.append(0.5 * (f * v[None, :] ** 2).sum() * s.dv / s.Nx - K0g), Wh.append(Wg)
 tg, Kg, Wh = np.array(tg), np.array(Kg), np.array(Wh)
-dKh = np.interp(tg, out["t"], K[:, 0] - K[0, 0])
-Wxh = np.interp(tg, out["t"], out["W"][:, 2])
+# compare at common save times (every 2 omega_pe^-1); interpolating the quiver-oscillating dK_e is not valid
+th = np.round(out["t"], 6)
+keep = np.isin(np.round(tg, 6), th)
+tg, Kg, Wh = tg[keep], Kg[keep], Wh[keep]
+sel = np.isin(th, np.round(tg, 6))
+dKh, Wxh = (K[:, 0] - K[0, 0])[sel], out["W"][sel, 2]
 rec["grid_comparison_vq0.03"] = {
     "t_max": Tc, "grid": {"Nx": 16, "Nv": 1024, "vmax_over_vte": 16, "dt": dt, "wall_time": time.perf_counter() - tic,
                           "edge_f_over_max": float(np.abs(f[:, [0, -1]]).max() / f.max())},
