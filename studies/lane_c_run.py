@@ -40,8 +40,8 @@ def seeds(r):
     return [(s, k, A * np.exp(1j * ph)) for (s, k, A), ph in zip(BASE, PHASES[r])]
 
 
-def model(vq, Nn):
-    return ds.Model(Nx=8, Nn=Nn, nu=0.0, Lx=Lx, qs=(-1.0, 1.0), Omega_cs=(1.0, 1 / 1836),
+def model(vq, Nn, Nx=8):
+    return ds.Model(Nx=Nx, Nn=Nn, nu=0.0, Lx=Lx, qs=(-1.0, 1.0), Omega_cs=(1.0, 1 / 1836),
                     alpha_s=(a_e,) * 3 + (a_i,) * 3, u_s=(0.0,) * 6, mode="prescribed_drive",
                     E_drive=(vq * vte, 0.0, 0.0), omega_drive=w_tot, frame="pump")
 
@@ -75,6 +75,7 @@ def main(argv=None):
     ap.add_argument("--Nn", type=int, required=True)
     ap.add_argument("--real", type=int, default=0, choices=(-1, 0, 1, 2))
     ap.add_argument("--T", type=float, default=1000.0)
+    ap.add_argument("--Nx", type=int, default=8)
     a = ap.parse_args(argv)
     stats = []
     run0 = _sim.run
@@ -85,7 +86,7 @@ def main(argv=None):
         return o
 
     _sim.run = counted
-    m = model(a.vq, a.Nn)
+    m = model(a.vq, a.Nn, a.Nx)
     y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], seeds(a.real)))
     tic = time.perf_counter()
     out = ds.run_adaptive(m, y0, a.T, SEG, n_save_segment=NSAVE, rtol=1e-10, atol=1e-14, max_steps=200_000)
@@ -95,9 +96,9 @@ def main(argv=None):
         out[k] = out[k][good]
     K, Th, Tx, Q = diagnostics(m, out)
     st = np.array(stats)
-    case = f"vq{a.vq:g}_Nn{a.Nn}_r{a.real}"
+    case = f"vq{a.vq:g}_Nn{a.Nn}_r{a.real}" + ("" if a.Nx == 8 else f"_Nx{a.Nx}")
     scale = max(np.abs(out["W"][:, 2]).max(), 1e-300)
-    rec = {"case": case, "vq_over_vte": a.vq, "Nn": a.Nn, "nu": 0.0, "realization": a.real, "phases": PHASES.get(a.real),
+    rec = {"case": case, "vq_over_vte": a.vq, "Nn": a.Nn, "Nx": a.Nx, "nu": 0.0, "realization": a.real, "phases": PHASES.get(a.real),
            "T_requested": a.T, "status": out["status"], "failure_reason": out["failure_reason"],
            "t_reached": float(out["t"][-1]), "events": len(out["events"]),
            "max_event_moment_defect": max([e["moment_defect"] for e in out["events"] if "moment_defect" in e],
@@ -106,11 +107,12 @@ def main(argv=None):
            "steps": int(st[:, 0].sum()), "rejected": int(st[:, 1].sum()), "compile_time": float(st[:, 2].sum()),
            "run_time": float(st[:, 3].sum()), "wall_time": wall,
            "repository_commit": _sim._git_sha(), "parent_commit": ds.PARENT_COMMIT,
-           "command": f"python studies/lane_c_run.py --vq {a.vq:g} --Nn {a.Nn} --real {a.real} --T {a.T:g}"}
+           "command": f"python studies/lane_c_run.py --vq {a.vq:g} --Nn {a.Nn} --real {a.real} --T {a.T:g} --Nx {a.Nx}"}
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / f"{case}.json").write_text(json.dumps(rec, indent=1, default=float) + "\n")
     np.savez_compressed(OUT / f"{case}.npz", t=out["t"], K=K, Th=Th, Tx=Tx, Q=Q, W=out["W"], B=out["B"],
-                        U_gamma=out["U_gamma"], seg_stats=st)
+                        U_gamma=out["U_gamma"], seg_stats=st,
+                        Ek2=np.abs(out["Fk"][:, 0, 0, :, 0]) ** 2)  # |E_x(k)|^2 per rfft mode
     print(json.dumps(rec, default=float), flush=True)
 
 

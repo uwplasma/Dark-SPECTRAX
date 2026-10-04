@@ -103,17 +103,24 @@ for vq in VQ:
         below = late & (ratio < 0.9)
         e["W_ext_over_W_lin"] = {"at_t_cert": float(ratio[-1]), "min_t_gt_20": float(ratio[late].min()),
                                  "first_below_0.9": float(t[np.argmax(below)]) if below.any() else None}
-        i = np.flatnonzero(sel)[-1]
-        Wx = d["W"][i, 2]
+        P = 2 * np.pi / w
+        cyc = sel & (d["t"] > tc - 3 * P)  # last three drive periods inside the certified window
+        Wm = d["W"][cyc, 2].mean()
+        e["W_ext_over_W_lin"]["cycle_avg_at_t_cert"] = float(Wm / W_lin(d["t"][cyc], vq).mean())
+        fit = late & (t > 100)
+        e["W_ext_over_W_lin"]["detuning_fit_dw"] = float(np.sqrt(max(np.polyfit(t[fit] ** 2, 1 - ratio[fit], 1)[0], 0) * 12))
         e["partition_at_t_cert"] = {
-            "t": float(d["t"][i]), "W_ext_over_nTe": float(Wx / vte2),
-            "dK_e/W_ext": float((d["K"][i, 0] - d["K"][0, 0]) / Wx), "dK_i/W_ext": float((d["K"][i, 1] - d["K"][0, 1]) / Wx),
-            "dU_E/W_ext": float((d["U_gamma"][i] - d["U_gamma"][0]) / Wx),
-            "dThermal_e/W_ext": float((d["Th"][i, 0] - d["Th"][0, 0]) / Wx),
-            "dThermal_i/W_ext": float((d["Th"][i, 1] - d["Th"][0, 1]) / Wx)}
+            "window": [float(d["t"][cyc][0]), float(d["t"][cyc][-1])], "W_ext_over_nTe": float(Wm / vte2),
+            **{f"{nm}/W_ext": float(np.mean(x[cyc] - x[0]) / Wm) for nm, x in (
+                ("dK_e", d["K"][:, 0]), ("dK_i", d["K"][:, 1]), ("dU_E", d["U_gamma"]),
+                ("dThermal_e(k=0)", d["Th"][:, 0]), ("dThermal_i(k=0)", d["Th"][:, 1]))},
+            "dThermal_e(k=0) peak-to-peak/W_ext": float(np.ptp(d["Th"][cyc, 0]) / Wm)}
         if tc > 80:
             e["Q_i_last_window"] = qfit(d["t"], d["Q"][:, 1], tc, tc - 60)
-            e["Q_e_last_window"] = qfit(d["t"], d["Q"][:, 0], tc, tc - 60)
+            s60 = (d["t"] >= tc - 60) & (d["t"] <= tc)
+            e["Q_i_last_window"]["E_mean_amp"] = float(np.sqrt(2 * d["U_gamma"][s60].max()))
+            e["Q_i_last_window"]["amp_w_over_E_mean_amp"] = e["Q_i_last_window"]["amp_w"] / e["Q_i_last_window"]["E_mean_amp"]
+            e["Q_e_minus_Q_i_max"] = float(np.abs(d["Q"][:, 0] - d["Q"][:, 1]).max())
     S["scan"][f"{vq:g}"] = e
     print(vq, json.dumps({k: e.get(k) for k in ("pairs", "certified", "heating_at_t_res")}, default=float), flush=True)
 
@@ -159,4 +166,35 @@ if len(pts) >= 2:
     S["boundary_fit"] = {"points": pts, "t_res ~ C vq^p": {"p": float(p), "C": float(np.exp(c))},
                          "heating_at_t_res_range": [min(S["scan"][f"{v:g}"]["heating_at_t_res"]["dK_e"] for v, _ in pts),
                                                     max(S["scan"][f"{v:g}"]["heating_at_t_res"]["dK_e"] for v, _ in pts)]}
+# unseeded controls: W_ext against the exact uniform oscillator
+S["unseeded"] = {}
+for vq in (0.01, 0.1):
+    r = load(vq, 64, -1)
+    if r:
+        d = r[1]
+        m = d["t"] > 20
+        S["unseeded"][f"{vq:g}"] = {"status": r[0]["status"], "t_reached": r[0]["t_reached"],
+                                    "max_rel_dev_from_W_lin": float(np.abs(d["W"][m, 2] / W_lin(d["t"][m], vq) - 1).max())}
+# mobile-ion grid vs finest Hermite (r0)
+S["grid_mobile"] = {}
+for g in sorted(D.glob("gridm_*.npz")):
+    G = dict(np.load(g))
+    vq = float(g.stem.split("_")[1][2:])
+    for Nn in (256, 128):
+        r = load(vq, Nn, 0)
+        if r:
+            break
+    h = r[1]
+    th, tg = np.round(h["t"], 6), np.round(G["t"], 6)
+    a, b = np.isin(th, tg), np.isin(tg, th)
+    tt = h["t"][a]
+    S["grid_mobile"][g.stem] = {"hermite_Nn": Nn, "common_end": float(tt[-1]),
+                                "dK_e": disagreement(tt, h["K"][a, 0] - h["K"][0, 0], G["dK_e"][b]),
+                                "W_ext": disagreement(tt, h["W"][a, 2], G["W_ext"][b]),
+                                "grid_first_fmin_below_-1e-3": float(G["t"][np.argmax(G["fmin_rel"] < -1e-3)])
+                                if (G["fmin_rel"] < -1e-3).any() else None,
+                                "grid_first_edge_above_1e-6": float(G["t"][np.argmax(G["edge"] > 1e-6)])
+                                if (G["edge"] > 1e-6).any() else None,
+                                "U_k_at": {f"{T}": float(np.interp(T, G["t"], G["U_k"])) for T in (100, 300, 400, 500, 600, 700, 900)
+                                           if T <= G["t"][-1]}}
 (D / "summary.json").write_text(json.dumps(S, indent=1, default=float) + "\n")

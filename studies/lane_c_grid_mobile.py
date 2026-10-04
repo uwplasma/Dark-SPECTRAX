@@ -35,7 +35,7 @@ Ek = np.fft.fft(dens(si, fi) - dens(se, fe)) / Nx
 Ek[se.kx != 0] /= 1j * se.kx[se.kx != 0]
 Ek[0] = 0.0
 cur = lambda: np.fft.fft(flux(si, fi) - flux(se, fe)) / Nx  # noqa: E731
-Wx, rec = 0.0, []
+Wx, rec, spec = 0.0, [], []
 K0 = (kin(se, fe, 1.0), kin(si, fi, mi))
 every = int(round(0.5 / dt))
 tic = time.perf_counter()
@@ -43,6 +43,7 @@ for n in range(int(round(T / dt)) + 1):
     t = n * dt
     if n % every == 0:
         Ux = 0.5 * np.sum(np.abs(Ek[1:]) ** 2)  # nonzero-k field energy (box average)
+        spec.append(np.abs(Ek[: Nx // 2 + 1]) ** 2)
         rec.append([t, kin(se, fe, 1.0) - K0[0], kin(si, fi, mi) - K0[1], Wx, Ux, 0.5 * np.abs(Ek[0]) ** 2,
                     fe.min() / fe.max(), np.abs(fe[:, [0, -1]]).max() / fe.max()])
     if n == int(round(T / dt)):
@@ -63,7 +64,7 @@ r = np.array(rec)
 tag = f"gridm_vq{vq:g}_Nx{Nx}_Nv{Nve}_dt{dt:g}"
 out = Path(__file__).resolve().parent / "lane_c"
 np.savez_compressed(out / f"{tag}.npz", t=r[:, 0], dK_e=r[:, 1], dK_i=r[:, 2], W_ext=r[:, 3], U_k=r[:, 4], U_0=r[:, 5],
-                    fmin_rel=r[:, 6], edge=r[:, 7])
+                    fmin_rel=r[:, 6], edge=r[:, 7], Ek2=np.array(spec))
 (out / f"{tag}.json").write_text(json.dumps({"case": tag, "wall_time": time.perf_counter() - tic, "T": T,
                                              "min_f_rel": float(r[:, 6].min()), "max_edge": float(r[:, 7].max()),
                                              "command": "python studies/lane_c_grid_mobile.py " + " ".join(sys.argv[1:])}, indent=1) + "\n")
