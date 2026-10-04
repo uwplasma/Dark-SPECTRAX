@@ -47,7 +47,7 @@ python -m pip install -e ".[test]"
 python -m darkspectrax examples/landau.toml --out artifacts/landau
 ```
 
-The parent is pinned to SPECTRAX commit `c0910a1ee29d40f8250091d2ea037f74a14e2830`: the SPECTRAX integration branch
+The parent is pinned to SPECTRAX commit `ae2dd9d2a9de9c43a34626bc56d7ac0abd88ba2b` (lane-a: integration/dark-baseline + PR #61): the SPECTRAX integration branch
 `integration/dark-baseline` (main `ab87385` plus unmerged PRs #48, #46, #13, #12, #9, #55, #50, #44, #18, #51 and the
 moving-Hermite-basis stack #56-#60), not a release.
 `--out` receives `run.json` (provenance, solver statistics, ledger and Gauss maxima) and `run.npz`;

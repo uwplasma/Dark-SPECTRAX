@@ -164,7 +164,8 @@ def adapt_basis(model: Model, y, t=None, schedule_basis=None, **trigger):
 
     Live (``schedule_basis=None``): the parent's ``remap_trigger`` decides from the measured moments
     (keyword arguments are passed to it), and ``remap_event`` applies the capped move and returns
-    its record. Replay: ``schedule_basis`` is a recorded basis, applied without any decision.
+    its record. Replay: ``schedule_basis`` is a recorded basis, applied without any decision. ``keep_width=True``
+    makes live remaps shift-only (width kept), for use with the continuous width policy.
     Returns ``(y, record)``; ``record`` is None when nothing fired.
     """
     from spectrax._remap import remap, remap_event, remap_trigger
@@ -173,7 +174,15 @@ def adapt_basis(model: Model, y, t=None, schedule_basis=None, **trigger):
     if schedule_basis is not None:
         new = jnp.asarray(schedule_basis, complex)
         return {**y, "Ck": remap(y["Ck"], y["B"], new, *shape), "B": new}, None
+    trigger = dict(trigger)
+    keep_width = trigger.pop("keep_width", False)
+    if keep_width:  # shift-only remaps: the width is left to the continuous policy (Model.width_floor)
+        trigger.update(width_on=np.inf, max_narrow=1.0)
     fire, new, info = remap_trigger(y["Ck"], y["B"], *shape, **trigger)
+    if fire and keep_width:
+        new = np.stack([new[0], np.real(np.asarray(y["B"][1]))])
+        u, a = np.real(np.asarray(y["B"]))
+        new[0] = u + np.clip(new[0] - u, -trigger.get("max_shift", 1.0) * a, trigger.get("max_shift", 1.0) * a)
     if not fire:
         return y, None
     Ck, rec = remap_event(y["Ck"], y["B"], jnp.asarray(new), *shape, t=t,
@@ -191,17 +200,21 @@ def run_adaptive(model: Model, y0, t_max, segment, n_save_segment=11, schedule=N
     ``model.frame`` must be ``"pump"``. ``schedule`` (a list of ``(t, basis)`` from a previous
     run's ``events``) replays a frozen remap schedule instead of deciding live. Returns the
     concatenated saves (``t, K, U_gamma, U_D, W, B, Ck, Fk``), the work ledger closed over the
-    whole run, the event list and ``status`` (failure of any segment stops the run).
+    whole run, the event list, the summed solver ``cost`` (steps, rejected steps, compile and run time)
+    and ``status`` (failure of any segment stops the run).
     """
     if model.frame != "pump":
         raise ValueError("run_adaptive needs model.frame == 'pump'")
     y, t, parts, events = y0, 0.0, [], []
+    cost = dict.fromkeys(("num_steps", "num_rejected", "compile_time", "run_time"), 0)
     nseg = int(round(t_max / segment))
     replay = {round(float(tt), 9): b for tt, b in (schedule or [])}
     out = {"status": "success", "failure_reason": None}
     for k in range(nseg):
         seg = run(model, y, segment, n_save=n_save_segment, t0=t, **run_kw)
         parts.append({key: seg[key][(0 if k == 0 else 1):] for key in _SAVED})  # drop the repeated start
+        for key in cost:
+            cost[key] += seg[key]
         if seg["status"] != "success":
             out.update(status="failure", failure_reason=f"segment {k}: {seg['failure_reason']}")
             break
@@ -227,7 +240,7 @@ def run_adaptive(model: Model, y0, t_max, segment, n_save_segment=11, schedule=N
     out["ledger_defect"] = np.array(((out["K"] - out["K"][0]) - W.sum(axis=1),
                                      (out["U_gamma"] - out["U_gamma"][0]) + W[:, 0],
                                      (out["U_D"] - out["U_D"][0]) + W[:, 1]))
-    out["events"], out["t_reached"] = events, float(t)
+    out["events"], out["t_reached"], out["cost"] = events, float(t), cost
     return out
 
 

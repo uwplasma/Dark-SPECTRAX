@@ -27,17 +27,20 @@ from spectrax._diagnostics import _rfft_weights as _parent_rfft_weights
 from spectrax._model import Hermite_Fourier_system as _parent_kinetic
 from spectrax._model import plasma_current as _parent_current
 from spectrax._model import uniform_acceleration as _parent_uniform_acceleration
+from spectrax._model import basis_rate_terms as _parent_basis_rate
+from spectrax._initialization import filter_spectrum as _parent_filter_spectrum
+from spectrax._remap import moment_target as _parent_moment_target
 from spectrax._simulation import _twothirds_mask as _parent_mask
 from spectrax._simulation import cross_product as _cross
 
 jax.config.update("jax_enable_x64", True)
 
-PARENT_COMMIT = "c0910a1ee29d40f8250091d2ea037f74a14e2830"  # SPECTRAX integration/dark-baseline, not a release
+PARENT_COMMIT = "ae2dd9d2a9de9c43a34626bc56d7ac0abd88ba2b"  # SPECTRAX integration/lane-a (dark-baseline + #61), not a release
 MODES = ("ordinary", "prescribed_drive", "self_consistent")
 FRAMES = ("fixed", "pump")
 _FFT_AXES = (-1, -3, -2)  # parent convention: rfft along x, stored on axis -2
 
-__all__ = ["Model", "MODES", "FRAMES", "PARENT_COMMIT", "rhs", "inner", "hermite_index", "basis_of"]
+__all__ = ["Model", "MODES", "FRAMES", "PARENT_COMMIT", "rhs", "width_rate", "inner", "hermite_index", "basis_of"]
 
 
 def hermite_index(n, m, p, Nn, Nm):
@@ -76,6 +79,10 @@ class Model:
     phase_drive: float = 0.0
     sweep_drive: float = 0.0
     frame: str = "fixed"
+    width_floor: float = 0.0
+    width_tau: float = 10.0
+    filter_rate: float = 0.0
+    filter_order: int = 16
     _p: dict = field(default=None, repr=False)
 
     def __post_init__(self):
@@ -90,6 +97,10 @@ class Model:
             raise ValueError("E_drive is only used in mode='prescribed_drive'")
         if self.mode == "ordinary" and self.eta != 0:
             raise ValueError("mode='ordinary' has no dark coupling; set eta=0")
+        if self.width_floor and self.frame != "pump":
+            raise ValueError("width_floor (continuous width growth) needs frame='pump'")
+        if self.filter_rate and self.nu:
+            raise ValueError("filter_rate replaces the hypercollision spectrum; set nu=0")
         self.p  # build parent grids eagerly, never inside a JAX trace
 
     @property
@@ -103,6 +114,9 @@ class Model:
             user = {k: jnp.asarray(getattr(self, k), dtype=float)
                     for k in ("qs", "Omega_cs", "alpha_s", "u_s", "Lx", "Ly", "Lz", "nu")}
             user["D"] = 0.0
+            if self.filter_rate:  # Hou-Li-type exponential filter in RHS form: -rate*s(n)*C, s = 0 for n <= 2
+                user["nu"] = jnp.asarray(self.filter_rate, dtype=float)
+                user["collision_matrix"] = _parent_filter_spectrum(self.Nn, self.Nm, self.Np, self.filter_order)
             p = _parent_init(user, self.Nx, self.Ny, self.Nz, self.Nn, self.Nm, self.Np,
                              self.Ns, 2, 0.01)
             p["mask23"] = _parent_mask(self.Ny, self.Nx, self.Nz)
@@ -145,6 +159,20 @@ def basis_of(model: Model, y=None):
     return model.p["u_s"], model.p["alpha_s"]
 
 
+def width_rate(model: Model, Ck, B):
+    """Continuous width growth ``a_dot = max(0, (c*sigma - a)/tau)`` per species and axis.
+
+    ``sigma`` is the measured k = 0 rms speed about the mean (parent ``moment_target``), ``c`` is
+    ``model.width_floor`` and ``tau`` is ``model.width_tau``. The width never shrinks; axes with fewer
+    than 3 Hermite modes (no measured variance) keep their width.
+    """
+    shape = (model.Nn, model.Nm, model.Np, model.Ns)
+    _, sigma = _parent_moment_target(Ck, B, *shape)
+    a = jnp.real(B[1])
+    has3 = jnp.tile(jnp.array([model.Nn, model.Nm, model.Np]) >= 3, model.Ns)
+    return jnp.where(has3, jnp.maximum(0.0, (model.width_floor * sigma - a) / model.width_tau), 0.0)
+
+
 def _weights(Nx, shape):
     """Parseval weights for rfft storage along x: <f g> = sum w Re(f_k g_k*) (parent's, from PR #9)."""
     return _parent_rfft_weights(Nx, shape[1])[None, :, None]
@@ -185,6 +213,9 @@ def rhs(t, y, model: Model):
         p["sqrt_n_plus"], p["sqrt_n_minus"], p["sqrt_m_plus"], p["sqrt_m_minus"],
         p["sqrt_p_plus"], p["sqrt_p_minus"], p["Lx"], p["Ly"], p["Lz"], p["nu"], p["D"],
         a_s, u_s, p["qs"], p["Omega_cs"], Nn, Nm, Np, Ns, mask23=mask, F0=F0)
+    a_dot = width_rate(m, Ck, y["B"]) if pump and m.width_floor else None
+    if a_dot is not None:  # exact moving-width terms (parent #57), widening only
+        dCk = dCk + _parent_basis_rate(Ck, jnp.zeros_like(a_dot), a_dot, a_s, Nn, Nm, Np, Ns).reshape(dCk.shape)
     J = _parent_current(p["qs"], a_s, u_s, Ck, Nn, Nm, Np, Ns)
 
     dE = 1j * _cross(nabla, Fk[3:]) - J / om0
@@ -207,5 +238,5 @@ def rhs(t, y, model: Model):
     dW = jnp.stack([P_em, P_D, P_ext]).astype(jnp.complex128)
     out = {"Ck": dCk.reshape(Ck.shape), "Fk": jnp.concatenate([dE, dB]), "Dk": dDk, "W": dW}
     if pump:
-        out["B"] = jnp.stack([u_dot, jnp.zeros_like(u_dot)]).astype(y["B"].dtype)
+        out["B"] = jnp.stack([u_dot, jnp.zeros_like(u_dot) if a_dot is None else a_dot]).astype(y["B"].dtype)
     return out

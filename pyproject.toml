@@ -11,9 +11,9 @@ requires-python = ">=3.11"
 license = {file = "LICENSE"}
 authors = [{name = "UWPlasma, UW-Madison group", email = "rogerio.jorge@wisc.edu"}]
 dependencies = [
-  # Exact parent commit: SPECTRAX integration branch integration/dark-baseline
+  # Exact parent commit: SPECTRAX integration branch integration/lane-a
   # (main ab87385 + unmerged PRs #48 #46 #13 #12 #9 #55 #50 #44 #18 #51), not a release. Its own dependency list omits these:
-  "spectrax @ git+https://github.com/uwplasma/SPECTRAX.git@c0910a1ee29d40f8250091d2ea037f74a14e2830",
+  "spectrax @ git+https://github.com/uwplasma/SPECTRAX.git@ae2dd9d2a9de9c43a34626bc56d7ac0abd88ba2b",
   "jax",
   "diffrax",
   "orthax",
