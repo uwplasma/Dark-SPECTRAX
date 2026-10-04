@@ -64,6 +64,24 @@ Requirements found while testing:
   including sizes divisible by 3, is alias-free for quadratic products.
 * Initial data must lie in the active band; the helpers here only populate retained modes.
 
+### Pump frame and basis remaps (`frame="pump"`, parent PRs #56-#60)
+
+With `Model(frame="pump")` the state carries `B = stack([u_s, alpha_s])`. Each species centre follows the total
+uniform force, $\dot u_s=(q/m)_s(\bar E+u_s\times\bar B)$, where the box averages include $\eta E_D$ and the drive.
+The parent kernel then uses $E-\bar E$ and $u\times(B-\bar B)$. This is an exact change of variables
+(SPECTRAX `uniform_acceleration`, `Hermite_Fourier_system(F0=...)`). The coherent $k=0$ quiver then sits in $u_s(t)$,
+not in high Hermite orders.
+
+Widths and residual drifts change only between segments, through the parent's exact lower-triangular remap
+(`run_adaptive`, `adapt_basis`):
+* the remap preserves every moment of order below the truncation;
+* triggers fire on $|U-u|/a>0.3$ or $|a'/a-1|>0.05$, with hysteresis;
+* caps are $|\Delta u|\le a'$, $a/a'\le1.1$ and $a'\ge1.1\sigma$;
+* every event is recorded and can be replayed as a frozen schedule.
+
+The kinetic energy is quadratic in $(u_s, C)$ in this frame, so an explicit scheme closes the work ledger to solver
+tolerance rather than to round-off.
+
 ## Initialization
 
 * `maxwellian`: basis-matched drifting Maxwellians plus density perturbations (conjugate pair stored for k_x = 0).

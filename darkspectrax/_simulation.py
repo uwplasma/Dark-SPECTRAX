@@ -19,7 +19,7 @@ import numpy as np
 from ._diagnostics import charge_density, energies, gauss_residuals
 from ._model import PARENT_COMMIT, Model, rhs
 
-__all__ = ["maxwellian", "consistent_fields", "proca_mode", "run", "save_record"]
+__all__ = ["maxwellian", "consistent_fields", "proca_mode", "run", "save_record", "adapt_basis", "run_adaptive"]
 
 
 def maxwellian(model: Model, densities, perturbations=()):
@@ -49,7 +49,7 @@ def consistent_fields(model: Model, y, E_mean=(0.0, 0.0, 0.0)):
     E_D = -i k phi_D; A_D = B_D = 0. Rejects nonzero mean charge.
     """
     om0 = model.Omega_cs[0]
-    rho = charge_density(model, y["Ck"])
+    rho = charge_density(model, y["Ck"], y.get("B"))
     q0 = abs(complex(rho[0, 0, 0]))
     if q0 > 1e-12 * max(1.0, float(jnp.max(jnp.abs(rho)))):
         raise ValueError(f"periodic box is not neutral: mean charge {q0:.3e}")
@@ -136,6 +136,7 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
     out.update({
         "t": np.asarray(sol.ts), "Ck": np.asarray(ys["Ck"]), "Fk": np.asarray(ys["Fk"]),
         "Dk": np.asarray(ys["Dk"]), "W": np.asarray(ys["W"]).real,
+        "B": np.asarray(ys["B"]).real if "B" in ys else None,
         "gauss": np.array([[float(a), float(b)] for a, b in gs]),
         "status": "success", "failure_reason": None,
         "num_valid_times": int(np.isfinite(np.asarray(sol.ts)).sum()),
@@ -155,6 +156,78 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
                             (out["U_gamma"] - out["U_gamma"][0]) + W[:, 0],
                             (out["U_D"] - out["U_D"][0]) + W[:, 1])
     out["ledger_defect"] = np.array(out["ledger_defect"])
+    return out
+
+
+def adapt_basis(model: Model, y, t=None, schedule_basis=None, **trigger):
+    """Remap the pump-frame basis between segments with the parent's exact triangular remap.
+
+    Live (``schedule_basis=None``): the parent's ``remap_trigger`` decides from the measured moments
+    (keyword arguments are passed to it), and ``remap_event`` applies the capped move and returns
+    its record. Replay: ``schedule_basis`` is a recorded basis, applied without any decision.
+    Returns ``(y, record)``; ``record`` is None when nothing fired.
+    """
+    from spectrax._remap import remap, remap_event, remap_trigger
+
+    shape = (model.Nn, model.Nm, model.Np, model.Ns)
+    if schedule_basis is not None:
+        new = jnp.asarray(schedule_basis, complex)
+        return {**y, "Ck": remap(y["Ck"], y["B"], new, *shape), "B": new}, None
+    fire, new, info = remap_trigger(y["Ck"], y["B"], *shape, **trigger)
+    if not fire:
+        return y, None
+    Ck, rec = remap_event(y["Ck"], y["B"], jnp.asarray(new), *shape, t=t,
+                          max_shift=trigger.get("max_shift", 1.0), max_narrow=trigger.get("max_narrow", 1.1))
+    rec["trigger"] = info
+    return {**y, "Ck": Ck, "B": jnp.asarray(new, complex)}, rec
+
+
+_SAVED = ("t", "K", "U_gamma", "U_D", "W", "B", "Ck", "Fk", "Dk")
+
+
+def run_adaptive(model: Model, y0, t_max, segment, n_save_segment=11, schedule=None, trigger=None, **run_kw):
+    """Integrate in segments of length ``segment`` with a basis remap check after each one.
+
+    ``model.frame`` must be ``"pump"``. ``schedule`` (a list of ``(t, basis)`` from a previous
+    run's ``events``) replays a frozen remap schedule instead of deciding live. Returns the
+    concatenated saves (``t, K, U_gamma, U_D, W, B, Ck, Fk``), the work ledger closed over the
+    whole run, the event list and ``status`` (failure of any segment stops the run).
+    """
+    if model.frame != "pump":
+        raise ValueError("run_adaptive needs model.frame == 'pump'")
+    y, t, parts, events = y0, 0.0, [], []
+    nseg = int(round(t_max / segment))
+    replay = {round(float(tt), 9): b for tt, b in (schedule or [])}
+    out = {"status": "success", "failure_reason": None}
+    for k in range(nseg):
+        seg = run(model, y, segment, n_save=n_save_segment, t0=t, **run_kw)
+        parts.append({key: seg[key][(0 if k == 0 else 1):] for key in _SAVED})  # drop the repeated start
+        if seg["status"] != "success":
+            out.update(status="failure", failure_reason=f"segment {k}: {seg['failure_reason']}")
+            break
+        t = t + segment
+        y = {"Ck": jnp.asarray(seg["Ck"][-1]), "Fk": jnp.asarray(seg["Fk"][-1]), "Dk": jnp.asarray(seg["Dk"][-1]),
+             "W": jnp.asarray(seg["W"][-1], complex), "B": jnp.asarray(seg["B"][-1], complex)}
+        if k == nseg - 1:
+            break
+        if schedule is not None:
+            b = replay.get(round(t, 9))
+            if b is not None:
+                y, _ = adapt_basis(model, y, schedule_basis=b)
+                events.append({"t": t, "new_basis": np.asarray(b).tolist()})
+        else:
+            y, rec = adapt_basis(model, y, t=t, **(trigger or {}))
+            if rec is not None:
+                events.append(rec)
+        parts[-1]["B"] = np.concatenate([parts[-1]["B"][:-1], np.asarray(y["B"]).real[None]])
+        parts[-1]["Ck"] = np.concatenate([parts[-1]["Ck"][:-1], np.asarray(y["Ck"])[None]])
+    for key in _SAVED:
+        out[key] = np.concatenate([p[key] for p in parts])
+    W = out["W"] - out["W"][0]
+    out["ledger_defect"] = np.array(((out["K"] - out["K"][0]) - W.sum(axis=1),
+                                     (out["U_gamma"] - out["U_gamma"][0]) + W[:, 0],
+                                     (out["U_D"] - out["U_D"][0]) + W[:, 1]))
+    out["events"], out["t_reached"] = events, float(t)
     return out
 
 

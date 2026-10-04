@@ -26,16 +26,18 @@ from spectrax._initialization import initialize_simulation_parameters as _parent
 from spectrax._diagnostics import _rfft_weights as _parent_rfft_weights
 from spectrax._model import Hermite_Fourier_system as _parent_kinetic
 from spectrax._model import plasma_current as _parent_current
+from spectrax._model import uniform_acceleration as _parent_uniform_acceleration
 from spectrax._simulation import _twothirds_mask as _parent_mask
 from spectrax._simulation import cross_product as _cross
 
 jax.config.update("jax_enable_x64", True)
 
-PARENT_COMMIT = "9d0982d6fb3ec2cb602b930ed66a87845f77e570"  # SPECTRAX integration/dark-baseline, not a release
+PARENT_COMMIT = "c0910a1ee29d40f8250091d2ea037f74a14e2830"  # SPECTRAX integration/dark-baseline, not a release
 MODES = ("ordinary", "prescribed_drive", "self_consistent")
+FRAMES = ("fixed", "pump")
 _FFT_AXES = (-1, -3, -2)  # parent convention: rfft along x, stored on axis -2
 
-__all__ = ["Model", "MODES", "PARENT_COMMIT", "rhs", "inner", "hermite_index"]
+__all__ = ["Model", "MODES", "FRAMES", "PARENT_COMMIT", "rhs", "inner", "hermite_index", "basis_of"]
 
 
 def hermite_index(n, m, p, Nn, Nm):
@@ -73,11 +75,14 @@ class Model:
     omega_drive: float = 1.0
     phase_drive: float = 0.0
     sweep_drive: float = 0.0
+    frame: str = "fixed"
     _p: dict = field(default=None, repr=False)
 
     def __post_init__(self):
         if self.mode not in MODES:
             raise ValueError(f"mode must be one of {MODES}, got {self.mode!r}")
+        if self.frame not in FRAMES:
+            raise ValueError(f"frame must be one of {FRAMES}, got {self.frame!r}")
         Ns = len(self.qs)
         if len(self.Omega_cs) != Ns or len(self.alpha_s) != 3 * Ns or len(self.u_s) != 3 * Ns:
             raise ValueError("qs, Omega_cs, alpha_s (3*Ns) and u_s (3*Ns) are inconsistent")
@@ -119,7 +124,9 @@ class Model:
         return {"Ck": jnp.zeros((self.Ns * self.Nn * self.Nm * self.Np, *self.shape), c),
                 "Fk": jnp.zeros((6, *self.shape), c),
                 "Dk": jnp.zeros((10, *self.shape), c),
-                "W": jnp.zeros(3, c)}
+                "W": jnp.zeros(3, c),
+                **({"B": jnp.stack([jnp.asarray(self.u_s, float), jnp.asarray(self.alpha_s, float)]).astype(c)}
+                   if self.frame == "pump" else {})}
 
     def drive(self, t):
         """Uniform prescribed field E0 cos(theta), theta = (omega + sweep t) t + phase.
@@ -128,6 +135,14 @@ class Model:
         The electron acceleration amplitude is Omega_cs[0] |E0| in parent units."""
         theta = (self.omega_drive + self.sweep_drive * t) * t + self.phase_drive
         return jnp.asarray(self.E_drive) * jnp.cos(theta)
+
+
+def basis_of(model: Model, y=None):
+    """Hermite basis ``(u_s, alpha_s)``, each shape ``(3*Ns,)``: the state's ``B`` in the pump frame,
+    otherwise the model's constants."""
+    if y is not None and "B" in y:
+        return jnp.real(y["B"][0]), jnp.real(y["B"][1])
+    return model.p["u_s"], model.p["alpha_s"]
 
 
 def _weights(Nx, shape):
@@ -160,12 +175,17 @@ def rhs(t, y, model: Model):
     if m.mode == "prescribed_drive":
         F = F.at[:3].add(Ed[:, None, None, None])
     C = jnp.fft.irfftn(Ck * mask, s=(Nz, Ny, Nx), axes=_FFT_AXES, norm="forward")
+    u_s, a_s = basis_of(m, y)
+    # Pump frame: each centre follows (q/m)(E0 + u x B0) of the total uniform force field
+    # (ordinary + eta*dark + drive), and the kernel drops that force (exact change of variables).
+    pump = m.frame == "pump"
+    u_dot, F0 = _parent_uniform_acceleration(F, u_s, p["qs"], p["Omega_cs"], Ns) if pump else (None, None)
     dCk = _parent_kinetic(
         Ck, C, F, p["kx_grid"], p["ky_grid"], p["kz_grid"], p["k2_grid"], p["collision_matrix"],
         p["sqrt_n_plus"], p["sqrt_n_minus"], p["sqrt_m_plus"], p["sqrt_m_minus"],
         p["sqrt_p_plus"], p["sqrt_p_minus"], p["Lx"], p["Ly"], p["Lz"], p["nu"], p["D"],
-        p["alpha_s"], p["u_s"], p["qs"], p["Omega_cs"], Nn, Nm, Np, Ns, mask23=mask)
-    J = _parent_current(p["qs"], p["alpha_s"], p["u_s"], Ck, Nn, Nm, Np, Ns)
+        a_s, u_s, p["qs"], p["Omega_cs"], Nn, Nm, Np, Ns, mask23=mask, F0=F0)
+    J = _parent_current(p["qs"], a_s, u_s, Ck, Nn, Nm, Np, Ns)
 
     dE = 1j * _cross(nabla, Fk[3:]) - J / om0
     dB = -1j * _cross(nabla, Fk[:3])
@@ -185,4 +205,7 @@ def rhs(t, y, model: Model):
     # Ledger scalars are stored as complex with zero imaginary part (Diffrax
     # requires one dtype across the RK stage buffers).
     dW = jnp.stack([P_em, P_D, P_ext]).astype(jnp.complex128)
-    return {"Ck": dCk.reshape(Ck.shape), "Fk": jnp.concatenate([dE, dB]), "Dk": dDk, "W": dW}
+    out = {"Ck": dCk.reshape(Ck.shape), "Fk": jnp.concatenate([dE, dB]), "Dk": dDk, "W": dW}
+    if pump:
+        out["B"] = jnp.stack([u_dot, jnp.zeros_like(u_dot)]).astype(y["B"].dtype)
+    return out

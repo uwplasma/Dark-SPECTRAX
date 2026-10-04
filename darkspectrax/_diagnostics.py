@@ -10,7 +10,7 @@ from __future__ import annotations
 import jax.numpy as jnp
 import numpy as np
 
-from ._model import Model, hermite_index, inner
+from ._model import Model, basis_of, hermite_index, inner
 
 __all__ = ["moments", "energies", "gauss_residuals", "charge_density", "fit_modes"]
 
@@ -23,14 +23,15 @@ def _coef(model, Ck, s, n, m, p):
     return Ck[s * H + hermite_index(n, m, p, model.Nn, model.Nm)]
 
 
-def moments(model: Model, Ck):
+def moments(model: Model, Ck, basis=None):
     """Per-species Fourier coefficients of density, flux M_i and second moments M_ij.
 
+    ``basis`` is the pump-frame state ``B = stack([u_s, alpha_s])``; default: the model's basis.
     Returns ``n`` with shape ``(Ns, *grid)``, ``M`` ``(Ns, 3, *grid)`` and
     ``M2`` ``(Ns, 3, 3, *grid)`` (velocity moments of f, not multiplied by mass).
     """
-    a = np.asarray(model.alpha_s, float).reshape(-1, 3)
-    u = np.asarray(model.u_s, float).reshape(-1, 3)
+    u, a = basis_of(model, None if basis is None else {"B": basis})
+    a, u = a.reshape(-1, 3), u.reshape(-1, 3)
     e = np.eye(3, dtype=int)
     r2 = np.sqrt(2.0)
     ns, Ms, M2s = [], [], []
@@ -57,9 +58,9 @@ def moments(model: Model, Ck):
     return jnp.stack(ns), jnp.stack(Ms), jnp.stack(M2s)
 
 
-def charge_density(model: Model, Ck):
+def charge_density(model: Model, Ck, basis=None):
     """Fourier coefficients of rho = sum_s q_s n_s + rho_background."""
-    n, _, _ = moments(model, Ck)
+    n, _, _ = moments(model, Ck, basis)
     rho = jnp.tensordot(jnp.asarray(model.qs, float), n, axes=1)
     return rho.at[0, 0, 0].add(model.rho_background)
 
@@ -67,7 +68,7 @@ def charge_density(model: Model, Ck):
 def energies(model: Model, y):
     """Box-averaged kinetic, Maxwell and complete Proca energies of a state."""
     om0 = model.Omega_cs[0]
-    _, _, M2 = moments(model, y["Ck"])
+    _, _, M2 = moments(model, y["Ck"], y.get("B"))
     K_s = 0.5 * jnp.asarray(model.masses) * jnp.real(jnp.trace(M2[..., 0, 0, 0], axis1=1, axis2=2))
     Fk, Dk, Nx = y["Fk"], y["Dk"], model.Nx
     U_gamma = 0.5 * om0 ** 2 * inner(Nx, Fk, Fk)
@@ -79,7 +80,7 @@ def energies(model: Model, y):
 def gauss_residuals(model: Model, y):
     """Max |residual| of ik.E - rho/Om0 and ik.E_D + Omega_D^2 phi_D - eta rho/Om0."""
     nab = model.p["nabla"]
-    rho = charge_density(model, y["Ck"]) / model.Omega_cs[0]
+    rho = charge_density(model, y["Ck"], y.get("B")) / model.Omega_cs[0]
     Fk, Dk = y["Fk"], y["Dk"]
     r_ord = 1j * jnp.sum(nab * Fk[:3], axis=0) - rho
     r_dark = 1j * jnp.sum(nab * Dk[:3], axis=0) + model.Omega_D ** 2 * Dk[9] - model.eta * rho
