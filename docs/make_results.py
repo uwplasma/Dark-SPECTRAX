@@ -62,6 +62,7 @@ def third_round():
           "neither refinement direction is converged yet. The finest PIC run (128 cells, 320000 particles) is within "
           "0.1% in frequency and 1% in damping of the Hermite values for both ordinary and dark runs.", "",
           "## H05/H06 pilots: drive-amplitude scan and swept drive (`python studies/hhs_scan.py`)", "",
+          f"Record from parent `{hs['parent_commit'][:7]}` (not rerun at the current pin: the scan takes over 30 minutes). "
           "HHS-v1-inspired, nonrelativistic, mobile ions (1836), Nx = 8, declared seeds, omega = 1.000272 (total). Each run "
           "had a 250000-step budget. Several runs exhausted it; before that, the Hermite state became inadmissible "
           "(a species' moment kinetic energy went negative) while the work ledger still closed. Agreement time = first "

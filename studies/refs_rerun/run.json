@@ -1,7 +1,7 @@
 {
  "case_id": "refs_rerun",
- "parent_commit": "ab87385fc84871122666df66a0fabe21dfa50dbd",
- "repository_commit": "3e8baebce13355a10a7d93b6aa047f23c5db6efd",
+ "parent_commit": "9d0982d6fb3ec2cb602b930ed66a87845f77e570",
+ "repository_commit": "e531878fab1dfea3eb52fe73ccb0c2065ceaca0c",
  "command": "python studies/compare_refs.py",
  "beta": 0.1,
  "B00": {
@@ -34,8 +34,8 @@
     1.415661662537497,
     -0.15335905584664272
    ],
-   "compile_time": 0.5596886250132229,
-   "run_time": 0.0761341669713147
+   "compile_time": 0.6092756250000093,
+   "run_time": 0.07627529199817218
   },
   "k0.5_N256": {
    "status": "success",
@@ -66,8 +66,8 @@
     1.4156616617915379,
     -0.15335907673081972
    ],
-   "compile_time": 0.496329457993852,
-   "run_time": 0.11249791699810885
+   "compile_time": 0.5484490830276627,
+   "run_time": 0.1295075829839334
   },
   "k0.3_N128": {
    "status": "success",
@@ -98,8 +98,8 @@
     1.159846298677103,
     -0.012620257234246077
    ],
-   "compile_time": 0.44219575001625344,
-   "run_time": 0.1922609159955755
+   "compile_time": 0.556836541974917,
+   "run_time": 0.2099389580253046
   },
   "k0.3_N256": {
    "status": "success",
@@ -130,8 +130,8 @@
     1.1598459325675359,
     -0.012620023858451979
    ],
-   "compile_time": 0.4638276250043418,
-   "run_time": 0.29933016700670123
+   "compile_time": 0.4988920000032522,
+   "run_time": 0.2934488339815289
   }
  },
  "B02": {

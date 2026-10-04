@@ -1,8 +1,8 @@
 {
  "case_id": "C05",
  "command": "python studies/c05_dark_jax_in_cell.py",
- "repository_commit": "3e8baebce13355a10a7d93b6aa047f23c5db6efd",
- "parent_commit": "ab87385fc84871122666df66a0fabe21dfa50dbd",
+ "repository_commit": "e531878fab1dfea3eb52fe73ccb0c2065ceaca0c",
+ "parent_commit": "9d0982d6fb3ec2cb602b930ed66a87845f77e570",
  "dark_jax_in_cell_commit": "d54757962f3b9f7ec18eb981804ef59f6db6076c",
  "physical_inputs": {
   "sigma_over_c": 0.05,
@@ -35,8 +35,8 @@
    ],
    "complex_fit_resid": 0.005613961188298193,
    "max_ledger_defect": 1.8235825260997035e-17,
-   "run_time": 0.07187091701780446,
-   "compile_time": 0.539709667005809
+   "run_time": 0.07130566600244492,
+   "compile_time": 0.5659493340062909
   },
   "ordinary_Nn256": {
    "status": "success",
@@ -51,8 +51,8 @@
    ],
    "complex_fit_resid": 0.005613961184922593,
    "max_ledger_defect": 2.435759706859988e-17,
-   "run_time": 0.11254037500475533,
-   "compile_time": 0.44776429201010615
+   "run_time": 0.11049287504283711,
+   "compile_time": 0.4679834999842569
   },
   "self_consistent_Nn128": {
    "status": "success",
@@ -67,8 +67,8 @@
    ],
    "complex_fit_resid": 0.0055752834195580215,
    "max_ledger_defect": 1.2105609593701249e-17,
-   "run_time": 0.17410316699533723,
-   "compile_time": 0.4856169169943314
+   "run_time": 0.1754929160233587,
+   "compile_time": 0.5185726669733413
   },
   "self_consistent_Nn256": {
    "status": "success",
@@ -83,8 +83,8 @@
    ],
    "complex_fit_resid": 0.005575283419373511,
    "max_ledger_defect": 1.4226268246535084e-17,
-   "run_time": 0.28555666698957793,
-   "compile_time": 0.4847472079854924
+   "run_time": 0.2789790829992853,
+   "compile_time": 0.47846516699064523
   }
  },
  "pic": {

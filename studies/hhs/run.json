@@ -1,7 +1,7 @@
 {
  "label": "HHS-v1-inspired, nonrelativistic; not a reproduction",
- "parent_commit": "ab87385fc84871122666df66a0fabe21dfa50dbd",
- "repository_commit": "7007e767b8049131e92624b07826b1924ec49c19",
+ "parent_commit": "9d0982d6fb3ec2cb602b930ed66a87845f77e570",
+ "repository_commit": "e531878fab1dfea3eb52fe73ccb0c2065ceaca0c",
  "command": "python studies/hhs_ladder.py",
  "inputs": {
   "v_te": 0.03162277660168379,
@@ -26,8 +26,8 @@
    "ledger_defect": 1.8366053122775838e-10,
    "max_quiver_over_vte": 14.947798989295787,
    "steps": 7050,
-   "compile_time": 0.5048732089926489,
-   "run_time": 1.0351782079960685
+   "compile_time": 0.5735322500113398,
+   "run_time": 1.1005231669987552
   },
   "strong_omega_tot": {
    "status": "success",
@@ -38,8 +38,8 @@
    "ledger_defect": 1.8802335383094615e-10,
    "max_quiver_over_vte": 14.908597564778447,
    "steps": 7046,
-   "compile_time": 0.414439374988433,
-   "run_time": 1.0557352500036359
+   "compile_time": 0.41759450000245124,
+   "run_time": 1.1007985000032932
   },
   "weak_omega_e": {
    "status": "success",
@@ -50,8 +50,8 @@
    "ledger_defect": 4.012226206655256e-13,
    "max_quiver_over_vte": 0.4982599663098596,
    "steps": 5895,
-   "compile_time": 0.41268220799975097,
-   "run_time": 0.8910972499870695
+   "compile_time": 0.4201732919900678,
+   "run_time": 0.9308401659945957
   },
   "weak_omega_tot": {
    "status": "success",
@@ -62,8 +62,8 @@
    "ledger_defect": 4.0676837576416117e-13,
    "max_quiver_over_vte": 0.49695325215928154,
    "steps": 5898,
-   "compile_time": 0.41685562499333173,
-   "run_time": 0.8898311250086408
+   "compile_time": 0.4809018340019975,
+   "run_time": 0.9509006250009406
   }
  },
  "H01": {
@@ -76,9 +76,9 @@
    "ledger_defect": 3.1060198426376313e-15,
    "max_gauss": 3.361026739812404e-18,
    "steps": 9015,
-   "compile_time": 0.4821533329959493,
-   "run_time": 2.6866113750147633,
-   "diagnostic_time": 13.919615374994464,
+   "compile_time": 0.4940704589826055,
+   "run_time": 2.648457416013116,
+   "diagnostic_time": 17.340736250014743,
    "max_abs_Ebar_err_over_max": 2.673131113642489e-11
   },
   "strong_omega_e": {
@@ -90,9 +90,9 @@
    "ledger_defect": 6.205109261700828e-16,
    "max_gauss": 8.673630966961189e-19,
    "steps": 2012,
-   "compile_time": 0.46597483300138265,
-   "run_time": 0.5789480829844251,
-   "diagnostic_time": 1.3430453750188462,
+   "compile_time": 0.515916832984658,
+   "run_time": 0.6122890830156393,
+   "diagnostic_time": 1.6954630420077592,
    "max_abs_Ebar_err_over_max": 5.312391377295774e-13
   }
  },
@@ -106,9 +106,9 @@
    "ledger_defect": 5.193353883368433e-16,
    "max_gauss": 6.284091470351629e-19,
    "steps": 502,
-   "compile_time": 0.5519432919973042,
-   "run_time": 0.19703133299481124,
-   "diagnostic_time": 2.5554872499778867,
+   "compile_time": 0.5861763329885434,
+   "run_time": 0.2039855839975644,
+   "diagnostic_time": 3.116556374996435,
    "Qi_max_abs": 1.8924928440761796e-08,
    "Qi_over_n0E0_max": 0.0005984587842850622,
    "Qi_pump_quadrature_fit": [
@@ -131,9 +131,9 @@
    "ledger_defect": 2.0513706496818294e-15,
    "max_gauss": 2.677652598060814e-18,
    "steps": 10597,
-   "compile_time": 0.4651010840025265,
-   "run_time": 4.15402762501617,
-   "diagnostic_time": 22.77043924998725,
+   "compile_time": 0.5268829590058886,
+   "run_time": 4.354208541015396,
+   "diagnostic_time": 28.527607583004283,
    "Qi_max_abs": 1.901522710466417e-06,
    "Qi_over_n0E0_max": 0.06013142787610775,
    "Qi_pump_quadrature_fit": [
@@ -152,9 +152,9 @@
    "ledger_defect": 2.2154273790378314e-15,
    "max_gauss": 5.354792565785617e-18,
    "steps": 10570,
-   "compile_time": 0.45818262500688434,
-   "run_time": 4.182026041002246,
-   "diagnostic_time": 22.727029917004984,
+   "compile_time": 0.5349078330036718,
+   "run_time": 4.394222958013415,
+   "diagnostic_time": 28.74664062500233,
    "Qi_max_abs": 1.8917847218434536e-06,
    "Qi_over_n0E0_max": 0.05982348563733404,
    "Qi_pump_quadrature_fit": [
@@ -181,8 +181,8 @@
    "beat_period_estimate_2pi_over_eta": 6283.185307179586,
    "ledger_defect_reservoir": 1.8115929924187864e-12,
    "run_time": [
-    0.932905749999918,
-    0.901841290993616
+    1.0069225000042934,
+    0.9536005419795401
    ]
   },
   "eta0.03": {
@@ -200,8 +200,8 @@
    "beat_period_estimate_2pi_over_eta": 209.43951023931956,
    "ledger_defect_reservoir": 1.8287689220706314e-15,
    "run_time": [
-    0.9351570419967175,
-    0.8272773329808842
+    1.1518827499821782,
+    0.9043649579980411
    ]
   }
  }
