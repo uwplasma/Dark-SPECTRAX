@@ -60,8 +60,8 @@ Requirements found while testing:
 * The kinetic-energy ledger closes only when every direction that is forced has Hermite order at least 3
   (indices 0, 1, 2). With order 2 in y and z, a run with $E_z\neq0$ showed ledger defects of $5\times10^{-7}$
   to $2\times10^{-4}$; with order 3 they fall to solver tolerance.
-* Avoid grid sizes divisible by 3: the parent mask keeps $|m|\le\lfloor N/3\rfloor$, and for $N=3K$ the product
-  of two $+K$ modes aliases into $-K$. A strict-mask upstream fix is in progress (separate SPECTRAX PR).
+* The pinned parent includes the strict 2/3 mask (SPECTRAX PR #55, keeps $3|m|<N$), so every grid size,
+  including sizes divisible by 3, is alias-free for quadratic products.
 * Initial data must lie in the active band; the helpers here only populate retained modes.
 
 ## Initialization

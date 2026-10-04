@@ -23,6 +23,7 @@ import numpy as np
 # Version-pinned adapter to the parent (private names at the pinned commit).
 # ---------------------------------------------------------------------------
 from spectrax._initialization import initialize_simulation_parameters as _parent_init
+from spectrax._diagnostics import _rfft_weights as _parent_rfft_weights
 from spectrax._model import Hermite_Fourier_system as _parent_kinetic
 from spectrax._model import plasma_current as _parent_current
 from spectrax._simulation import _twothirds_mask as _parent_mask
@@ -30,7 +31,7 @@ from spectrax._simulation import cross_product as _cross
 
 jax.config.update("jax_enable_x64", True)
 
-PARENT_COMMIT = "ab87385fc84871122666df66a0fabe21dfa50dbd"
+PARENT_COMMIT = "9d0982d6fb3ec2cb602b930ed66a87845f77e570"  # SPECTRAX integration/dark-baseline, not a release
 MODES = ("ordinary", "prescribed_drive", "self_consistent")
 _FFT_AXES = (-1, -3, -2)  # parent convention: rfft along x, stored on axis -2
 
@@ -130,12 +131,8 @@ class Model:
 
 
 def _weights(Nx, shape):
-    """Parseval weights for rfft storage along x: <f g> = sum w Re(f_k g_k*)."""
-    w = np.full(shape[1], 2.0)
-    w[0] = 1.0
-    if Nx % 2 == 0 and Nx > 1:
-        w[-1] = 1.0
-    return jnp.asarray(w)[None, :, None]
+    """Parseval weights for rfft storage along x: <f g> = sum w Re(f_k g_k*) (parent's, from PR #9)."""
+    return _parent_rfft_weights(Nx, shape[1])[None, :, None]
 
 
 def inner(Nx, a, b):

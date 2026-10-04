@@ -91,7 +91,7 @@ def proca_mode(model: Model, y, index, A):
 
 
 def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
-        solver=None, max_steps=200_000, progress=False, fixed_dt=None, t0=0.0):
+        solver=None, max_steps=200_000, progress=False, fixed_dt=None, t0=0.0, dtmin=None):
     """Integrate from ``t0`` to ``t0 + t_max`` with Dopri8 (adaptive PID, or constant ``fixed_dt``).
 
     Restart a run by passing its final state (including the work ledger ``W``) and final time as ``t0``.
@@ -99,6 +99,9 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
     Returns a dict of saved states, diagnostics, solver statistics, timings and
     the work ledger. ``status`` is ``"success"`` only when Diffrax reports
     success *and* every saved array is finite; otherwise ``failure_reason`` says why.
+    Step limits follow the parent's PR #50 semantics: ``max_steps`` is the step budget and
+    ``dtmin`` (default None: no floor) stops the solve with ``dt_min_reached`` instead of
+    crawling; ``num_valid_times`` counts the saves that hold a solution.
     """
     solver = diffrax.Dopri8() if solver is None else solver
     ts = jnp.linspace(t0, t0 + t_max, n_save)
@@ -106,7 +109,7 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
     meter = diffrax.TqdmProgressMeter() if progress else diffrax.NoProgressMeter()
 
     if fixed_dt is None:
-        controller = diffrax.PIDController(rtol=rtol, atol=atol)
+        controller = diffrax.PIDController(rtol=rtol, atol=atol, dtmin=dtmin, force_dtmin=False)
     else:
         controller, dt0 = diffrax.ConstantStepSize(), fixed_dt
 
@@ -135,6 +138,7 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
         "Dk": np.asarray(ys["Dk"]), "W": np.asarray(ys["W"]).real,
         "gauss": np.array([[float(a), float(b)] for a, b in gs]),
         "status": "success", "failure_reason": None,
+        "num_valid_times": int(np.isfinite(np.asarray(sol.ts)).sum()),
         "num_steps": int(sol.stats["num_steps"]),
         "num_accepted": int(sol.stats["num_accepted_steps"]),
         "num_rejected": int(sol.stats["num_rejected_steps"]),

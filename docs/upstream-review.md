@@ -3,7 +3,7 @@
 The open SPECTRAX pull requests and what Dark-SPECTRAX needs from them. Nothing was merged or closed in this
 review; every recommendation is for the owner to act on.
 
-- Base: main `ab87385`. Dark-SPECTRAX is pinned to that main commit.
+- Base: main `ab87385`. Dark-SPECTRAX was pinned to that main commit at review time; it is now pinned to `integration/dark-baseline` (see below).
 - Identity: all new commits are by Rogerio Jorge. Original authors are kept.
 - Rewritten branches: updated with `--force-with-lease`, with local backup branches kept.
 - Tests are local runs. Where GitHub CI is cited, it is Python 3.11/3.12 plus codecov on the new head.
@@ -37,11 +37,18 @@ review; every recommendation is for the owner to act on.
 2. **Discontinuous-Galerkin:** #54 → #45 → (#39 on hold).
 3. **Close after owner approval:** #33 and #41.
 
-An unmerged integration commit containing #48, #46, #13, #12, #9 and #55 exists (`6781d80`; 115 local tests pass). Dark-SPECTRAX does not depend on it.
+An unmerged integration commit containing #48, #46, #13, #12, #9 and #55 exists (`6781d80`; 115 local tests pass). It is superseded as the companion pin by `integration/dark-baseline` (`9d0982d`, below).
 
 ## What Dark-SPECTRAX needs upstream
 
-- **#55 (strict mask):** until it merges, Dark-SPECTRAX avoids grid sizes divisible by 3.
-- **#9 (Parseval weights):** the companion uses its own weights.
-- **#18 (implicit midpoint):** required before implicit midpoint is used in Dark-SPECTRAX.
-- **#48 (dependencies):** the companion declares the missing dependencies itself.
+Dark-SPECTRAX is pinned to the SPECTRAX integration branch `integration/dark-baseline`
+(`9d0982d`: main `ab87385` plus the unmerged PRs #48, #46, #13, #12, #9, #55, #50, #44, #18, #51, merged in that order),
+not a release. Until those PRs merge upstream:
+
+- **#55 (strict mask):** used through the parent mask; grids divisible by 3 are valid.
+- **#9 (Parseval weights):** `inner` uses the parent's `_rfft_weights`.
+- **#13 (structured state):** the zero-mixing regression calls the parent's tuple `(Ck, Fk)` `ode_system`.
+- **#50 (step limits):** `run` follows the same `max_steps`/`dtmin`/`num_valid_times` semantics; the parent's
+  `_stepsize_controller` is not reused because it ties `rtol = atol`.
+- **#18 (implicit midpoint):** available at the pin; not yet used in Dark-SPECTRAX.
+- **#48 (dependencies):** the companion still declares the dependencies itself.

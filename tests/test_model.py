@@ -157,11 +157,10 @@ def _parent_rhs(model, y):
                           p["k2_grid"], p["nabla"], p["collision_matrix"], p["sqrt_n_plus"],
                           p["sqrt_n_minus"], p["sqrt_m_plus"], p["sqrt_m_minus"], p["sqrt_p_plus"],
                           p["sqrt_p_minus"])
-    flat = jnp.concatenate([y["Ck"].ravel(), y["Fk"].ravel()])
-    out = parent_ode_system(model.Nx, model.Ny, model.Nz, model.Nn, model.Nm, model.Np, model.Ns,
-                            0.0, flat, args)
-    nC = y["Ck"].size
-    return out[:nC].reshape(y["Ck"].shape), out[nC:].reshape(y["Fk"].shape)
+    Ck = y["Ck"].reshape(model.Ns, model.Np, model.Nm, model.Nn, *model.shape)
+    dC, dF = parent_ode_system(model.Nx, model.Ny, model.Nz, model.Nn, model.Nm, model.Np, model.Ns,
+                               0.0, (Ck, y["Fk"]), args)
+    return dC.reshape(y["Ck"].shape), dF
 
 
 @pytest.mark.parametrize("mode", ["ordinary", "self_consistent"])
@@ -254,3 +253,15 @@ def test_kx0_perturbation_keeps_conjugate_pair():
     assert np.allclose(n[:, 0, 0], ref, atol=1e-15)
     yc = ds.consistent_fields(model, y)
     assert ds.gauss_residuals(model, yc)[0] < 1e-16
+
+
+@pytest.mark.parametrize("Nx", [1, 2, 3, 6, 7, 8, 9])
+def test_inner_weights_are_parent_parseval_weights(Nx):
+    """inner() uses the parent's rfft weights (PR #9); they reproduce the real-space box average."""
+    from spectrax._diagnostics import _rfft_weights
+    from darkspectrax._model import _weights
+    assert np.array_equal(np.asarray(_weights(Nx, (1, Nx // 2 + 1, 1)))[0, :, 0], np.asarray(_rfft_weights(Nx, Nx // 2 + 1)))
+    rng = np.random.default_rng(Nx)
+    f, g = rng.normal(size=(2, 1, 1, Nx, 1))  # (ncomp, Ny, Nx, Nz)
+    fk, gk = (np.fft.rfftn(a, axes=(-1, -3, -2), norm="forward") for a in (f, g))
+    assert np.isclose(float(ds.inner(Nx, jnp.asarray(fk), jnp.asarray(gk))), np.mean(f * g), rtol=1e-13, atol=1e-15)

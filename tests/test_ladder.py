@@ -111,6 +111,11 @@ def test_a10_step_budget_failure_reason():
     y = {**y, "Fk": y["Fk"].at[0, 0, 0, 0].set(0.1)}
     out = ds.run(m, y, 50.0, n_save=3, max_steps=4)
     assert out["status"] == "failure" and "max_steps" in out["failure_reason"]
+    assert 1 <= out["num_valid_times"] < 3
+    floor = ds.run(m, y, 50.0, n_save=3, dtmin=10.0)
+    assert floor["status"] == "failure" and "minimum step size" in floor["failure_reason"]
+    ok = ds.run(m, y, 1.0, n_save=3)
+    assert ok["status"] == "success" and ok["num_valid_times"] == 3
 
 
 def test_a10_fixed_step_nonfinite_is_not_success():

@@ -102,7 +102,7 @@ def kick(Ck, Nn, Nx, L, a):
 
 for Nn, nu in ((256, 0.0), (512, 0.0), (512, 1.0)):
     for dark in (False, True):
-        m = model(k0, 32, Nn, nu, dark)  # Nx = 32 keeps |m| <= 10 and is not divisible by 3
+        m = model(k0, 32, Nn, nu, dark)  # Nx = 32 keeps |m| <= 10 under the strict mask
         y = ds.consistent_fields(m, ds.maxwellian(m, [1.0], [(0, (m1, 0, 0), eps1 / 2)]))
         a1 = ds.run(m, y, tau, n_save=int(tau / 0.05) + 1, rtol=1e-10, atol=1e-14)
         yk = {"Ck": kick(a1["Ck"][-1], Nn, 32, m.Lx, m.alpha_s[0]), "Fk": a1["Fk"][-1], "Dk": a1["Dk"][-1],
