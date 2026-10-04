@@ -1,0 +1,225 @@
+{
+ "label": "H05 pump frame + remap gate (HHS-v1-inspired, nonrelativistic pilot)",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830",
+ "repository_commit": "a7639d01cd03a601b167a52d2571dbcaf4d2090d",
+ "command": "python studies/h05_pump_frame.py",
+ "segment": 20.0,
+ "fixed_basis_resolved_until": {
+  "0.03": 365.0,
+  "0.1": 210.0
+ },
+ "gate": {
+  "resolved_gain_vq0.1": 2.914285714285714,
+  "rejected": true,
+  "verdict": "FAIL: pump frame + remap extends the resolved time by less than 3x"
+ },
+ "H05": {
+  "vq0.03_Nn32_nu0": {
+   "status": "failure",
+   "failure_reason": "segment 46: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 924.0,
+   "events": 23,
+   "max_event_moment_defect": 2.329024905021402e-16,
+   "final_basis_electron_x": [
+    -0.3484560842417051,
+    0.1086821114069258
+   ],
+   "max_ledger_over_W_ext": 5.3653321611542836e-08,
+   "W_ext_final": 0.09528086168752735,
+   "dK_electron_final": -32.96118226291399,
+   "dK_ion_final": 0.013098339428417918,
+   "min_K_species": [
+    -32.95968226291399,
+    0.0014999999999999998
+   ],
+   "min_T_x_species": [
+    -66.03938242082327,
+    5.446623093681917e-07
+   ],
+   "wall_time": 152.72627066698624
+  },
+  "vq0.03_Nn64_nu0": {
+   "status": "failure",
+   "failure_reason": "segment 45: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 900.0,
+   "events": 22,
+   "max_event_moment_defect": 3.3306690738754696e-16,
+   "final_basis_electron_x": [
+    0.16525441382479322,
+    0.09775369919197135
+   ],
+   "max_ledger_over_W_ext": 1.1075050457178277e-10,
+   "W_ext_final": 0.09033314799047121,
+   "dK_electron_final": -2836.7605740510285,
+   "dK_ion_final": 1.103438271780992,
+   "min_K_species": [
+    -2836.7590740510286,
+    0.0014999999999999998
+   ],
+   "min_T_x_species": [
+    -5673.570699574296,
+    5.446623093681917e-07
+   ],
+   "wall_time": 204.98584358301014
+  },
+  "vq0.03_Nn64_nu1": {
+   "status": "success",
+   "failure_reason": null,
+   "t_reached": 1000.0,
+   "events": 26,
+   "max_event_moment_defect": 4.440892098500625e-16,
+   "final_basis_electron_x": [
+    -0.14763922986876027,
+    0.1115570691719431
+   ],
+   "max_ledger_over_W_ext": 3.2534454360751594e-11,
+   "W_ext_final": 0.11122059709994381,
+   "dK_electron_final": 0.01749257184524117,
+   "dK_ion_final": 1.2873604215602949e-05,
+   "min_K_species": [
+    0.0015,
+    0.0014999999999999998
+   ],
+   "min_T_x_species": [
+    0.001,
+    5.446623093681917e-07
+   ],
+   "wall_time": 48.28555241599679
+  },
+  "vq0.03_agreement": {
+   "Nn32_vs_Nn64_nu0": {
+    "dK_e": 870.0,
+    "W_ext": null,
+    "common_end": 900.0
+   },
+   "nu0_vs_nu1_Nn64": {
+    "dK_e": 870.0,
+    "W_ext": null,
+    "common_end": 900.0
+   },
+   "resolved_until": 870.0,
+   "gain_over_fixed_basis": 2.3835616438356166,
+   "positive_kinetic_energy": false
+  },
+  "vq0.1_Nn32_nu0": {
+   "status": "failure",
+   "failure_reason": "segment 33: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 660.0,
+   "events": 20,
+   "max_event_moment_defect": 3.3306690738754696e-16,
+   "final_basis_electron_x": [
+    -1.0943111291393939,
+    0.1353141659056563
+   ],
+   "max_ledger_over_W_ext": 7.197015503213198e-05,
+   "W_ext_final": 0.5432897421882623,
+   "dK_electron_final": -7359680434.10622,
+   "dK_ion_final": 468.19298061355505,
+   "min_K_species": [
+    -7359680434.10472,
+    0.0014999999999999998
+   ],
+   "min_T_x_species": [
+    -14719360963.329329,
+    5.446623093681917e-07
+   ],
+   "wall_time": 141.6310354580055
+  },
+  "vq0.1_Nn64_nu0": {
+   "status": "failure",
+   "failure_reason": "segment 31: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 632.0,
+   "events": 17,
+   "max_event_moment_defect": 2.220446049250313e-16,
+   "final_basis_electron_x": [
+    0.7435723693155702,
+    0.12426862169433946
+   ],
+   "max_ledger_over_W_ext": 8.098900653864592e-11,
+   "W_ext_final": 0.4984220908474356,
+   "dK_electron_final": -33899.98811628002,
+   "dK_ion_final": 1.21679986822516,
+   "min_K_species": [
+    -33899.986616280024,
+    0.0014999999999999998
+   ],
+   "min_T_x_species": [
+    -67801.31731396353,
+    5.446623093681917e-07
+   ],
+   "wall_time": 190.0007209170144
+  },
+  "vq0.1_Nn64_nu1": {
+   "status": "failure",
+   "failure_reason": "segment 38: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "t_reached": 766.0,
+   "events": 24,
+   "max_event_moment_defect": 4.347729223773988e-16,
+   "final_basis_electron_x": [
+    -1.1277261464686614,
+    0.2990275641045997
+   ],
+   "max_ledger_over_W_ext": 1.4469892952588926e-08,
+   "W_ext_final": 0.7269932253902801,
+   "dK_electron_final": -10.399582771124953,
+   "dK_ion_final": 0.005904813049589533,
+   "min_K_species": [
+    -15.477570100131441,
+    0.0014999999999999998
+   ],
+   "min_T_x_species": [
+    -31.1328573674342,
+    5.446623093681917e-07
+   ],
+   "wall_time": 204.30848383402918
+  },
+  "vq0.1_agreement": {
+   "Nn32_vs_Nn64_nu0": {
+    "dK_e": 612.0,
+    "W_ext": null,
+    "common_end": 632.0
+   },
+   "nu0_vs_nu1_Nn64": {
+    "dK_e": 612.0,
+    "W_ext": null,
+    "common_end": 632.0
+   },
+   "resolved_until": 612.0,
+   "gain_over_fixed_basis": 2.914285714285714,
+   "positive_kinetic_energy": false
+  }
+ },
+ "grid_comparison_vq0.03": {
+  "t_max": 300.0,
+  "grid": {
+   "Nx": 16,
+   "Nv": 1024,
+   "vmax_over_vte": 16,
+   "dt": 0.02,
+   "wall_time": 15.09286749997409,
+   "edge_f_over_max": 2.9550932774681926e-13
+  },
+  "hermite": {
+   "Nn": 64,
+   "status": "success",
+   "events": 0,
+   "wall_time": 14.876753207994625
+  },
+  "dK_e_final": {
+   "hermite": 1.2560534657867026e-05,
+   "grid": 1.125039183232199e-05
+  },
+  "W_ext_final": {
+   "hermite": 0.010115465805732676,
+   "grid": 0.01011299213619386
+  },
+  "first_disagreement_10pct": {
+   "dK_e": null,
+   "W_ext": null
+  },
+  "max_diff_over_running_max_t_gt_50": {
+   "dK_e": 0.00530889853520709,
+   "W_ext": 0.00027141123675253397
+  }
+ }
+}
