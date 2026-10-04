@@ -5,7 +5,7 @@ PY=../adapt-dark/.venv/bin/python
 one() {  # vq Nn real
   f=studies/lane_c/runs/vq$1_Nn$2_r$3.json
   [ -f "$f" ] && return
-  until mkdir /tmp/spectrax-heavy.lock 2>/dev/null; do sleep 20; done
+  until mkdir /tmp/spectrax-heavy.lock 2>/dev/null; do sleep 2; done
   PYTHONPATH=$PWD /opt/local/bin/gtimeout 900 $PY studies/lane_c_run.py --vq $1 --Nn $2 --real $3 > studies/lane_c/logs/vq$1_Nn$2_r$3.log 2>&1
   echo "$1 $2 $3 exit=$?" >> studies/lane_c/logs/batch.txt
   rmdir /tmp/spectrax-heavy.lock
