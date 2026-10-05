@@ -7,9 +7,10 @@ Experiments (declared before running):
   floquet : CONSTANT-amplitude dipole pump E0 cos(w0 t) (k = 0), species velocities U_s = (q_s/m_s) E0 sin(w0 t)/w0.
             Monodromy matrix over one period -> Floquet exponent gamma = max Re ln(mu)/T0 and the frequency
             Re omega = arg(mu)/T0 (mod w0). Scans: k, E0, w0 (detuning), T_i/T_e, m_i/m_e, fixed ions, Nn.
-  nishikawa : the textbook dipole-pump parametric dispersion relation (Nishikawa 1968; Kruer ch. 8; leading order in
-            b = k r, r = relative e-i excursion):  1/chi_e(w) + 1/(1+chi_i(w)) = (b^2/4) [1/eps(w-w0) + 1/eps(w+w0)],
-            eps = 1 + chi_e (+chi_i), kinetic chi_s from the plasma dispersion function. Max-Im root by multistart Newton.
+  nishikawa : the exact kinetic dipole-pump parametric dispersion relation (Silin 1965; Nishikawa 1968), written as
+            det[diag(1+chi_i(w_l)) + B diag(chi_e(w_l)) B^T] = 0, w_l = w + l w0, B_lj = J_{l-j}(k r), |l| <= L,
+            kinetic chi_s from the plasma dispersion function; L = 1 is Nishikawa's three-wave truncation.
+            (A first attempt with a hand-written reduced form and complex Newton was wrong in sign and is replaced.)
   adiabatic : H05's resonant pump has a secularly growing excursion r(t) = (1+eps)E0 t/(2w). Prediction of the H05
             |E_k|^2 amplification as exp(2 int gamma_floquet(k, r(t)) dt) vs the measured highk table.
 Rejection criteria:
@@ -80,38 +81,34 @@ def chi(w, k, sig, wp2):
     return wp2 / (k * sig) ** 2 * (1 + z * Z)
 
 
-def nishikawa(k, E0, w0=1.0, mi=1836.0, tau=1.0):
-    sig_i = VTE * np.sqrt(tau / mi)
+def silin_matrix(w, k, E0, w0=1.0, mi=1836.0, tau=1.0, L=4):
+    """Exact kinetic dipole-pump dispersion matrix (Silin 1965; Nishikawa 1968; Aliev-Silin).
+    Lab-frame potentials phi_l = phi(w + l w0), electron frame psi = B^T phi with B_lj = J_{l-j}(b),
+    b = k r, r = relative e-i excursion (ions taken unpumped):  M = diag(1+chi_i) + B diag(chi_e) B^T.
+    L = 1 is Nishikawa's three-wave (w, w +- w0) truncation."""
     r = (1 + 1 / mi) * E0 / w0 ** 2
-    b = k * r
+    ls = np.arange(-L, L + 1)
+    sig_i = VTE * np.sqrt(tau / mi)
+    B = jv(ls[:, None] - ls[None, :], k * r)
+    ce = np.array([chi(w + l * w0, k, VTE, 1.0) for l in ls])
+    ci = np.array([chi(w + l * w0, k, sig_i, 1.0 / mi) for l in ls])
+    return np.diag(1 + ci) + B @ np.diag(ce) @ B.T
 
-    def ce(w):
-        return chi(w, k, VTE, 1.0)
 
-    def ci(w):
-        return chi(w, k, sig_i, 1.0 / mi)
+def nishikawa(k, E0, w0=1.0, mi=1836.0, tau=1.0, L=4):
+    """Largest purely growing root w = i gamma of det M = 0 (det is real on the imaginary axis to 1e-12)."""
+    from scipy.optimize import brentq
 
-    def F(w):
-        eps_m = 1 + ce(w - w0) + ci(w - w0)
-        eps_p = 1 + ce(w + w0) + ci(w + w0)
-        return 1 / ce(w) + 1 / (1 + ci(w)) - b * b / 4 * (1 / eps_m + 1 / eps_p)
+    def d(g):
+        return np.linalg.det(silin_matrix(1j * g, k, E0, w0, mi, tau, L)).real
 
-    best = (0.0, 0.0)
-    for g0 in np.geomspace(1e-4, 0.3, 14):
-        for wr in (0.0, k * np.sqrt(1 + tau) * VTE / np.sqrt(mi), 2 * k * VTE / np.sqrt(mi)):
-            w = complex(wr, g0)
-            for _ in range(60):
-                h = 1e-7 * max(abs(w), 1e-6)
-                d = (F(w + h) - F(w - h)) / (2 * h)
-                step = F(w) / d
-                w = w - step
-                if not np.isfinite(w) or w.imag <= 0:
-                    break
-                if abs(step) < 1e-12 * max(abs(w), 1e-8):
-                    if abs(F(w)) < 1e-8 * (1 + abs(1 / ce(w))) and w.imag > best[0]:
-                        best = (float(w.imag), float(abs(w.real)))
-                    break
-    return best
+    gs = np.geomspace(1e-5, 0.5, 300)
+    v = np.array([d(g) for g in gs])
+    idx = np.nonzero(np.sign(v[1:]) != np.sign(v[:-1]))[0]
+    if idx.size == 0:
+        return (0.0, 0.0)
+    i = idx[-1]
+    return (float(brentq(d, gs[i], gs[i + 1], xtol=1e-12)), 0.0)
 
 
 if __name__ == "__main__":
@@ -132,7 +129,8 @@ if __name__ == "__main__":
             gm, wm = floquet(k, E0)
             gf, _ = floquet(k, E0, fixed_ions=True)
             gn, wn = nishikawa(k, E0)
-            row = dict(vos_vte=v, kj=j, k_lD=k * VTE, b=k * E0, gamma_floquet=gm, omega_floquet=wm,
+            g1, _ = nishikawa(k, E0, L=1)
+            row = dict(gamma_nishikawa_L1=g1, vos_vte=v, kj=j, k_lD=k * VTE, b=k * E0, gamma_floquet=gm, omega_floquet=wm,
                        gamma_fixed_ions=gf, gamma_nishikawa=gn, omega_nishikawa=wn)
             rows.append(row)
             print(json.dumps(row), flush=True)
