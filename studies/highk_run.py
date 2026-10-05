@@ -20,7 +20,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import darkspectrax as ds  # noqa: E402
 from darkspectrax import _simulation as _sim  # noqa: E402
-from lane_c_run import NSAVE, SEG, model, seeds  # noqa: E402
+from lane_c_run import NSAVE, SEG, diagnostics, model, seeds  # noqa: E402
 
 OUT = Path(__file__).resolve().parent / "highk" / "runs"
 
@@ -96,6 +96,10 @@ def main(argv=None):
                           trigger=trig)
     wall = time.perf_counter() - tic
     good = np.isfinite(out["t"]) & np.all(np.isfinite(out["W"]), axis=1)
+    for k in ("t", "K", "W", "B", "Ck", "Fk", "Dk", "U_gamma", "U_D"):
+        out[k] = out[k][good]
+    good = np.ones(out["t"].size, bool)
+    Ks, Th, Tx, Q = diagnostics(m, out)
     Ck = out["Ck"][good].reshape(good.sum(), m.Ns, m.Nn, m.Nx // 2 + 1)
     spec = np.abs(Ck) ** 2
     case = f"vq{a.vq:g}_Nx{a.Nx}_Nn{a.Nn}" + (f"_kmax{a.kmax}" if a.kmax is not None else "") \
@@ -109,7 +113,7 @@ def main(argv=None):
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / f"{case}.json").write_text(json.dumps(rec, indent=1, default=float) + "\n")
     np.savez_compressed(OUT / f"{case}.npz", t=out["t"][good], spec=spec, B=out["B"][good], W=out["W"][good],
-                        K=out["K"][good], Ek2=np.abs(out["Fk"][good][:, 0, 0, :, 0]) ** 2, seg_stats=st,
+                        K=out["K"][good], K_species=Ks, Th=Th, Tx=Tx, Q=Q, Ek2=np.abs(out["Fk"][good][:, 0, 0, :, 0]) ** 2, seg_stats=st,
                         Ck_last=out["Ck"][good][-1])
     print(json.dumps(rec, default=float), flush=True)
 
