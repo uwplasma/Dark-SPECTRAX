@@ -19,7 +19,7 @@ from highk_eig import operator  # noqa: E402
 a = np.sqrt(2e-3)
 
 
-def exponent(K, Nn, E1, basis, w=1.0, nsub=200):
+def exponent(K, Nn, E1, basis, w=1.0, nsub=100):
     L0 = operator(K, Nn, 0.0, a, 0.0, basis)
     L1 = operator(K, Nn, E1, a, 0.0, basis) - L0
     T = 2 * np.pi / w
@@ -32,7 +32,7 @@ def exponent(K, Nn, E1, basis, w=1.0, nsub=200):
 
 if __name__ == "__main__":
     res = []
-    for basis, K, Nn, E1 in itertools.product(("AW", "SW"), (2, 5), (32, 64, 128), (8e-4, 3e-3, 8e-3, 2e-2)):
+    for basis, K, Nn, E1 in itertools.product(("AW", "SW"), (2, 5), (32, 64), (8e-4, 3e-3, 8e-3, 2e-2)):
         if basis == "SW" and Nn == 128:
             continue
         res.append({"basis": basis, "K": K, "Nn": Nn, "E1": E1, "floquet": exponent(K, Nn, E1, basis)})

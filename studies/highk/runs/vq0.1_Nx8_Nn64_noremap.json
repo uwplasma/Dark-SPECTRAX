@@ -1,0 +1,15 @@
+{
+ "case": "vq0.1_Nx8_Nn64_noremap",
+ "status": "success",
+ "failure_reason": null,
+ "t_reached": 480.0,
+ "events": 0,
+ "steps": 4747,
+ "rejected": 756,
+ "compile_time": 14.689106001053005,
+ "run_time": 4.376714041980449,
+ "wall_time": 40.44899033301044,
+ "repository_commit": "e1d38243785424ac288c7af13dea7935dac3da65",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830",
+ "command": "python studies/highk_run.py --Nx 8 --Nn 64 --T 480 --no-remap"
+}
