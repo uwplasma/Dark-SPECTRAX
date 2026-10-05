@@ -68,6 +68,7 @@ def main(argv=None):
     ap.add_argument("--no-remap", action="store_true")
     ap.add_argument("--tag", default="")
     ap.add_argument("--seed-scale", type=float, default=1.0)
+    ap.add_argument("--noise-floor", type=float, default=None, help="parent run(noise_floor=...) (main >= 8a17f6f)")
     ap.add_argument("--field-nu", type=float, default=0.0,
                     help="c in the field-scaled closure rate nu_s = c |q/m|_s sqrt(2 Nn) max|E - E0| / a_s on s(n)")
     a = ap.parse_args(argv)
@@ -93,7 +94,7 @@ def main(argv=None):
     y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], [(sp, k, A * a.seed_scale) for sp, k, A in seeds(0)]))
     tic = time.perf_counter()
     out = ds.run_adaptive(m, y0, a.T, SEG, n_save_segment=NSAVE, rtol=1e-10, atol=1e-14, max_steps=200_000,
-                          trigger=trig)
+                          trigger=trig, **({"noise_floor": a.noise_floor} if a.noise_floor else {}))
     wall = time.perf_counter() - tic
     good = np.isfinite(out["t"]) & np.all(np.isfinite(out["W"]), axis=1)
     for k in ("t", "K", "W", "B", "Ck", "Fk", "Dk", "U_gamma", "U_D"):
@@ -103,7 +104,7 @@ def main(argv=None):
     Ck = out["Ck"][good].reshape(good.sum(), m.Ns, m.Nn, m.Nx // 2 + 1)
     spec = np.abs(Ck) ** 2
     case = f"vq{a.vq:g}_Nx{a.Nx}_Nn{a.Nn}" + (f"_kmax{a.kmax}" if a.kmax is not None else "") \
-        + (f"_dt{a.fixed_dt:g}" if a.fixed_dt else "") + ("_noremap" if a.no_remap else "") + (f"_seed{a.seed_scale:g}" if a.seed_scale != 1 else "") + (f"_fnu{a.field_nu:g}" if a.field_nu else "") + a.tag
+        + (f"_dt{a.fixed_dt:g}" if a.fixed_dt else "") + ("_noremap" if a.no_remap else "") + (f"_seed{a.seed_scale:g}" if a.seed_scale != 1 else "") + (f"_fnu{a.field_nu:g}" if a.field_nu else "") + (f"_nf{a.noise_floor:g}" if a.noise_floor else "") + a.tag
     st = np.array(stats)
     rec = {"case": case, "status": out["status"], "failure_reason": out["failure_reason"],
            "t_reached": float(out["t"][good][-1]), "events": len(out["events"]),
