@@ -1,0 +1,17 @@
+{
+ "case": "vq0.1_Nx32_Nn64_c1_nf1e-14",
+ "part": 1,
+ "t_start": 240.0,
+ "t_end": 480.0,
+ "status": "success",
+ "failure_reason": null,
+ "events": 9,
+ "steps": 8285,
+ "rejected": 3004,
+ "compile_time": 0.7857319999602623,
+ "run_time": 15.395665289950557,
+ "wall_time": 27.578553332947195,
+ "repository_commit": "db706c83bb8109b5bacb775247e0366ad5d08549",
+ "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e",
+ "command": "python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --T 1000 --chunk 240 --noise-floor 1e-14"
+}
