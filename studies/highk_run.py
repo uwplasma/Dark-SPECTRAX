@@ -1,0 +1,81 @@
+"""highk: diagnostic H05 pump-frame Hermite runs at v_q/v_te = 0.1 (lane_c_run.py r0 setup, nu = 0) that record, per
+save, the Hermite spectrum per species and per Fourier mode, |C_{s,n}(k)|^2, plus the basis (u_s, a_s) and step
+statistics. Options select the decisive experiments:
+  --Nx, --Nn                  resolution
+  --kmax K                    override the 2/3 mask to keep |k| <= K (padded-convolution reference: Nx=24, K=5
+                              must reproduce Nx=16 to round-off if de-aliasing is consistent)
+  --fixed-dt DT               constant-step Dopri8 instead of PID (stiffness/step-size test)
+  --no-remap                  disable segment remaps (pump frame shift only, initial width)
+Run: python studies/highk_run.py --vq 0.1 --Nx 16 --Nn 64 --T 480 [--tag X]  ->  studies/highk/runs/<case>.npz/json
+"""
+import argparse
+import json
+import sys
+import time
+from pathlib import Path
+
+import jax.numpy as jnp
+import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import darkspectrax as ds  # noqa: E402
+from darkspectrax import _simulation as _sim  # noqa: E402
+from lane_c_run import NSAVE, SEG, model, seeds  # noqa: E402
+
+OUT = Path(__file__).resolve().parent / "highk" / "runs"
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--vq", type=float, default=0.1)
+    ap.add_argument("--Nn", type=int, default=64)
+    ap.add_argument("--Nx", type=int, default=16)
+    ap.add_argument("--T", type=float, default=480.0)
+    ap.add_argument("--kmax", type=int, default=None)
+    ap.add_argument("--fixed-dt", type=float, default=None)
+    ap.add_argument("--no-remap", action="store_true")
+    ap.add_argument("--tag", default="")
+    a = ap.parse_args(argv)
+    m = model(a.vq, a.Nn, a.Nx)
+    if a.kmax is not None:
+        kx = np.arange(a.Nx // 2 + 1)[None, :, None]
+        m.p["mask23"] = jnp.asarray(kx <= a.kmax)
+    stats = []
+    run0 = _sim.run
+
+    def counted(*args, **kw):
+        if a.fixed_dt is not None:
+            kw["fixed_dt"] = a.fixed_dt
+            kw["max_steps"] = int(SEG / a.fixed_dt) + 10
+        o = run0(*args, **kw)
+        stats.append([o["num_steps"], o["num_rejected"], o["compile_time"], o["run_time"]])
+        return o
+
+    _sim.run = counted
+    trig = {"shift_on": 1e9, "width_on": 1e9} if a.no_remap else None
+    y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], seeds(0)))
+    tic = time.perf_counter()
+    out = ds.run_adaptive(m, y0, a.T, SEG, n_save_segment=NSAVE, rtol=1e-10, atol=1e-14, max_steps=200_000,
+                          trigger=trig)
+    wall = time.perf_counter() - tic
+    good = np.isfinite(out["t"]) & np.all(np.isfinite(out["W"]), axis=1)
+    Ck = out["Ck"][good].reshape(good.sum(), m.Ns, m.Nn, m.Nx // 2 + 1)
+    spec = np.abs(Ck) ** 2
+    case = f"vq{a.vq:g}_Nx{a.Nx}_Nn{a.Nn}" + (f"_kmax{a.kmax}" if a.kmax is not None else "") \
+        + (f"_dt{a.fixed_dt:g}" if a.fixed_dt else "") + ("_noremap" if a.no_remap else "") + a.tag
+    st = np.array(stats)
+    rec = {"case": case, "status": out["status"], "failure_reason": out["failure_reason"],
+           "t_reached": float(out["t"][good][-1]), "events": len(out["events"]),
+           "steps": int(st[:, 0].sum()), "rejected": int(st[:, 1].sum()), "compile_time": float(st[:, 2].sum()),
+           "run_time": float(st[:, 3].sum()), "wall_time": wall, "repository_commit": _sim._git_sha(),
+           "parent_commit": ds.PARENT_COMMIT, "command": "python studies/highk_run.py " + " ".join(sys.argv[1:])}
+    OUT.mkdir(parents=True, exist_ok=True)
+    (OUT / f"{case}.json").write_text(json.dumps(rec, indent=1, default=float) + "\n")
+    np.savez_compressed(OUT / f"{case}.npz", t=out["t"][good], spec=spec, B=out["B"][good], W=out["W"][good],
+                        K=out["K"][good], Ek2=np.abs(out["Fk"][good][:, 0, 0, :, 0]) ** 2, seg_stats=st,
+                        Ck_last=out["Ck"][good][-1])
+    print(json.dumps(rec, default=float), flush=True)
+
+
+if __name__ == "__main__":
+    main()
