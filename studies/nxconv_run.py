@@ -76,7 +76,7 @@ def main(argv=None):
     if parts:
         last = np.load(parts[-1])
         info = json.loads(Path(str(parts[-1])[:-4] + ".json").read_text())
-        if info["status"] != "success" or info["t_end"] >= a.T - 1e-9:
+        if info["status"] not in ("success", "short") or info["t_end"] >= a.T - 1e-9:
             print(f"{case}: nothing to do ({info['status']}, t_end {info['t_end']:g})")
             return 0
         t0 = info["t_end"]
@@ -86,7 +86,7 @@ def main(argv=None):
         t0 = 0.0
         y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], seeds(0)))
     ipart = len(parts)
-    t1 = min(a.T, t0 + a.chunk)
+    t1 = min(a.T, t0 + max(SEG, SEG * (a.chunk // SEG)))  # whole segments
     stats, run0 = [], _sim.run
 
     def counted(*args, **kw):  # absolute time: offset the parent's segment start

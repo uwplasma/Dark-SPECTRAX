@@ -1,3 +1,42 @@
+start 05:47:00 : .venv/bin/python -m pytest -q -n 2 tests
+bringing up nodes...
+bringing up nodes...
+
+..........................................................               [100%]
+=============================== warnings summary ===============================
+tests/test_ladder.py::test_a10_step_budget_failure_reason
+tests/test_ladder.py::test_a10_nonfinite_initial_state_fails
+  /Users/rogeriojorge/local/spectrax-wt/nxconv/darkspectrax/_simulation.py:200: RuntimeWarning: invalid value encountered in subtract
+    W = out["W"] - out["W"][0]  # work done in this segment (a restart carries W(t0) != 0)
+
+tests/test_ladder.py::test_a10_step_budget_failure_reason
+tests/test_ladder.py::test_a10_nonfinite_initial_state_fails
+  /Users/rogeriojorge/local/spectrax-wt/nxconv/darkspectrax/_simulation.py:203: RuntimeWarning: invalid value encountered in subtract
+    (out["U_gamma"] - out["U_gamma"][0]) + W[:, 0],
+
+tests/test_ladder.py::test_a10_step_budget_failure_reason
+tests/test_ladder.py::test_a10_nonfinite_initial_state_fails
+  /Users/rogeriojorge/local/spectrax-wt/nxconv/darkspectrax/_simulation.py:204: RuntimeWarning: invalid value encountered in subtract
+    (out["U_D"] - out["U_D"][0]) + W[:, 1])
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+58 passed, 6 warnings in 64.81s (0:01:04)
+exit 0 05:48:05 : .venv/bin/python -m pytest -q -n 2 tests
+start 05:49:45 : .venv/bin/python studies/nxconv_grid_validate.py
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_spectral_landau0.3 done 1s
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_filtered_landau0.3 done 1s
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_pfc_landau0.3 done 1s
+g_vq0_Nx8_Nv512_dt0.02_osc_v8_pfc_landau0.3 done 1s
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_spectral_landau0.5 done 1s
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_filtered_landau0.5 done 1s
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_pfc_landau0.5 done 1s
+g_vq0_Nx8_Nv512_dt0.02_osc_v8_pfc_landau0.5 done 1s
+g_vq0.1_Nx16_Nv4096_dt0.02_lab_v64_spectral done 22s
+g_vq0.1_Nx16_Nv4096_dt0.02_lab_v64_pfc done 20s
+g_vq0.1_Nx16_Nv4096_dt0.02_osc_v24_spectral done 18s
+g_vq0.1_Nx16_Nv4096_dt0.02_osc_v24_pfc done 18s
+g_vq0.1_Nx8_Nv2048_dt0.02_osc_v16_pfc_unseeded done 12s
+g_vq0.1_Nx8_Nv2048_dt0.01_osc_v16_pfc_unseeded done 24s
 {
  "landau_k0.3_spectral_lab": {
   "omega": 1.1610954897111168,
@@ -100,3 +139,7 @@
   "max_energy_defect_over_W": 4.597975361441273e-15
  }
 }
+exit 0 05:51:48 : .venv/bin/python studies/nxconv_grid_validate.py
+start 05:53:19 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --T 1000 --chunk 250 --noise-floor 1e-14
+{"case": "vq0.1_Nx32_Nn64_c1_nf1e-14", "part": 0, "t_start": 0.0, "t_end": 240.0, "status": "short", "failure_reason": null, "events": 0, "steps": 1950, "rejected": 628, "compile_time": 0.79059229104314, "run_time": 3.563082165957894, "wall_time": 15.416412916965783, "repository_commit": "2d4711abfca43b87665ab127ba1056527e56f7f8", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --T 1000 --chunk 250 --noise-floor 1e-14"}
+exit 0 05:53:46 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --T 1000 --chunk 250 --noise-floor 1e-14

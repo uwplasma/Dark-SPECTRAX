@@ -1,0 +1,16 @@
+start 05:40:43 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32
+g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral checkpoint t=200 wall=91
+exit 3 05:42:15 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32
+start 05:42:22 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32
+g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral checkpoint t=400 wall=178
+exit 3 05:43:49 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32
+start 05:45:22 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32
+g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral checkpoint t=600 wall=275
+exit 3 05:47:00 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32
+start 05:48:05 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32
+g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral checkpoint t=800 wall=373
+exit 3 05:49:43 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32
+start 05:51:49 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32
+g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral done 462s
+exit 0 05:53:19 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32
+start 05:53:48 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 64 --Nv 4096 --chunk 200 --frame osc --vmax 32

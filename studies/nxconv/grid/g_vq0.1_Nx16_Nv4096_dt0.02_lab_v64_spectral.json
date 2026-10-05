@@ -1,16 +1,16 @@
 {
  "case": "g_vq0.1_Nx16_Nv4096_dt0.02_lab_v64_spectral",
- "T": 700.0,
+ "T": 100.0,
  "finite": true,
- "wall_time": 211.3239532079897,
- "steps": 35000,
- "t_fneg_1e-3": 457.5,
- "min_f_rel": -0.601354951782451,
- "max_negfrac": 0.37866832641485537,
- "max_edge": 0.2965530294779828,
- "max_energy_defect_over_W": 0.028848650371293978,
- "max_mass_drift": 2.1094237467877974e-14,
- "max_momentum": 0.341656875487794,
- "repository_commit": "82447c0d8c3175437cc19e15f2c21600e14954dd",
- "command": "python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 16 --Nv 4096 --vmax 64 --frame lab --vshift spectral --chunk 250"
+ "wall_time": 22.20723837497644,
+ "steps": 5000,
+ "t_fneg_1e-3": null,
+ "min_f_rel": -8.893953930446858e-14,
+ "max_negfrac": 6.203876154433968e-13,
+ "max_edge": 6.794247346084362e-14,
+ "max_energy_defect_over_W": 2.043008492157282e-06,
+ "max_mass_drift": 7.549516567451064e-15,
+ "max_momentum": 5.290073934460793e-12,
+ "repository_commit": "2d4711abfca43b87665ab127ba1056527e56f7f8",
+ "command": "python studies/nxconv_grid.py "
 }

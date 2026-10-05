@@ -1,16 +1,16 @@
 {
- "case": "g_vq0.1_Nx8_Nv2048_dt0.02_osc_v16_pfc_unseeded",
+ "case": "g_vq0.1_Nx8_Nv2048_dt0.01_osc_v16_pfc_unseeded",
  "T": 200.0,
  "finite": true,
- "wall_time": 12.157136375026312,
- "steps": 10000,
+ "wall_time": 24.40552412503166,
+ "steps": 20000,
  "t_fneg_1e-3": null,
  "min_f_rel": 2.572209372642415e-56,
  "max_negfrac": -0.0,
  "max_edge": 3.3023790644650674e-56,
- "max_energy_defect_over_W": 8.081984142806467e-15,
+ "max_energy_defect_over_W": 4.597975361441273e-15,
  "max_mass_drift": 0.0,
- "max_momentum": 1.27675647831893e-15,
+ "max_momentum": 2.3869795029440866e-15,
  "repository_commit": "2d4711abfca43b87665ab127ba1056527e56f7f8",
  "command": "python studies/nxconv_grid.py "
 }
