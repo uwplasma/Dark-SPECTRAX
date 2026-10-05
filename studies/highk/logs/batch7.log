@@ -1,0 +1,2 @@
+exit 124 : --Nx 32 --Nn 64 --T 500 --field-nu 1
+exit 124 : --vq 0.03 --Nx 32 --Nn 64 --T 500 --field-nu 1

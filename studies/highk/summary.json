@@ -1,0 +1,158 @@
+{
+ "vq0.1_Nx8": {
+  "t_reached": 700.0,
+  "status": "success",
+  "t_pos": null,
+  "steps": 24335,
+  "rejected": 8882,
+  "compile_s": 20.5,
+  "run_s": 19.3,
+  "grid": {
+   "t_res_dKe": ">=700",
+   "t_res_W": ">=700",
+   "grid_fmin_lt_-1e-3": 375.5
+  }
+ },
+ "vq0.1_Nx16": {
+  "t_reached": 700.0,
+  "status": "success",
+  "t_pos": null,
+  "steps": 26043,
+  "rejected": 7968,
+  "compile_s": 36.3,
+  "run_s": 45.9,
+  "c0.5": {
+   "t_res_dKe": ">=700",
+   "t_res_W": ">=700",
+   "t_reached": 700.0,
+   "t_pos": null
+  },
+  "c2": {
+   "t_res_dKe": ">=700",
+   "t_res_W": ">=700",
+   "t_reached": 700.0,
+   "t_pos": null
+  },
+  "Nn128": {
+   "t_res_dKe": ">=700",
+   "t_res_W": ">=700",
+   "t_reached": 700.0,
+   "t_pos": null
+  },
+  "grid": {
+   "t_res_dKe": 691.5,
+   "t_res_W": ">=700",
+   "grid_fmin_lt_-1e-3": 457.5
+  }
+ },
+ "vq0.1_Nx32": {
+  "t_reached": 680.0,
+  "status": "failure",
+  "t_pos": 672.0,
+  "steps": 22786,
+  "rejected": 8679,
+  "compile_s": 0.7,
+  "run_s": 42.0,
+  "grid": {
+   "t_res_dKe": 625.0,
+   "t_res_W": 671.5,
+   "grid_fmin_lt_-1e-3": 542.5
+  }
+ },
+ "vq0.1_Nx16_noise_floor_check": {
+  "t_res_dKe": ">=700",
+  "t_res_W": ">=700"
+ },
+ "vq0.1_Nx8_vs_Nx16": {
+  "t_res_dKe": ">=700",
+  "t_res_W": ">=700"
+ },
+ "vq0.1_Nx16_vs_Nx32": {
+  "t_res_dKe": ">=680",
+  "t_res_W": ">=680"
+ },
+ "grid_vq0.1_Nx8_vs_Nx16": {
+  "t_res_dKe": 691.5,
+  "t_res_W": ">=700"
+ },
+ "grid_vq0.1_Nx16_vs_Nx32": {
+  "t_res_dKe": 625.0,
+  "t_res_W": 671.5
+ },
+ "vq0.03_Nx8": {
+  "t_reached": 1000.0,
+  "status": "success",
+  "t_pos": null,
+  "steps": 31918,
+  "rejected": 12219,
+  "compile_s": 35.4,
+  "run_s": 30.0,
+  "grid": {
+   "t_res_dKe": ">=1000",
+   "t_res_W": ">=1000",
+   "grid_fmin_lt_-1e-3": 673.5
+  }
+ },
+ "vq0.03_Nx16": {
+  "t_reached": 1000.0,
+  "status": "success",
+  "t_pos": null,
+  "steps": 30398,
+  "rejected": 9856,
+  "compile_s": 40.6,
+  "run_s": 45.9,
+  "c0.5": {
+   "t_res_dKe": ">=1000",
+   "t_res_W": ">=1000",
+   "t_reached": 1000.0,
+   "t_pos": 995.5
+  },
+  "c2": {
+   "t_res_dKe": ">=1000",
+   "t_res_W": ">=1000",
+   "t_reached": 1000.0,
+   "t_pos": null
+  },
+  "Nn128": {
+   "t_res_dKe": 980.5,
+   "t_res_W": ">=1000",
+   "t_reached": 1000.0,
+   "t_pos": 970.5
+  },
+  "grid": {
+   "t_res_dKe": ">=1000",
+   "t_res_W": ">=1000",
+   "grid_fmin_lt_-1e-3": 827.5
+  }
+ },
+ "vq0.03_Nx32": {
+  "t_reached": 960.0,
+  "status": "failure",
+  "t_pos": 942.0,
+  "steps": 24334,
+  "rejected": 8219,
+  "compile_s": 0.8,
+  "run_s": 44.9,
+  "grid": {
+   "t_res_dKe": 952.0,
+   "t_res_W": ">=960",
+   "grid_fmin_lt_-1e-3": 899.5
+  }
+ },
+ "vq0.03_Nx8_vs_Nx16": {
+  "t_res_dKe": ">=1000",
+  "t_res_W": ">=1000"
+ },
+ "vq0.03_Nx16_vs_Nx32": {
+  "t_res_dKe": 952.5,
+  "t_res_W": ">=960"
+ },
+ "grid_vq0.03_Nx8_vs_Nx16": {
+  "t_res_dKe": ">=1000",
+  "t_res_W": ">=1000"
+ },
+ "grid_vq0.03_Nx16_vs_Nx32": {
+  "t_res_dKe": ">=1000",
+  "t_res_W": ">=1000"
+ }
+}

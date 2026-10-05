@@ -1,0 +1,8 @@
+{
+ "case": "gridlin_J5_vq0.1_Nx16_Nv4096_dt0.005",
+ "wall_time": 443.977088790969,
+ "T": 500.0,
+ "min_f_rel": -4.011252587262687e-12,
+ "max_edge": 3.508476797531243e-12,
+ "command": "python studies/highk_grid_linear.py 0.1 500 16 4096 0.005 5"
+}

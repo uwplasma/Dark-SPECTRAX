@@ -1,0 +1,8 @@
+{
+ "case": "gridm_vq0.1_Nx8_Nv4096_dt0.02",
+ "wall_time": 76.0407099169679,
+ "T": 700.0,
+ "min_f_rel": -0.3689557492659899,
+ "max_edge": 0.0005738797731195818,
+ "command": "python studies/lane_c_grid_mobile.py 0.1 700 8 4096 0.02"
+}

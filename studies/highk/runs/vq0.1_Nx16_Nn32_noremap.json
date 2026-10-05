@@ -1,0 +1,15 @@
+{
+ "case": "vq0.1_Nx16_Nn32_noremap",
+ "status": "failure",
+ "failure_reason": "segment 23: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+ "t_reached": 471.0,
+ "events": 0,
+ "steps": 209569,
+ "rejected": 196542,
+ "compile_time": 16.190356166742276,
+ "run_time": 166.81937425216893,
+ "wall_time": 205.25745345803443,
+ "repository_commit": "e1d38243785424ac288c7af13dea7935dac3da65",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830",
+ "command": "python studies/highk_run.py --Nx 16 --Nn 32 --T 480 --no-remap"
+}

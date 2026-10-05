@@ -1,0 +1,15 @@
+{
+ "case": "vq0.1_Nx16_Nn64_dt0.01",
+ "status": "failure",
+ "failure_reason": "segment 23: nonfinite state",
+ "t_reached": 476.0,
+ "events": 9,
+ "steps": 48000,
+ "rejected": 0,
+ "compile_time": 15.61587962100748,
+ "run_time": 68.39519054506673,
+ "wall_time": 107.58884149999358,
+ "repository_commit": "e3fe0606ca5f7ae3cea8f8f6f6f06d6d4dc352ef",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830",
+ "command": "python studies/highk_run.py --Nx 16 --Nn 64 --T 480 --fixed-dt 0.01"
+}
