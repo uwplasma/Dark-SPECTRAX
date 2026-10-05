@@ -16,7 +16,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 
-from ._diagnostics import charge_density, energies, gauss_residuals
+from ._diagnostics import charge_density, energies, gauss_residuals, moments
 from ._model import PARENT_COMMIT, Model, rhs
 
 __all__ = ["maxwellian", "consistent_fields", "proca_mode", "run", "save_record", "adapt_basis", "run_adaptive"]
@@ -90,8 +90,51 @@ def proca_mode(model: Model, y, index, A):
     return {**y, "Dk": y["Dk"].at[:, iy, ix, iz].add(vals)}
 
 
+def _compile(model, y0, t_max, n_save, rtol, atol, dt0, solver, max_steps, progress, fixed_dt, dtmin, noise_floor):
+    term = diffrax.ODETerm(lambda t, y, args: rhs(t, y, model))
+    meter = diffrax.TqdmProgressMeter() if progress else diffrax.NoProgressMeter()
+    if fixed_dt is not None:
+        dt0 = fixed_dt
+
+    @jax.jit
+    def solve(y0, t0):
+        if fixed_dt is not None:
+            controller = diffrax.ConstantStepSize()
+        elif noise_floor is None:
+            controller = diffrax.PIDController(rtol=rtol, atol=atol, dtmin=dtmin, force_dtmin=False)
+        else:
+            controller = _FlooredPID(rtol=rtol, atol=atol, dtmin=dtmin, force_dtmin=False,
+                                     floor=_row_floor(model, y0["Ck"], noise_floor))
+        ts = t0 + jnp.linspace(0.0, t_max, n_save)
+        return diffrax.diffeqsolve(
+            term, solver, t0, t0 + t_max, dt0, y0, saveat=diffrax.SaveAt(ts=ts),
+            stepsize_controller=controller, max_steps=max_steps, throw=False, progress_meter=meter)
+
+    return solve.lower(y0, jnp.asarray(0.0)).compile()
+
+
+class _FlooredPID(diffrax.PIDController):
+    """PID control with an absolute error floor per Ck row (``floor``): err / (atol + floor + rtol |y|)."""
+
+    floor: jax.Array = None
+
+    def adapt_step_size(self, t0, t1, y0, y1_candidate, args, y_error, error_order, controller_state):
+        y = jnp.maximum(jnp.abs(y0["Ck"]), jnp.abs(jnp.nan_to_num(y1_candidate["Ck"])))
+        shrink = (self.atol + self.rtol * y) / (self.atol + self.floor + self.rtol * y)
+        y_error = {**y_error, "Ck": y_error["Ck"] * shrink}
+        return super().adapt_step_size(t0, t1, y0, y1_candidate, args, y_error, error_order, controller_state)
+
+
+def _row_floor(model: Model, Ck, noise_floor):
+    """``noise_floor * |C_000(k=0)|`` of each row's species (the round-off scale of that species' coefficients)."""
+    H = model.Nn * model.Nm * model.Np
+    c0 = jnp.abs(Ck[::H, 0, 0, 0])
+    return (noise_floor * jnp.repeat(c0, H))[:, None, None, None]
+
+
 def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
-        solver=None, max_steps=200_000, progress=False, fixed_dt=None, t0=0.0, dtmin=None):
+        solver=None, max_steps=200_000, progress=False, fixed_dt=None, t0=0.0, dtmin=None,
+        noise_floor=None, cache=None):
     """Integrate from ``t0`` to ``t0 + t_max`` with Dopri8 (adaptive PID, or constant ``fixed_dt``).
 
     Restart a run by passing its final state (including the work ledger ``W``) and final time as ``t0``.
@@ -102,34 +145,29 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
     Step limits follow the parent's PR #50 semantics: ``max_steps`` is the step budget and
     ``dtmin`` (default None: no floor) stops the solve with ``dt_min_reached`` instead of
     crawling; ``num_valid_times`` counts the saves that hold a solution.
+    ``noise_floor`` (default None: plain PID) adds ``noise_floor * |C_000,s(k=0)|`` to ``atol`` on the
+    rows of species ``s``, so round-off in coefficients far below a species' own scale cannot drive the
+    step size (see docs/results.md, unseeded pump-frame stall). ``cache`` (a dict) reuses the compiled
+    solve across calls with equal settings and shapes; ``t0`` is a traced argument.
     """
     solver = diffrax.Dopri8() if solver is None else solver
-    ts = jnp.linspace(t0, t0 + t_max, n_save)
-    term = diffrax.ODETerm(lambda t, y, args: rhs(t, y, model))
-    meter = diffrax.TqdmProgressMeter() if progress else diffrax.NoProgressMeter()
-
-    if fixed_dt is None:
-        controller = diffrax.PIDController(rtol=rtol, atol=atol, dtmin=dtmin, force_dtmin=False)
-    else:
-        controller, dt0 = diffrax.ConstantStepSize(), fixed_dt
-
-    @jax.jit
-    def solve(y0):
-        return diffrax.diffeqsolve(
-            term, solver, t0, t0 + t_max, dt0, y0, saveat=diffrax.SaveAt(ts=ts),
-            stepsize_controller=controller,
-            max_steps=max_steps, throw=False, progress_meter=meter)
-
+    key = (id(model), t_max, n_save, rtol, atol, dt0, id(solver), max_steps, progress, fixed_dt, dtmin, noise_floor,
+           jax.tree_util.tree_map(lambda a: (jnp.shape(a), jnp.result_type(a)), y0))
+    compiled = None if cache is None else cache.get(key)
     tic = _time.perf_counter()
     with warnings.catch_warnings():  # complex states are used exactly as in the parent
         warnings.filterwarnings("ignore", message="Complex dtype support")
-        compiled = solve.lower(y0).compile()
+        if compiled is None:
+            compiled = _compile(model, y0, t_max, n_save, rtol, atol, dt0, solver, max_steps, progress, fixed_dt,
+                                dtmin, noise_floor)
+            if cache is not None:
+                cache[key] = compiled
         t1 = _time.perf_counter()
-        sol = jax.block_until_ready(compiled(y0))
+        sol = jax.block_until_ready(compiled(y0, jnp.asarray(t0, float)))
     t2 = _time.perf_counter()
 
     ys = sol.ys
-    states = [jax.tree_util.tree_map(lambda a, i=i: a[i], ys) for i in range(len(ts))]
+    states = [jax.tree_util.tree_map(lambda a, i=i: a[i], ys) for i in range(n_save)]
     en = [energies(model, s) for s in states]
     gs = [gauss_residuals(model, s) for s in states]
     out = {key: np.array([float(e[key]) for e in en]) for key in ("K", "U_gamma", "U_D")}
@@ -185,27 +223,51 @@ def adapt_basis(model: Model, y, t=None, schedule_basis=None, **trigger):
 _SAVED = ("t", "K", "U_gamma", "U_D", "W", "B", "Ck", "Fk", "Dk")
 
 
-def run_adaptive(model: Model, y0, t_max, segment, n_save_segment=11, schedule=None, trigger=None, **run_kw):
+def _first_negative(model: Model, seg):
+    """First saved time at which some species has K_s <= 0 or k=0 T_x <= 0 (None if never)."""
+    for i in range(seg["t"].size):
+        st = {key: jnp.asarray(seg[key][i]) for key in ("Ck", "Fk", "Dk", "B")}
+        n, M, M2 = (np.asarray(x)[..., 0, 0, 0].real for x in moments(model, st["Ck"], st["B"]))
+        K = np.asarray(energies(model, st)["K_species"])
+        if np.any(K <= 0) or np.any(M2[:, 0, 0] - M[:, 0] ** 2 / n <= 0):
+            return float(seg["t"][i])
+    return None
+
+
+def run_adaptive(model: Model, y0, t_max, segment, n_save_segment=11, schedule=None, trigger=None,
+                 stop_on_negative=True, **run_kw):
     """Integrate in segments of length ``segment`` with a basis remap check after each one.
 
     ``model.frame`` must be ``"pump"``. ``schedule`` (a list of ``(t, basis)`` from a previous
     run's ``events``) replays a frozen remap schedule instead of deciding live. Returns the
     concatenated saves (``t, K, U_gamma, U_D, W, B, Ck, Fk``), the work ledger closed over the
-    whole run, the event list and ``status`` (failure of any segment stops the run).
+    whole run, the event list, summed solver statistics (``num_steps, num_rejected, compile_time,
+    run_time``) and ``status``. The run stops at a failed segment, and (``stop_on_negative``) after
+    the first segment in which a saved kinetic energy or k=0 temperature is not positive: the
+    Hermite solution is then unresolved and further segments only spend the step budget.
+    The compiled solve is reused across segments (one compilation per run).
     """
     if model.frame != "pump":
         raise ValueError("run_adaptive needs model.frame == 'pump'")
     y, t, parts, events = y0, 0.0, [], []
     nseg = int(round(t_max / segment))
     replay = {round(float(tt), 9): b for tt, b in (schedule or [])}
-    out = {"status": "success", "failure_reason": None}
+    out = {"status": "success", "failure_reason": None, "num_steps": 0, "num_rejected": 0,
+           "compile_time": 0.0, "run_time": 0.0}
+    cache = {}
     for k in range(nseg):
-        seg = run(model, y, segment, n_save=n_save_segment, t0=t, **run_kw)
+        seg = run(model, y, segment, n_save=n_save_segment, t0=t, cache=cache, **run_kw)
+        for key in ("num_steps", "num_rejected", "compile_time", "run_time"):
+            out[key] += seg[key]
         parts.append({key: seg[key][(0 if k == 0 else 1):] for key in _SAVED})  # drop the repeated start
         if seg["status"] != "success":
             out.update(status="failure", failure_reason=f"segment {k}: {seg['failure_reason']}")
             break
         t = t + segment
+        t_neg = _first_negative(model, seg) if stop_on_negative else None
+        if t_neg is not None:
+            out.update(status="failure", failure_reason=f"segment {k}: positivity lost at t = {t_neg:g}")
+            break
         y = {"Ck": jnp.asarray(seg["Ck"][-1]), "Fk": jnp.asarray(seg["Fk"][-1]), "Dk": jnp.asarray(seg["Dk"][-1]),
              "W": jnp.asarray(seg["W"][-1], complex), "B": jnp.asarray(seg["B"][-1], complex)}
         if k == nseg - 1:
