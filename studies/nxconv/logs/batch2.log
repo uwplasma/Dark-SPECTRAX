@@ -185,3 +185,6 @@ exit 0 06:43:08 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 6
 start 06:45:32 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --T 1000 --chunk 240 --noise-floor 1e-14
 vq0.1_Nx64_Nn64_c1_nf1e-14: nothing to do (failure, t_end 620)
 exit 0 06:45:32 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --T 1000 --chunk 240 --noise-floor 1e-14
+start 07:01:31 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn64_c1_nf1e-14: nothing to do (failure, t_end 620)
+exit 0 07:01:32 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --T 1000 --chunk 240 --noise-floor 1e-14
