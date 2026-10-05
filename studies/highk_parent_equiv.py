@@ -10,7 +10,6 @@ import numpy as np
 
 jax.config.update("jax_enable_x64", True)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import spectrax  # noqa: E402
 import darkspectrax as ds  # noqa: E402
 from darkspectrax import _simulation as _sim  # noqa: E402
 from darkspectrax._model import basis_of  # noqa: E402
@@ -42,6 +41,6 @@ highk_run._install_field_closure(m, 0.8)
 r1 = _sim.rhs(1.3, y, m)["Ck"]
 ref = _reference_damp(m, y, 0.8)
 err = float(jnp.abs((r1 - r0) - ref).max() / jnp.abs(ref).max())
-print("spectrax:", spectrax.__file__, " max|ref|", float(jnp.abs(ref).max()), " nan:", bool(jnp.isnan(r1).any()))
+print("parent:", ds.PARENT_COMMIT, " max|ref|", float(jnp.abs(ref).max()), " nan:", bool(jnp.isnan(r1).any()))
 print("max rel diff parent-helper closure vs original study closure:", f"{err:.2e}")
 assert err < 1e-12

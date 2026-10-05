@@ -34,8 +34,8 @@ python -m darkspectrax examples/landau.toml --out artifacts/landau
 ```
 
 The parent is pinned to SPECTRAX commit `16400f887f0609b7699cd5df5b1188fbfb74ef5e`: the SPECTRAX integration branch
-`integration/dark-baseline` (main `ab87385` plus unmerged PRs #48, #46, #13, #12, #9, #55, #50, #44, #18, #51 and the
-moving-Hermite-basis stack #56-#60), not a release.
+`integration/dark-baseline` of unmerged PRs (main `ab87385` plus #48, #46, #13, #12, #9, #55, #50, #44, #18, #51,
+the moving-Hermite-basis stack #56-#60, the lane-A filter #61 and the field-scaled closure #66), not a release.
 `--out` receives `run.json` (provenance, solver statistics, ledger and Gauss maxima) and `run.npz`;
 `--resume previous/run.npz` continues from a saved final state.
 
@@ -187,7 +187,9 @@ it returns and re-absorbs all of $U_D(0)$ on the beat period.
 
 Not established: any physics beyond $t_{\rm res}$ (saturation, late heating, partition), any $v_q/v_{te}=0.1$
 result at $t=1000$, convergence in $N_x$, or portability of the $t_{\rm res}$ law to other seeds, grids, mass
-ratios or relativistic drive. Records: [lane C](studies/lane_c/summary.json) · [lane B](studies/lane_b/summary.json) ·
+ratios or relativistic drive. The certified-time panel above is the Nx = 8 lane result; x-refinement with the
+field-scaled closure (SPECTRAX #66) supersedes it: certified to t of about 672 (0.1) and 942-952 (0.03), ended by a
+physical high-k instability ([high-k section](docs/results.md#h05-x-refinement-aw-truncation-instability-field-scaled-closure-physical-high-k-limit-studieshighk_py)). Records: [lane C](studies/lane_c/summary.json) · [lane B](studies/lane_b/summary.json) ·
 [H00-H07](studies/hhs/run.json); table and limits in [docs/results.md](docs/results.md).
 
 ## Conservation and convergence

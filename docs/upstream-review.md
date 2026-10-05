@@ -42,8 +42,10 @@ An unmerged integration commit containing #48, #46, #13, #12, #9 and #55 exists 
 ## What Dark-SPECTRAX needs upstream
 
 Dark-SPECTRAX is pinned to the SPECTRAX integration branch `integration/dark-baseline`
-(`9d0982d`: main `ab87385` plus the unmerged PRs #48, #46, #13, #12, #9, #55, #50, #44, #18, #51, merged in that order),
-not a release. Until those PRs merge upstream:
+(`16400f8`: main `ab87385` plus the unmerged PRs #48, #46, #13, #12, #9, #55, #50, #44, #18, #51, merged in that order,
+then the moving-Hermite-basis stack #56-#60, the lane-A filter #61 and the field-scaled closure #66), not a release.
+Earlier pins: `9d0982d` (first ten PRs), `c0910a1` (+ #56-#60); the side branches `integration/highk` and
+`integration/lane-a` are superseded by `integration/dark-baseline`. Until those PRs merge upstream:
 
 - **#55 (strict mask):** used through the parent mask; grids divisible by 3 are valid.
 - **#9 (Parseval weights):** `inner` uses the parent's `_rfft_weights`.
@@ -51,4 +53,6 @@ not a release. Until those PRs merge upstream:
 - **#50 (step limits):** `run` follows the same `max_steps`/`dtmin`/`num_valid_times` semantics; the parent's
   `_stepsize_controller` is not reused because it ties `rtol = atol`.
 - **#18 (implicit midpoint):** available at the pin; not yet used in Dark-SPECTRAX.
+- **#66 (field-scaled closure):** `studies/highk_run.py` calls `spectrax.field_scaled_closure_rate`; equal to the
+  former study implementation to 3.4e-16 (`studies/highk_parent_equiv.py`).
 - **#48 (dependencies):** the companion still declares the dependencies itself.

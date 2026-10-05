@@ -26,6 +26,10 @@ for p in sorted((root / "studies/noisefloor").glob("scan_*.jsonl")):
     for line in p.read_text().splitlines():  # last record per (part, rtol, floor, case) wins
         d = json.loads(line)
         nfs[(p.stem, d["floor"], d.get("vq", d.get("case")))] = d
+hk = json.loads((root / "studies/highk/summary.json").read_text())
+hk_lin = json.loads((root / "studies/highk/linear_vq0.1.json").read_text())
+hk_eig = json.loads((root / "studies/highk/eig.json").read_text())
+hk_flq = json.loads((root / "studies/highk/floquet.json").read_text())
 ba = {p.stem[len("before_after_"):]: json.loads(p.read_text()) for p in (root / "studies/consolidate").glob("before_after_*.json")}
 
 
@@ -36,7 +40,7 @@ def _tr(x, end=1000.0):
 def lanes():
     """H05 strong-drive lane comparison, the declared stabilizer, the B01 correction and the run_adaptive fixes."""
     sc, fb = lc["scan"], gate["fixed_basis_resolved_until"]
-    L = ["## H05 strong resonant drive: lane comparison (pump frame + remap, parent c0910a1)", "",
+    L = ["## H05 strong resonant drive: lane comparison (pump frame + remap, Nx = 8, records made at parent c0910a1)", "",
          "HHS-v1-inspired nonrelativistic pilot: mobile ions (m_i/m_e = 1836), v_te = sqrt(1e-3), L = 40, Nx = 8, gate "
          "seeds at 5e-4, drive at omega = sqrt(1 + 1/1836), rtol 1e-10. t_res = first t > 50 at which electron dK differs "
          "by more than 10% of its running max between refinements (W_ext never limits). Lane C: nu = 0, Nn 64/128/256 "
@@ -100,7 +104,7 @@ def lanes():
           "- Can: v_q/v_te = 0.03 to t = 1000 with the declared order-2 closure, nu = 1-2, Nn 64/128 agreeing in W_ext "
           "and (nu = 2) in dK_e.",
           "- Cannot: any physics beyond t_res (saturation, late heating, partition); any v_q/v_te = 0.1 result at t = 1000 "
-          "with any lane; x-convergence (Hermite Nx = 16 fails earlier through spurious high-k growth); portability of "
+          "with any lane; x-convergence without the field-scaled closure (see the high-k section below); portability of "
           "the t_res law to other seeds, Nx, mass ratio or relativistic drive; local temperatures (k = 0 random energy "
           "includes non-uniform flow); a pass of the common gate (0.03 and 0.1 to t = 1000 collisionless).", "",
           "## Correction: B01 trapping rebound under the hypercollision closure "
@@ -133,6 +137,75 @@ def lanes():
         L.append(f"| {r['case']} | {r['noise_floor']} | {f(r['before'])} | {f(r['after'])} | "
                  f"{r['max_rel_diff_dK_e']:.1e} / {r['max_rel_diff_W_ext']:.1e} |")
     L += ["", noise_floor_section()]
+    return "\n".join(L)
+
+
+def highk_section():
+    """x-refinement of H05: numerical AW truncation instability, field-scaled closure (SPECTRAX #66), physical high-k limit."""
+    L = ["## H05 x-refinement: AW truncation instability, field-scaled closure, physical high-k limit (`studies/highk_*.py`)", "",
+         "Supersedes the lane comparison above for x-convergence and the certified windows at v_q/v_te = 0.03 and 0.1. "
+         "Records were made at parent c0910a1 with the closure implemented in the study; the study now calls the parent "
+         "helper `spectrax.field_scaled_closure_rate` (SPECTRAX #66, in the pinned integration branch), which equals the "
+         "study implementation to round-off (`python studies/highk_parent_equiv.py`, record `studies/highk/parent_equiv.txt`).", "",
+         "### Numerical: asymmetric-Hermite truncation instability", "",
+         "Without a closure, Nx = 16 fails earlier than Nx = 8 (t = 476 against >= 700 at v_q/v_te = 0.1), and raising Nn "
+         "does not help. In a non-uniform field the truncated AW Galerkin operator -v d_x + (q/m)E d_v is not "
+         "anti-self-adjoint: its growing modes sit in the top third of the Hermite ladder at the largest kept |k|, with a "
+         "rate that rises with the Fourier cut-off K and with Nn. The symmetric (SW) basis is neutral to round-off. "
+         "Largest real part of the frozen-field spectrum (`studies/highk_eig.py`, u = 0) and Floquet exponent in a "
+         "pump-modulated field (`studies/highk_floquet.py`):", "",
+         "| basis | K | Nn | max Re, E1 = 1e-3 | max Re, E1 = 1e-2 | Floquet, E1 = 8e-3 | Floquet, E1 = 2e-2 |", "|---|---|---|---|---|---|---|"]
+    eig = {(r["basis"], r["K"], r["Nn"], r["E1"]): r["max_re"] for r in hk_eig if r["u"] == 0.0}
+    flq = {(r["basis"], r["K"], r["Nn"], r["E1"]): r["floquet"] for r in hk_flq}
+    for b in ("AW", "SW"):
+        for K in (2, 5, 10):
+            for nn in (32, 64, 128):
+                f = [flq.get((b, K, nn, e)) for e in (0.008, 0.02)]
+                L.append(f"| {b} | {K} | {nn} | {eig[(b, K, nn, 0.001)]:.1e} | {eig[(b, K, nn, 0.01)]:.1e} | "
+                         + " | ".join("-" if x is None else f"{x:.1e}" for x in f) + " |")
+    L += ["", "Ruled out: aliasing (padded convolution equals the 2/3-masked RHS to 1e-16, `studies/highk/alias_check.txt`), "
+          "step size (fixed dt = 0.01 fails at the same t) and segment remaps (with remaps off it fails at 472).", "",
+          "Closure: nu_s = c |q/m|_s sqrt(2N) max|E - <E>| / a_s on n(n-1)(n-2)/((N-1)(N-2)(N-3)) (density, momentum "
+          "and energy rows untouched), c = 1. c = 0.5 and 2 and Nn = 128 agree with c = 1 under the 10% rule; before "
+          "t of about 550 the run is identical to the unregularized one to 5 digits.", "",
+          "| v_q/v_te | Nx | status, t reached | first non-positive K or T | steps (rejected) | compile + run s | c = 0.5 / c = 2 / Nn 128 t_res(dK_e) | grid t_res(dK_e), refinement pair |",
+          "|---|---|---|---|---|---|---|---|"]
+    for vq in ("0.1", "0.03"):
+        for nx in (8, 16, 32):
+            r = hk[f"vq{vq}_Nx{nx}"]
+            var = " / ".join(str(r[k]["t_res_dKe"]) for k in ("c0.5", "c2", "Nn128")) if "c2" in r else "-"
+            L.append(f"| {vq} | {nx} | {r['status']}, {r['t_reached']:g} | {r['t_pos'] if r['t_pos'] is not None else 'none'} | "
+                     f"{r['steps']} ({r['rejected']}) | {r['compile_s']:g} + {r['run_s']:g} | {var} | {r['grid']['t_res_dKe']} |")
+    L += ["", "Hermite x-refinement agreement (t_res dK_e / W_ext): "
+          + "; ".join(f"{k.replace('_', ' ')} {hk[k]['t_res_dKe']} / {hk[k]['t_res_W']}"
+                      for k in ("vq0.1_Nx8_vs_Nx16", "vq0.1_Nx16_vs_Nx32", "vq0.03_Nx8_vs_Nx16", "vq0.03_Nx16_vs_Nx32")) + ". "
+          "Nx = 32 runs use `noise_floor` 1e-14 (without it atol 1e-14 sits below FFT round-off and the runs hit the cap); "
+          "at Nx = 16 the floor changes nothing.", "",
+          "### Physical: broadband finite-k instability of the quivering plasma", "",
+          "The exact Volterra solution and the linear Hermite model (`studies/highk_linear.py`, v_q/v_te = 0.1, T = 700) "
+          "agree that the driven plasma amplifies finite-k fields, more strongly at larger k up to k lambda_D of about 0.1. "
+          "Hermite Nn = 32/64/128 agree with each other; they follow the exact solution until the tabulated t (first 10% "
+          "difference) and end below it by a factor 1.3-4, so the Hermite model understates, not invents, the growth:", "",
+          "| mode | exact max E_k^2 / initial | exact end / initial | Hermite Nn 32 / 64 / 128 end / initial | Hermite vs exact 10% at t |",
+          "|---|---|---|---|---|"]
+    for k, r in hk_lin["res"].items():
+        L.append(f"| {k} | {r['exact_E2_max_over_E2_0']:.2e} | {r['exact_E2_end_over_0']:.2e} | "
+                 + " / ".join(f"{r[f'herm{n}_E2_end_over_0']:.3e}" for n in (32, 64, 128)) + f" | {r['herm64_t_10pct']:g} |")
+    L += ["", "This instability, not the closure, ends x-converged agreement: at Nx = 32 the Hermite run loses positivity "
+          f"at t = {hk['vq0.1_Nx32']['t_pos']:g} (0.1) and {hk['vq0.03_Nx32']['t_pos']:g} (0.03), and the grid at Nx = 32 "
+          "blows up at the same time. Reaching t = 1000 at these drives needs k lambda_D up to 0.1-0.2 (Nx >= 64-128) and "
+          "describes a high-k turbulent stage.", "",
+          "### Certified collisionless windows (Hermite, all criteria)", "",
+          f"- v_q/v_te = 0.1: t of about {hk['vq0.1_Nx32']['t_pos']:g} (Nx 32 positivity; grid agreement to "
+          f"{hk['grid_vq0.1_Nx16_vs_Nx32']['t_res_dKe']}-{hk['vq0.1_Nx16']['grid']['t_res_dKe']}). Previously 606.5 (lane C).",
+          f"- v_q/v_te = 0.03: t of about {hk['vq0.03_Nx32']['t_pos']:g}-{hk['vq0.03_Nx16_vs_Nx32']['t_res_dKe']} "
+          "(Nx 32 positivity and Nx 16 vs 32). Previously 879 (lane C).",
+          "- v_q/v_te = 0.01: unchanged, resolved to 1000 (lane C).",
+          "- No drive reaches t = 1000 x-converged at 0.03 or 0.1.", "",
+          "Superseded: the certified-time panel of `docs/_static/conversion/figure.png` and the Lane C t_res values for "
+          "0.03 and 0.1 above are Nx = 8 results; they are kept as records but the windows here replace them. "
+          "The t_res law in the lane section is an Nx = 8 law. Grid caveat: the grid reference goes negative "
+          "(f < -1e-3) before the Hermite runs do, so it is not a better reference late in the run."]
     return "\n".join(L)
 
 
@@ -509,6 +582,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {third_round()}
 
 {lanes()}
+
+{highk_section()}
 
 {phase_space()}
 

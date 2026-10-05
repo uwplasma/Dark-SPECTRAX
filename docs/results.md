@@ -221,7 +221,7 @@ Within the resolved windows W_ext follows the linear resonant estimate E0^2 t^2/
 
 The homogeneous swept-drive mean field matches an independent ODE solution to 1e-9 over 0 <= t <= 1e4. The kinetic swept runs lose resolution (t ~ 2400-2850) before the resonance crossing at t = 5000: no swept-drive kinetic result is claimed.
 
-## H05 strong resonant drive: lane comparison (pump frame + remap, parent c0910a1)
+## H05 strong resonant drive: lane comparison (pump frame + remap, Nx = 8, records made at parent c0910a1)
 
 HHS-v1-inspired nonrelativistic pilot: mobile ions (m_i/m_e = 1836), v_te = sqrt(1e-3), L = 40, Nx = 8, gate seeds at 5e-4, drive at omega = sqrt(1 + 1/1836), rtol 1e-10. t_res = first t > 50 at which electron dK differs by more than 10% of its running max between refinements (W_ext never limits). Lane C: nu = 0, Nn 64/128/256 (`studies/lane_c_run.py`). Lane B: order-2 hypercollision, Nn64/Nn128 rows, pairs Nn and nu/2-2nu (`studies/lane_b_closure.py`). Lane A (width floor + exponential filter) is deferred: branch `lane-a` and SPECTRAX #61 stay open, its records are not on main and it is not compared here.
 
@@ -262,7 +262,7 @@ Use it only as a declared numerical closure at Nn >= 64 and v_q/v_te <= 0.03; at
 
 - Can: v_q/v_te <= 0.01 collisionless (nu = 0) to omega_pe t = 1000, Hermite-converged (Nn 64/128/256), positive, W_ext on the exact linear resonant law to about 1%, energy split equally between electron kinetic and mean field, ions at m_e/(2 m_i). For 0.02-0.1 the same holds up to the tabulated t_res.
 - Can: v_q/v_te = 0.03 to t = 1000 with the declared order-2 closure, nu = 1-2, Nn 64/128 agreeing in W_ext and (nu = 2) in dK_e.
-- Cannot: any physics beyond t_res (saturation, late heating, partition); any v_q/v_te = 0.1 result at t = 1000 with any lane; x-convergence (Hermite Nx = 16 fails earlier through spurious high-k growth); portability of the t_res law to other seeds, Nx, mass ratio or relativistic drive; local temperatures (k = 0 random energy includes non-uniform flow); a pass of the common gate (0.03 and 0.1 to t = 1000 collisionless).
+- Cannot: any physics beyond t_res (saturation, late heating, partition); any v_q/v_te = 0.1 result at t = 1000 with any lane; x-convergence without the field-scaled closure (see the high-k section below); portability of the t_res law to other seeds, Nx, mass ratio or relativistic drive; local temperatures (k = 0 random energy includes non-uniform flow); a pass of the common gate (0.03 and 0.1 to t = 1000 collisionless).
 
 ## Correction: B01 trapping rebound under the hypercollision closure (`python studies/consolidate/b01_rebound.py`)
 
@@ -310,6 +310,76 @@ Control runs (H00, H01, unseeded pump-frame controls) pass `**ds.CONTROLS` expli
 Unseeded pump-frame controls at tighter rtol (same floor scan): rtol 1e-11 floor 1e-13, v_q/v_te 0.01: 3633 steps, 1.8e-09; rtol 1e-11 floor 1e-13, v_q/v_te 0.1: 4485 steps, 1.2e-09; rtol 1e-11 floor 1e-14, v_q/v_te 0.01: 3650 steps, 1.8e-09; rtol 1e-11 floor 1e-14, v_q/v_te 0.1: 4532 steps, 1.5e-09; rtol 1e-11 floor 1e-15, v_q/v_te 0.01: 3695 steps, 1.8e-09; rtol 1e-11 floor 1e-15, v_q/v_te 0.1: 4546 steps, 1.2e-09; rtol 1e-12 floor 1e-14, v_q/v_te 0.01: 3772 steps, 8.1e-10; rtol 1e-12 floor 1e-14, v_q/v_te 0.1: 5470 steps, 2.7e-10.
 
 Reading: the unseeded deviation from the exact uniform two-fluid law is set by rtol, not by the floor (flat over 1e-16..1e-10; the maximum sits at t = 20-30, the start of the window); plain PID agreed to 3e-10 only because it crawled on noise and stalled (t = 158 and 31.5). H00 is floor-insensitive up to 1e-13; H01's Ebar error grows roughly linearly with the floor (3x at 1e-14, 40x at 1e-12, 800x at 1e-10, where it exceeds 2e-9). The seeded case moves by <= 4e-8 of dK_e at any floor and stops at the same t, far below the realization spread (committed t reached 869.5-937.5 over r0-r2; 860 here is the positivity stop for every floor). Larger floors save few steps (pump: 3238 at 1e-14 vs 3194 at 1e-10), so 1e-14 is kept as the control preset; controls keep the seeded runs' rtol 1e-10 so they test the same numerics, and rtol 1e-11 would bring the unseeded agreement below 2e-9 for about 15-30% more steps.
+
+## H05 x-refinement: AW truncation instability, field-scaled closure, physical high-k limit (`studies/highk_*.py`)
+
+Supersedes the lane comparison above for x-convergence and the certified windows at v_q/v_te = 0.03 and 0.1. Records were made at parent c0910a1 with the closure implemented in the study; the study now calls the parent helper `spectrax.field_scaled_closure_rate` (SPECTRAX #66, in the pinned integration branch), which equals the study implementation to round-off (`python studies/highk_parent_equiv.py`, record `studies/highk/parent_equiv.txt`).
+
+### Numerical: asymmetric-Hermite truncation instability
+
+Without a closure, Nx = 16 fails earlier than Nx = 8 (t = 476 against >= 700 at v_q/v_te = 0.1), and raising Nn does not help. In a non-uniform field the truncated AW Galerkin operator -v d_x + (q/m)E d_v is not anti-self-adjoint: its growing modes sit in the top third of the Hermite ladder at the largest kept |k|, with a rate that rises with the Fourier cut-off K and with Nn. The symmetric (SW) basis is neutral to round-off. Largest real part of the frozen-field spectrum (`studies/highk_eig.py`, u = 0) and Floquet exponent in a pump-modulated field (`studies/highk_floquet.py`):
+
+| basis | K | Nn | max Re, E1 = 1e-3 | max Re, E1 = 1e-2 | Floquet, E1 = 8e-3 | Floquet, E1 = 2e-2 |
+|---|---|---|---|---|---|---|
+| AW | 2 | 32 | 6.8e-02 | 2.6e-01 | 1.1e-15 | 1.3e-02 |
+| AW | 2 | 64 | 1.0e-01 | 7.3e-01 | 2.6e-03 | 4.4e-02 |
+| AW | 2 | 128 | 1.5e-01 | 1.5e+00 | - | - |
+| AW | 5 | 32 | 9.2e-02 | 4.7e-01 | 3.5e-06 | 4.3e-02 |
+| AW | 5 | 64 | 1.4e-01 | 7.6e-01 | 2.0e-05 | 1.5e-01 |
+| AW | 5 | 128 | 2.0e-01 | 1.6e+00 | - | - |
+| AW | 10 | 32 | 9.6e-02 | 7.0e-01 | - | - |
+| AW | 10 | 64 | 1.4e-01 | 1.0e+00 | - | - |
+| AW | 10 | 128 | 2.1e-01 | 1.7e+00 | - | - |
+| SW | 2 | 32 | 2.1e-16 | 1.8e-15 | 1.0e-15 | 7.4e-16 |
+| SW | 2 | 64 | 4.2e-16 | 3.4e-15 | 1.2e-15 | 1.2e-15 |
+| SW | 2 | 128 | 5.6e-16 | 4.4e-15 | - | - |
+| SW | 5 | 32 | 5.0e-16 | 2.0e-15 | 1.1e-15 | 1.2e-15 |
+| SW | 5 | 64 | 2.5e-16 | 6.4e-15 | 2.6e-15 | 2.2e-15 |
+| SW | 5 | 128 | 5.3e-16 | 3.8e-15 | - | - |
+| SW | 10 | 32 | 3.3e-16 | 2.7e-15 | - | - |
+| SW | 10 | 64 | 5.3e-16 | 2.0e-15 | - | - |
+| SW | 10 | 128 | 7.8e-16 | 2.9e-15 | - | - |
+
+Ruled out: aliasing (padded convolution equals the 2/3-masked RHS to 1e-16, `studies/highk/alias_check.txt`), step size (fixed dt = 0.01 fails at the same t) and segment remaps (with remaps off it fails at 472).
+
+Closure: nu_s = c |q/m|_s sqrt(2N) max|E - <E>| / a_s on n(n-1)(n-2)/((N-1)(N-2)(N-3)) (density, momentum and energy rows untouched), c = 1. c = 0.5 and 2 and Nn = 128 agree with c = 1 under the 10% rule; before t of about 550 the run is identical to the unregularized one to 5 digits.
+
+| v_q/v_te | Nx | status, t reached | first non-positive K or T | steps (rejected) | compile + run s | c = 0.5 / c = 2 / Nn 128 t_res(dK_e) | grid t_res(dK_e), refinement pair |
+|---|---|---|---|---|---|---|---|
+| 0.1 | 8 | success, 700 | none | 24335 (8882) | 20.5 + 19.3 | - | >=700 |
+| 0.1 | 16 | success, 700 | none | 26043 (7968) | 36.3 + 45.9 | >=700 / >=700 / >=700 | 691.5 |
+| 0.1 | 32 | failure, 680 | 672.0 | 22786 (8679) | 0.7 + 42 | - | 625.0 |
+| 0.03 | 8 | success, 1000 | none | 31918 (12219) | 35.4 + 30 | - | >=1000 |
+| 0.03 | 16 | success, 1000 | none | 30398 (9856) | 40.6 + 45.9 | >=1000 / >=1000 / 980.5 | >=1000 |
+| 0.03 | 32 | failure, 960 | 942.0 | 24334 (8219) | 0.8 + 44.9 | - | 952.0 |
+
+Hermite x-refinement agreement (t_res dK_e / W_ext): vq0.1 Nx8 vs Nx16 >=700 / >=700; vq0.1 Nx16 vs Nx32 >=680 / >=680; vq0.03 Nx8 vs Nx16 >=1000 / >=1000; vq0.03 Nx16 vs Nx32 952.5 / >=960. Nx = 32 runs use `noise_floor` 1e-14 (without it atol 1e-14 sits below FFT round-off and the runs hit the cap); at Nx = 16 the floor changes nothing.
+
+### Physical: broadband finite-k instability of the quivering plasma
+
+The exact Volterra solution and the linear Hermite model (`studies/highk_linear.py`, v_q/v_te = 0.1, T = 700) agree that the driven plasma amplifies finite-k fields, more strongly at larger k up to k lambda_D of about 0.1. Hermite Nn = 32/64/128 agree with each other; they follow the exact solution until the tabulated t (first 10% difference) and end below it by a factor 1.3-4, so the Hermite model understates, not invents, the growth:
+
+| mode | exact max E_k^2 / initial | exact end / initial | Hermite Nn 32 / 64 / 128 end / initial | Hermite vs exact 10% at t |
+|---|---|---|---|---|
+| k1 | 7.82e+00 | 7.41e+00 | 1.930e+00 / 1.930e+00 / 1.930e+00 | 405 |
+| k2 | 1.91e+02 | 1.85e+02 | 6.315e+01 / 6.315e+01 / 6.315e+01 | 323 |
+| k3 | 3.48e+03 | 3.40e+03 | 1.637e+03 / 1.637e+03 / 1.637e+03 | 292 |
+| k4 | 5.76e+04 | 5.74e+04 | 3.245e+04 / 3.245e+04 / 3.245e+04 | 273 |
+| k5 | 9.51e+05 | 9.51e+05 | 5.984e+05 / 5.984e+05 / 5.985e+05 | 270 |
+| k6 | 1.49e+07 | 1.49e+07 | 1.011e+07 / 1.011e+07 / 1.011e+07 | 276 |
+| k7 | 2.12e+08 | 2.12e+08 | 1.532e+08 / 1.532e+08 / 1.532e+08 | 317 |
+| k8 | 2.72e+09 | 2.72e+09 | 2.057e+09 / 2.057e+09 / 2.057e+09 | 364 |
+
+This instability, not the closure, ends x-converged agreement: at Nx = 32 the Hermite run loses positivity at t = 672 (0.1) and 942 (0.03), and the grid at Nx = 32 blows up at the same time. Reaching t = 1000 at these drives needs k lambda_D up to 0.1-0.2 (Nx >= 64-128) and describes a high-k turbulent stage.
+
+### Certified collisionless windows (Hermite, all criteria)
+
+- v_q/v_te = 0.1: t of about 672 (Nx 32 positivity; grid agreement to 625.0-691.5). Previously 606.5 (lane C).
+- v_q/v_te = 0.03: t of about 942-952.5 (Nx 32 positivity and Nx 16 vs 32). Previously 879 (lane C).
+- v_q/v_te = 0.01: unchanged, resolved to 1000 (lane C).
+- No drive reaches t = 1000 x-converged at 0.03 or 0.1.
+
+Superseded: the certified-time panel of `docs/_static/conversion/figure.png` and the Lane C t_res values for 0.03 and 0.1 above are Nx = 8 results; they are kept as records but the windows here replace them. The t_res law in the lane section is an Nx = 8 law. Grid caveat: the grid reference goes negative (f < -1e-3) before the Hermite runs do, so it is not a better reference late in the run.
 
 ## Phase-space movies: resolution of the reconstructed f (`python studies/figures.py phase`)
 
