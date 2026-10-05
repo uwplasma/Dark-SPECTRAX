@@ -52,10 +52,19 @@ def t_pos(h):
     return float(h["t"][bad[0]]) if bad.size else None
 
 
+def first(vq, Nx):
+    """c = 1, Nn 64 record: plain PID (Nx 8, 16) or with the noise floor (Nx 32, after the rebase on main)."""
+    for tag in ("_v2", "", "_nf1e-14"):
+        h = herm(f"vq{vq:g}_Nx{Nx}_Nn64_fnu1{tag}")
+        if h is not None:
+            return h
+    return None
+
+
 out = {}
 for vq, T in ((0.1, 700), (0.03, 1000)):
     for Nx in (8, 16, 32):
-        base = herm(f"vq{vq:g}_Nx{Nx}_Nn64_fnu1_v2") or herm(f"vq{vq:g}_Nx{Nx}_Nn64_fnu1")
+        base = first(vq, Nx)
         if base is None:
             continue
         row = {"t_reached": base["rec"]["t_reached"], "status": base["rec"]["status"], "t_pos": t_pos(base),
@@ -73,7 +82,10 @@ for vq, T in ((0.1, 700), (0.03, 1000)):
                            "grid_fmin_lt_-1e-3": float(g["t"][np.argmax(g["fmin"] < -1e-3)]) if (g["fmin"] < -1e-3).any() else None}
         out[f"vq{vq:g}_Nx{Nx}"] = row
     # x-convergence of the closure runs: Nx 8 vs 16, 16 vs 32
-    hs = {Nx: herm(f"vq{vq:g}_Nx{Nx}_Nn64_fnu1_v2") or herm(f"vq{vq:g}_Nx{Nx}_Nn64_fnu1") for Nx in (8, 16, 32)}
+    hs = {Nx: first(vq, Nx) for Nx in (8, 16, 32)}
+    a, b = herm(f"vq{vq:g}_Nx16_Nn64_fnu1_v2"), herm(f"vq{vq:g}_Nx16_Nn64_fnu1_nf1e-14")
+    if a is not None and b is not None:
+        out[f"vq{vq:g}_Nx16_noise_floor_check"] = {"t_res_dKe": t_res(a, b, "dKe"), "t_res_W": t_res(a, b, "W")}
     for A, B in ((8, 16), (16, 32)):
         if hs[A] is not None and hs[B] is not None:
             out[f"vq{vq:g}_Nx{A}_vs_Nx{B}"] = {"t_res_dKe": t_res(hs[A], hs[B], "dKe"), "t_res_W": t_res(hs[A], hs[B], "W")}

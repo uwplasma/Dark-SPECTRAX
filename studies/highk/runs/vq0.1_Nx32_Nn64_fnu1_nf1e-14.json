@@ -1,0 +1,15 @@
+{
+ "case": "vq0.1_Nx32_Nn64_fnu1_nf1e-14",
+ "status": "failure",
+ "failure_reason": "segment 33: positivity lost at t = 672",
+ "t_reached": 680.0,
+ "events": 20,
+ "steps": 22786,
+ "rejected": 8679,
+ "compile_time": 0.7480807450483553,
+ "run_time": 42.00441795802908,
+ "wall_time": 69.153837833961,
+ "repository_commit": "dab50092adb4314dcc33f27b7460f3e1d0068e23",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830",
+ "command": "python studies/highk_run.py --Nx 32 --Nn 64 --T 700 --field-nu 1 --noise-floor 1e-14"
+}
