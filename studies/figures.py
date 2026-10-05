@@ -725,11 +725,11 @@ def fig_djic_phase(*args):
     pic_rec = load_json("studies/djic_phase/run.json")
     pic = load_npz("artifacts/djic_phase/two_stream.npz")
     herm = load_npz("docs/_static/phase_space/data.npz")
-    t_res = min(rec["t_res_ordinary"], rec["t_res_dark"])
+    t_res = rec["t_drawn"]  # Hermite frames end where Nn and 2Nn stop agreeing on f or field energy
     fs = {}
     for mdl in ("ordinary", "dark"):
         z = np.load(CACHE / f"{case}_{mdl}_Nn{c['Nn']}.npz")
-        keep = np.isfinite(z["t_frames"]) & (z["t_frames"] <= t_res) & (z["t_frames"] > 0)
+        keep = np.isfinite(z["t_frames"]) & (z["t_frames"] < t_res) & (z["t_frames"] > 0)
         x, v, f = phase_f(case, mdl == "dark", c["Nn"], z["Ck"][keep], nx=64, nv=80)
         fs[mdl] = (z["t_frames"][keep], f)
     n = min(len(fs["ordinary"][0]), len(fs["dark"][0]))
@@ -780,7 +780,7 @@ def fig_djic_phase(*args):
     frames[min(n - 1, int(np.searchsorted(tf, 0.8 * tf[-1])))].save(out / "figure.png")
     gr = {}
     for mdl in ("ordinary", "dark"):  # growth of |E_k1| over the same window, both codes
-        w = (1 / 3 * tf[-1], 2 / 3 * tf[-1])
+        w = (10.0, 20.0)  # exponential phase in both codes (Hermite linear root 0.2616 / 0.2664)
         key = f"{case}_{mdl}_Nn{c['Nn']}"
         th, Eh = herm[f"{key}_t"], np.abs(herm[f"{key}_E1"])
         mh, mp = (th >= w[0]) & (th <= w[1]), (tp >= w[0]) & (tp <= w[1])
