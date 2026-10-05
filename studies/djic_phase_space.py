@@ -7,7 +7,7 @@ Run in an environment with jaxincell and darkjaxincell importable (Dark-JAX-in-C
 Same physical inputs as ``PHASE_CASES["two_stream"]`` in studies/figures.py: two electron beams with drifts
 +-v0, v0 = 0.1 c, thermal standard deviation 0.3 v0, box mode k v0/omega_pe = 0.4, fixed neutralizing ions,
 density seed dn_s/n_s = 1e-3 cos(k x) on both beams; dark run eta = 0.3, Omega_D = omega_pe.
-PIC specifics: quiet start, time step 0.0125/omega_pe, 128 cells (default), displacement seed.
+PIC specifics: quiet start, omega_pe dt = 0.006 (c dt/dx = 0.49 at 128 cells), displacement seed.
 Writes artifacts/djic_phase/two_stream.npz (sampled markers per frame; not committed) and
 studies/djic_phase/run.json + data.npz (E_k1 histories); per-frame marker histograms go to the cache.
 """
@@ -41,8 +41,8 @@ v0 = u_es * beta * c
 wp = k * v0 / k_es
 density = wp ** 2 * epsilon_0 * mass_electron / e ** 2
 vth = np.sqrt(2) * vt_es * beta * c  # quiet_start convention: sqrt(2) x standard deviation (studies/c05_pic_rerun.py)
-dt = 0.0125 / wp
-stride = int(round(T / (PHASE_FRAMES - 1) / 0.0125))
+stride = 125  # steps per movie frame: omega_pe dt = 0.006, c dt/dx = 0.49 at 128 cells (explicit Proca margin)
+dt = T / (PHASE_FRAMES - 1) / stride / wp
 frames = PHASE_FRAMES - 1
 species = []
 for sign, name in ((1, "plus"), (-1, "minus")):
@@ -86,7 +86,7 @@ rec_dir.mkdir(parents=True, exist_ok=True)
 djic = Path(sys.modules["darkjaxincell"].__file__).resolve().parents[1]
 sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=djic, capture_output=True, text=True).stdout.strip()
 rec = {"case": "two_stream", "command": "python studies/djic_phase_space.py " + " ".join(sys.argv[1:]),
-       "dark_jax_in_cell_commit": sha, "cells": cells, "particles_per_beam": per_beam, "dt_omega_pe": 0.0125,
+       "dark_jax_in_cell_commit": sha, "cells": cells, "particles_per_beam": per_beam, "dt_omega_pe": dt * wp, "c_dt_over_dx": c * dt * cells / length,
        "frame_stride_steps": stride, "frames": int(out["ordinary"]["t"].size), "eta": eta, "Omega_D_over_wp": 1.0,
        "v0_over_c": v0 / c, "seed": seed, "wall_s": timing, "backend": jax.default_backend(), "jax": jax.__version__,
        "python": platform.python_version(),
