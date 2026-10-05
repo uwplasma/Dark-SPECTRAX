@@ -18,10 +18,10 @@
   "t_reached": 1000.0,
   "steps": 6074,
   "rejected": 823,
-  "compile_time": 39.29163495398825,
-  "run_time": 5.969428668962792,
-  "wall_time": 134.15927729196846,
-  "repository_commit": "590988a1aff836f1bad2bcc0121654d7bca77ab0"
+  "compile_time": 0.8436838391935453,
+  "run_time": 5.93625608086586,
+  "wall_time": 52.29945016599959,
+  "repository_commit": "aabb1cc73ce7712ab9ca2a045a6ec585eb544900"
  },
  "common_saves": 2001,
  "max_rel_diff_dK_e": 7.193227751056529e-08,

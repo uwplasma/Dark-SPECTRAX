@@ -1,0 +1,29 @@
+{
+ "case": "vq0.1_Nn64_r0",
+ "noise_floor": null,
+ "before": {
+  "status": "failure",
+  "failure_reason": "segment 31: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+  "t_reached": 632.5,
+  "steps": 206137,
+  "rejected": 199271,
+  "compile_time": 18.097150416171644,
+  "run_time": 165.91802558396012,
+  "wall_time": 209.54119433299638,
+  "repository_commit": "80c34b1f59e5fd60fc68f7b479c903854e36768a"
+ },
+ "after": {
+  "status": "failure",
+  "failure_reason": "segment 29: positivity lost at t = 599.5",
+  "t_reached": 600.0,
+  "steps": 5855,
+  "rejected": 849,
+  "compile_time": 0.8177277470240369,
+  "run_time": 5.617307792941574,
+  "wall_time": 34.40434558398556,
+  "repository_commit": "aabb1cc73ce7712ab9ca2a045a6ec585eb544900"
+ },
+ "common_saves": 1201,
+ "max_rel_diff_dK_e": 5.766394137101673e-14,
+ "max_rel_diff_W_ext": 3.711273067897226e-16
+}

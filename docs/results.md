@@ -288,8 +288,10 @@ nu = 1 keeps the rebound (93% at N = 512, 82% at N = 256); at N = 256, nu = 0 re
 
 | case | floor | before: status, t, steps, compile s, wall s | after: status, t, steps, compile s, wall s | max diff dK_e / W_ext (rel.) |
 |---|---|---|---|---|
-| vq0.01_Nn64_r0 | None | success, 1000, 7950, 33.1, 88 | success, 1000, 7950, 40.3, 141 | 1.1e-13 / 4.2e-16 |
-| vq0.01_Nn64_r0 | 1e-14 | success, 1000, 7950, 33.1, 88 | success, 1000, 6074, 39.3, 134 | 7.2e-08 / 3.5e-10 |
+| vq0.01_Nn64_r0 | None | success, 1000, 7950, 33.1, 88 | success, 1000, 7950, 0.9, 56 | 1.1e-13 / 4.2e-16 |
+| vq0.01_Nn64_r0 | 1e-14 | success, 1000, 7950, 33.1, 88 | success, 1000, 6074, 0.8, 52 | 7.2e-08 / 3.5e-10 |
+| vq0.1_Nn64_r0 | None | failure, 632.5, 206137, 18.1, 210 | failure, 600, 5855, 0.8, 34 | 5.8e-14 / 3.7e-16 |
+| vq0.1_Nn64_r0 | 1e-14 | failure, 632.5, 206137, 18.1, 210 | failure, 600, 4843, 0.9, 33 | 2.1e-08 / 1.1e-11 |
 
 ## Test suite (local, CPU, float64)
 
