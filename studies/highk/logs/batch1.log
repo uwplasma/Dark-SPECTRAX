@@ -1,0 +1,16 @@
+/Users/rogeriojorge/local/spectrax-wt/highk-dark/studies/highk_run.py:63: RuntimeWarning: overflow encountered in square
+  spec = np.abs(Ck) ** 2
+{"case": "vq0.1_Nx16_Nn64", "status": "failure", "failure_reason": "segment 23: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>", "t_reached": 476.0, "events": 9, "steps": 207800, "rejected": 199675, "compile_time": 15.748066501284484, "run_time": 280.4549792909529, "wall_time": 318.1607045420096, "repository_commit": "e3fe0606ca5f7ae3cea8f8f6f6f06d6d4dc352ef", "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830", "command": "python studies/highk_run.py --Nx 16 --Nn 64 --T 480"}
+exit 0 : --Nx 16 --Nn 64 --T 480
+/Users/rogeriojorge/local/spectrax-wt/highk-dark/studies/highk_run.py:63: RuntimeWarning: overflow encountered in square
+  spec = np.abs(Ck) ** 2
+{"case": "vq0.1_Nx16_Nn128", "status": "success", "failure_reason": null, "t_reached": 480.0, "events": 10, "steps": 7737, "rejected": 1134, "compile_time": 16.131157085997984, "run_time": 16.600843789987266, "wall_time": 54.64975708402926, "repository_commit": "e3fe0606ca5f7ae3cea8f8f6f6f06d6d4dc352ef", "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830", "command": "python studies/highk_run.py --Nx 16 --Nn 128 --T 480"}
+exit 0 : --Nx 16 --Nn 128 --T 480
+/Users/rogeriojorge/local/spectrax-wt/highk-dark/studies/highk_run.py:63: RuntimeWarning: overflow encountered in square
+  spec = np.abs(Ck) ** 2
+{"case": "vq0.1_Nx16_Nn64_noremap", "status": "failure", "failure_reason": "segment 23: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>", "t_reached": 472.0, "events": 0, "steps": 208488, "rejected": 199885, "compile_time": 16.359497083874885, "run_time": 281.9790479961666, "wall_time": 320.2272372089792, "repository_commit": "e3fe0606ca5f7ae3cea8f8f6f6f06d6d4dc352ef", "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830", "command": "python studies/highk_run.py --Nx 16 --Nn 64 --T 480 --no-remap"}
+exit 0 : --Nx 16 --Nn 64 --T 480 --no-remap
+/Users/rogeriojorge/local/spectrax-wt/highk-dark/studies/highk_run.py:63: RuntimeWarning: overflow encountered in square
+  spec = np.abs(Ck) ** 2
+{"case": "vq0.1_Nx16_Nn64_dt0.01", "status": "failure", "failure_reason": "segment 23: nonfinite state", "t_reached": 476.0, "events": 9, "steps": 48000, "rejected": 0, "compile_time": 15.61587962100748, "run_time": 68.39519054506673, "wall_time": 107.58884149999358, "repository_commit": "e3fe0606ca5f7ae3cea8f8f6f6f06d6d4dc352ef", "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830", "command": "python studies/highk_run.py --Nx 16 --Nn 64 --T 480 --fixed-dt 0.01"}
+exit 0 : --Nx 16 --Nn 64 --T 480 --fixed-dt 0.01

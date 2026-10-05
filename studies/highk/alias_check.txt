@@ -1,0 +1,8 @@
+Nx 16 vs padded 24, kept |k|<=5: Ck max rel diff 1.17e-16
+Nx 16 vs padded 24, kept |k|<=5: Fk max rel diff 0.00e+00
+Nx 16 vs padded 24, kept |k|<=5: B max rel diff 1.62e-16
+  padded run: largest RHS on a dropped mode = 0.00e+00
+Nx 8 vs padded 16, kept |k|<=2: Ck max rel diff 1.02e-16
+Nx 8 vs padded 16, kept |k|<=2: Fk max rel diff 0.00e+00
+Nx 8 vs padded 16, kept |k|<=2: B max rel diff 0.00e+00
+  padded run: largest RHS on a dropped mode = 0.00e+00

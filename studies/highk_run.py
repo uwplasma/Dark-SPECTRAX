@@ -35,6 +35,7 @@ def main(argv=None):
     ap.add_argument("--fixed-dt", type=float, default=None)
     ap.add_argument("--no-remap", action="store_true")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--seed-scale", type=float, default=1.0)
     a = ap.parse_args(argv)
     m = model(a.vq, a.Nn, a.Nx)
     if a.kmax is not None:
@@ -53,7 +54,7 @@ def main(argv=None):
 
     _sim.run = counted
     trig = {"shift_on": 1e9, "width_on": 1e9} if a.no_remap else None
-    y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], seeds(0)))
+    y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], [(sp, k, A * a.seed_scale) for sp, k, A in seeds(0)]))
     tic = time.perf_counter()
     out = ds.run_adaptive(m, y0, a.T, SEG, n_save_segment=NSAVE, rtol=1e-10, atol=1e-14, max_steps=200_000,
                           trigger=trig)
@@ -62,7 +63,7 @@ def main(argv=None):
     Ck = out["Ck"][good].reshape(good.sum(), m.Ns, m.Nn, m.Nx // 2 + 1)
     spec = np.abs(Ck) ** 2
     case = f"vq{a.vq:g}_Nx{a.Nx}_Nn{a.Nn}" + (f"_kmax{a.kmax}" if a.kmax is not None else "") \
-        + (f"_dt{a.fixed_dt:g}" if a.fixed_dt else "") + ("_noremap" if a.no_remap else "") + a.tag
+        + (f"_dt{a.fixed_dt:g}" if a.fixed_dt else "") + ("_noremap" if a.no_remap else "") + (f"_seed{a.seed_scale:g}" if a.seed_scale != 1 else "") + a.tag
     st = np.array(stats)
     rec = {"case": case, "status": out["status"], "failure_reason": out["failure_reason"],
            "t_reached": float(out["t"][good][-1]), "events": len(out["events"]),
