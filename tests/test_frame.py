@@ -1,5 +1,6 @@
 """Pump (oscillating-centre) frame and basis remaps on the parent's moving-basis operators."""
 
+import inspect
 import jax.numpy as jnp
 import numpy as np
 import pytest
@@ -115,7 +116,9 @@ def test_noise_floor_removes_the_unseeded_pump_frame_stall():
                      mode="prescribed_drive", E_drive=(0.1 * vte, 0.0, 0.0), omega_drive=w, frame="pump")
     y0 = ds.consistent_fields(model, ds.maxwellian(model, [1.0, 1.0]))
     kw = dict(n_save=21, rtol=1e-10, atol=1e-14, max_steps=3000)
-    plain, floored = ds.run(model, y0, 20.0, **kw), ds.run(model, y0, 20.0, noise_floor=1e-14, **kw)
+    plain, floored = ds.run(model, y0, 20.0, **kw), ds.run(model, y0, 20.0, **ds.CONTROLS, **kw)
+    assert ds.CONTROLS == {"noise_floor": 1e-14}  # the control preset (studies/noisefloor); default stays None
+    assert inspect.signature(ds.run).parameters["noise_floor"].default is None
     assert plain["status"] == "failure"
     assert floored["status"] == "success" and floored["num_steps"] < 300
     t, A = floored["t"], 0.1 * vte * (1 + eps) / (2 * w)

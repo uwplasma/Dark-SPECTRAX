@@ -32,6 +32,7 @@ rec = {"label": "HHS-v1-inspired, nonrelativistic; not a reproduction", "parent_
        "inputs": {"v_te": vte, "alpha_e": a_e, "alpha_i": a_i, "mass_ratio": 1836, "Lx": Lx,
                   "E0": drives, "omega_electron": w_e, "omega_total": w_tot}}
 arrays = {}
+CONTROL_NOISE_FLOOR = ds.CONTROLS["noise_floor"]  # H00/H01 are controls (studies/noisefloor)
 
 
 def Ebar_exact(t, E0, w, wL=1.0):
@@ -55,25 +56,27 @@ def timed(fn, *a, **k):
 
 
 # ---------------- H00: homogeneous, fixed ions -----------------------------------------------
-H00 = {}
-for dname, E0 in drives.items():
-    for wname, w in (("omega_e", w_e), ("omega_tot", w_tot)):
-        m = ds.Model(Nx=1, Nn=3, alpha_s=(a_e,) * 3, rho_background=1.0, mode="prescribed_drive",
-                     E_drive=(E0, 0.0, 0.0), omega_drive=w)
-        out = ds.run(m, ds.maxwellian(m, [1.0]), 1000.0, n_save=10001, rtol=1e-11, atol=1e-16)
-        t, Eb = out["t"], out["Fk"][:, 0, 0, 0, 0].real
-        ref = Ebar_exact(t, E0, w)
-        Wref = Wext_exact(1000.0, E0, w)
-        key = f"{dname}_{wname}"
-        H00[key] = {"status": out["status"], "max_abs_Ebar_err_over_max": float(np.abs(Eb - ref).max() / np.abs(ref).max()),
-                    "W_ext_final": float(out["W"][-1, 2]), "W_ext_exact": Wref,
-                    "W_ext_rel_err": float(abs(out["W"][-1, 2] - Wref) / abs(Wref)),
-                    "ledger_defect": float(np.abs(out["ledger_defect"]).max()),
-                    "max_quiver_over_vte": float(np.abs(ref).max() / vte),
-                    "steps": out["num_steps"], "compile_time": out["compile_time"], "run_time": out["run_time"]}
-        arrays[f"H00_{key}_t"], arrays[f"H00_{key}_E"] = t[::10], Eb[::10]
-        print("H00", key, H00[key], flush=True)
-rec["H00"] = H00
+def h00(noise_floor=None):
+    H00 = {}
+    for dname, E0 in drives.items():
+        for wname, w in (("omega_e", w_e), ("omega_tot", w_tot)):
+            m = ds.Model(Nx=1, Nn=3, alpha_s=(a_e,) * 3, rho_background=1.0, mode="prescribed_drive",
+                         E_drive=(E0, 0.0, 0.0), omega_drive=w)
+            out = ds.run(m, ds.maxwellian(m, [1.0]), 1000.0, n_save=10001, rtol=1e-11, atol=1e-16,
+                         noise_floor=noise_floor)
+            t, Eb = out["t"], out["Fk"][:, 0, 0, 0, 0].real
+            ref = Ebar_exact(t, E0, w)
+            Wref = Wext_exact(1000.0, E0, w)
+            key = f"{dname}_{wname}"
+            H00[key] = {"status": out["status"], "max_abs_Ebar_err_over_max": float(np.abs(Eb - ref).max() / np.abs(ref).max()),
+                        "W_ext_final": float(out["W"][-1, 2]), "W_ext_exact": Wref,
+                        "W_ext_rel_err": float(abs(out["W"][-1, 2] - Wref) / abs(Wref)),
+                        "ledger_defect": float(np.abs(out["ledger_defect"]).max()),
+                        "max_quiver_over_vte": float(np.abs(ref).max() / vte),
+                        "steps": out["num_steps"], "compile_time": out["compile_time"], "run_time": out["run_time"]}
+            arrays[f"H00_{key}_t"], arrays[f"H00_{key}_E"] = t[::10], Eb[::10]
+            print("H00", key, H00[key], flush=True)
+    return H00
 
 
 # ---------------- finite-k runs ----------------------------------------------------------------
@@ -116,11 +119,12 @@ def identity_residual(m, out, mobile):
     return np.array(R), np.array(Qi)
 
 
-def finite_k(name, E0, w, mobile, T, Nn, nsave):
+def finite_k(name, E0, w, mobile, T, Nn, nsave, noise_floor=None):
     m = finite_k_model(E0, w, mobile, Nn)
     dens = [1.0, 1.0] if mobile else [1.0]
     y = ds.consistent_fields(m, ds.maxwellian(m, dens, seeds(mobile)))
-    out = ds.run(m, y, T, n_save=nsave, rtol=1e-10, atol=1e-14, max_steps=2_000_000)
+    out = ds.run(m, y, T, n_save=nsave, rtol=1e-10, atol=1e-14, max_steps=2_000_000,
+                 noise_floor=noise_floor)
     (R, Qi), tdiag = timed(identity_residual, m, out, mobile)
     wL2 = 1 + (1 / 1836 if mobile else 0.0)
     t = out["t"]
@@ -149,55 +153,62 @@ def finite_k(name, E0, w, mobile, T, Nn, nsave):
     return r
 
 
-rec["H01"] = {}
-for dname, T in (("weak", 1000.0), ("strong", 100.0)):
-    rec["H01"][f"{dname}_omega_e"] = finite_k(f"H01_{dname}", drives[dname], w_e, False, T, 32, int(T * 4) + 1)
-
-rec["H02"] = {}
-gate = finite_k("H02_weak_pilot100", drives["weak"], w_tot, True, 100.0, 32, 401)
-rec["H02"]["weak_omega_tot_T100"] = gate
-gate_pass = gate["status"] == "success" and gate["max_identity_residual_over_wL2E0"] < 1e-6
-rec["H02"]["gate_T100_to_T1000"] = {"criterion": "status success and identity residual < 1e-6 (wL^2 E0)",
-                                    "passed": bool(gate_pass)}
-if gate_pass:
-    for wname, w in (("omega_tot", w_tot), ("omega_e", w_e)):
-        rec["H02"][f"weak_{wname}_T1000"] = finite_k(f"H02_weak_{wname}", drives["weak"], w, True, 1000.0, 32, 4001)
+def h01(noise_floor=None):
+    return {f"{d}_omega_e": finite_k(f"H01_{d}", drives[d], w_e, False, T, 32, int(T * 4) + 1, noise_floor)
+            for d, T in (("weak", 1000.0), ("strong", 100.0))}
 
 
-# ---------------- H07: finite reservoir vs prescribed drive, homogeneous fixed ions --------------
-H07 = {}
-for eta in (1e-3, 3e-2):
-    E0 = drives["weak"]
-    mp = ds.Model(Nx=1, Nn=3, alpha_s=(a_e,) * 3, rho_background=1.0, mode="prescribed_drive",
-                  E_drive=(E0, 0.0, 0.0), omega_drive=1.0)
-    ms = ds.Model(Nx=1, Nn=3, alpha_s=(a_e,) * 3, rho_background=1.0, mode="self_consistent", eta=eta, Omega_D=1.0)
-    y0 = ds.maxwellian(ms, [1.0])
-    ys = ds.proca_mode(ms, y0, (0, 0, 0), [-1j * E0 / eta, 0.0, 0.0])  # eta E_D(0) = E0, E_D ~ cos(t)
-    op = ds.run(mp, ds.maxwellian(mp, [1.0]), 1000.0, n_save=4001, rtol=1e-11, atol=1e-16)
-    osc = ds.run(ms, ys, 1000.0, n_save=4001, rtol=1e-11, atol=1e-16)
-    t = osc["t"]
-    Mx = np.array([[0, 1, eta, 0], [-1, 0, 0, 0], [-eta, 0, 0, 1], [0, 0, -1, 0]], float)
-    v0 = [0.0, 0.0, float(ys["Dk"][0, 0, 0, 0].real), float(ys["Dk"][6, 0, 0, 0].real)]
-    ref = np.array([expm(Mx * tt) @ v0 for tt in t[::40]])
-    H07[f"eta{eta}"] = {
-        "status": [op["status"], osc["status"]],
-        "Ebar_vs_matrix_exponential_max_err_over_max": float(
-            np.abs(osc["Fk"][::40, 0, 0, 0, 0].real - ref[:, 1]).max() / np.abs(ref[:, 1]).max()),
-        "U_D0": float(osc["U_D"][0]), "W_D_final": float(osc["W"][-1, 1]),
-        "max_fraction_of_reservoir_transferred": float(osc["W"][:, 1].max() / osc["U_D"][0]),
-        "W_ext_prescribed_final": float(op["W"][-1, 2]),
-        "max_abs_Ebar_prescribed": float(np.abs(op["Fk"][:, 0, 0, 0, 0].real).max()),
-        "max_abs_Ebar_reservoir": float(np.abs(osc["Fk"][:, 0, 0, 0, 0].real).max()),
-        "beat_period_estimate_2pi_over_eta": 2 * np.pi / eta,
-        "ledger_defect_reservoir": float(np.abs(osc["ledger_defect"]).max()),
-        "run_time": [op["run_time"], osc["run_time"]]}
-    arrays[f"H07_eta{eta}_t"] = t
-    arrays[f"H07_eta{eta}_Ebar_prescribed"] = op["Fk"][:, 0, 0, 0, 0].real
-    arrays[f"H07_eta{eta}_Ebar_reservoir"] = osc["Fk"][:, 0, 0, 0, 0].real
-    arrays[f"H07_eta{eta}_W_D"], arrays[f"H07_eta{eta}_W_ext"] = osc["W"][:, 1], op["W"][:, 2]
-    print("H07", eta, H07[f"eta{eta}"], flush=True)
-rec["H07"] = H07
+def main():
+    rec["H00"] = h00(CONTROL_NOISE_FLOOR)
+    rec["H01"] = h01(CONTROL_NOISE_FLOOR)
+    rec["H02"] = {}
+    gate = finite_k("H02_weak_pilot100", drives["weak"], w_tot, True, 100.0, 32, 401)
+    rec["H02"]["weak_omega_tot_T100"] = gate
+    gate_pass = gate["status"] == "success" and gate["max_identity_residual_over_wL2E0"] < 1e-6
+    rec["H02"]["gate_T100_to_T1000"] = {"criterion": "status success and identity residual < 1e-6 (wL^2 E0)",
+                                        "passed": bool(gate_pass)}
+    if gate_pass:
+        for wname, w in (("omega_tot", w_tot), ("omega_e", w_e)):
+            rec["H02"][f"weak_{wname}_T1000"] = finite_k(f"H02_weak_{wname}", drives["weak"], w, True, 1000.0, 32, 4001)
 
-OUT.mkdir(exist_ok=True)
-(OUT / "run.json").write_text(json.dumps(rec, indent=1, default=float) + "\n")
-np.savez_compressed(OUT / "run.npz", **arrays)
+    # ---------------- H07: finite reservoir vs prescribed drive, homogeneous fixed ions --------------
+    H07 = {}
+    for eta in (1e-3, 3e-2):
+        E0 = drives["weak"]
+        mp = ds.Model(Nx=1, Nn=3, alpha_s=(a_e,) * 3, rho_background=1.0, mode="prescribed_drive",
+                      E_drive=(E0, 0.0, 0.0), omega_drive=1.0)
+        ms = ds.Model(Nx=1, Nn=3, alpha_s=(a_e,) * 3, rho_background=1.0, mode="self_consistent", eta=eta, Omega_D=1.0)
+        y0 = ds.maxwellian(ms, [1.0])
+        ys = ds.proca_mode(ms, y0, (0, 0, 0), [-1j * E0 / eta, 0.0, 0.0])  # eta E_D(0) = E0, E_D ~ cos(t)
+        op = ds.run(mp, ds.maxwellian(mp, [1.0]), 1000.0, n_save=4001, rtol=1e-11, atol=1e-16)
+        osc = ds.run(ms, ys, 1000.0, n_save=4001, rtol=1e-11, atol=1e-16)
+        t = osc["t"]
+        Mx = np.array([[0, 1, eta, 0], [-1, 0, 0, 0], [-eta, 0, 0, 1], [0, 0, -1, 0]], float)
+        v0 = [0.0, 0.0, float(ys["Dk"][0, 0, 0, 0].real), float(ys["Dk"][6, 0, 0, 0].real)]
+        ref = np.array([expm(Mx * tt) @ v0 for tt in t[::40]])
+        H07[f"eta{eta}"] = {
+            "status": [op["status"], osc["status"]],
+            "Ebar_vs_matrix_exponential_max_err_over_max": float(
+                np.abs(osc["Fk"][::40, 0, 0, 0, 0].real - ref[:, 1]).max() / np.abs(ref[:, 1]).max()),
+            "U_D0": float(osc["U_D"][0]), "W_D_final": float(osc["W"][-1, 1]),
+            "max_fraction_of_reservoir_transferred": float(osc["W"][:, 1].max() / osc["U_D"][0]),
+            "W_ext_prescribed_final": float(op["W"][-1, 2]),
+            "max_abs_Ebar_prescribed": float(np.abs(op["Fk"][:, 0, 0, 0, 0].real).max()),
+            "max_abs_Ebar_reservoir": float(np.abs(osc["Fk"][:, 0, 0, 0, 0].real).max()),
+            "beat_period_estimate_2pi_over_eta": 2 * np.pi / eta,
+            "ledger_defect_reservoir": float(np.abs(osc["ledger_defect"]).max()),
+            "run_time": [op["run_time"], osc["run_time"]]}
+        arrays[f"H07_eta{eta}_t"] = t
+        arrays[f"H07_eta{eta}_Ebar_prescribed"] = op["Fk"][:, 0, 0, 0, 0].real
+        arrays[f"H07_eta{eta}_Ebar_reservoir"] = osc["Fk"][:, 0, 0, 0, 0].real
+        arrays[f"H07_eta{eta}_W_D"], arrays[f"H07_eta{eta}_W_ext"] = osc["W"][:, 1], op["W"][:, 2]
+        print("H07", eta, H07[f"eta{eta}"], flush=True)
+    rec["H07"] = H07
+
+    OUT.mkdir(exist_ok=True)
+    (OUT / "run.json").write_text(json.dumps(rec, indent=1, default=float) + "\n")
+    np.savez_compressed(OUT / "run.npz", **arrays)
+
+
+if __name__ == "__main__":
+    main()

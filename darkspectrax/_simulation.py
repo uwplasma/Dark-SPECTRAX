@@ -125,6 +125,15 @@ class _FlooredPID(diffrax.PIDController):
         return super().adapt_step_size(t0, t1, y0, y1_candidate, args, y_error, error_order, controller_state)
 
 
+CONTROLS = {"noise_floor": 1e-14}
+"""Solver settings for unseeded / homogeneous control runs (H00, H01, unseeded pump-frame controls).
+
+Pass explicitly, e.g. ``run(..., **CONTROLS)``; ``run`` and ``run_adaptive`` keep ``noise_floor=None`` by default,
+so seeded records are unchanged. 1e-14 is the scan choice of studies/noisefloor (docs/results.md): it removes the
+unseeded pump-frame stall, keeps H00/H01 within their recorded exact-law errors, and moves a seeded case by
+< 3e-8 of dK_e. Larger floors save few steps and degrade H01 linearly in the floor."""
+
+
 def _row_floor(model: Model, Ck, noise_floor):
     """``noise_floor * |C_000(k=0)|`` of each row's species (the round-off scale of that species' coefficients)."""
     H = model.Nn * model.Nm * model.Np

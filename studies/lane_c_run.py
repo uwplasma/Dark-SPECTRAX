@@ -9,7 +9,8 @@ Declared seed realizations (same amplitudes, phases rotated; chosen before any r
   r0: the gate seeds  [(e, k1, 5e-4), (e, k2, 5e-5j), (i, k1, 5e-4)]
   r1: phases multiplied by exp(i*(2pi/3, pi/2, 4pi/3))
   r2: phases multiplied by exp(i*(4pi/3, 5pi/3, pi/3))
-  r-1: no seeds (homogeneous control; W_ext must equal the uniform two-fluid oscillator)
+  r-1: no seeds (homogeneous control; W_ext must equal the uniform two-fluid oscillator). Control runs use
+       ds.CONTROLS (noise_floor 1e-14, studies/noisefloor); plain PID stalls on ion round-off there.
 
 Run: python studies/lane_c_run.py --vq 0.03 --Nn 64 --real 0 [--T 1000]  ->  studies/lane_c/runs/<case>.{json,npz}
 """
@@ -81,7 +82,10 @@ def main(argv=None):
     ap.add_argument("--real", type=int, default=0, choices=(-1, 0, 1, 2))
     ap.add_argument("--T", type=float, default=1000.0)
     ap.add_argument("--Nx", type=int, default=8)
+    ap.add_argument("--noise-floor", type=float, default=None,
+                    help="per-species atol floor; default None for seeded runs, ds.CONTROLS for --real -1")
     a = ap.parse_args(argv)
+    nf = a.noise_floor if a.noise_floor is not None else (ds.CONTROLS["noise_floor"] if a.real < 0 else None)
     stats = []
     run0 = _sim.run
 
@@ -94,7 +98,8 @@ def main(argv=None):
     m = model(a.vq, a.Nn, a.Nx)
     y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], seeds(a.real)))
     tic = time.perf_counter()
-    out = ds.run_adaptive(m, y0, a.T, SEG, n_save_segment=NSAVE, rtol=1e-10, atol=1e-14, max_steps=200_000)
+    out = ds.run_adaptive(m, y0, a.T, SEG, n_save_segment=NSAVE, rtol=1e-10, atol=1e-14, max_steps=200_000,
+                          noise_floor=nf)
     wall = time.perf_counter() - tic
     good = np.isfinite(out["t"]) & np.all(np.isfinite(out["W"]), axis=1)
     for k in ("t", "K", "W", "B", "Ck", "Fk", "Dk", "U_gamma", "U_D"):
@@ -103,7 +108,8 @@ def main(argv=None):
     st = np.array(stats)
     case = f"vq{a.vq:g}_Nn{a.Nn}_r{a.real}" + ("" if a.Nx == 8 else f"_Nx{a.Nx}")
     scale = max(np.abs(out["W"][:, 2]).max(), 1e-300)
-    rec = {"case": case, "vq_over_vte": a.vq, "Nn": a.Nn, "Nx": a.Nx, "nu": 0.0, "realization": a.real, "phases": PHASES.get(a.real),
+    rec = {"case": case, "vq_over_vte": a.vq, "Nn": a.Nn, "Nx": a.Nx, "nu": 0.0, "realization": a.real,
+           "noise_floor": nf, "phases": PHASES.get(a.real),
            "T_requested": a.T, "status": out["status"], "failure_reason": out["failure_reason"],
            "t_reached": float(out["t"][-1]), "events": len(out["events"]),
            "max_event_moment_defect": max([e["moment_defect"] for e in out["events"] if "moment_defect" in e],
