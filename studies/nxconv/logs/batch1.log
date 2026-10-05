@@ -1,0 +1,122 @@
+start 04:58:27 : .venv/bin/python -m pytest -q -n 2 tests
+/Users/rogeriojorge/local/spectrax-wt/nxconv/.venv/bin/python: No module named pytest
+exit 1 04:58:27 : .venv/bin/python -m pytest -q -n 2 tests
+start 04:58:27 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 16 --Nn 64 --T 300 --tag _equiv
+{"case": "vq0.1_Nx16_Nn64_c1_equiv", "part": 0, "t_start": 0.0, "t_end": 300.0, "status": "success", "failure_reason": null, "events": 2, "steps": 8613, "rejected": 2065, "compile_time": 0.9955475009046495, "run_time": 13.232549167063553, "wall_time": 31.802188500005286, "repository_commit": "8097e96d5e7fde1f16fabe504fca1599ff8c9390", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 16 --Nn 64 --T 300 --tag _equiv"}
+exit 0 04:59:14 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 16 --Nn 64 --T 300 --tag _equiv
+start 04:59:14 : .venv/bin/python studies/nxconv_grid_validate.py
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_spectral_landau0.3 done 1s
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_filtered_landau0.3 done 1s
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_pfc_landau0.3 done 1s
+g_vq0_Nx8_Nv512_dt0.02_osc_v8_pfc_landau0.3 done 1s
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_spectral_landau0.5 done 1s
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_filtered_landau0.5 done 1s
+g_vq0_Nx8_Nv512_dt0.02_lab_v8_pfc_landau0.5 done 1s
+g_vq0_Nx8_Nv512_dt0.02_osc_v8_pfc_landau0.5 done 1s
+g_vq0.1_Nx16_Nv4096_dt0.02_lab_v64_spectral done 36s
+g_vq0.1_Nx16_Nv4096_dt0.02_lab_v64_pfc done 26s
+g_vq0.1_Nx16_Nv4096_dt0.02_osc_v24_spectral done 21s
+g_vq0.1_Nx16_Nv4096_dt0.02_osc_v24_pfc done 23s
+g_vq0.1_Nx8_Nv2048_dt0.02_osc_v16_pfc_unseeded done 15s
+{
+ "landau_k0.3_spectral_lab": {
+  "omega": 1.0134169850289656,
+  "gamma": 0.0006745684471681577,
+  "exact_omega": 1.160009816256156,
+  "exact_gamma": -0.0125998337674912,
+  "rel_err_gamma": 1.0535378846750034,
+  "note": "peak sampling at 0.5 spacing limits omega to ~1%"
+ },
+ "landau_k0.3_filtered_lab": {
+  "omega": 1.0134169850289656,
+  "gamma": 0.0006745684471676785,
+  "exact_omega": 1.160009816256156,
+  "exact_gamma": -0.0125998337674912,
+  "rel_err_gamma": 1.0535378846749655,
+  "note": "peak sampling at 0.5 spacing limits omega to ~1%"
+ },
+ "landau_k0.3_pfc_lab": {
+  "omega": 1.0134169850289656,
+  "gamma": 0.0006745684448624765,
+  "exact_omega": 1.160009816256156,
+  "exact_gamma": -0.0125998337674912,
+  "rel_err_gamma": 1.0535378844920105,
+  "note": "peak sampling at 0.5 spacing limits omega to ~1%"
+ },
+ "landau_k0.3_pfc_osc": {
+  "omega": 1.0134169850289656,
+  "gamma": 0.0006745684448624046,
+  "exact_omega": 1.160009816256156,
+  "exact_gamma": -0.0125998337674912,
+  "rel_err_gamma": 1.0535378844920047,
+  "note": "peak sampling at 0.5 spacing limits omega to ~1%"
+ },
+ "landau_k0.5_spectral_lab": {
+  "omega": 1.0134169850289656,
+  "gamma": 0.000674552198477176,
+  "exact_omega": 1.4157518869570194,
+  "exact_gamma": -0.15329188557035014,
+  "rel_err_gamma": 1.0044004429586562,
+  "note": "peak sampling at 0.5 spacing limits omega to ~1%"
+ },
+ "landau_k0.5_filtered_lab": {
+  "omega": 1.0134169850289656,
+  "gamma": 0.0006745521984772,
+  "exact_omega": 1.4157518869570194,
+  "exact_gamma": -0.15329188557035014,
+  "rel_err_gamma": 1.0044004429586564,
+  "note": "peak sampling at 0.5 spacing limits omega to ~1%"
+ },
+ "landau_k0.5_pfc_lab": {
+  "omega": 1.0134169850289656,
+  "gamma": 0.0006745521876572034,
+  "exact_omega": 1.4157518869570194,
+  "exact_gamma": -0.15329188557035014,
+  "rel_err_gamma": 1.004400442888072,
+  "note": "peak sampling at 0.5 spacing limits omega to ~1%"
+ },
+ "landau_k0.5_pfc_osc": {
+  "omega": 1.0134169850289656,
+  "gamma": 0.0006745521876571555,
+  "exact_omega": 1.4157518869570194,
+  "exact_gamma": -0.15329188557035014,
+  "rel_err_gamma": 1.0044004428880717,
+  "note": "peak sampling at 0.5 spacing limits omega to ~1%"
+ },
+ "conservation_vq0.1_T100_lab_spectral": {
+  "max_energy_defect_over_W": 2.043008492157253e-06,
+  "max_mass_drift": 5.440092820663267e-15,
+  "max_momentum": 5.209777054204778e-12,
+  "min_f_rel": -8.924039315276217e-14,
+  "wall_time": 36.35926341696177
+ },
+ "conservation_vq0.1_T100_lab_pfc": {
+  "max_energy_defect_over_W": 2.0430794581039434e-06,
+  "max_mass_drift": 6.661338147750939e-16,
+  "max_momentum": 1.2936485216386018e-11,
+  "min_f_rel": -3.083593008477092e-63,
+  "wall_time": 26.106818458007183
+ },
+ "conservation_vq0.1_T100_osc_spectral": {
+  "max_energy_defect_over_W": 2.043008492163926e-06,
+  "max_mass_drift": 2.6645352591003757e-15,
+  "max_momentum": 5.282996262678807e-12,
+  "min_f_rel": -3.3799696247746916e-13,
+  "wall_time": 21.330657875048928
+ },
+ "conservation_vq0.1_T100_osc_pfc": {
+  "max_energy_defect_over_W": 2.043008493607939e-06,
+  "max_mass_drift": 8.881784197001252e-16,
+  "max_momentum": 8.950062913015699e-13,
+  "min_f_rel": -6.75361807181968e-67,
+  "wall_time": 22.77486466697883
+ },
+ "unseeded_vq0.1_T200_osc_pfc": {
+  "max_rel_dev_W_vs_exact_two_fluid": 0.00013663815607867225,
+  "max_energy_defect_over_W": 8.081984142806467e-15
+ }
+}
+exit 0 05:01:31 : .venv/bin/python studies/nxconv_grid_validate.py
+start 05:01:31 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --T 1000 --chunk 200 --noise-floor 1e-14
+{"case": "vq0.1_Nx64_Nn64_c1_nf1e-14", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1334, "rejected": 430, "compile_time": 1.050167876004707, "run_time": 4.385433459014166, "wall_time": 16.55345083301654, "repository_commit": "8097e96d5e7fde1f16fabe504fca1599ff8c9390", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --T 1000 --chunk 200 --noise-floor 1e-14"}
+exit 0 05:01:59 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --T 1000 --chunk 200 --noise-floor 1e-14

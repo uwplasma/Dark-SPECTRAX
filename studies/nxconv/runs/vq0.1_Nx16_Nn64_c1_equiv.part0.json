@@ -1,0 +1,17 @@
+{
+ "case": "vq0.1_Nx16_Nn64_c1_equiv",
+ "part": 0,
+ "t_start": 0.0,
+ "t_end": 300.0,
+ "status": "success",
+ "failure_reason": null,
+ "events": 2,
+ "steps": 8613,
+ "rejected": 2065,
+ "compile_time": 0.9955475009046495,
+ "run_time": 13.232549167063553,
+ "wall_time": 31.802188500005286,
+ "repository_commit": "8097e96d5e7fde1f16fabe504fca1599ff8c9390",
+ "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e",
+ "command": "python studies/nxconv_run.py --vq 0.1 --Nx 16 --Nn 64 --T 300 --tag _equiv"
+}

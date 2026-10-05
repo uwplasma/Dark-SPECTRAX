@@ -1,0 +1,16 @@
+{
+ "case": "g_vq0_Nx8_Nv512_dt0.02_lab_v8_filtered_landau0.3",
+ "T": 30.0,
+ "finite": true,
+ "wall_time": 1.3111291670356877,
+ "steps": 1500,
+ "t_fneg_1e-3": null,
+ "min_f_rel": -1.1122832000578673e-14,
+ "max_negfrac": 4.048302066068578e-17,
+ "max_edge": 2.2843492633366176e-13,
+ "max_energy_defect_over_W": 2.777777777776232e+295,
+ "max_mass_drift": 1.3322676295501878e-15,
+ "max_momentum": 5.752888789667008e-13,
+ "repository_commit": "8097e96d5e7fde1f16fabe504fca1599ff8c9390",
+ "command": "python studies/nxconv_grid.py "
+}

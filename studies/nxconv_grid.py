@@ -103,7 +103,7 @@ def setup(a):
     mi = 1836.0
     vti = vte / np.sqrt(mi)
     if a.landau is not None:
-        Lx = 2 * np.pi / (a.landau * vte)
+        Lx = 2 * np.pi * vte / a.landau  # k lambda_D = a.landau, lambda_D = v_te
     else:
         Lx = 40.0
     se = Species(Lx, a.Nx, a.vmax * vte, a.Nv, -1.0, 1.0, a.vshift)
@@ -137,6 +137,7 @@ def main(argv=None):
     ap.add_argument("--landau", type=float, default=None, help="validation: k lambda_D (electrons, no drive)")
     ap.add_argument("--amp", type=float, default=1e-4)
     ap.add_argument("--unseeded", action="store_true")
+    ap.add_argument("--save-every", type=float, default=0.5)
     ap.add_argument("--save-f", type=str, default="", help="comma-separated times at which to store f_e(x, v)")
     a = ap.parse_args(argv)
     se, si, fe, fi, vte, mi, Lx = setup(a)
@@ -146,7 +147,7 @@ def main(argv=None):
            + (f"_landau{a.landau:g}" if a.landau is not None else "") + ("_unseeded" if a.unseeded else ""))
     OUT.mkdir(parents=True, exist_ok=True)
     ck = OUT / f"{tag}.ckpt.npz"
-    nsteps, every = int(round(a.T / a.dt)), int(round(0.5 / a.dt))
+    nsteps, every = int(round(a.T / a.dt)), max(1, int(round(a.save_every / a.dt)))
     save_f = {int(round(float(s) / a.dt)) for s in a.save_f.split(",") if s}
     Ek = fft(si.dens(fi) - se.dens(fe), 0) / a.Nx
     Ek[se.kx != 0] /= 1j * se.kx[se.kx != 0]
