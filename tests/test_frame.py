@@ -80,3 +80,45 @@ def test_run_adaptive_stops_at_a_failed_segment():
     model = _pumped("pump", E0=0.05)
     out = ds.run_adaptive(model, _y0(model), 4.0, 2.0, max_steps=3)
     assert out["status"] == "failure" and out["failure_reason"].startswith("segment 0")
+
+
+def test_run_adaptive_compiles_once(monkeypatch):
+    """All segments of a run share one compiled solve (t0 is traced)."""
+    calls = []
+    compile_ = ds._simulation._compile
+    monkeypatch.setattr(ds._simulation, "_compile", lambda *a: calls.append(1) or compile_(*a))
+    model = _pumped("pump", E0=0.05)
+    out = ds.run_adaptive(model, _y0(model), 8.0, 2.0, rtol=1e-10, atol=1e-13)
+    assert out["status"] == "success" and len(calls) == 1 and out["num_steps"] > 0
+
+
+def test_run_adaptive_stops_when_positivity_is_lost():
+    """A state with negative k=0 temperature stops after its first segment with a positivity failure_reason."""
+    model = _pumped("pump", E0=0.05)
+    y0 = _y0(model)
+    y0 = {**y0, "Ck": y0["Ck"].at[2, 0, 0, 0].set(-y0["Ck"][0, 0, 0, 0])}  # T_x < 0 from C_2 = -C_0
+    out = ds.run_adaptive(model, y0, 6.0, 2.0)
+    assert out["status"] == "failure" and out["failure_reason"] == "segment 0: positivity lost at t = 0"
+    assert out["t_reached"] == 2.0
+    off = ds.run_adaptive(model, y0, 4.0, 2.0, stop_on_negative=False)
+    assert "positivity" not in str(off["failure_reason"])
+
+
+def test_noise_floor_removes_the_unseeded_pump_frame_stall():
+    """Unseeded e-i plasma in the pump frame: the k=0 ion coefficients are round-off of C_000,i ~ 1/a_i^3, and
+    plain PID at atol 1e-14 chases that noise. A per-species floor of 1e-14 |C_000,s| restores normal steps,
+    and the uniform two-fluid work stays the exact resonant oscillator's."""
+    vte, eps = np.sqrt(1e-3), 1 / 1836
+    w = np.sqrt(1 + eps)
+    model = ds.Model(Nx=4, Nn=8, Lx=40.0, qs=(-1.0, 1.0), Omega_cs=(1.0, eps),
+                     alpha_s=(np.sqrt(2) * vte,) * 3 + (np.sqrt(2 * eps) * vte,) * 3, u_s=(0.0,) * 6,
+                     mode="prescribed_drive", E_drive=(0.1 * vte, 0.0, 0.0), omega_drive=w, frame="pump")
+    y0 = ds.consistent_fields(model, ds.maxwellian(model, [1.0, 1.0]))
+    kw = dict(n_save=21, rtol=1e-10, atol=1e-14, max_steps=3000)
+    plain, floored = ds.run(model, y0, 20.0, **kw), ds.run(model, y0, 20.0, noise_floor=1e-14, **kw)
+    assert plain["status"] == "failure"
+    assert floored["status"] == "success" and floored["num_steps"] < 300
+    t, A = floored["t"], 0.1 * vte * (1 + eps) / (2 * w)
+    r, rd = -A * t * np.sin(w * t), -A * (np.sin(w * t) + w * t * np.cos(w * t))
+    W_lin = 0.5 / (1 + eps) * (rd ** 2 + w ** 2 * r ** 2)
+    assert _max(floored["W"][:, 2] - W_lin) < 1e-8 * W_lin.max()
