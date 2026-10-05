@@ -32,3 +32,17 @@ start 06:56:43 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 6
 g_vq0.1_Nx64_Nv8192_dt0.02_osc_v32_spectral_xmask23 checkpoint t=600 wall=883
 exit 3 07:01:31 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 64 --Nv 8192 --xshift mask23 --chunk 200 --frame osc --vmax 32
 start 07:02:44 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 64 --Nv 8192 --xshift mask23 --chunk 200 --frame osc --vmax 32
+g_vq0.1_Nx64_Nv8192_dt0.02_osc_v32_spectral_xmask23 done 1027s
+exit 0 07:05:08 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 64 --Nv 8192 --xshift mask23 --chunk 200 --frame osc --vmax 32
+start 07:05:30 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --xshift mask23 --chunk 200 --frame osc --vmax 32
+g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=200 wall=74
+exit 3 07:06:44 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --xshift mask23 --chunk 200 --frame osc --vmax 32
+start 07:06:47 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --xshift mask23 --chunk 200 --frame osc --vmax 32
+g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=400 wall=148
+exit 3 07:08:01 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --xshift mask23 --chunk 200 --frame osc --vmax 32
+start 07:08:34 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --xshift mask23 --chunk 200 --frame osc --vmax 32
+g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=600 wall=223
+exit 3 07:09:50 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --xshift mask23 --chunk 200 --frame osc --vmax 32
+start 07:10:43 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --xshift mask23 --chunk 200 --frame osc --vmax 32
+g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=800 wall=299
+exit 3 07:11:59 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 32 --Nv 4096 --xshift mask23 --chunk 200 --frame osc --vmax 32
