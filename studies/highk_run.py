@@ -26,33 +26,30 @@ OUT = Path(__file__).resolve().parent / "highk" / "runs"
 
 
 def _install_field_closure(m, c):
-    """Field-scaled order-2 hypercollision on the AW top modes (study implementation, wraps the Dark RHS).
+    """Field-scaled order-2 hypercollision on the AW top modes: the parent's spectrax.field_scaled_closure_rate
+    (SPECTRAX PR #66, in the pinned integration branch) times hypercollision_spectrum(order=2), added to the Dark RHS.
 
     The truncated AW Fourier-Hermite operator in a field E has spurious growth modes living in the top third of the
     Hermite ladder at the highest kept |k| (studies/highk_eig.py), with rate ~0.3 sqrt(2 Nn) |E|/a. A fixed nu is
-    overtaken as the H05 k1 field grows secularly, so the rate here follows the field:
-        dC_s/dt += -c |q/m|_s sqrt(2 Nn) max_x|E_x - <E_x>| / a_s * s(n) C_s,
+    overtaken as the H05 k1 field grows secularly, so the rate follows the field:
+        dC_s/dt += -c |q/m|_s sqrt(2 N) max_x|E - <E>| / a_s * s(n) C_s,
     s(n) = n(n-1)(n-2)/((N-1)(N-2)(N-3)) (zero for n <= 2: density, momentum and energy rows untouched).
+    studies/highk_parent_equiv.py checks this equals the original study implementation.
     """
-    import jax.numpy as jnp
+    import spectrax
     from darkspectrax._model import basis_of
 
-    Ns, Nn = m.Ns, m.Nn
-    n = np.arange(Nn, dtype=float)
-    sn = jnp.asarray(n * (n - 1) * (n - 2) / ((Nn - 1) * (Nn - 2) * (Nn - 3)))
-    qm = jnp.asarray(np.abs(np.asarray(m.qs)) * np.asarray(m.Omega_cs))
+    col = spectrax.hypercollision_spectrum(m.Nn, m.Nm, m.Np, 2)[None, :, :, :, None, None, None]
     rhs0 = _sim.rhs
     mask = m.p["mask23"]
 
     def rhs(t, y, model):
         out = rhs0(t, y, model)
-        Ex = jnp.fft.irfftn(y["Fk"][0] * mask, s=(m.Nz, m.Ny, m.Nx), axes=(-1, -3, -2), norm="forward")
-        Emax = jnp.max(jnp.abs(Ex - jnp.mean(Ex)))
-        a_x = basis_of(model, y)[1].reshape(Ns, 3)[:, 0]
-        rate = c * qm * jnp.sqrt(2.0 * Nn) * Emax / a_x
-        Ck = y["Ck"].reshape(Ns, Nn, *y["Ck"].shape[1:])
-        damp = -(rate[:, None, None, None, None] * sn[None, :, None, None, None]) * Ck
-        return {**out, "Ck": out["Ck"] + damp.reshape(y["Ck"].shape)}
+        F = jnp.fft.irfftn(y["Fk"] * mask, s=(m.Nz, m.Ny, m.Nx), axes=(-1, -3, -2), norm="forward")
+        nu = spectrax.field_scaled_closure_rate(F, basis_of(model, y)[1], m.p["qs"], m.p["Omega_cs"],
+                                                m.Nn, m.Nm, m.Np, m.Ns, c)
+        Ck = y["Ck"].reshape(m.Ns, m.Np, m.Nm, m.Nn, *y["Ck"].shape[1:])
+        return {**out, "Ck": out["Ck"] + (-nu * col * Ck).reshape(y["Ck"].shape)}
 
     _sim.rhs = rhs
 
