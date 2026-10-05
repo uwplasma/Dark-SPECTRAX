@@ -40,10 +40,15 @@ def seeds(r):
     return [(s, k, A * np.exp(1j * ph)) for (s, k, A), ph in zip(BASE, PHASES[r])]
 
 
-def model(vq, Nn, Nx=8):
-    return ds.Model(Nx=Nx, Nn=Nn, nu=0.0, Lx=Lx, qs=(-1.0, 1.0), Omega_cs=(1.0, 1 / 1836),
-                    alpha_s=(a_e,) * 3 + (a_i,) * 3, u_s=(0.0,) * 6, mode="prescribed_drive",
-                    E_drive=(vq * vte, 0.0, 0.0), omega_drive=w_tot, frame="pump")
+def model(vq, Nn, Nx=8, nu=0.0, order=None):
+    """H05 pump-frame model; ``order`` installs the parent's order-``order`` hypercollision spectrum (Lane B)."""
+    m = ds.Model(Nx=Nx, Nn=Nn, nu=nu, Lx=Lx, qs=(-1.0, 1.0), Omega_cs=(1.0, 1 / 1836),
+                 alpha_s=(a_e,) * 3 + (a_i,) * 3, u_s=(0.0,) * 6, mode="prescribed_drive",
+                 E_drive=(vq * vte, 0.0, 0.0), omega_drive=w_tot, frame="pump")
+    if order is not None:
+        from spectrax._initialization import hypercollision_spectrum
+        m.p["collision_matrix"] = hypercollision_spectrum(Nn, 1, 1, order=order)
+    return m
 
 
 def diagnostics(m, out):

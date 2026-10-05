@@ -151,7 +151,7 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
     solve across calls with equal settings and shapes; ``t0`` is a traced argument.
     """
     solver = diffrax.Dopri8() if solver is None else solver
-    key = (id(model), t_max, n_save, rtol, atol, dt0, id(solver), max_steps, progress, fixed_dt, dtmin, noise_floor,
+    key = (id(model), t_max, n_save, rtol, atol, dt0, type(solver), max_steps, progress, fixed_dt, dtmin, noise_floor,
            tuple((k, jnp.shape(v), str(jnp.result_type(v))) for k, v in sorted(y0.items())))
     compiled = None if cache is None else cache.get(key)
     tic = _time.perf_counter()
@@ -223,15 +223,13 @@ def adapt_basis(model: Model, y, t=None, schedule_basis=None, **trigger):
 _SAVED = ("t", "K", "U_gamma", "U_D", "W", "B", "Ck", "Fk", "Dk")
 
 
-def _first_negative(model: Model, seg):
-    """First saved time at which some species has K_s <= 0 or k=0 T_x <= 0 (None if never)."""
-    for i in range(seg["t"].size):
-        st = {key: jnp.asarray(seg[key][i]) for key in ("Ck", "Fk", "Dk", "B")}
-        n, M, M2 = (np.asarray(x)[..., 0, 0, 0].real for x in moments(model, st["Ck"], st["B"]))
-        K = np.asarray(energies(model, st)["K_species"])
-        if np.any(K <= 0) or np.any(M2[:, 0, 0] - M[:, 0] ** 2 / n <= 0):
-            return float(seg["t"][i])
-    return None
+def _positivity_check(model: Model):
+    """Jitted per-save check: (K_s > 0 and k=0 T_x,s > 0 for every species), vectorized over saves."""
+    def one(Ck, B):
+        n, M, M2 = (x[..., 0, 0, 0].real for x in moments(model, Ck[:, :1, :1, :1], B))
+        K = 0.5 * jnp.asarray(model.masses) * jnp.trace(M2, axis1=1, axis2=2)
+        return jnp.all(K > 0) & jnp.all(M2[:, 0, 0] - M[:, 0] ** 2 / n > 0)
+    return jax.jit(jax.vmap(one))
 
 
 def run_adaptive(model: Model, y0, t_max, segment, n_save_segment=11, schedule=None, trigger=None,
@@ -254,7 +252,7 @@ def run_adaptive(model: Model, y0, t_max, segment, n_save_segment=11, schedule=N
     replay = {round(float(tt), 9): b for tt, b in (schedule or [])}
     out = {"status": "success", "failure_reason": None, "num_steps": 0, "num_rejected": 0,
            "compile_time": 0.0, "run_time": 0.0}
-    cache = {}
+    cache, positive = {}, _positivity_check(model)
     for k in range(nseg):
         seg = run(model, y, segment, n_save=n_save_segment, t0=t, cache=cache, **run_kw)
         for key in ("num_steps", "num_rejected", "compile_time", "run_time"):
@@ -264,8 +262,9 @@ def run_adaptive(model: Model, y0, t_max, segment, n_save_segment=11, schedule=N
             out.update(status="failure", failure_reason=f"segment {k}: {seg['failure_reason']}")
             break
         t = t + segment
-        t_neg = _first_negative(model, seg) if stop_on_negative else None
-        if t_neg is not None:
+        ok = np.asarray(positive(jnp.asarray(seg["Ck"]), jnp.asarray(seg["B"], complex))) if stop_on_negative else [True]
+        if not np.all(ok):
+            t_neg = float(seg["t"][np.argmin(ok)])
             out.update(status="failure", failure_reason=f"segment {k}: positivity lost at t = {t_neg:g}")
             break
         y = {"Ck": jnp.asarray(seg["Ck"][-1]), "Fk": jnp.asarray(seg["Fk"][-1]), "Dk": jnp.asarray(seg["Dk"][-1]),

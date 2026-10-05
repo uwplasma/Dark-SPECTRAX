@@ -1,0 +1,94 @@
+{
+ "grid": {
+  "R_fixed": 0.3209443841958654,
+  "R_window": 0.3209443841958654,
+  "t_env_min_20_45": 30.3,
+  "t_env_max_50_80": 62.800000000000004
+ },
+ "fresh_ordinary_N256_nu0": {
+  "status": "success",
+  "R_fixed": -0.12329522250773989,
+  "R_window": 0.1090387767425192,
+  "t_env_min_20_45": 30.3,
+  "t_env_max_50_80": 50.0,
+  "retained_fixed": -0.384163825818792,
+  "retained_window": 0.3397435260184369
+ },
+ "fresh_ordinary_N256_nu1": {
+  "status": "success",
+  "R_fixed": 0.2627728519130818,
+  "R_window": 0.2631328830499186,
+  "t_env_min_20_45": 30.3,
+  "t_env_max_50_80": 57.300000000000004,
+  "retained_fixed": 0.8187488700619147,
+  "retained_window": 0.819870656746978
+ },
+ "fresh_ordinary_N512_nu0": {
+  "status": "success",
+  "R_fixed": 0.28363034276702886,
+  "R_window": 0.284124718084909,
+  "t_env_min_20_45": 30.3,
+  "t_env_max_50_80": 68.3,
+  "retained_fixed": 0.8837367367485558,
+  "retained_window": 0.8852771136556602
+ },
+ "fresh_ordinary_N512_nu1": {
+  "status": "success",
+  "R_fixed": 0.29981348055785223,
+  "R_window": 0.29981348055785223,
+  "t_env_min_20_45": 30.3,
+  "t_env_max_50_80": 60.050000000000004,
+  "retained_fixed": 0.9341602324933735,
+  "retained_window": 0.9341602324933735
+ },
+ "record_ordinary_N512_nu0.0": {
+  "R_fixed": 0.28363034276702886,
+  "R_window": 0.284124718084909,
+  "t_env_min_20_45": 30.3,
+  "t_env_max_50_80": 68.3,
+  "retained_fixed": 0.8837367367485558,
+  "retained_window": 0.8852771136556602
+ },
+ "record_ordinary_N512_nu1.0": {
+  "R_fixed": 0.29981348055785223,
+  "R_window": 0.29981348055785223,
+  "t_env_min_20_45": 30.3,
+  "t_env_max_50_80": 60.050000000000004,
+  "retained_fixed": 0.9341602324933735,
+  "retained_window": 0.9341602324933735
+ },
+ "record_ordinary_N1024_nu0.0": {
+  "R_fixed": 0.363861612164799,
+  "R_window": 0.3673243690315802,
+  "t_env_min_20_45": 30.3,
+  "t_env_max_50_80": 68.3,
+  "retained_fixed": 1.1337216978463849,
+  "retained_window": 1.1445109717433477
+ },
+ "record_dark_N512_nu0.0": {
+  "R_fixed": 0.30359209984806695,
+  "R_window": 0.30359209984806695,
+  "t_env_min_20_45": 29.5,
+  "t_env_max_50_80": 63.6,
+  "retained_fixed": 0.9459336719934357,
+  "retained_window": 0.9459336719934357
+ },
+ "record_dark_N512_nu1.0": {
+  "R_fixed": 0.2256038890924524,
+  "R_window": 0.23595852288133676,
+  "t_env_min_20_45": 29.5,
+  "t_env_max_50_80": 55.6,
+  "retained_fixed": 0.7029376434104273,
+  "retained_window": 0.7352006593682486
+ },
+ "record_dark_N1024_nu0.0": {
+  "R_fixed": 0.3036543234499438,
+  "R_window": 0.3036543234499438,
+  "t_env_min_20_45": 29.5,
+  "t_env_max_50_80": 63.6,
+  "retained_fixed": 0.9461275485805981,
+  "retained_window": 0.9461275485805981
+ },
+ "repository_commit": "590988a1aff836f1bad2bcc0121654d7bca77ab0",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830"
+}

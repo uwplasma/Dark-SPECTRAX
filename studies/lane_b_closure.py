@@ -19,68 +19,35 @@ import time
 from pathlib import Path
 
 import numpy as np
-from spectrax._initialization import hypercollision_spectrum
 
 import darkspectrax as ds
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lane_c_run import BASE as seeds, SEG, diagnostics, model  # noqa: E402  (shared H05 setup)
 
 OUT = Path(__file__).resolve().parent / "lane_b"
-vte = np.sqrt(1e-3)
-a_e, a_i = np.sqrt(2) * vte, np.sqrt(2) * np.sqrt(1e-3 / 1836)
-Lx, w_tot = 40.0, np.sqrt(1 + 1 / 1836)
-seeds = [(0, (1, 0, 0), 5e-4), (0, (2, 0, 0), 5e-5j), (1, (1, 0, 0), 5e-4)]
-SEG, NSAVE = 20.0, 11
-STATS = {"num_steps": 0, "num_rejected": 0, "compile_time": 0.0, "run_time": 0.0, "segments": 0}
-_run = ds._simulation.run
-
-
-def _counted_run(*a, **kw):
-    seg = _run(*a, **kw)
-    for k in ("num_steps", "num_rejected", "compile_time", "run_time"):
-        STATS[k] += seg[k]
-    STATS["segments"] += 1
-    return seg
-
-
-ds._simulation.run = _counted_run  # per-segment solver stats; run_adaptive looks run up at call time
-
-
-def mobile(E0, Nn, nu, order):
-    m = ds.Model(Nx=8, Nn=Nn, nu=nu, Lx=Lx, qs=(-1.0, 1.0), Omega_cs=(1.0, 1 / 1836), alpha_s=(a_e,) * 3 + (a_i,) * 3,
-                 u_s=(0.0,) * 6, mode="prescribed_drive", E_drive=(E0, 0.0, 0.0), omega_drive=w_tot, frame="pump")
-    m.p["collision_matrix"] = hypercollision_spectrum(Nn, 1, 1, order=order)
-    return m
-
-
-def thermal(model, out):
-    K, T = [], []
-    for i in range(out["t"].size):
-        st = {"Ck": out["Ck"][i], "Fk": out["Fk"][i], "Dk": out["Dk"][i], "W": out["W"][i].astype(complex),
-              "B": out["B"][i].astype(complex)}
-        K.append(np.asarray(ds.energies(model, st)["K_species"]))
-        n, M, M2 = (np.asarray(x)[..., 0, 0, 0].real for x in ds.moments(model, st["Ck"], st["B"]))
-        T.append(M2[:, 0, 0] - M[:, 0] ** 2 / n)
-    return np.array(K), np.array(T)
+NSAVE = 11
 
 
 if __name__ == "__main__":
     vq, Nn, nu, order = sys.argv[1], int(sys.argv[2]), float(sys.argv[3]), int(sys.argv[4])
     T = float(sys.argv[5]) if len(sys.argv) > 5 else 1000.0
-    m = mobile(float(vq) * vte, Nn, nu, order)
+    m = model(float(vq), Nn, nu=nu, order=order)
     y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], seeds))
     tic = time.perf_counter()
-    out = ds.run_adaptive(m, y0, T, SEG, n_save_segment=NSAVE, rtol=1e-10, atol=1e-14, max_steps=200_000)
+    out = ds.run_adaptive(m, y0, T, SEG, n_save_segment=NSAVE, rtol=1e-10, atol=1e-14, max_steps=200_000,
+                          stop_on_negative=False)  # the recorded sweep ran to the step budget
     wall = time.perf_counter() - tic
     good = np.isfinite(out["t"]) & np.all(np.isfinite(out["W"]), axis=1)
     for k in ("t", "K", "W", "B", "Ck", "Fk", "Dk", "U_gamma", "U_D"):
         out[k] = out[k][good]
-    K, Tx = thermal(m, out)
+    K, _, Tx, _ = diagnostics(m, out)
     neg = np.any(K <= 0, axis=1) | np.any(Tx <= 0, axis=1)
     scale = max(np.abs(out["W"][:, 2]).max(), 1e-300)
     meta = {"vq": vq, "Nn": Nn, "nu": nu, "order": order, "status": str(out["status"]),
             "failure_reason": str(out["failure_reason"]), "t_reached": float(out["t"][-1]), "wall": wall,
             "events": len(out["events"]), "max_ledger_over_W_ext": float(np.abs(out["ledger_defect"][:, good]).max() / scale),
             "t_first_negative": float(out["t"][np.argmax(neg)]) if neg.any() else None,
-            **STATS,
+            **{k: out[k] for k in ("num_steps", "num_rejected", "compile_time", "run_time")},
             "repository_commit": ds._simulation._git_sha(), "parent_commit": ds.PARENT_COMMIT}
     print(json.dumps(meta), flush=True)
     OUT.mkdir(exist_ok=True)

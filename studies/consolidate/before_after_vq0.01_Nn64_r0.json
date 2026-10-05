@@ -1,0 +1,29 @@
+{
+ "case": "vq0.01_Nn64_r0",
+ "noise_floor": null,
+ "before": {
+  "status": "success",
+  "failure_reason": null,
+  "t_reached": 1000.0,
+  "steps": 7950,
+  "rejected": 1129,
+  "compile_time": 33.126122663437854,
+  "run_time": 6.804287209874019,
+  "wall_time": 87.5744693329907,
+  "repository_commit": "9dfbe225de76dcdbdb71e0aeeb20c3b37847e45e"
+ },
+ "after": {
+  "status": "success",
+  "failure_reason": null,
+  "t_reached": 1000.0,
+  "steps": 7950,
+  "rejected": 1129,
+  "compile_time": 40.287388962868135,
+  "run_time": 7.885590162302833,
+  "wall_time": 141.18293637497118,
+  "repository_commit": "590988a1aff836f1bad2bcc0121654d7bca77ab0"
+ },
+ "common_saves": 2001,
+ "max_rel_diff_dK_e": 1.128712790612176e-13,
+ "max_rel_diff_W_ext": 4.2019331111932576e-16
+}
