@@ -750,6 +750,12 @@ def fig_djic_phase(*args):
                 ax = fig.add_subplot(gs[row, j])
                 im = ax.imshow(img, origin="lower", aspect="auto", cmap="magma", vmin=0, vmax=fmax,
                                extent=(0, 1, c["v"][0], c["v"][1]))
+                if src == "Hermite" and img.min() < -0.01 * fmax:  # negative f marked, not clipped
+                    xc = (np.arange(img.shape[1]) + 0.5) / img.shape[1]
+                    ax.contourf(xc, np.linspace(*c["v"], img.shape[0]), img, levels=[img.min() - 1, -0.01 * fmax],
+                                colors=["#4fc3f7"])
+                    ax.text(0.98, 0.03, "cyan: f < -1% max f", transform=ax.transAxes, color="#4fc3f7",
+                            fontsize=7.5, ha="right")
                 lab = "ordinary" if mdl == "ordinary" else rf"dark ($\eta$ = {ETA})"
                 ax.set(title=f"{src}, {lab}, t = {tf[i]:.1f}", xlabel=r"$x/L$" if row else None,
                        ylabel=r"$v_x/v_0$" if j == 0 else None)
