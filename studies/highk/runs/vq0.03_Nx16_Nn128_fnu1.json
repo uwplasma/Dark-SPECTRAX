@@ -1,0 +1,15 @@
+{
+ "case": "vq0.03_Nx16_Nn128_fnu1",
+ "status": "success",
+ "failure_reason": null,
+ "t_reached": 1000.0,
+ "events": 24,
+ "steps": 52302,
+ "rejected": 10852,
+ "compile_time": 41.920994250278454,
+ "run_time": 121.70463829190703,
+ "wall_time": 215.28253916604444,
+ "repository_commit": "86c882f3ca745587deae9d060b2c400fc3a62124",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830",
+ "command": "python studies/highk_run.py --vq 0.03 --Nx 16 --Nn 128 --T 1000 --field-nu 1"
+}
