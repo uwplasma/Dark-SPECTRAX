@@ -117,7 +117,7 @@ B01 grid: first envelope minimum t = 31.45, maximum t = 65.60 (not reached in t 
 | ordinary N=512 nu=1.0 | [] | none | - | 8.9 |
 | dark N=512 nu=1.0 | [] | - | 0.088 | 8.8 |
 
-With nu = 0, N = 1024 reproduces the grid's first envelope minimum (31.45) and stays within 10% of the grid envelope through t = 100; N = 512 departs at t = 85 and its envelope minimum is not detected. The dark run reaches its first minimum earlier (30.5). The hypercollision closure nu = 1 removes the trapping minimum while staying within 10% of the grid envelope to t = 100: a closure can match an envelope and still erase the physical trapping signature.
+With nu = 0, N = 1024 reproduces the grid's first envelope minimum (31.45) and stays within 10% of the grid envelope through t = 100; N = 512 departs at t = 85 and its envelope minimum is not detected. The dark run reaches its first minimum earlier (30.5). The prominence-based extremum detector used in this table misses minima in several runs (N = 512, nu = 0 and nu = 1); the earlier statement that nu = 1 removes the trapping minimum is retracted, see the B01 correction section below.
 
 B06 grid echo: t = 29.05, abs(E_k3) = 1.15873e-03 (ballistic estimate 30).
 
@@ -220,6 +220,76 @@ Within the resolved windows W_ext follows the linear resonant estimate E0^2 t^2/
 | down: theta = (1.2 + (-2e-05) t) t | 1.2 + -4e-05 t | 1.2e-09 | 2850 | 4458 (budget) |
 
 The homogeneous swept-drive mean field matches an independent ODE solution to 1e-9 over 0 <= t <= 1e4. The kinetic swept runs lose resolution (t ~ 2400-2850) before the resonance crossing at t = 5000: no swept-drive kinetic result is claimed.
+
+## H05 strong resonant drive: lane comparison (pump frame + remap, parent c0910a1)
+
+HHS-v1-inspired nonrelativistic pilot: mobile ions (m_i/m_e = 1836), v_te = sqrt(1e-3), L = 40, Nx = 8, gate seeds at 5e-4, drive at omega = sqrt(1 + 1/1836), rtol 1e-10. t_res = first t > 50 at which electron dK differs by more than 10% of its running max between refinements (W_ext never limits). Lane C: nu = 0, Nn 64/128/256 (`studies/lane_c_run.py`). Lane B: order-2 hypercollision, Nn64/Nn128 rows, pairs Nn and nu/2-2nu (`studies/lane_b_closure.py`). Lane A (width floor + exponential filter) is deferred: branch `lane-a` and SPECTRAX #61 stay open, its records are not on main and it is not compared here.
+
+| v_q/v_te | fixed basis | pump gate (Nn32/64, nu 0/1) | Lane C nu = 0 (certified) | Lane C first negative K or T_x (Nn128) | Lane B nu = 1 | Lane B nu = 2 |
+|---|---|---|---|---|---|---|
+| 0.01 | - | - | >= 1000 (128v256) | none | >= 1000 / >= 1000 | >= 1000 / >= 1000 |
+| 0.03 | 365 | 870 | 879 (128v256) | 876.0 | >= 1000 / 976 | >= 1000 / >= 1000 |
+| 0.1 | 210 | 612 | 606.5 (128v256) | 605.0 | 692 / 660 | 740 / 692 |
+
+Lane C boundary for 0.02 <= v_q/v_te <= 0.1: t_res = 304 (v_q/v_te)^-0.30 (4 points, residuals <= 1%); W_ext/(n T_e) at t_res ranges 48-459, so it is not a heating threshold. Loss of resolution coincides with loss of positivity. Empirical, for these seeds and Nx = 8 only.
+
+Inside the certified windows (Lane C, cycle averages at t_cert; seed spread over three phase realizations in `studies/lane_c/summary.json`):
+
+| v_q/v_te | t_cert | W_ext / exact linear resonant W | dK_e / W_ext | dU_E / W_ext | dK_i / W_ext | electron k=0 random / W_ext |
+|---|---|---|---|---|---|---|
+| 0.001 | 1000 | 0.9899 | 0.496 | 0.504 | 2.7e-04 | 0.0151 |
+| 0.01 | 1000 | 0.9899 | 0.496 | 0.504 | 2.7e-04 | 0.0153 |
+| 0.02 | 980.5 | 0.9900 | 0.500 | 0.499 | 2.8e-04 | 0.0168 |
+| 0.03 | 879 | 0.9919 | 0.503 | 0.497 | 2.8e-04 | 0.0139 |
+| 0.05 | 746.5 | 0.9942 | 0.499 | 0.501 | 2.8e-04 | 0.0098 |
+| 0.1 | 606.5 | 0.9963 | 0.503 | 0.497 | 2.8e-04 | 0.0061 |
+
+The unseeded control follows the exact uniform two-fluid oscillator to 3e-10; the seeded deficit (about 1%) behaves like a fixed detuning and is unexplained. The ion correlation force <dn_i dE_x> is about 1e-4 of the mean force. An independent mobile-ion grid code (`studies/lane_c_grid_mobile.py`) agrees on dK_e up to 900 (v_q/v_te = 0.03), 625.5 (v_q/v_te = 0.1).
+
+### Declared stabilizer: order-2 hypercollision, nu = 1-2 (Lane B), for v_q/v_te <= 0.03 only
+
+Before blow-up the H05 observables do not depend on nu (spread <= 1.4e-6 of the mean at t = 600). At 0.1 every nu (0.25-64) and both orders blow up before t = 1000; the closure postpones loss of positivity, it does not regularize. Fidelity cost on ordinary benchmarks (`studies/lane_b_fidelity.py`, against the grid references):
+
+| nu (order 2) | B01 rebound retained N=128 / N=512 (> 100%: recurrence overshoot) | B06 echo amplitude error N=128 / N=512 | B06 echo t N=128 (grid 29.05) | H05 0.03 steps Nn64 / wall (s) |
+|---|---|---|---|---|
+| 0 | 238% / 88% | -7.4% / +0.0% | 29.20 | - (nu = 0: step budget at t = 900) |
+| 1 | 65% / 93% | -81.7% / -3.2% | 28.55 | 10158 / 53 |
+| 2 | 67% / 91% | -92.1% / -6.2% | 25.60 | 11398 / 55 |
+
+Use it only as a declared numerical closure at Nn >= 64 and v_q/v_te <= 0.03; at N <= 128 it removes most of the B06 echo, so it is not a collisionless proxy there.
+
+### What can and cannot be claimed
+
+- Can: v_q/v_te <= 0.01 collisionless (nu = 0) to omega_pe t = 1000, Hermite-converged (Nn 64/128/256), positive, W_ext on the exact linear resonant law to about 1%, energy split equally between electron kinetic and mean field, ions at m_e/(2 m_i). For 0.02-0.1 the same holds up to the tabulated t_res.
+- Can: v_q/v_te = 0.03 to t = 1000 with the declared order-2 closure, nu = 1-2, Nn 64/128 agreeing in W_ext and (nu = 2) in dK_e.
+- Cannot: any physics beyond t_res (saturation, late heating, partition); any v_q/v_te = 0.1 result at t = 1000 with any lane; x-convergence (Hermite Nx = 16 fails earlier through spurious high-k growth); portability of the t_res law to other seeds, Nx, mass ratio or relativistic drive; local temperatures (k = 0 random energy includes non-uniform flow); a pass of the common gate (0.03 and 0.1 to t = 1000 collisionless).
+
+## Correction: B01 trapping rebound under the hypercollision closure (`python studies/consolidate/b01_rebound.py`)
+
+Retracted: the c-refs record (`studies/refs/B01`) stated that nu = 1 at N = 256/512 removes the trapping rebound. That statement rested on a prominence-0.3 extremum detector, which also finds no extremum in the nu = 0, N = 512 run. Detector-free re-measurement, envelope ratio R = log(env(65.6)/env(31.45)) at the grid extremum times and R_window = log(max env on [50, 80] / min env on [20, 45]), relative to the grid (R_grid = 0.321):
+
+| run | R / R_grid | R_window / R_grid_window |
+|---|---|---|
+| ordinary N256 nu0 | -0.38 | 0.34 |
+| ordinary N256 nu1 | 0.82 | 0.82 |
+| ordinary N512 nu0 | 0.88 | 0.89 |
+| ordinary N512 nu1 | 0.93 | 0.93 |
+| ordinary N1024 nu0.0 | 1.13 | 1.14 |
+| dark N512 nu0.0 | 0.95 | 0.95 |
+| dark N512 nu1.0 | 0.70 | 0.74 |
+
+nu = 1 keeps the rebound (93% at N = 512, 82% at N = 256); at N = 256, nu = 0 recurrence corrupts it instead. The fresh N = 512 runs reproduce the committed `studies/b01_b06` arrays exactly.
+
+## run_adaptive fixes (`python studies/consolidate/before_after.py VQ NN REAL [FLOOR]`)
+
+- One compilation per run: `t0` is a traced argument and the compiled solve is reused across segments.
+- Positivity stop: a segment with a saved K_s <= 0 or k = 0 T_x <= 0 ends the run with `failure_reason = 'segment k: positivity lost at t = ...'` instead of spending the step budget.
+- Unseeded pump-frame stall: the k = 0, n >= 1 ion coefficients are round-off of C_000,i ~ 1/a_i^3 ~ 1e9, so plain PID at atol 1e-14 rejects steps on noise. `noise_floor` adds noise_floor*|C_000,s| to atol on species s (default off, so recorded runs are unchanged).
+
+| case | floor | before: status, t, steps, compile s, wall s | after: status, t, steps, compile s, wall s | max diff dK_e / W_ext (rel.) |
+|---|---|---|---|---|
+| vq0.01_Nn64_r0 | None | success, 1000, 7950, 33.1, 88 | success, 1000, 7950, 40.3, 141 | 1.1e-13 / 4.2e-16 |
+| vq0.01_Nn64_r0 | 1e-14 | success, 1000, 7950, 33.1, 88 | success, 1000, 6074, 39.3, 134 | 7.2e-08 / 3.5e-10 |
 
 ## Test suite (local, CPU, float64)
 

@@ -38,6 +38,10 @@ Landau and growth references are independent kinetic roots; the ordinary Hermite
 
 [Script](examples/instabilities.py) · [record](docs/_static/b02_b03/run.json)
 
+## Strong resonant drive (H05 pilot)
+
+HHS-v1-inspired nonrelativistic pilot (mobile ions, Nx = 8, pump frame with remaps). Collisionless (nu = 0) runs are Hermite-converged to omega_pe t = 1000 for v_q/v_te <= 0.01 and W_ext stays within 1% of the exact linear resonant law. At stronger drive the resolved time is 879 (0.03), 606.5 (0.1); loss of resolution coincides with loss of positivity. A declared order-2 hypercollision closure (nu = 2) extends 0.03 to >= 1000 at a fidelity cost on ordinary benchmarks; no lane resolves 0.1 to t = 1000, and no result is x-converged. Table and limits: [docs/results.md](docs/results.md).
+
 ## Install and run
 
 ```sh
