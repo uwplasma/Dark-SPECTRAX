@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "refs" / "code"))  # sl
 from slv import VP  # noqa: E402
 
 vq, T, Nx, Nve, dt = float(sys.argv[1]), float(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), float(sys.argv[5])
-J = int(sys.argv[6])
+JS = int(sys.argv[6])
 vte, mi = np.sqrt(1e-3), 1836.0
 vti = vte / np.sqrt(mi)
 Lx, w = 40.0, np.sqrt(1 + 1 / mi)
@@ -32,7 +32,7 @@ E0 = vq * vte
 se, si = VP(Lx, Nx, 64 * vte, Nve), VP(Lx, Nx, 40 * vti, 512)
 k1, x = 2 * np.pi / Lx, se.x
 max_ = lambda v, s: np.exp(-v[None, :] ** 2 / (2 * s ** 2)) / np.sqrt(2 * np.pi * s ** 2)  # noqa: E731
-fe = max_(se.v, vte) * (1 + 1e-8 * np.cos(J * k1 * x))[:, None]
+fe = max_(se.v, vte) * (1 + 1e-8 * np.cos(JS * k1 * x))[:, None]
 fi = max_(si.v, vti) * np.ones_like(x)[:, None]
 dens = lambda s, f: f.sum(axis=1) * s.dv  # noqa: E731
 flux = lambda s, f: (f * s.v[None, :]).sum(axis=1) * s.dv  # noqa: E731
@@ -67,7 +67,7 @@ for n in range(int(round(T / dt)) + 1):
     Ek = Ek - dt * J
     fe, fi = se.adv_x(fe, dt / 2), si.adv_x(fi, dt / 2)
 r = np.array(rec)
-tag = f"gridlin_J{J}_vq{vq:g}_Nx{Nx}_Nv{Nve}_dt{dt:g}"
+tag = f"gridlin_J{JS}_vq{vq:g}_Nx{Nx}_Nv{Nve}_dt{dt:g}"
 out = Path(__file__).resolve().parent / "highk"
 np.savez_compressed(out / f"{tag}.npz", t=r[:, 0], dK_e=r[:, 1], dK_i=r[:, 2], W_ext=r[:, 3], U_k=r[:, 4], U_0=r[:, 5],
                     fmin_rel=r[:, 6], edge=r[:, 7], Ek2=np.array(spec))
