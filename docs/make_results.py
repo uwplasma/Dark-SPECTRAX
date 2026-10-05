@@ -129,17 +129,34 @@ def lanes():
     return "\n".join(L)
 
 
-def readme_strong():
-    sc = lc["scan"]
-    b = lb["vq0.03_o2_Nn64_nu2"]["t_res"]
-    return ("HHS-v1-inspired nonrelativistic pilot (mobile ions, Nx = 8, pump frame with remaps). Collisionless "
-            f"(nu = 0) runs are Hermite-converged to omega_pe t = 1000 for v_q/v_te <= 0.01 and W_ext stays within "
-            f"{100 * (1 - sc['0.01']['W_ext_over_W_lin']['cycle_avg_at_t_cert']):.0f}% of the exact linear resonant law. "
-            "At stronger drive the resolved time is " + ", ".join(f"{sc[v]['certified']['t_cert']:g} ({v})" for v in
-                                                                  ("0.03", "0.1"))
-            + "; loss of resolution coincides with loss of positivity. A declared order-2 hypercollision closure "
-            f"(nu = 2) extends 0.03 to {_tr(b['dK'])} at a fidelity cost on ordinary benchmarks; no lane resolves 0.1 to "
-            "t = 1000, and no result is x-converged. Table and limits: [docs/results.md](docs/results.md).")
+def phase_space():
+    ph = json.loads((root / "docs/_static/phase_space/run.json").read_text())["cases"]
+    rows = []
+    for k, e in ph.items():
+        i, r = e["inputs"], e["runs"]
+        reach = [(v["valid"] - 1) * i["T"] / 400 for v in r.values()]
+        st = ", ".join(sorted({v["status"] for v in r.values()}))
+        rows.append(f"| {k} | {i['Nn']} / {2 * i['Nn']}, nu = {i['nu']:g} | {st} ({min(reach):g}-{max(reach):g}) | "
+                    f"{e['t_res_ordinary']:g} / {e['t_res_dark']:g} | {e['t_res_f_ordinary']:g} / {e['t_res_f_dark']:g} | "
+                    f"{e['movie']['min_f_over_max_ordinary']:.3f} / {e['movie']['min_f_over_max_dark']:.3f} |")
+    return """## Phase-space movies: resolution of the reconstructed f (`python studies/figures.py phase`)
+
+Question: how long do fixed-basis Hermite runs resolve f(x, v) itself (not only the field) once trapping starts?
+Input: `PHASE_CASES` in studies/figures.py (electrostatic units mapped with v_t/c = 0.1, Nx = 16, seeds at the box
+mode, ordinary and dark eta = 0.3, Omega_D = omega_pe), each at Nn and 2Nn, Dopri8 rtol 1e-8, 200000-step budget.
+Measurement: t_res by field energy (10% of the running max, as for H05) and by f (first frame with
+max|f_Nn - f_2Nn| > 0.1 max f on a 96 x 160 grid); frames are drawn only before the earlier one.
+
+| case | Nn / 2Nn, closure | solver status (t reached) | t_res field energy (ord / dark) | t_res f (ord / dark) | min f / max f drawn (ord / dark) |
+|---|---|---|---|---|---|
+""" + "\n".join(rows) + """
+
+The field-energy rule alone is too lenient for phase-space pictures: in the two-stream and bump-on-tail runs f
+differs by more than 10% between Nn and 2Nn 13-18 time units before the field energies do, and every two-stream
+and bump-on-tail run later exhausts its step budget. Negative f is not removed by doubling Nn (two-stream: about
+-31% / -37% of max f at the last drawn frame while Nn and 2Nn agree to 0.8%); Nx was not varied, so x truncation and
+the nu = 1 closure are the untested candidates. The nonlinear Landau runs (no closure) stay above -0.7% of max f to
+the drawn end. The movies illustrate the onset of trapping only."""
 
 
 def third_round():
@@ -405,18 +422,16 @@ shift = {kl: (roots[kl]["dark"][0] / roots[kl]["ordinary"][0] - 1,
               roots[kl]["dark"][1] / roots[kl]["ordinary"][1] - 1) for kl in roots}
 worst = max(r["rel_error"] for r in runs)
 para = (
-    f"Electrons with $v_{{te}}=0.1c$ on fixed ions damp a $10^{{-4}}$ density seed at "
-    f"$k\\lambda_{{De}}=0.2$-$0.7$, with and without a mixed field ($\\eta={s['eta']}$, "
-    f"$\\Omega_D={s['Omega_D']}\\,\\omega_{{pe}}$, Yukawa-consistent start). An independent SciPy root of "
-    "$D_L=(Q-\\Omega_D^2)(1+\\chi)+\\eta^2Q\\chi$ predicts that mixing raises the frequency by "
+    f"Electrons with $v_{{te}}=0.1c$ on fixed ions, with and without a mixed field ($\\eta={s['eta']}$, "
+    f"$\\Omega_D={s['Omega_D']:g}\\,\\omega_{{pe}}$, Yukawa-consistent start). Mixing splits the longitudinal response into a "
+    "Langmuir-like and a Proca-like branch (left panel). Fitted complex frequencies of "
+    f"{len(runs)} runs (Hermite orders 64/128, grids 5/8) agree with independent SciPy roots of "
+    "$D_L=(Q-\\Omega_D^2)(1+\\chi)+\\eta^2Q\\chi$ to a relative "
+    f"{worst:.1e} or better, and the work ledger closes to roundoff. Mixing raises the frequency by "
     f"{100 * shift[0.3][0]:.1f}% / {100 * shift[0.5][0]:.1f}% and lowers the damping rate by "
-    f"{-100 * shift[0.3][1]:.1f}% / {-100 * shift[0.5][1]:.1f}% at $k\\lambda_{{De}}=0.3/0.5$. Fitted complex frequencies agree with "
-    f"the roots to a relative {worst:.1e} or better for all {len(runs)} runs (Hermite orders 64/128, grids 5/8), "
-    "and the work ledger closes to roundoff. At $k\\lambda_{De}=0.2$ the damping rate itself (about $5\\times10^{-5}$) "
-    "is not resolved by the Hermite-limited window. This is a linear, deliberately large-coupling verification; it does not "
-    "address nonlinear or late-time behavior.\n\n"
-    "<img src=\"docs/_static/b00/figure.png\" width=\"860\" alt=\"Ordinary and dark Landau damping against kinetic roots\">\n\n"
-    "[Script](examples/plasma.py) · [record](docs/_static/b00/run.json) · [table](docs/results.md)")
+    f"{-100 * shift[0.3][1]:.1f}% / {-100 * shift[0.5][1]:.1f}% at $k\\lambda_{{De}}=0.3/0.5$. At $k\\lambda_{{De}}=0.2$ the "
+    "damping rate (about $5\\times10^{-5}$) is not resolved inside the Hermite-limited window and is not plotted. "
+    "This is a linear, deliberately large-coupling verification.")
 
 (root / "docs/results.md").write_text(f"""# Results
 
@@ -457,6 +472,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 
 {lanes()}
 
+{phase_space()}
+
 ## Test suite (local, CPU, float64)
 
 A00 moments and Lorentz operator by independent quadrature (agreement 1e-12 or better), A01 zero-mixing RHS equal
@@ -475,12 +492,6 @@ hook is not implemented.
 Timing (CPU, from the records): compile {tmin('compile_time'):.2f}-{tmax('compile_time'):.2f} s per configuration,
 integration {tmin('run_time'):.2f}-{tmax('run_time'):.2f} s for the B00/B02/B03 runs above.
 """)
-
-readme = (root / "README.md").read_text()
-readme = re.sub(r"(## Result: Landau damping with a dark field\n\n).*?(\n\n## Ordinary and dark plasma tests)",
-                lambda m: m.group(1) + para + m.group(2), readme, flags=re.S)
-(root / "README.md").write_text(readme)
-
 
 def readme_table():
     refmax = max([abs(v["dw_grid"]) for v in refs["B00"].values()] + [abs(v["dg_grid"]) for v in refs["B00"].values()]
@@ -512,19 +523,18 @@ def readme_table():
              f"{d['amp']:.5e} / {g6:.5e} (grid Vlasov-Ampere-Proca) |")
     h = hhs["H00"]["weak_omega_e"]
     L.append(f"| H00 resonant mean field, t <= 1000 (HHS-v1-inspired) | error {h['max_abs_Ebar_err_over_max']:.0e}, W_ext {h['W_ext_rel_err']:.0e} | - |")
-    return "\n".join(L) + ("\n\nLandau and growth references are independent kinetic roots; the ordinary Hermite runs also "
-                           f"agree with an independent semi-Lagrangian solver to within {refmax:.1e} (B00, B02). "
-                           "Details, windows and limitations: [docs/results.md](docs/results.md).\n\n"
-                           "<img src=\"docs/_static/b02_b03/figure.png\" width=\"860\" "
-                           "alt=\"Two-stream and bump-on-tail growth, ordinary and dark, against kinetic roots\">\n\n"
-                           "[Script](examples/instabilities.py) · [record](docs/_static/b02_b03/run.json)")
+    return "\n".join(L)
+
+
+
+
+def _between(text, tag, body):
+    """Replace the README block between <!-- tag --> and <!-- /tag --> (generated from the records)."""
+    return re.sub(rf"(<!-- {tag} -->\n).*?(\n<!-- /{tag} -->)", lambda m: m.group(1) + body + m.group(2), text,
+                  flags=re.S)
 
 
 readme = (root / "README.md").read_text()
-readme = re.sub(r"(## Ordinary and dark plasma tests\n\n).*?(\n\n## Strong resonant drive)",
-                lambda m: m.group(1) + readme_table() + m.group(2), readme, flags=re.S)
-(root / "README.md").write_text(readme)
-readme = (root / "README.md").read_text()
-readme = re.sub(r"(## Strong resonant drive \(H05 pilot\)\n\n).*?(\n\n## Install)",
-                lambda m: m.group(1) + readme_strong() + m.group(2), readme, flags=re.S)
+readme = _between(readme, "tests-paragraph", para)
+readme = _between(readme, "tests-table", readme_table())
 (root / "README.md").write_text(readme)

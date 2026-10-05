@@ -5,7 +5,7 @@ Each population has its own drifting Hermite basis. Growth is the slope of log|E
 starts after the stable-branch transient and ends before |E_k| exceeds 1e-5 (code units), i.e. linear.
 Reference: D_L = (Q - Omega_D^2)(1 + chi) + eta^2 Q chi = 0, chi = sum of drifting-Maxwellian terms (wofz).
 
-Run: python examples/instabilities.py  -> docs/_static/b02_b03/{run.json, run.npz, figure.png}
+Run: python examples/instabilities.py  -> docs/_static/b02_b03/{run.json, run.npz}; figure: python studies/figures.py growth
 """
 
 import json
@@ -108,23 +108,4 @@ rec = {"case_id": "B02_B03", "command": "python examples/instabilities.py",
 (out_dir / "run.json").write_text(json.dumps(rec, indent=2, default=float) + "\n")
 np.savez_compressed(out_dir / "run.npz", **arrays)
 
-import matplotlib  # noqa: E402
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-
-fig, axes = plt.subplots(1, len(cases), figsize=(13, 3.8), constrained_layout=True)
-for ax, name in zip(axes, cases):
-    for mdl, color in (("ordinary", "tab:blue"), ("dark", "tab:red")):
-        r = [x for x in rows if x["case"] == name and x["model"] == mdl][0]  # base Nn
-        t, A = arrays[f"{name}_{mdl}_t"], arrays[f"{name}_{mdl}_A"]
-        ax.semilogy(t, A / beta, color=color, lw=1, label=f"{mdl}: fit {r['growth_fit']:.4f}")
-        a, b = r["window"]
-        tt = np.linspace(a, b, 2)
-        i = np.argmin(np.abs(t - b))
-        ax.semilogy(tt, A[i] / beta * np.exp(r["root"][1] * (tt - b)), "--", color=color, lw=1.5,
-                    label=f"{mdl} root, $\\gamma$={r['root'][1]:.4f}")
-    ax.set_title(name.replace("_", " "), fontsize=10)
-    ax.set_xlabel("$\\omega_{pe}t$")
-    ax.set_ylabel("$|E_{x,k}|$ (electrostatic units)")
-    ax.legend(fontsize=7.5, loc="lower right")
-fig.savefig(out_dir / "figure.png", dpi=130)
+# Figure: python studies/figures.py growth  (shared plotting module, reads this record)

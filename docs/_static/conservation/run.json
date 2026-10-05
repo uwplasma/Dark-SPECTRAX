@@ -1,0 +1,10 @@
+{
+  "figure": "conservation",
+  "command": "python studies/figures.py conservation",
+  "repository_commit": "aa47cefa643fbf84e0c9f53b8ac607608bb34143",
+  "sources": [
+    "studies/lane_c/runs/vq0.1_Nn*_r0.npz",
+    "studies/lane_c/summary.json"
+  ],
+  "t_res": 606.5
+}

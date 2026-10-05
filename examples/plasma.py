@@ -6,7 +6,7 @@ dark fields.  The reference solves D_L = (Q - Omega_D^2)(1 + chi) + eta^2 Q chi 
 Q = omega^2 - c^2 k^2, with the plasma dispersion function from scipy's wofz.
 
 Run:  python examples/plasma.py            (short: Nn = 64, 128; Nx = 5, 8)
-Writes docs/_static/b00/{run.json,run.npz,figure.png}.
+Writes docs/_static/b00/{run.json,run.npz}; the figure is drawn by `python studies/figures.py landau`.
 """
 
 import json
@@ -115,23 +115,4 @@ rec["versions"] = {"jax": jax.__version__, "diffrax": diffrax.__version__,
 (out_dir / "run.json").write_text(json.dumps(rec, indent=2) + "\n")
 np.savez_compressed(out_dir / "run.npz", **arrays)
 
-import matplotlib  # noqa: E402
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-
-fig, axes = plt.subplots(2, 2, figsize=(10, 7), constrained_layout=True)
-for ax, kl in zip(axes.ravel(), k_lambdas):
-    root_row = [r for r in rows if r.get("roots") and r["k_lambda_De"] == kl][0]["roots"]
-    for name, color in (("ordinary", "tab:blue"), ("dark", "tab:red")):
-        tag = f"k{kl}_{name}_Nn{hermite_orders[-1]}_Nx{grids[-1]}"
-        t, z = arrays[f"t_{tag}"], arrays[f"Ek_{tag}"]
-        ax.semilogy(t, np.abs(z.imag) + 1e-30, color=color, lw=1, label=f"{name} run")
-        g = root_row[name][1]
-        ax.semilogy(t, np.abs(z[0]) * np.exp(g * t), "--", color=color, lw=1,
-                    label=f"{name} root decay, $\\gamma$={g:.4f}")
-    ax.set_title(f"$k\\lambda_{{De}}$ = {kl}  ($\\eta$={eta}, $\\Omega_D$={Omega_D}$\\omega_{{pe}}$)")
-    ax.set_xlabel("$\\omega_{pe} t$")
-    ax.set_ylabel("|Im $E_{x,k}$| (density seed $10^{-4}$, parent units)")
-    ax.axvspan(*windows[kl], color="0.9", zorder=-1)
-    ax.legend(fontsize=8, loc="lower left")
-fig.savefig(out_dir / "figure.png", dpi=130)
+# Figure: python studies/figures.py landau  (shared plotting module, reads this record)

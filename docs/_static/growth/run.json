@@ -1,0 +1,9 @@
+{
+  "figure": "growth",
+  "command": "python studies/figures.py growth",
+  "repository_commit": "aa47cefa643fbf84e0c9f53b8ac607608bb34143",
+  "sources": [
+    "docs/_static/b02_b03/run.json",
+    "docs/_static/b02_b03/run.npz"
+  ]
+}

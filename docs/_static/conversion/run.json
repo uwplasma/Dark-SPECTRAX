@@ -1,0 +1,34 @@
+{
+  "figure": "conversion",
+  "command": "python studies/figures.py conversion",
+  "repository_commit": "aa47cefa643fbf84e0c9f53b8ac607608bb34143",
+  "sources": [
+    "studies/lane_c/summary.json",
+    "studies/lane_c/runs/*_Nn128_r0.npz",
+    "studies/lane_b/summary.json",
+    "studies/h05_pump/run.json",
+    "studies/hhs/run.npz"
+  ],
+  "certified": {
+    "0.001": {
+      "t_cert": 1000.0,
+      "W_ext_over_W_lin_cycle_avg": 0.9899272631245689
+    },
+    "0.01": {
+      "t_cert": 1000.0,
+      "W_ext_over_W_lin_cycle_avg": 0.9898718815618177
+    },
+    "0.03": {
+      "t_cert": 879.0,
+      "W_ext_over_W_lin_cycle_avg": 0.9919029922837251
+    },
+    "0.1": {
+      "t_cert": 606.5,
+      "W_ext_over_W_lin_cycle_avg": 0.9962673356311228
+    }
+  },
+  "boundary_fit": {
+    "p": -0.3010168703625515,
+    "C": 303.5319093109626
+  }
+}

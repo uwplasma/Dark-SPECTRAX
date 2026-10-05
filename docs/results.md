@@ -293,6 +293,27 @@ nu = 1 keeps the rebound (93% at N = 512, 82% at N = 256); at N = 256, nu = 0 re
 | vq0.1_Nn64_r0 | None | failure, 632.5, 206137, 18.1, 210 | failure, 600, 5855, 0.8, 34 | 5.8e-14 / 3.7e-16 |
 | vq0.1_Nn64_r0 | 1e-14 | failure, 632.5, 206137, 18.1, 210 | failure, 600, 4843, 0.9, 33 | 2.1e-08 / 1.1e-11 |
 
+## Phase-space movies: resolution of the reconstructed f (`python studies/figures.py phase`)
+
+Question: how long do fixed-basis Hermite runs resolve f(x, v) itself (not only the field) once trapping starts?
+Input: `PHASE_CASES` in studies/figures.py (electrostatic units mapped with v_t/c = 0.1, Nx = 16, seeds at the box
+mode, ordinary and dark eta = 0.3, Omega_D = omega_pe), each at Nn and 2Nn, Dopri8 rtol 1e-8, 200000-step budget.
+Measurement: t_res by field energy (10% of the running max, as for H05) and by f (first frame with
+max|f_Nn - f_2Nn| > 0.1 max f on a 96 x 160 grid); frames are drawn only before the earlier one.
+
+| case | Nn / 2Nn, closure | solver status (t reached) | t_res field energy (ord / dark) | t_res f (ord / dark) | min f / max f drawn (ord / dark) |
+|---|---|---|---|---|---|
+| landau | 512 / 1024, nu = 0 | success (100-100) | 100 / 100 | 71.25 / 71.25 | -0.006 / -0.006 |
+| two_stream | 128 / 256, nu = 1 | failure (45.9-47.4) | 43.5 / 43.05 | 30 / 29.25 | -0.312 / -0.373 |
+| bump_on_tail | 128 / 256, nu = 1 | failure (57-64.25) | 56.75 / 54.5 | 38.75 / 37.5 | -0.070 / -0.090 |
+
+The field-energy rule alone is too lenient for phase-space pictures: in the two-stream and bump-on-tail runs f
+differs by more than 10% between Nn and 2Nn 13-18 time units before the field energies do, and every two-stream
+and bump-on-tail run later exhausts its step budget. Negative f is not removed by doubling Nn (two-stream: about
+-31% / -37% of max f at the last drawn frame while Nn and 2Nn agree to 0.8%); Nx was not varied, so x truncation and
+the nu = 1 closure are the untested candidates. The nonlinear Landau runs (no closure) stay above -0.7% of max f to
+the drawn end. The movies illustrate the onset of trapping only.
+
 ## Test suite (local, CPU, float64)
 
 A00 moments and Lorentz operator by independent quadrature (agreement 1e-12 or better), A01 zero-mixing RHS equal

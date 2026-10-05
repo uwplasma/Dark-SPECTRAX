@@ -1,0 +1,11 @@
+{
+  "figure": "performance",
+  "command": "python studies/figures.py performance",
+  "repository_commit": "aa47cefa643fbf84e0c9f53b8ac607608bb34143",
+  "sources": [
+    "studies/c05/run.json",
+    "studies/c05_pic/*.json",
+    "studies/lane_c/summary.json"
+  ],
+  "note": "timings from the records' own machines; not a controlled benchmark"
+}

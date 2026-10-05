@@ -1,0 +1,14 @@
+{
+  "figure": "grid",
+  "command": "python studies/figures.py grid",
+  "repository_commit": "aa47cefa643fbf84e0c9f53b8ac607608bb34143",
+  "sources": [
+    "studies/b01_b06/run.npz",
+    "studies/refs/B01/grid_k0.3_eps0.05.npz",
+    "studies/refs/B06/grid_Nv1024_dt0.0125.npz",
+    "studies/dark_grid/run.npz"
+  ],
+  "echo_ordinary_amp_rel_to_grid": 1.9821076229886714e-05,
+  "echo_dark_amp_rel_to_dark_grid": 1.56258316703628e-05,
+  "echo_dark_over_ordinary": -0.03257275530378734
+}
