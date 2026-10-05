@@ -8,6 +8,6 @@ go() { until mkdir /tmp/spectrax-heavy.lock 2>/dev/null; do sleep 2; done; echo 
        /opt/local/bin/gtimeout 900 $PY studies/lane_c_grid_mobile.py "$@" >> studies/highk/logs/batch5.log 2>&1
        echo "exit $? : $*" >> studies/highk/logs/batch5.log
        [ "$(cat /tmp/spectrax-heavy.lock/owner)" = "$$" ] && rm -rf /tmp/spectrax-heavy.lock; }
-go 0.1 700 8 4096 0.02
-go 0.03 1000 8 4096 0.02
+#done go 0.1 700 8 4096 0.02
+#done go 0.03 1000 8 4096 0.02
 go 0.03 1000 32 4096 0.02
