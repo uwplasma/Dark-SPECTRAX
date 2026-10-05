@@ -110,7 +110,7 @@ def test_noise_floor_removes_the_unseeded_pump_frame_stall():
     and the uniform two-fluid work stays the exact resonant oscillator's."""
     vte, eps = np.sqrt(1e-3), 1 / 1836
     w = np.sqrt(1 + eps)
-    model = ds.Model(Nx=4, Nn=8, Lx=40.0, qs=(-1.0, 1.0), Omega_cs=(1.0, eps),
+    model = ds.Model(Nx=8, Nn=16, Lx=40.0, qs=(-1.0, 1.0), Omega_cs=(1.0, eps),
                      alpha_s=(np.sqrt(2) * vte,) * 3 + (np.sqrt(2 * eps) * vte,) * 3, u_s=(0.0,) * 6,
                      mode="prescribed_drive", E_drive=(0.1 * vte, 0.0, 0.0), omega_drive=w, frame="pump")
     y0 = ds.consistent_fields(model, ds.maxwellian(model, [1.0, 1.0]))
