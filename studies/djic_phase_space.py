@@ -68,7 +68,7 @@ for label, sim in (("ordinary", plasma), ("dark", dark)):
         jax.block_until_ready(o.E)
         ts.append(np.asarray(o.t) * wp)
         E1.append(np.fft.rfft(np.asarray(o.E[:, :, 0]), axis=1)[:, 1] / cells)
-        xp = (np.asarray(o.x[:, :, 0]) / length + 0.5) % 1.0  # PIC box is [-L/2, L/2): shift to [0, L)
+        xp = (np.asarray(o.x[:, :, 0]) / length) % 1.0  # PIC box is [-L/2, L/2): wrap (not shift) into [0, L)
         vp = np.asarray(o.v[:, :, 0]) / (beta * c)  # electrostatic units of the Hermite case (v0 = u_es)
         xs.append(xp[:, sample])
         vs.append(vp[:, sample])
