@@ -58,7 +58,7 @@ if __name__ == "__main__":
     neg = f.min(axis=(1, 2)) / f.max(axis=(1, 2))
     out = Path(__file__).resolve().parent / "instab"
     out.mkdir(exist_ok=True)
-    rec = {"Nx": Nx, "Nn": Nn, "c": c, "T": T, "status": int(r["status"]) if np.ndim(r["status"]) == 0 else str(r["status"]),
+    rec = {"Nx": Nx, "Nn": Nn, "c": c, "T": T, "status": str(r["status"]),
            "failure_reason": str(r["failure_reason"]), "steps": int(r["steps"]), "run_time": float(r["run_time"]),
            "t": r["t_frames"][ok].tolist(), "minf_over_maxf": neg.tolist(),
            "E1abs": np.abs(np.interp(r["t_frames"][ok], r["t"][np.isfinite(r["t"])],
