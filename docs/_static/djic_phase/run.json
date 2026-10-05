@@ -1,0 +1,31 @@
+{
+  "figure": "djic_phase",
+  "command": "python studies/figures.py djic_phase",
+  "repository_commit": "fb268ec5281535251e2dcd259b25d5ad905f6f86",
+  "sources": [
+    "docs/_static/phase_space/run.json",
+    "studies/djic_phase/run.json",
+    "artifacts/djic_phase/two_stream.npz (python studies/djic_phase_space.py)"
+  ],
+  "frames": 38,
+  "t_last_frame": 28.5,
+  "webp_bytes": 428736,
+  "growth_fits": {
+    "ordinary": {
+      "window": [
+        10.0,
+        20.0
+      ],
+      "hermite": 0.2441630448059101,
+      "pic": 0.24744978480270738
+    },
+    "dark": {
+      "window": [
+        10.0,
+        20.0
+      ],
+      "hermite": 0.2603093222451011,
+      "pic": 0.2652788791414068
+    }
+  }
+}

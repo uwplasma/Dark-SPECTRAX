@@ -156,9 +156,17 @@ converged yet: doubling particles or cells moves the dark damping fit by about t
 
 <img src="docs/_static/djic/figure.png" width="900" alt="Landau field histories from Hermite and PIC, and fitted damping rates against particle number">
 
-@@DJIC_PHASE_TEXT@@
+The two-stream case of the opening movie was also run in Dark-JAX-in-Cell with the same physical inputs (128 cells,
+262,144 quiet-start markers, $\omega_{pe}\Delta t=0.006$, about 80 s per run on CPU). Both codes form the same vortex
+at the same phase; over $10\le\omega_{pe}t\le20$ the fitted growth of $|E_k|$ agrees to 1.3% (ordinary: Hermite
+0.2442, PIC 0.2474) and 1.9% (dark: 0.2603, 0.2653), with mixing raising it in both. The PIC run continues through
+the shaded interval where the Hermite runs are no longer resolved, and its $f$ stays non-negative by construction;
+the Hermite $f$ has negative regions (cyan) as trapping develops.
 
-Records: [C05](studies/c05/run.json) · [PIC reruns](studies/c05_pic) · [two-stream PIC](studies/djic_phase/run.json).
+<img src="docs/_static/djic_phase/two_stream.webp" width="760" alt="Two-stream phase space: Hermite reconstruction and Dark-JAX-in-Cell markers, ordinary and dark, with both field histories">
+
+Records: [C05](studies/c05/run.json) · [PIC reruns](studies/c05_pic) · [two-stream PIC](studies/djic_phase/run.json) ·
+[comparison](docs/_static/djic_phase/run.json).
 
 ## Resonant dark-photon drive
 
@@ -219,7 +227,7 @@ curves are computed, `data.npz`.
 | conversion, conservation | `python studies/figures.py conversion` · `... conservation` | `studies/lane_c_run.py`, `studies/lane_b_closure.py`, `studies/hhs_ladder.py` |
 | performance | `python studies/figures.py performance` | the C05 and lane C records |
 
-`python studies/figures.py all` redraws every record-only figure in a few seconds. Media total: @@MEDIA@@.
+`python studies/figures.py all` redraws every record-only figure in a few seconds. Images and movies: 2.6 MB in total (largest movie 0.63 MB).
 
 ## Tests
 
