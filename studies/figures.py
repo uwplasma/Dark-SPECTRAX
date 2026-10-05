@@ -527,7 +527,7 @@ def fig_performance():
 PHASE_CASES = {
     "landau": {"title": r"nonlinear Landau damping, $k\lambda_{De}$ = 0.3, $\delta n/n$ = 0.05",
                "pops": [(1.0, 1.0, 0.0)], "k": 0.3, "seed": 0.05, "Nx": 16, "Nn": 512, "nu": 0.0, "T": 100.0,
-               "v": (-5.0, 5.0), "units": ("v_{te}", r"\lambda_{De}")},
+               "v": (-5.0, 5.0), "units": ("v_{te}", r"\lambda_{De}"), "delta": True},
     "two_stream": {"title": r"two-stream, $u=\pm 1$, $v_t$ = 0.3, $k$ = 0.4",
                    "pops": [(0.5, 0.3, 1.0), (0.5, 0.3, -1.0)], "k": 0.4, "seed": 1e-3, "Nx": 16, "Nn": 128,
                    "nu": 1.0, "T": 60.0, "v": (-2.6, 2.6), "units": ("v_0", r"v_0/\omega_{pe}")},
@@ -597,7 +597,7 @@ def phase_run(cases):
     data = dict(load_npz("docs/_static/phase_space/data.npz")) if (STATIC / "phase_space" / "data.npz").exists() else {}
     for case in cases:
         c = PHASE_CASES[case]
-        entry = {"inputs": {k: v for k, v in c.items() if k not in ("title", "units")}, "eta": ETA, "Omega_D": OMEGA_D,
+        entry = {"inputs": {k: v for k, v in c.items() if k not in ("title", "units", "delta")}, "eta": ETA, "Omega_D": OMEGA_D,
                  "beta": BETA, "rtol": 1e-8, "atol": 1e-14, "solver": "Dopri8", "runs": {}}
         res = {}
         for dark in (False, True):
@@ -655,6 +655,7 @@ def phase_draw(cases):
         fs = {m: (fs[m][0][:nd], fs[m][1][:nd], fs[m][2][:nd]) for m in fs}
         fmax = max(fs[m][1].max() for m in fs)
         neg = {m: [float(fr.min() / fr.max()) for fr in fs[m][1]] for m in fs}  # min f / max f per frame
+        dmax = max(np.abs(fs[m][1] - fs[m][1].mean(axis=1, keepdims=True)).max() for m in fs)
         e["t_drawn"] = t_res
         frames = []
         for i in range(len(tf)):
@@ -662,15 +663,25 @@ def phase_draw(cases):
             gs = fig.add_gridspec(2, 2, height_ratios=[2.2, 1])
             for j, mdl in enumerate(("ordinary", "dark")):
                 ax = fig.add_subplot(gs[0, j])
-                im = ax.imshow(fs[mdl][1][i].T, origin="lower", aspect="auto", cmap="magma", vmin=0, vmax=fmax,
-                               extent=(x[0], x[-1] + x[1], v[0], v[-1]))
+                fr = fs[mdl][1][i]
+                ext = (x[0], x[-1] + x[1], v[0], v[-1])
+                if c.get("delta"):  # small perturbation: show f - <f>_x so trapping is visible
+                    im = ax.imshow((fr - fr.mean(axis=0)).T, origin="lower", aspect="auto", cmap="RdBu_r",
+                                   vmin=-dmax, vmax=dmax, extent=ext)
+                else:
+                    im = ax.imshow(fr.T, origin="lower", aspect="auto", cmap="magma", vmin=0, vmax=fmax, extent=ext)
+                    if fr.min() < -0.01 * fmax:  # mark negative f honestly instead of clipping it to black
+                        ax.contourf(x + 0.5 * x[1], v, fr.T, levels=[fr.min() - 1, -0.01 * fmax], colors=["#4fc3f7"])
+                    ax.text(0.98, 0.03, "cyan: f < -1% max f", transform=ax.transAxes, color="#4fc3f7",
+                            fontsize=7.5, ha="right")
                 label = "ordinary" if mdl == "ordinary" else rf"dark ($\eta$ = {ETA}, $\Omega_D=\omega_{{pe}}$)"
                 vu, xu = c["units"]
                 ax.set(title=f"{label}, t = {tf[i]:.1f}", xlabel=rf"$x\,/\,({xu})$",
                        ylabel=rf"$v_x/{vu}$" if j == 0 else None)
                 ax.text(0.02, 0.03, f"min f / max f = {neg[mdl][i]:+.1e}", transform=ax.transAxes, color="w",
                         fontsize=8)
-            fig.colorbar(im, ax=fig.axes, shrink=0.8, label=r"$f(x,v_x)$")
+            fig.colorbar(im, ax=fig.axes, shrink=0.8,
+                         label=r"$f-\langle f\rangle_x$" if c.get("delta") else r"$f(x,v_x)$")
             ax = fig.add_subplot(gs[1, :])
             for mdl in ("ordinary", "dark"):
                 key = f"{case}_{mdl}_Nn{c['Nn']}"
