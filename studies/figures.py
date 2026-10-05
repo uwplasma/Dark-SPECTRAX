@@ -669,7 +669,9 @@ def phase_draw(cases):
                     im = ax.imshow((fr - fr.mean(axis=0)).T, origin="lower", aspect="auto", cmap="RdBu_r",
                                    vmin=-dmax, vmax=dmax, extent=ext)
                 else:
-                    im = ax.imshow(fr.T, origin="lower", aspect="auto", cmap="magma", vmin=0, vmax=fmax, extent=ext)
+                    from matplotlib.colors import PowerNorm
+                    im = ax.imshow(np.maximum(fr, 0).T, origin="lower", aspect="auto", cmap="magma", extent=ext,
+                                   norm=PowerNorm(0.5, vmin=0, vmax=fmax))  # sqrt scale shows weak beams
                     if fr.min() < -0.01 * fmax:  # mark negative f honestly instead of clipping it to black
                         ax.contourf(x + 0.5 * x[1], v, fr.T, levels=[fr.min() - 1, -0.01 * fmax], colors=["#4fc3f7"])
                     ax.text(0.98, 0.03, "cyan: f < -1% max f", transform=ax.transAxes, color="#4fc3f7",
@@ -681,7 +683,7 @@ def phase_draw(cases):
                 ax.text(0.02, 0.03, f"min f / max f = {neg[mdl][i]:+.1e}", transform=ax.transAxes, color="w",
                         fontsize=8)
             fig.colorbar(im, ax=fig.axes, shrink=0.8,
-                         label=r"$f-\langle f\rangle_x$" if c.get("delta") else r"$f(x,v_x)$")
+                         label=r"$f-\langle f\rangle_x$" if c.get("delta") else r"$f(x,v_x)$ (square-root scale)")
             ax = fig.add_subplot(gs[1, :])
             for mdl in ("ordinary", "dark"):
                 key = f"{case}_{mdl}_Nn{c['Nn']}"
