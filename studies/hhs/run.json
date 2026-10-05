@@ -1,7 +1,7 @@
 {
  "label": "HHS-v1-inspired, nonrelativistic; not a reproduction",
- "parent_commit": "9d0982d6fb3ec2cb602b930ed66a87845f77e570",
- "repository_commit": "e531878fab1dfea3eb52fe73ccb0c2065ceaca0c",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830",
+ "repository_commit": "f7c71261594468efe29e07321eb5e6f6e61cb4d0",
  "command": "python studies/hhs_ladder.py",
  "inputs": {
   "v_te": 0.03162277660168379,
@@ -19,51 +19,51 @@
  "H00": {
   "strong_omega_e": {
    "status": "success",
-   "max_abs_Ebar_err_over_max": 1.13557331150909e-09,
-   "W_ext_final": 0.11260470636563655,
+   "max_abs_Ebar_err_over_max": 1.1366534921519757e-09,
+   "W_ext_final": 0.11260470636563395,
    "W_ext_exact": 0.11260470636384642,
-   "W_ext_rel_err": 1.5897413729061958e-11,
-   "ledger_defect": 1.8366053122775838e-10,
+   "W_ext_rel_err": 1.5874367211701698e-11,
+   "ledger_defect": 1.8419513830858492e-10,
    "max_quiver_over_vte": 14.947798989295787,
-   "steps": 7050,
-   "compile_time": 0.5735322500113398,
-   "run_time": 1.1005231669987552
+   "steps": 7038,
+   "compile_time": 0.6110118750366382,
+   "run_time": 1.1424312919843942
   },
   "strong_omega_tot": {
    "status": "success",
-   "max_abs_Ebar_err_over_max": 1.1612628872385562e-09,
-   "W_ext_final": 0.11187083232564297,
+   "max_abs_Ebar_err_over_max": 1.1618615041532824e-09,
+   "W_ext_final": 0.11187083232563834,
    "W_ext_exact": 0.11187083232406772,
-   "W_ext_rel_err": 1.4081005598617625e-11,
-   "ledger_defect": 1.8802335383094615e-10,
+   "W_ext_rel_err": 1.4039572268485756e-11,
+   "ledger_defect": 1.8827178011049384e-10,
    "max_quiver_over_vte": 14.908597564778447,
-   "steps": 7046,
-   "compile_time": 0.41759450000245124,
-   "run_time": 1.1007985000032932
+   "steps": 7043,
+   "compile_time": 0.5042565420153551,
+   "run_time": 1.1121885000029579
   },
   "weak_omega_e": {
    "status": "success",
-   "max_abs_Ebar_err_over_max": 1.3860210999724304e-09,
-   "W_ext_final": 0.0001251163404084184,
+   "max_abs_Ebar_err_over_max": 1.1985849536475455e-09,
+   "W_ext_final": 0.00012511634040846217,
    "W_ext_exact": 0.00012511634040427382,
-   "W_ext_rel_err": 3.312580620060051e-11,
-   "ledger_defect": 4.012226206655256e-13,
+   "W_ext_rel_err": 3.347567786862291e-11,
+   "ledger_defect": 3.059097707135486e-13,
    "max_quiver_over_vte": 0.4982599663098596,
-   "steps": 5895,
-   "compile_time": 0.4201732919900678,
-   "run_time": 0.9308401659945957
+   "steps": 5531,
+   "compile_time": 0.4926657080068253,
+   "run_time": 0.866540458984673
   },
   "weak_omega_tot": {
    "status": "success",
-   "max_abs_Ebar_err_over_max": 1.3543470733339063e-09,
-   "W_ext_final": 0.000124300924808137,
+   "max_abs_Ebar_err_over_max": 1.3969414036581202e-09,
+   "W_ext_final": 0.00012430092480815878,
    "W_ext_exact": 0.00012430092480451965,
-   "W_ext_rel_err": 2.9101627675125872e-11,
-   "ledger_defect": 4.0676837576416117e-13,
+   "W_ext_rel_err": 2.9276729820559426e-11,
+   "ledger_defect": 4.0623691002360414e-13,
    "max_quiver_over_vte": 0.49695325215928154,
-   "steps": 5898,
-   "compile_time": 0.4809018340019975,
-   "run_time": 0.9509006250009406
+   "steps": 5530,
+   "compile_time": 0.5025572499725968,
+   "run_time": 0.8311981250299141
   }
  },
  "H01": {
@@ -73,13 +73,13 @@
    "T": 1000.0,
    "Nn": 32,
    "max_identity_residual_over_wL2E0": 1.6457031883953284e-13,
-   "ledger_defect": 3.1060198426376313e-15,
-   "max_gauss": 3.361026739812404e-18,
-   "steps": 9015,
-   "compile_time": 0.4940704589826055,
-   "run_time": 2.648457416013116,
-   "diagnostic_time": 17.340736250014743,
-   "max_abs_Ebar_err_over_max": 2.673131113642489e-11
+   "ledger_defect": 1.260870544799765e-14,
+   "max_gauss": 3.3711915167478546e-18,
+   "steps": 6466,
+   "compile_time": 0.5657446249970235,
+   "run_time": 1.8781973330187611,
+   "diagnostic_time": 39.3325628330349,
+   "max_abs_Ebar_err_over_max": 8.267999923729184e-11
   },
   "strong_omega_e": {
    "status": "success",
@@ -87,13 +87,13 @@
    "T": 100.0,
    "Nn": 32,
    "max_identity_residual_over_wL2E0": 7.314236392868128e-15,
-   "ledger_defect": 6.205109261700828e-16,
-   "max_gauss": 8.673630966961189e-19,
-   "steps": 2012,
-   "compile_time": 0.515916832984658,
-   "run_time": 0.6122890830156393,
-   "diagnostic_time": 1.6954630420077592,
-   "max_abs_Ebar_err_over_max": 5.312391377295774e-13
+   "ledger_defect": 5.326827574956422e-15,
+   "max_gauss": 1.1926232462886713e-18,
+   "steps": 1139,
+   "compile_time": 0.5215757499681786,
+   "run_time": 0.3337247080053203,
+   "diagnostic_time": 3.8886619999539107,
+   "max_abs_Ebar_err_over_max": 1.1561202875635212e-11
   }
  },
  "H02": {
@@ -106,9 +106,9 @@
    "ledger_defect": 5.193353883368433e-16,
    "max_gauss": 6.284091470351629e-19,
    "steps": 502,
-   "compile_time": 0.5861763329885434,
-   "run_time": 0.2039855839975644,
-   "diagnostic_time": 3.116556374996435,
+   "compile_time": 0.5904976660385728,
+   "run_time": 0.20671929197851568,
+   "diagnostic_time": 7.5081513749901205,
    "Qi_max_abs": 1.8924928440761796e-08,
    "Qi_over_n0E0_max": 0.0005984587842850622,
    "Qi_pump_quadrature_fit": [
@@ -131,9 +131,9 @@
    "ledger_defect": 2.0513706496818294e-15,
    "max_gauss": 2.677652598060814e-18,
    "steps": 10597,
-   "compile_time": 0.5268829590058886,
-   "run_time": 4.354208541015396,
-   "diagnostic_time": 28.527607583004283,
+   "compile_time": 0.5457542919903062,
+   "run_time": 4.24338712496683,
+   "diagnostic_time": 71.48594712500926,
    "Qi_max_abs": 1.901522710466417e-06,
    "Qi_over_n0E0_max": 0.06013142787610775,
    "Qi_pump_quadrature_fit": [
@@ -152,9 +152,9 @@
    "ledger_defect": 2.2154273790378314e-15,
    "max_gauss": 5.354792565785617e-18,
    "steps": 10570,
-   "compile_time": 0.5349078330036718,
-   "run_time": 4.394222958013415,
-   "diagnostic_time": 28.74664062500233,
+   "compile_time": 0.5381094589829445,
+   "run_time": 4.199461165990215,
+   "diagnostic_time": 72.18461220798781,
    "Qi_max_abs": 1.8917847218434536e-06,
    "Qi_over_n0E0_max": 0.05982348563733404,
    "Qi_pump_quadrature_fit": [
@@ -181,8 +181,8 @@
    "beat_period_estimate_2pi_over_eta": 6283.185307179586,
    "ledger_defect_reservoir": 1.8115929924187864e-12,
    "run_time": [
-    1.0069225000042934,
-    0.9536005419795401
+    0.9889861670089886,
+    0.8919532499858178
    ]
   },
   "eta0.03": {
@@ -200,8 +200,8 @@
    "beat_period_estimate_2pi_over_eta": 209.43951023931956,
    "ledger_defect_reservoir": 1.8287689220706314e-15,
    "run_time": [
-    1.1518827499821782,
-    0.9043649579980411
+    0.950609749997966,
+    0.8824483750504442
    ]
   }
  }

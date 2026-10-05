@@ -140,18 +140,18 @@ Not a reproduction of HHS: nonrelativistic 1D3V Hermite, deterministic declared 
 |---|---|---|---|
 | strong_omega_e | 1.1e-09 | 1.6e-11 | 14.95 |
 | strong_omega_tot | 1.2e-09 | 1.4e-11 | 14.91 |
-| weak_omega_e | 1.4e-09 | 3.3e-11 | 0.50 |
+| weak_omega_e | 1.2e-09 | 3.3e-11 | 0.50 |
 | weak_omega_tot | 1.4e-09 | 2.9e-11 | 0.50 |
 
 The homogeneous mean field is exact in the Hermite system (only orders 0-1 enter), so H00 is meaningful even at quiver speeds of 15 v_te; finite-k strong-drive runs were limited to t = 100.
 
 | H01/H02 finite-k (Nx = 8, Nn = 32) | T | identity residual / (omega_L^2 E0) | Ebar error | max abs(Q_i) / E0 | Q_i phase vs pump (rad) | run + diag time (s) |
 |---|---|---|---|---|---|---|
-| H01 weak_omega_e | 1000 | 1.6e-13 | 2.7e-11 | 0.000 | nan | 20.0 |
-| H01 strong_omega_e | 100 | 7.3e-15 | 5.3e-13 | 0.000 | nan | 2.3 |
-| H02 weak_omega_tot_T100 | 100 | 1.4e-14 | nan | 0.001 | 2.91 | 3.3 |
-| H02 weak_omega_tot_T1000 | 1000 | 1.6e-13 | nan | 0.060 | 3.11 | 32.9 |
-| H02 weak_omega_e_T1000 | 1000 | 1.6e-13 | nan | 0.060 | 2.96 | 33.1 |
+| H01 weak_omega_e | 1000 | 1.6e-13 | 8.3e-11 | 0.000 | nan | 41.2 |
+| H01 strong_omega_e | 100 | 7.3e-15 | 1.2e-11 | 0.000 | nan | 4.2 |
+| H02 weak_omega_tot_T100 | 100 | 1.4e-14 | nan | 0.001 | 2.91 | 7.7 |
+| H02 weak_omega_tot_T1000 | 1000 | 1.6e-13 | nan | 0.060 | 3.11 | 75.7 |
+| H02 weak_omega_e_T1000 | 1000 | 1.6e-13 | nan | 0.060 | 2.96 | 76.4 |
 
 Seeds: 1e-3 density at k1 = 2 pi/40 (both species when ions move) and 1e-4 electron-only at k2. The mean-pump identity, evaluated from the code's own RHS, holds to about 1e-13 with mobile ions; the gate (T = 100 residual < 1e-6) passed, so T = 1000 was run. The ion-density/field correlation reaches about 6% of the drive term by t = 1000 and is roughly in antiphase with the pump, but a single-frequency fit leaves 34% of Q_i unexplained, so it is not a pure pump-frequency response. This is a seed-dependent pilot, not a detuning measurement.
 
@@ -244,7 +244,7 @@ Inside the certified windows (Lane C, cycle averages at t_cert; seed spread over
 | 0.05 | 746.5 | 0.9942 | 0.499 | 0.501 | 2.8e-04 | 0.0098 |
 | 0.1 | 606.5 | 0.9963 | 0.503 | 0.497 | 2.8e-04 | 0.0061 |
 
-The unseeded control follows the exact uniform two-fluid oscillator to 3e-10; the seeded deficit (about 1%) behaves like a fixed detuning and is unexplained. The ion correlation force <dn_i dE_x> is about 1e-4 of the mean force. An independent mobile-ion grid code (`studies/lane_c_grid_mobile.py`) agrees on dK_e up to 900 (v_q/v_te = 0.03), 625.5 (v_q/v_te = 0.1).
+The unseeded control follows the exact uniform two-fluid oscillator to 7e-09 over 20 < t <= 1000 (ds.CONTROLS; rtol-limited, see the control-run noise floor section); the seeded deficit (about 1%) behaves like a fixed detuning and is unexplained. The ion correlation force <dn_i dE_x> is about 1e-4 of the mean force. An independent mobile-ion grid code (`studies/lane_c_grid_mobile.py`) agrees on dK_e up to 900 (v_q/v_te = 0.03), 625.5 (v_q/v_te = 0.1).
 
 ### Declared stabilizer: order-2 hypercollision, nu = 1-2 (Lane B), for v_q/v_te <= 0.03 only
 
@@ -292,6 +292,24 @@ nu = 1 keeps the rebound (93% at N = 512, 82% at N = 256); at N = 256, nu = 0 re
 | vq0.01_Nn64_r0 | 1e-14 | success, 1000, 7950, 33.1, 88 | success, 1000, 6074, 0.8, 52 | 7.2e-08 / 3.5e-10 |
 | vq0.1_Nn64_r0 | None | failure, 632.5, 206137, 18.1, 210 | failure, 600, 5855, 0.8, 34 | 5.8e-14 / 3.7e-16 |
 | vq0.1_Nn64_r0 | 1e-14 | failure, 632.5, 206137, 18.1, 210 | failure, 600, 4843, 0.9, 33 | 2.1e-08 / 1.1e-11 |
+
+## Control-run noise floor: `ds.CONTROLS = {"noise_floor": 1e-14}` (`python studies/noisefloor/scan.py`)
+
+Control runs (H00, H01, unseeded pump-frame controls) pass `**ds.CONTROLS` explicitly; `run` and `run_adaptive` keep `noise_floor=None`, so seeded records are unchanged. Scan, rtol 1e-10 / atol 1e-14 unless noted:
+
+| noise_floor | (a) unseeded pump 0.01: steps, max abs(W/W_lin - 1) | (a) unseeded pump 0.1: steps, dev | (b) H00 weak omega_e: steps, Ebar err | (b) H01 weak: steps, Ebar err | (b) H01 strong: steps, Ebar err | (c) seeded 0.03 Nn64 r0: t reached, steps, diff dK_e / W_ext |
+|---|---|---|---|---|---|---|
+| None (plain PID) | fails (committed plain-PID record) | fails (committed plain-PID record) | 5895, 1.4e-09 | 9015, 2.7e-11 | 2012, 5.3e-13 | 860, 7606, 1e-13 / 5e-16 |
+| 1e-16 | 3309, 9.5e-09 | 4552, 5.3e-09 | 5829, 1.4e-09 | 8602, 2.2e-11 | 1605, 1.9e-12 | 860, 7035, 8e-09 / 2e-12 |
+| 1e-15 | 3259, 1.1e-08 | 3498, 3.8e-09 | 5772, 1.4e-09 | 7729, 3.6e-11 | 1375, 4.3e-12 | 860, 6678, 2e-08 / 2e-11 |
+| 1e-14 | 3238, 6.6e-09 | 3452, 3.8e-09 | 5531, 1.2e-09 | 6466, 8.3e-11 | 1139, 1.2e-11 | 860, 6306, 2e-08 / 8e-11 |
+| 1e-13 | 3212, 1.3e-08 | 3433, 4.8e-09 | 4847, 1.2e-09 | 5147, 2.8e-10 | 913, 4.9e-11 | 860, 5943, 3e-08 / 2e-10 |
+| 1e-12 | 3188, 1.1e-08 | 3375, 3.9e-09 | 4413, 1.7e-09 | 3857, 1.2e-09 | 715, 2.5e-10 | 860, 5670, 4e-08 / 4e-10 |
+| 1e-10 | 3194, 1.2e-08 | 3366, 7.5e-09 | 4403, 2.0e-09 | 2347, 2.1e-08 | 426, 3.7e-09 | 860, 5364, 4e-08 / 1e-09 |
+
+Unseeded pump-frame controls at tighter rtol (same floor scan): rtol 1e-11 floor 1e-13, v_q/v_te 0.01: 3633 steps, 1.8e-09; rtol 1e-11 floor 1e-13, v_q/v_te 0.1: 4485 steps, 1.2e-09; rtol 1e-11 floor 1e-14, v_q/v_te 0.01: 3650 steps, 1.8e-09; rtol 1e-11 floor 1e-14, v_q/v_te 0.1: 4532 steps, 1.5e-09; rtol 1e-11 floor 1e-15, v_q/v_te 0.01: 3695 steps, 1.8e-09; rtol 1e-11 floor 1e-15, v_q/v_te 0.1: 4546 steps, 1.2e-09; rtol 1e-12 floor 1e-14, v_q/v_te 0.01: 3772 steps, 8.1e-10; rtol 1e-12 floor 1e-14, v_q/v_te 0.1: 5470 steps, 2.7e-10.
+
+Reading: the unseeded deviation from the exact uniform two-fluid law is set by rtol, not by the floor (flat over 1e-16..1e-10; the maximum sits at t = 20-30, the start of the window); plain PID agreed to 3e-10 only because it crawled on noise and stalled (t = 158 and 31.5). H00 is floor-insensitive up to 1e-13; H01's Ebar error grows roughly linearly with the floor (3x at 1e-14, 40x at 1e-12, 800x at 1e-10, where it exceeds 2e-9). The seeded case moves by <= 4e-8 of dK_e at any floor and stops at the same t, far below the realization spread (committed t reached 869.5-937.5 over r0-r2; 860 here is the positivity stop for every floor). Larger floors save few steps (pump: 3238 at 1e-14 vs 3194 at 1e-10), so 1e-14 is kept as the control preset; controls keep the seeded runs' rtol 1e-10 so they test the same numerics, and rtol 1e-11 would bring the unseeded agreement below 2e-9 for about 15-30% more steps.
 
 ## Phase-space movies: resolution of the reconstructed f (`python studies/figures.py phase`)
 

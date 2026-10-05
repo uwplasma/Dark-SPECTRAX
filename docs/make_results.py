@@ -21,6 +21,11 @@ lb = json.loads((root / "studies/lane_b/summary.json").read_text())
 fid = {f"{c}_N{n}": json.loads((root / f"studies/lane_b/fidelity_{c}_N{n}.json").read_text())
        for c in ("B01", "B06") for n in (128, 512)}
 reb = json.loads((root / "studies/consolidate/b01_rebound.json").read_text())
+nfs = {}
+for p in sorted((root / "studies/noisefloor").glob("scan_*.jsonl")):
+    for line in p.read_text().splitlines():  # last record per (part, rtol, floor, case) wins
+        d = json.loads(line)
+        nfs[(p.stem, d["floor"], d.get("vq", d.get("case")))] = d
 ba = {p.stem[len("before_after_"):]: json.loads(p.read_text()) for p in (root / "studies/consolidate").glob("before_after_*.json")}
 
 
@@ -66,7 +71,8 @@ def lanes():
                  f"{pa['dK_e/W_ext']:.3f} | {pa['dU_E/W_ext']:.3f} | {pa['dK_i/W_ext']:.1e} | {pa['dThermal_e(k=0)/W_ext']:.4f} |")
     un = lc["unseeded"]
     L += ["", "The unseeded control follows the exact uniform two-fluid oscillator to "
-          f"{max(v['max_rel_dev_from_W_lin'] for v in un.values()):.0e}; the seeded deficit (about 1%) behaves like a fixed "
+          f"{max(v['max_rel_dev_from_W_lin'] for v in un.values()):.0e} over 20 < t <= 1000 (ds.CONTROLS; rtol-limited, see the "
+          "control-run noise floor section); the seeded deficit (about 1%) behaves like a fixed "
           "detuning and is unexplained. The ion correlation force <dn_i dE_x> is about 1e-4 of the mean force. An "
           "independent mobile-ion grid code (`studies/lane_c_grid_mobile.py`) agrees on dK_e up to "
           + ", ".join(f"{v['dK_e']:g} (v_q/v_te = {k.split('_')[1][2:]})" for k, v in lc["grid_mobile"].items()
@@ -126,6 +132,38 @@ def lanes():
                        f"{d['wall_time']:.0f}")
         L.append(f"| {r['case']} | {r['noise_floor']} | {f(r['before'])} | {f(r['after'])} | "
                  f"{r['max_rel_diff_dK_e']:.1e} / {r['max_rel_diff_W_ext']:.1e} |")
+    L += ["", noise_floor_section()]
+    return "\n".join(L)
+
+
+def noise_floor_section():
+    fl = ("1e-16", "1e-15", "1e-14", "1e-13", "1e-12", "1e-10")
+    g = lambda part, f, key: nfs.get((part, None if f is None else float(f), key))  # noqa: E731
+    L = ["## Control-run noise floor: `ds.CONTROLS = {\"noise_floor\": 1e-14}` (`python studies/noisefloor/scan.py`)", "",
+         "Control runs (H00, H01, unseeded pump-frame controls) pass `**ds.CONTROLS` explicitly; `run` and "
+         "`run_adaptive` keep `noise_floor=None`, so seeded records are unchanged. Scan, rtol 1e-10 / atol 1e-14 unless noted:", "",
+         "| noise_floor | (a) unseeded pump 0.01: steps, max abs(W/W_lin - 1) | (a) unseeded pump 0.1: steps, dev | "
+         "(b) H00 weak omega_e: steps, Ebar err | (b) H01 weak: steps, Ebar err | (b) H01 strong: steps, Ebar err | "
+         "(c) seeded 0.03 Nn64 r0: t reached, steps, diff dK_e / W_ext |", "|---|---|---|---|---|---|---|"]
+    for f in (None,) + fl:
+        a = [g("scan_a", f, v) for v in (0.01, 0.1)]
+        aa = [f"{x['steps']}, {x['max_rel_dev_W_lin']:.1e}" if x else "fails (committed plain-PID record)" for x in a]
+        b = [g("scan_b", f, k) for k in ("H00_weak_omega_e", "H01_weak_omega_e", "H01_strong_omega_e")]
+        c = g("scan_c", f, "vq0.03_Nn64_r0")
+        L.append(f"| {f or 'None (plain PID)'} | {aa[0]} | {aa[1]} | "
+                 + " | ".join(f"{x['steps']}, {x['Ebar_err']:.1e}" for x in b)
+                 + f" | {c['t_reached']:g}, {c['steps']}, {c['max_rel_diff_dK_e']:.0e} / {c['max_rel_diff_W_ext']:.0e} |")
+    r = {k[0][len("scan_a_rtol"):] + f" floor {k[1]:g}, v_q/v_te {k[2]}": d for k, d in nfs.items() if k[0].startswith("scan_a_rtol")}
+    L += ["", "Unseeded pump-frame controls at tighter rtol (same floor scan): "
+          + "; ".join(f"rtol {k}: {d['steps']} steps, {d['max_rel_dev_W_lin']:.1e}" for k, d in sorted(r.items())) + ".", "",
+          "Reading: the unseeded deviation from the exact uniform two-fluid law is set by rtol, not by the floor "
+          "(flat over 1e-16..1e-10; the maximum sits at t = 20-30, the start of the window); plain PID agreed to 3e-10 only "
+          "because it crawled on noise and stalled (t = 158 and 31.5). H00 is floor-insensitive up to 1e-13; H01's Ebar "
+          "error grows roughly linearly with the floor (3x at 1e-14, 40x at 1e-12, 800x at 1e-10, where it exceeds 2e-9). "
+          "The seeded case moves by <= 4e-8 of dK_e at any floor and stops at the same t, far below the realization spread "
+          "(committed t reached 869.5-937.5 over r0-r2; 860 here is the positivity stop for every floor). Larger floors save few steps (pump: 3238 at 1e-14 vs 3194 at 1e-10), so 1e-14 is "
+          "kept as the control preset; controls keep the seeded runs' rtol 1e-10 so they test the same numerics, and "
+          "rtol 1e-11 would bring the unseeded agreement below 2e-9 for about 15-30% more steps."]
     return "\n".join(L)
 
 

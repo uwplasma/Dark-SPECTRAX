@@ -1037,14 +1037,14 @@
  },
  "unseeded": {
   "0.01": {
-   "status": "failure",
-   "t_reached": 158.0,
-   "max_rel_dev_from_W_lin": 3.266615866692746e-10
+   "status": "success",
+   "t_reached": 1000.0,
+   "max_rel_dev_from_W_lin": 6.55997378640194e-09
   },
   "0.1": {
-   "status": "failure",
-   "t_reached": 31.5,
-   "max_rel_dev_from_W_lin": 7.382983113757291e-14
+   "status": "success",
+   "t_reached": 1000.0,
+   "max_rel_dev_from_W_lin": 3.848527052596751e-09
   }
  },
  "grid_mobile": {
