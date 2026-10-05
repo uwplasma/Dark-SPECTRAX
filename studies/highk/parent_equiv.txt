@@ -1,0 +1,2 @@
+2736549.2253709193 2736549.2253709203 [1.01859164 0.03189334] False
+spectrax: /Users/rogeriojorge/local/spectrax-wt/highk/spectrax/__init__.py  max rel diff study closure vs parent helper: 4.30e-16

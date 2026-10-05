@@ -1,0 +1,15 @@
+{
+ "case": "vq0.1_Nx8_Nn64_fnu1",
+ "status": "success",
+ "failure_reason": null,
+ "t_reached": 700.0,
+ "events": 21,
+ "steps": 24335,
+ "rejected": 8882,
+ "compile_time": 20.53399987408193,
+ "run_time": 19.347562624898273,
+ "wall_time": 68.29194041597657,
+ "repository_commit": "26af9d13194d4e23a58e95da021e206c553bff58",
+ "parent_commit": "c0910a1ee29d40f8250091d2ea037f74a14e2830",
+ "command": "python studies/highk_run.py --Nx 8 --Nn 64 --T 700 --field-nu 1"
+}
