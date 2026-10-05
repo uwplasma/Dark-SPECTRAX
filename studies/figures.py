@@ -560,9 +560,9 @@ def phase_simulate(case, dark, Nn):
     out = ds.run(m, y, c["T"], n_save=stride * (PHASE_FRAMES - 1) + 1, rtol=1e-8, atol=1e-14, max_steps=200_000,
                  dtmin=1e-6)
     t = out["t"]
-    ok = np.isfinite(t)
+    ok = np.isfinite(t) & np.isfinite(out["K"])
     return {"t": t, "E1": out["Fk"][:, 0, 0, 1, 0] / BETA, "U_E": out["U_gamma"], "K": out["K"], "W": out["W"],
-            "ledger": np.abs(out["ledger_defect"]).max(axis=0), "Ck": out["Ck"][::stride], "t_frames": t[::stride],
+            "ledger": np.nanmax(np.abs(out["ledger_defect"][:, :int(ok.sum())]), axis=1), "Ck": out["Ck"][::stride], "t_frames": t[::stride],
             "status": out["status"], "failure_reason": out["failure_reason"], "valid": int(ok.sum()),
             "run_time": out["run_time"], "compile_time": out["compile_time"], "steps": out["num_steps"]}
 
@@ -620,7 +620,7 @@ def phase_run(cases):
             entry[f"t_res_{mdl}_censored"] = tr is None
         rec["cases"][case] = entry
     rec.update({"command": "python studies/figures.py phase", "repository_commit": git_sha(),
-                "t_res_rule": "first t > 1 where |U_E(Nn) - U_E(2Nn)| > 0.1 running max; frames after it are not drawn",
+                "t_res_rule": "first t > 1 where |U_E(Nn) - U_E(2Nn)| > 0.1 running max (t_res_*), and first frame where max|f(Nn) - f(2Nn)| > 0.1 max f (t_res_f_*); frames at or after the earliest of the four are not drawn (t_drawn)",
                 "reconstruction": "f(x, v_x) = a_y a_z sum_n C_n(x) psi_n((v - u)/a_x) per population, Nn-run"})
     (STATIC / "phase_space").mkdir(parents=True, exist_ok=True)
     rec_path.write_text(json.dumps(rec, indent=2, default=float) + "\n")
@@ -633,20 +633,29 @@ def phase_draw(cases):
     p = plt()
     rec = load_json("docs/_static/phase_space/run.json")
     data = load_npz("docs/_static/phase_space/data.npz")
-    stills = {}
     for case in cases:
         c, e = PHASE_CASES[case], rec["cases"][case]
-        t_res = min(e["t_res_ordinary"], e["t_res_dark"])
         fs = {}
         for mdl in ("ordinary", "dark"):
-            z = np.load(CACHE / f"{case}_{mdl}_Nn{c['Nn']}.npz")
-            keep = np.isfinite(z["t_frames"]) & (z["t_frames"] <= t_res)
-            x, v, f = phase_f(case, mdl == "dark", c["Nn"], z["Ck"][keep])
-            fs[mdl] = (z["t_frames"][keep], f)
-        tf = fs["ordinary"][0][:min(len(fs["ordinary"][0]), len(fs["dark"][0]))]
+            z1, z2 = (np.load(CACHE / f"{case}_{mdl}_Nn{n}.npz") for n in (c["Nn"], 2 * c["Nn"]))
+            n = int(min(np.isfinite(z1["t_frames"]).sum(), np.isfinite(z2["t_frames"]).sum()))
+            x, v, f1 = phase_f(case, mdl == "dark", c["Nn"], z1["Ck"][:n])
+            f2 = phase_f(case, mdl == "dark", 2 * c["Nn"], z2["Ck"][:n])[2]
+            diff = np.abs(f1 - f2).max(axis=(1, 2)) / f2.max(axis=(1, 2))  # Nn vs 2Nn, L-inf / max f
+            bad = np.nonzero(diff > 0.1)[0]
+            t_f = float(z1["t_frames"][bad[0]]) if bad.size else float(z1["t_frames"][n - 1])
+            e[f"t_res_f_{mdl}"], e[f"t_res_f_{mdl}_censored"] = t_f, not bad.size
+            e[f"f_difference_{mdl}"] = diff.tolist()
+            fs[mdl] = (z1["t_frames"][:n], f1, diff)
+        # Frames drawn: both models resolved by both rules (field energy and f itself, Nn vs 2Nn, 10%).
+        t_res = min(e["t_res_ordinary"], e["t_res_dark"], e["t_res_f_ordinary"], e["t_res_f_dark"])
+        keep = {m: fs[m][0] < t_res for m in fs}
+        nd = min(keep["ordinary"].sum(), keep["dark"].sum())
+        tf = fs["ordinary"][0][:nd]
+        fs = {m: (fs[m][0][:nd], fs[m][1][:nd], fs[m][2][:nd]) for m in fs}
         fmax = max(fs[m][1].max() for m in fs)
-        neg = {m: [float(fr.min() / fmax) for fr in fs[m][1]] for m in fs}  # min f / max f per frame
-        stills[case] = (x, v, {m: fs[m][1] for m in fs}, tf, neg, fmax)
+        neg = {m: [float(fr.min() / fr.max()) for fr in fs[m][1]] for m in fs}  # min f / max f per frame
+        e["t_drawn"] = t_res
         frames = []
         for i in range(len(tf)):
             fig = p.figure(figsize=(9.0, 5.0), dpi=88, constrained_layout=True)
@@ -669,7 +678,7 @@ def phase_draw(cases):
                 m = np.isfinite(tt) & (tt <= t_res)
                 ax.semilogy(tt[m], np.abs(E[m]), color=COLOR[mdl], lw=1, label=mdl)
             ax.axvline(tf[i], color="0.3", lw=0.8)
-            shade_uncertified(ax, t_res, c["T"], label="not resolved (Nn vs 2Nn)")
+            shade_uncertified(ax, t_res, c["T"], label="not resolved (Nn vs 2Nn: field or f differ > 10%)")
             ax.set(xlim=(0, c["T"]), ylabel=r"$|E_{x,k}|$")
             time_axis(ax)
             ax.legend(loc="lower right", fontsize=7.5, ncol=3)
@@ -681,7 +690,8 @@ def phase_draw(cases):
         frames[0].save(out, save_all=True, append_images=frames[1:], duration=120, loop=0, quality=70, method=6)
         e["movie"] = {"file": out.name, "frames": len(frames), "t_last_frame": float(tf[-1]),
                       "bytes": out.stat().st_size, "min_f_over_max_ordinary": min(neg["ordinary"]),
-                      "min_f_over_max_dark": min(neg["dark"])}
+                      "min_f_over_max_dark": min(neg["dark"]),
+                      "max_f_difference_drawn": max(float(fs[m][2].max()) for m in fs)}
         print(f"wrote {out.name} ({out.stat().st_size / 1e6:.2f} MB, {len(frames)} frames)")
     (STATIC / "phase_space" / "run.json").write_text(json.dumps(rec, indent=2, default=float) + "\n")
 
