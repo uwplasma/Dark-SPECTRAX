@@ -152,7 +152,7 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
     """
     solver = diffrax.Dopri8() if solver is None else solver
     key = (id(model), t_max, n_save, rtol, atol, dt0, id(solver), max_steps, progress, fixed_dt, dtmin, noise_floor,
-           jax.tree_util.tree_map(lambda a: (jnp.shape(a), jnp.result_type(a)), y0))
+           tuple((k, jnp.shape(v), str(jnp.result_type(v))) for k, v in sorted(y0.items())))
     compiled = None if cache is None else cache.get(key)
     tic = _time.perf_counter()
     with warnings.catch_warnings():  # complex states are used exactly as in the parent
