@@ -9,7 +9,7 @@ go() { until mkdir /tmp/spectrax-heavy.lock 2>/dev/null; do sleep 2; done; echo 
        echo "start $(date +%T) : $*" >> $LOG
        /opt/local/bin/gtimeout 900 "$@" >> $LOG 2>&1; rc=$?
        echo "exit $rc $(date +%T) : $*" >> $LOG
-       [ "$(cat /tmp/spectrax-heavy.lock/owner)" = "$$" ] && rm -rf /tmp/spectrax-heavy.lock; return $rc; }
+       [ "$(cat /tmp/spectrax-heavy.lock/owner)" = "$$" ] && rm -rf /tmp/spectrax-heavy.lock; sleep 3; return $rc; }
 herm() { for i in 1 2 3 4 5 6 7 8; do go $PY studies/nxconv_run.py "$@" --T 1000 --chunk 250 --noise-floor 1e-14 || return
          tail -1 $LOG | grep -q "nothing to do" && return; done; }
 go $PY -m pytest -q -n 2 tests

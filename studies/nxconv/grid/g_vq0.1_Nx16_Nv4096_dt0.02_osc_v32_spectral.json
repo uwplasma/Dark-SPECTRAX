@@ -1,0 +1,16 @@
+{
+ "case": "g_vq0.1_Nx16_Nv4096_dt0.02_osc_v32_spectral",
+ "T": 700.0,
+ "finite": true,
+ "wall_time": 196.0469456660212,
+ "steps": 35000,
+ "t_fneg_1e-3": 457.5,
+ "min_f_rel": -0.7500485326737303,
+ "max_negfrac": 0.33402157204400573,
+ "max_edge": 0.20917284398047573,
+ "max_energy_defect_over_W": 0.14751034781455427,
+ "max_mass_drift": 7.771561172376096e-15,
+ "max_momentum": 0.03517361275691122,
+ "repository_commit": "82447c0d8c3175437cc19e15f2c21600e14954dd",
+ "command": "python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 16 --Nv 4096 --vmax 32 --frame osc --vshift spectral --chunk 250"
+}

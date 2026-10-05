@@ -11,6 +11,8 @@ L = 40, drive E0 cos(w t) on both species, Strang x/2 - v - x/2 with the 4-pass 
            filtered   same, then an exponential filter exp(-36 (|eta|/eta_max)^36) in the v-Fourier variable
            pfc        positive flux-conservative third-order shift (Filbet, Sonnendrucker, Bertrand 2001), with the
                       positivity limiter only (no upper bound); exact integer part, mass-conservative.
+  --xshift spectral (default) | mask23 (2/3 mask on f after each x shift, as the Hermite runs) | pfc (positive
+                   flux-conservative x translation per v column: positivity-preserving but diffusive in x)
   --chunk / resume: the run is integrated in chunks of --chunk omega_pe^-1 with a checkpoint (state, U_s, W_ext, t)
                    so that each process stays under the 15 min cap; rerunning the same command resumes.
 
@@ -44,8 +46,10 @@ def ifft(a, axis):
 
 
 class Species:
-    def __init__(self, Lx, Nx, vmax, Nv, qm, mass, vshift):
-        self.Nx, self.Nv, self.qm, self.mass, self.vshift = Nx, Nv, qm, mass, vshift
+    def __init__(self, Lx, Nx, vmax, Nv, qm, mass, vshift, xshift="spectral"):
+        self.Nx, self.Nv, self.qm, self.mass, self.vshift, self.xshift = Nx, Nv, qm, mass, vshift, xshift
+        self.dx = Lx / Nx
+        self.mask = np.abs(np.fft.fftfreq(Nx, d=1.0 / Nx)) <= (Nx - 1) // 3
         self.x = np.arange(Nx) * Lx / Nx
         self.dv = 2 * vmax / Nv
         self.v = -vmax + np.arange(Nv) * self.dv
@@ -55,8 +59,12 @@ class Species:
         self.U = 0.0
 
     def adv_x(self, f, dt):
-        fk = fft(f, 0)
-        return ifft(fk * np.exp(-1j * self.kx[:, None] * (self.v[None, :] + self.U) * dt), 0).real
+        if self.xshift == "pfc":  # column-wise translation by (v + U) dt / dx cells, positivity-preserving
+            return pfc_shift(f.T, (self.v + self.U) * dt / self.dx).T
+        fk = fft(f, 0) * np.exp(-1j * self.kx[:, None] * (self.v[None, :] + self.U) * dt)
+        if self.xshift == "mask23":  # keep |k| <= (Nx - 1) // 3, as the Hermite runs' 2/3 mask
+            fk *= self.mask[:, None]
+        return ifft(fk, 0).real
 
     def shift_v(self, f, s):
         """f(x, v) -> f(x, v - s(x))."""
@@ -106,8 +114,8 @@ def setup(a):
         Lx = 2 * np.pi * vte / a.landau  # k lambda_D = a.landau, lambda_D = v_te
     else:
         Lx = 40.0
-    se = Species(Lx, a.Nx, a.vmax * vte, a.Nv, -1.0, 1.0, a.vshift)
-    si = Species(Lx, a.Nx, 40 * vti, a.Nvi, 1.0 / mi, mi, a.vshift)
+    se = Species(Lx, a.Nx, a.vmax * vte, a.Nv, -1.0, 1.0, a.vshift, a.xshift)
+    si = Species(Lx, a.Nx, 40 * vti, a.Nvi, 1.0 / mi, mi, a.vshift, a.xshift)
     k1, x = 2 * np.pi / Lx, se.x
     mx = lambda v, s: np.exp(-v[None, :] ** 2 / (2 * s ** 2)) / np.sqrt(2 * np.pi * s ** 2)  # noqa: E731
     if a.landau is not None:
@@ -133,6 +141,7 @@ def main(argv=None):
     ap.add_argument("--vmax", type=float, default=64.0, help="electron v-grid half width in v_te")
     ap.add_argument("--frame", choices=("lab", "osc"), default="lab")
     ap.add_argument("--vshift", choices=("spectral", "filtered", "pfc"), default="spectral")
+    ap.add_argument("--xshift", choices=("spectral", "mask23", "pfc"), default="spectral")
     ap.add_argument("--chunk", type=float, default=1e9, help="omega_pe^-1 per process before checkpointing")
     ap.add_argument("--landau", type=float, default=None, help="validation: k lambda_D (electrons, no drive)")
     ap.add_argument("--amp", type=float, default=1e-4)
@@ -144,6 +153,7 @@ def main(argv=None):
     w = np.sqrt(1 + 1 / mi)
     E0 = a.vq * vte
     tag = (f"g_vq{a.vq:g}_Nx{a.Nx}_Nv{a.Nv}_dt{a.dt:g}_{a.frame}_v{a.vmax:g}_{a.vshift}"
+           + ("" if a.xshift == "spectral" else f"_x{a.xshift}")
            + (f"_landau{a.landau:g}" if a.landau is not None else "") + ("_unseeded" if a.unseeded else ""))
     OUT.mkdir(parents=True, exist_ok=True)
     ck = OUT / f"{tag}.ckpt.npz"
