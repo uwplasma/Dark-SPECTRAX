@@ -1,0 +1,32 @@
+{
+ "vq0.1_Nx16": {
+  "t_reached": 700.0,
+  "status": "success",
+  "t_pos": null,
+  "steps": 26043,
+  "rejected": 7968,
+  "compile_s": 36.3,
+  "run_s": 45.9,
+  "c0.5": {
+   "t_res_dKe": ">=700",
+   "t_res_W": ">=700",
+   "t_reached": 700.0,
+   "t_pos": null
+  },
+  "c2": {
+   "t_res_dKe": ">=700",
+   "t_res_W": ">=700",
+   "t_reached": 700.0,
+   "t_pos": null
+  },
+  "grid": {
+   "t_res_dKe": 691.5,
+   "t_res_W": ">=700",
+   "grid_fmin_lt_-1e-3": 457.5
+  }
+ },
+ "grid_vq0.1_Nx16_vs_Nx32": {
+  "t_res_dKe": 625.0,
+  "t_res_W": 671.5
+ }
+}
