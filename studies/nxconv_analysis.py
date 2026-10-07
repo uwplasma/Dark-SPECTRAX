@@ -95,19 +95,21 @@ def main():
     for vq in (0.1, 0.03):
         for nx in (16, 32, 64, 128):
             for nn in (64, 128):
-                for c in (0.5, 1, 2):
+                for c in (0.5, 1, 2, 4, 8):
                     case = f"vq{vq:g}_Nx{nx}_Nn{nn}_c{c:g}_nf1e-14"
                     h = herm(case)
                     if h is not None:
                         H[case] = h
                         S["hermite"][case] = {**cost(h), "t_pos": t_pos(h)}
         for nx in (32, 64):
-            a, b = H.get(f"vq{vq:g}_Nx{2 * nx}_Nn64_c1_nf1e-14"), H.get(f"vq{vq:g}_Nx{nx}_Nn64_c1_nf1e-14")
+          for c in (1, 4):
+            a, b = H.get(f"vq{vq:g}_Nx{2 * nx}_Nn64_c{c}_nf1e-14"), H.get(f"vq{vq:g}_Nx{nx}_Nn64_c{c}_nf1e-14")
             if a and b:
-                S["pairs"][f"vq{vq:g} Nx{nx} vs {2 * nx}"] = {"dK_e": t_res(a, b, "dKe"), "W_ext": t_res(a, b, "Wx"),
+                S["pairs"][f"vq{vq:g} c{c} Nx{nx} vs {2 * nx}"] = {"dK_e": t_res(a, b, "dKe"), "W_ext": t_res(a, b, "Wx"),
                                                               f"Ek2 k<{kmax(nx)}": spec_res(a, b, kmax(nx))}
-        ref = H.get(f"vq{vq:g}_Nx64_Nn64_c1_nf1e-14")
-        for tag, lab in (("Nn128_c1", "Nn 64 vs 128"), ("Nn64_c0.5", "c 1 vs 1/2"), ("Nn64_c2", "c 1 vs 2")):
+        ref = H.get(f"vq{vq:g}_Nx64_Nn64_c4_nf1e-14")
+        for tag, lab in (("Nn128_c4", "c4 Nn 64 vs 128"), ("Nn64_c1", "c 4 vs 1"), ("Nn64_c2", "c 4 vs 2"),
+                         ("Nn64_c8", "c 4 vs 8")):
             b = H.get(f"vq{vq:g}_Nx64_{tag}_nf1e-14")
             if ref and b:
                 S["pairs"][f"vq{vq:g} Nx64 {lab}"] = {"dK_e": t_res(ref, b, "dKe"), "W_ext": t_res(ref, b, "Wx"),
@@ -133,10 +135,17 @@ def main():
     for k, d in gd.items():
         nx = int(k.split("_Nx")[1].split("_")[0])
         vq = float(k.split("_vq")[1].split("_")[0])
-        h = H.get(f"vq{vq:g}_Nx{nx}_Nn64_c1_nf1e-14")
-        if h is not None:
+        h = H.get(f"vq{vq:g}_Nx{nx}_Nn64_c4_nf1e-14")
+        if h is not None and "xmask23" in k:
             S["hermite_vs_grid"][f"{k}"] = {"dK_e": t_res(h, d, "dKe"), "W_ext": t_res(h, d, "Wx"),
                                             f"Ek2 k<{kmax(nx)}": spec_res(h, d, kmax(nx))}
+    for vq in (0.1, 0.03):
+        for nx in (32, 64):
+            a, b = gd.get(f"g_vq{vq:g}_Nx{2*nx}_Nv4096_dt0.02_osc_v32_spectral_xmask23"), \
+                gd.get(f"g_vq{vq:g}_Nx{nx}_Nv4096_dt0.02_osc_v32_spectral_xmask23")
+            if a is not None and b is not None:
+                S["grid_pairs"][f"mask23 vq{vq:g} Nx{nx} vs {2*nx}"] = {"dK_e": t_res(a, b, "dKe"), "W_ext": t_res(a, b, "Wx"),
+                                                                    f"Ek2 k<{kmax(nx)}": spec_res(a, b, kmax(nx))}
     (D / "nxconv" / "summary.json").write_text(json.dumps(S, indent=1, default=str) + "\n")
     print(json.dumps(S, indent=1, default=str))
 

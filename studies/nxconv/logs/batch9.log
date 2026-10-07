@@ -1,0 +1,178 @@
+start 08:14:36 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx32_Nn64_c4_nf1e-14", "part": 0, "t_start": 0.0, "t_end": 240.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2131, "rejected": 729, "compile_time": 1.0010472910944372, "run_time": 4.5084920428926125, "wall_time": 18.197797749948222, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 08:15:07 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 08:16:08 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx32_Nn64_c4_nf1e-14", "part": 1, "t_start": 240.0, "t_end": 480.0, "status": "success", "failure_reason": null, "events": 9, "steps": 6764, "rejected": 2484, "compile_time": 1.012572834151797, "run_time": 14.276915040856693, "wall_time": 28.763064459024463, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 08:16:48 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 08:33:33 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx32_Nn64_c4_nf1e-14", "part": 2, "t_start": 480.0, "t_end": 720.0, "status": "success", "failure_reason": null, "events": 11, "steps": 16045, "rejected": 6462, "compile_time": 0.8922777490806766, "run_time": 28.827821791055612, "wall_time": 42.24192175001372, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 08:34:26 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 08:53:12 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx32_Nn64_c4_nf1e-14", "part": 3, "t_start": 720.0, "t_end": 820.0, "status": "failure", "failure_reason": "segment 4: positivity lost at t = 813.5", "events": 4, "steps": 10679, "rejected": 3988, "compile_time": 0.7973235420649871, "run_time": 19.94349524989957, "wall_time": 26.642880207975395, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 08:53:43 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 08:59:17 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx32_Nn64_c4_nf1e-14: nothing to do (failure, t_end 820)
+exit 0 08:59:18 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:27:28 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx32_Nn64_c4_nf1e-14: nothing to do (failure, t_end 820)
+exit 0 09:27:29 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:32:25 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx32_Nn64_c4_nf1e-14: nothing to do (failure, t_end 820)
+exit 0 09:32:26 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:37:24 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx32_Nn64_c4_nf1e-14: nothing to do (failure, t_end 820)
+exit 0 09:37:26 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:42:24 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx64_Nn64_c8_nf1e-14", "part": 0, "t_start": 0.0, "t_end": 240.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2165, "rejected": 788, "compile_time": 0.7785951230907813, "run_time": 6.67465945892036, "wall_time": 17.68853174999822, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 09:42:52 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:43:19 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx64_Nn64_c8_nf1e-14", "part": 1, "t_start": 240.0, "t_end": 480.0, "status": "success", "failure_reason": null, "events": 9, "steps": 6563, "rejected": 2556, "compile_time": 0.7734986670548096, "run_time": 20.72658187308116, "wall_time": 32.41517279105028, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 09:44:01 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:44:36 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx64_Nn64_c8_nf1e-14", "part": 2, "t_start": 480.0, "t_end": 720.0, "status": "success", "failure_reason": null, "events": 11, "steps": 15368, "rejected": 6912, "compile_time": 0.9425832910346799, "run_time": 47.161636041942984, "wall_time": 60.30032262502937, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 09:45:47 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:46:28 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx64_Nn64_c8_nf1e-14", "part": 3, "t_start": 720.0, "t_end": 760.0, "status": "failure", "failure_reason": "segment 1: positivity lost at t = 760", "events": 1, "steps": 4061, "rejected": 1875, "compile_time": 0.8937814169912599, "run_time": 12.43182562396396, "wall_time": 17.421143707993906, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 09:46:48 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:47:43 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn64_c8_nf1e-14: nothing to do (failure, t_end 760)
+exit 0 09:47:44 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:48:06 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn64_c8_nf1e-14: nothing to do (failure, t_end 760)
+exit 0 09:48:07 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:48:10 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn64_c8_nf1e-14: nothing to do (failure, t_end 760)
+exit 0 09:48:10 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:48:13 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn64_c8_nf1e-14: nothing to do (failure, t_end 760)
+exit 0 09:48:14 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:48:17 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx64_Nn64_c2_nf1e-14", "part": 0, "t_start": 0.0, "t_end": 240.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1915, "rejected": 629, "compile_time": 0.7831900409655645, "run_time": 6.10083841800224, "wall_time": 16.968138958967756, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 09:48:44 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:53:59 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx64_Nn64_c2_nf1e-14", "part": 1, "t_start": 240.0, "t_end": 480.0, "status": "success", "failure_reason": null, "events": 9, "steps": 5832, "rejected": 2089, "compile_time": 0.7711277069174685, "run_time": 18.43232866912149, "wall_time": 30.031087999988813, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 09:54:38 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:59:28 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx64_Nn64_c2_nf1e-14", "part": 2, "t_start": 480.0, "t_end": 693.5, "status": "failure", "failure_reason": "segment 10: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>", "events": 10, "steps": 212291, "rejected": 15901, "compile_time": 0.7697752911481075, "run_time": 673.7310852080118, "wall_time": 684.5872443749686, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:11:02 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:15:54 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn64_c2_nf1e-14: nothing to do (failure, t_end 693.5)
+exit 0 10:15:55 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:20:50 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn64_c2_nf1e-14: nothing to do (failure, t_end 693.5)
+exit 0 10:20:51 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:25:45 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn64_c2_nf1e-14: nothing to do (failure, t_end 693.5)
+exit 0 10:25:46 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:25:49 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn64_c2_nf1e-14: nothing to do (failure, t_end 693.5)
+exit 0 10:25:50 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:25:53 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn64_c2_nf1e-14: nothing to do (failure, t_end 693.5)
+exit 0 10:25:54 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 2 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:25:57 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx64_Nn128_c4_nf1e-14", "part": 0, "t_start": 0.0, "t_end": 240.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1661, "rejected": 476, "compile_time": 0.7751119589083828, "run_time": 8.015743705967907, "wall_time": 18.766913583967835, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:26:25 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:26:28 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx64_Nn128_c4_nf1e-14", "part": 1, "t_start": 240.0, "t_end": 480.0, "status": "success", "failure_reason": null, "events": 9, "steps": 6838, "rejected": 2380, "compile_time": 0.821390418917872, "run_time": 32.97931458312087, "wall_time": 44.56369625002844, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:27:22 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:27:25 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx64_Nn128_c4_nf1e-14", "part": 2, "t_start": 480.0, "t_end": 600.0, "status": "failure", "failure_reason": "segment 5: positivity lost at t = 593", "events": 5, "steps": 11453, "rejected": 2802, "compile_time": 0.768727041897364, "run_time": 55.2788649580325, "wall_time": 62.46956733299885, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:28:33 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:28:36 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn128_c4_nf1e-14: nothing to do (failure, t_end 600)
+exit 0 10:28:37 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:28:40 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn128_c4_nf1e-14: nothing to do (failure, t_end 600)
+exit 0 10:28:40 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:28:43 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn128_c4_nf1e-14: nothing to do (failure, t_end 600)
+exit 0 10:28:44 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:28:47 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn128_c4_nf1e-14: nothing to do (failure, t_end 600)
+exit 0 10:28:48 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:28:51 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.1_Nx64_Nn128_c4_nf1e-14: nothing to do (failure, t_end 600)
+exit 0 10:28:52 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:28:55 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx128_Nn64_c4_nf1e-14", "part": 0, "t_start": 0.0, "t_end": 240.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1956, "rejected": 689, "compile_time": 0.7887255430687219, "run_time": 9.711784584040288, "wall_time": 20.58852200000547, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:29:25 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:29:28 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.1_Nx128_Nn64_c4_nf1e-14", "part": 1, "t_start": 240.0, "t_end": 480.0, "status": "success", "failure_reason": null, "events": 9, "steps": 6140, "rejected": 2384, "compile_time": 0.7633940831292421, "run_time": 30.231165165780112, "wall_time": 41.638669957988895, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.1 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:30:19 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:30:22 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+exit 124 10:45:22 : .venv/bin/python studies/nxconv_run.py --vq 0.1 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:45:25 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx32_Nn64_c4_nf1e-14", "part": 0, "t_start": 0.0, "t_end": 240.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1614, "rejected": 598, "compile_time": 0.7482424140907824, "run_time": 3.0101947499788366, "wall_time": 13.717458665953018, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:45:49 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:45:52 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx32_Nn64_c4_nf1e-14", "part": 1, "t_start": 240.0, "t_end": 480.0, "status": "success", "failure_reason": null, "events": 3, "steps": 3151, "rejected": 1132, "compile_time": 0.7473080399795435, "run_time": 5.8321770000620745, "wall_time": 17.114214959030505, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:46:18 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:46:21 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx32_Nn64_c4_nf1e-14", "part": 2, "t_start": 480.0, "t_end": 720.0, "status": "success", "failure_reason": null, "events": 10, "steps": 5590, "rejected": 1932, "compile_time": 0.7499498760444112, "run_time": 10.420384457043838, "wall_time": 21.801075708004646, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:46:52 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:46:55 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx32_Nn64_c4_nf1e-14", "part": 3, "t_start": 720.0, "t_end": 960.0, "status": "success", "failure_reason": null, "events": 10, "steps": 10207, "rejected": 3362, "compile_time": 0.7416290430701338, "run_time": 18.911031207011547, "wall_time": 30.263904457970057, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:47:35 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:47:38 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx32_Nn64_c4_nf1e-14", "part": 4, "t_start": 960.0, "t_end": 1000.0, "status": "success", "failure_reason": null, "events": 1, "steps": 3207, "rejected": 1130, "compile_time": 0.7513497090549208, "run_time": 5.939664373989217, "wall_time": 9.971085208002478, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:47:50 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:47:53 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.03_Nx32_Nn64_c4_nf1e-14: nothing to do (success, t_end 1000)
+exit 0 10:47:54 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:47:57 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.03_Nx32_Nn64_c4_nf1e-14: nothing to do (success, t_end 1000)
+exit 0 10:47:58 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:48:01 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.03_Nx32_Nn64_c4_nf1e-14: nothing to do (success, t_end 1000)
+exit 0 10:48:01 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 32 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:48:04 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx128_Nn64_c4_nf1e-14", "part": 0, "t_start": 0.0, "t_end": 240.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1507, "rejected": 582, "compile_time": 0.796768499945756, "run_time": 7.439450207981281, "wall_time": 18.296930250013247, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:48:33 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:48:36 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx128_Nn64_c4_nf1e-14", "part": 1, "t_start": 240.0, "t_end": 480.0, "status": "success", "failure_reason": null, "events": 3, "steps": 2934, "rejected": 1087, "compile_time": 0.7941248749848455, "run_time": 14.465275126043707, "wall_time": 26.00348000001395, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:49:11 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:49:14 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx128_Nn64_c4_nf1e-14", "part": 2, "t_start": 480.0, "t_end": 720.0, "status": "success", "failure_reason": null, "events": 10, "steps": 5430, "rejected": 2130, "compile_time": 0.7844980031368323, "run_time": 26.853010622842703, "wall_time": 38.310636583017185, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:50:02 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:50:05 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx128_Nn64_c4_nf1e-14", "part": 3, "t_start": 720.0, "t_end": 960.0, "status": "success", "failure_reason": null, "events": 10, "steps": 12315, "rejected": 4801, "compile_time": 0.7879249170655385, "run_time": 61.91142607992515, "wall_time": 73.56869912502589, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 10:51:28 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 10:51:31 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+exit 124 11:06:31 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 128 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 11:06:34 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx64_Nn64_c8_nf1e-14", "part": 0, "t_start": 0.0, "t_end": 240.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1678, "rejected": 660, "compile_time": 0.8931071239640005, "run_time": 5.046518001065124, "wall_time": 17.46281729103066, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 11:07:03 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 11:07:06 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx64_Nn64_c8_nf1e-14", "part": 1, "t_start": 240.0, "t_end": 480.0, "status": "success", "failure_reason": null, "events": 3, "steps": 3131, "rejected": 1162, "compile_time": 0.8888602910446934, "run_time": 9.469791169976816, "wall_time": 22.918479792017024, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 11:07:39 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 11:07:42 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx64_Nn64_c8_nf1e-14", "part": 2, "t_start": 480.0, "t_end": 720.0, "status": "success", "failure_reason": null, "events": 10, "steps": 5565, "rejected": 2091, "compile_time": 0.9814012500573881, "run_time": 16.79257849982241, "wall_time": 29.96659870800795, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 11:08:22 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 11:08:25 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx64_Nn64_c8_nf1e-14", "part": 3, "t_start": 720.0, "t_end": 960.0, "status": "success", "failure_reason": null, "events": 10, "steps": 9824, "rejected": 3991, "compile_time": 0.8761137918336317, "run_time": 30.50589774810942, "wall_time": 43.382084166049026, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 11:09:19 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 11:09:22 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx64_Nn64_c8_nf1e-14", "part": 4, "t_start": 960.0, "t_end": 1000.0, "status": "success", "failure_reason": null, "events": 1, "steps": 3271, "rejected": 1487, "compile_time": 0.8908468339941464, "run_time": 10.282242790970486, "wall_time": 15.412155083031394, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 11:09:40 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 11:09:43 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.03_Nx64_Nn64_c8_nf1e-14: nothing to do (success, t_end 1000)
+exit 0 11:09:44 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 11:09:47 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.03_Nx64_Nn64_c8_nf1e-14: nothing to do (success, t_end 1000)
+exit 0 11:09:48 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 11:09:51 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.03_Nx64_Nn64_c8_nf1e-14: nothing to do (success, t_end 1000)
+exit 0 11:09:52 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14
+start 11:09:55 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 32 --Nv 4096 --dt 0.01 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.1_Nx32_Nv4096_dt0.01_osc_v32_spectral_xmask23 checkpoint t=200 wall=167
+exit 3 11:12:42 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 32 --Nv 4096 --dt 0.01 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 11:12:45 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 32 --Nv 4096 --dt 0.01 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.1_Nx32_Nv4096_dt0.01_osc_v32_spectral_xmask23 checkpoint t=400 wall=332
+exit 3 11:15:30 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 32 --Nv 4096 --dt 0.01 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 11:15:34 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 32 --Nv 4096 --dt 0.01 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.1_Nx32_Nv4096_dt0.01_osc_v32_spectral_xmask23 checkpoint t=600 wall=497
+exit 3 11:18:20 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 32 --Nv 4096 --dt 0.01 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 11:18:23 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 32 --Nv 4096 --dt 0.01 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.1_Nx32_Nv4096_dt0.01_osc_v32_spectral_xmask23 done 580s
+exit 0 11:19:45 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 700 --Nx 32 --Nv 4096 --dt 0.01 --chunk 200 --frame osc --vmax 32 --xshift mask23

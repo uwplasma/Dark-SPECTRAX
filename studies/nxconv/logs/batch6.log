@@ -55,3 +55,69 @@ exit 0 08:08:06 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --N
 start 08:08:09 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
 g_vq0.03_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=200 wall=103
 exit 3 08:09:52 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 08:16:49 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.03_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=400 wall=206
+exit 3 08:18:32 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 08:34:27 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.03_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=600 wall=291
+exit 3 08:35:52 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 08:36:27 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.03_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=800 wall=376
+exit 3 08:37:53 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 08:51:55 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.03_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 done 451s
+exit 0 08:53:10 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 08:53:44 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.1_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=200 wall=333
+exit 3 08:59:17 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 09:00:01 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.1_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=400 wall=624
+exit 3 09:27:27 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 09:27:30 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.1_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=600 wall=918
+exit 3 09:32:24 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 09:32:27 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.1_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=800 wall=1215
+exit 3 09:37:24 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 09:37:27 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.1_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 done 1510s
+exit 0 09:42:22 : .venv/bin/python studies/nxconv_grid.py --vq 0.1 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 09:42:53 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx64_Nn64_c4_nf1e-14", "part": 0, "t_start": 0.0, "t_end": 240.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1619, "rejected": 637, "compile_time": 0.759888622967992, "run_time": 5.1527849600533955, "wall_time": 15.930838125001173, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 09:43:19 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:44:02 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx64_Nn64_c4_nf1e-14", "part": 1, "t_start": 240.0, "t_end": 480.0, "status": "success", "failure_reason": null, "events": 3, "steps": 3091, "rejected": 1156, "compile_time": 0.9133027089992538, "run_time": 9.516748915950302, "wall_time": 22.476563000003807, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 09:44:35 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:45:48 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx64_Nn64_c4_nf1e-14", "part": 2, "t_start": 480.0, "t_end": 720.0, "status": "success", "failure_reason": null, "events": 10, "steps": 5265, "rejected": 1917, "compile_time": 0.9116611659992486, "run_time": 16.133833707950544, "wall_time": 29.000202084018383, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 09:46:27 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:46:48 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx64_Nn64_c4_nf1e-14", "part": 3, "t_start": 720.0, "t_end": 960.0, "status": "success", "failure_reason": null, "events": 10, "steps": 9896, "rejected": 3928, "compile_time": 0.9454447089228779, "run_time": 30.339286666945554, "wall_time": 43.41804329195293, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 09:47:42 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:47:45 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+{"case": "vq0.03_Nx64_Nn64_c4_nf1e-14", "part": 4, "t_start": 960.0, "t_end": 1000.0, "status": "success", "failure_reason": null, "events": 1, "steps": 3639, "rejected": 1376, "compile_time": 0.911357791046612, "run_time": 11.176754832966253, "wall_time": 16.245467792032287, "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3", "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e", "command": "python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14"}
+exit 0 09:48:04 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:48:07 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.03_Nx64_Nn64_c4_nf1e-14: nothing to do (success, t_end 1000)
+exit 0 09:48:07 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:48:10 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.03_Nx64_Nn64_c4_nf1e-14: nothing to do (success, t_end 1000)
+exit 0 09:48:11 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:48:14 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+vq0.03_Nx64_Nn64_c4_nf1e-14: nothing to do (success, t_end 1000)
+exit 0 09:48:15 : .venv/bin/python studies/nxconv_run.py --vq 0.03 --Nx 64 --Nn 64 --field-nu 4 --T 1000 --chunk 240 --noise-floor 1e-14
+start 09:48:46 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.03_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=200 wall=312
+exit 3 09:53:58 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 09:54:39 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.03_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=400 wall=599
+exit 3 09:59:27 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 10:11:03 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.03_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=600 wall=889
+exit 3 10:15:52 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 10:15:55 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.03_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 checkpoint t=800 wall=1182
+exit 3 10:20:49 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+start 10:20:52 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23
+g_vq0.03_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 done 1475s
+exit 0 10:25:45 : .venv/bin/python studies/nxconv_grid.py --vq 0.03 --T 1000 --Nx 128 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23

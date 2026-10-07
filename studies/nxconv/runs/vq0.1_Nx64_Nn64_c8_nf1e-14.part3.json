@@ -1,0 +1,17 @@
+{
+ "case": "vq0.1_Nx64_Nn64_c8_nf1e-14",
+ "part": 3,
+ "t_start": 720.0,
+ "t_end": 760.0,
+ "status": "failure",
+ "failure_reason": "segment 1: positivity lost at t = 760",
+ "events": 1,
+ "steps": 4061,
+ "rejected": 1875,
+ "compile_time": 0.8937814169912599,
+ "run_time": 12.43182562396396,
+ "wall_time": 17.421143707993906,
+ "repository_commit": "e7dfbc7515263e07ae847551e97d3bb81f11d4f3",
+ "parent_commit": "16400f887f0609b7699cd5df5b1188fbfb74ef5e",
+ "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 64 --field-nu 8 --T 1000 --chunk 240 --noise-floor 1e-14"
+}
