@@ -3,7 +3,8 @@
 t_res(obs, a, b) = first t > 50 where |a - b| > 10% of the running max of |a| (a = the reference member of the pair:
 the c = 1, Nn 64 run, or the finer Nx).  Observables: dK_e, W_ext (Hermite ledger W[:, 2]); field spectra: |E_k|^2
 for every k strictly below the top retained mode of the coarser run (k <= Nx/3 - 1), each compared with the same
-10% rule on its own running max, reported as the first such t over those k (and which k).
+10% rule on its own running max, counted only while
+|E_k|^2 >= FLOOR (1e-6) x running max |E_1|^2 of the reference run, reported as the first such t over those k (and which k).
 t_pos = first save with K_s <= 0 or k=0 T_x <= 0. Cost = summed steps, rejected, compile + run time over parts.
 Grid: t_fneg = first save with min f_e < -1e-3 max f_e (after either sub-step); edge, energy defect, mass drift.
 Run: python studies/nxconv_analysis.py -> studies/nxconv/summary.json (+ printed tables)
@@ -48,17 +49,27 @@ def t_res(a, b, ka, kb=None):
     return float(t[bad[0]]) if bad.size else f">={t[-1]:g}"
 
 
-def spec_res(a, b, kmax):
-    """First 10% disagreement over k = 1 .. kmax - 1 of |E_k|^2 (per-k running max)."""
+FLOOR = 1e-6  # spectral metric counts mode k only while its |E_k|^2 >= FLOOR * running max |E_1|^2 (reference run)
+
+
+def spec_res(a, b, kmax, floor=FLOOR):
+    """First 10% disagreement over k = 1 .. kmax - 1 of |E_k|^2 (per-k running max), counted only at times where
+    the reference mode is above floor * running max of the k = 1 field energy (noise-level modes are not compared).
+    floor = 0 gives the unthresholded metric."""
+    ta, tb = np.round(a["t"], 6), np.round(b["t"], 6)
+    t = np.intersect1d(ta, tb)
+    if t.size == 0:
+        return None
+    ia, ib = np.searchsorted(ta, t), np.searchsorted(tb, t)
+    e1 = np.maximum.accumulate(np.abs(a["Ek2"][ia, 1]))
     best = None
     for k in range(1, kmax):
-        r = t_res(a, b, lambda h, k=k: h["Ek2"][:, k])
-        if isinstance(r, float) and (best is None or r < best[0]):
-            best = (r, k)
-    if best is None:
-        tt = np.intersect1d(np.round(a["t"], 6), np.round(b["t"], 6))
-        return f">={tt[-1]:g}"
-    return f"{best[0]:g} (k{best[1]})"
+        x, y = a["Ek2"][ia, k], b["Ek2"][ib, k]
+        scale = np.maximum.accumulate(np.abs(x))
+        bad = np.nonzero((t > 50) & (np.abs(x) >= floor * e1) & (np.abs(x - y) > 0.1 * scale))[0]
+        if bad.size and (best is None or t[bad[0]] < best[0]):
+            best = (float(t[bad[0]]), k)
+    return f">={t[-1]:g}" if best is None else f"{best[0]:g} (k{best[1]})"
 
 
 def t_pos(h):
