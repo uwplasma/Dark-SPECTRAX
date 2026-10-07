@@ -32,7 +32,7 @@ from spectrax._simulation import cross_product as _cross
 
 jax.config.update("jax_enable_x64", True)
 
-PARENT_COMMIT = "26605e5a9f759e632f87c7deccc37b15ee20a7cd"  # SPECTRAX integration/dark-baseline, not a release
+PARENT_COMMIT = "f33dfdab2a413c51722846748ee1e9dda5677d72"  # SPECTRAX integration/dark-baseline, not a release
 MODES = ("ordinary", "prescribed_drive", "self_consistent")
 FRAMES = ("fixed", "pump")
 _FFT_AXES = (-1, -3, -2)  # parent convention: rfft along x, stored on axis -2

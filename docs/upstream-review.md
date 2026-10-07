@@ -42,9 +42,9 @@ An unmerged integration commit containing #48, #46, #13, #12, #9 and #55 exists 
 ## What Dark-SPECTRAX needs upstream
 
 Dark-SPECTRAX is pinned to the SPECTRAX integration branch `integration/dark-baseline`
-(`26605e5`: main `ab87385` plus the unmerged PRs #48, #46, #13, #12, #9, #55, #50, #44, #18, #51, merged in that order,
+(`f33dfda`: main `bf41830` plus the unmerged PRs #48, #46, #13, #12, #9, #55, #50, #44, #18, #51, merged in that order,
 then the moving-Hermite-basis stack #56-#60, the lane-A filter #61, the field-scaled closure #66 and the species-TOML usability stack #62-#65), not a release.
-Earlier pins: `9d0982d` (first ten PRs), `c0910a1` (+ #56-#60), `16400f8` (+ #61, #66); the side branches `integration/highk` and
+Earlier pins: `9d0982d` (first ten PRs), `c0910a1` (+ #56-#60), `16400f8` (+ #61, #66), `26605e5` (+ #62-#65, on main `ab87385`); the side branches `integration/highk` and
 `integration/lane-a` are superseded by `integration/dark-baseline`. Until those PRs merge upstream:
 
 - **#55 (strict mask):** used through the parent mask; grids divisible by 3 are valid.

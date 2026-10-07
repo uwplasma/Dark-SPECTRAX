@@ -13,7 +13,7 @@ authors = [{name = "UWPlasma, UW-Madison group", email = "rogerio.jorge@wisc.edu
 dependencies = [
   # Exact parent commit: SPECTRAX integration branch integration/dark-baseline
   # (main ab87385 + unmerged PRs #48 #46 #13 #12 #9 #55 #50 #44 #18 #51 #56-#60 #61 #66 #62-#65), not a release. Its own dependency list omits these:
-  "spectrax @ git+https://github.com/uwplasma/SPECTRAX.git@26605e5a9f759e632f87c7deccc37b15ee20a7cd",
+  "spectrax @ git+https://github.com/uwplasma/SPECTRAX.git@f33dfdab2a413c51722846748ee1e9dda5677d72",
   "jax",
   "diffrax",
   "orthax",
