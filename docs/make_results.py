@@ -210,6 +210,32 @@ def highk_section():
     return "\n".join(L)
 
 
+def nxconv_section():
+    d = json.loads((root / "studies/nxconv/summary.json").read_text())
+    L = ["## H05 Nx convergence to t = 1000: Hermite (Nx 32/64/128) vs masked spectral grid (`studies/nxconv_*.py`)", "",
+         "Records made with parent integration/dark-baseline 16400f8 (pump frame, remap, #66 field-scaled closure "
+         "strength c, noise_floor 1e-14). Each entry is the last time two runs agree within 10% (`>=` = agree to the "
+         "end of the shorter run). Field spectra count only modes with |E_k|^2 >= 1e-6 of the running max of |E_1|^2 "
+         "in the reference run.", "",
+         "| Hermite pair | dK_e | W_ext | field spectrum |", "|---|---|---|---|"]
+    for k, v in d["pairs"].items():
+        L.append(f"| {k} | {v['dK_e']} | {v['W_ext']} | {next(x for kk, x in v.items() if kk.startswith('Ek2'))} |")
+    L += ["", "| Hermite c = 4 vs grid | dK_e | W_ext | field spectrum |", "|---|---|---|---|"]
+    for k, v in d["hermite_vs_grid"].items():
+        L.append(f"| {k} | {v['dK_e']} | {v['W_ext']} | {next(x for kk, x in v.items() if kk.startswith('Ek2'))} |")
+    L += ["", "| grid run | first f < -1e-3 max f | min f / max f | max edge fraction | max energy defect / W |",
+          "|---|---|---|---|---|"]
+    for k, v in d["grid"].items():
+        L.append(f"| {k} | {v.get('t_fneg_1e-3')} | {v['min_f_rel']:.2g} | {v['max_edge']:.2g} | "
+                 f"{v['max_energy_defect_over_W']:.1e} |")
+    L += ["", "**Certified windows (supersede the Nx = 8 lane windows and the conversion-figure panel):** "
+          "v_q/v_te = 0.03: dK_e and W_ext to t ~ 960-1000 (c = 4, Nx >= 32), field spectra to ~720-770. "
+          "v_q/v_te = 0.1: dK_e and W_ext to t <~ 600, limited by the asymmetric-Hermite truncation instability "
+          "(more Nx or Nn fails sooner); field spectra to ~555. The grid reference at v_q/v_te = 0.1 is valid only to "
+          "t ~ 650 at vmax = 32 v_te (f reaches the velocity-box edge), independent of Nv."]
+    return "\n".join(L)
+
+
 def otsi_section():
     """The physical finite-k instability of H05 is the oscillating two-stream instability (studies/instab_otsi.py)."""
     sc = otsi["scan"]
@@ -617,6 +643,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {lanes()}
 
 {highk_section()}
+
+{nxconv_section()}
 
 {otsi_section()}
 

@@ -381,6 +381,65 @@ This instability, not the closure, ends x-converged agreement: at Nx = 32 the He
 
 Superseded: the certified-time panel of `docs/_static/conversion/figure.png` and the Lane C t_res values for 0.03 and 0.1 above are Nx = 8 results; they are kept as records but the windows here replace them. The t_res law in the lane section is an Nx = 8 law. Grid caveat: the grid reference goes negative (f < -1e-3) before the Hermite runs do, so it is not a better reference late in the run.
 
+## H05 Nx convergence to t = 1000: Hermite (Nx 32/64/128) vs masked spectral grid (`studies/nxconv_*.py`)
+
+Records made with parent integration/dark-baseline 16400f8 (pump frame, remap, #66 field-scaled closure strength c, noise_floor 1e-14). Each entry is the last time two runs agree within 10% (`>=` = agree to the end of the shorter run). Field spectra count only modes with |E_k|^2 >= 1e-6 of the running max of |E_1|^2 in the reference run.
+
+| Hermite pair | dK_e | W_ext | field spectrum |
+|---|---|---|---|
+| vq0.1 c1 Nx32 vs 64 | 620.0 | >=620 | 617 (k4) |
+| vq0.1 c4 Nx32 vs 64 | >=760 | >=760 | 687.5 (k6) |
+| vq0.1 c1 Nx64 vs 128 | >=560 | >=560 | 555.5 (k4) |
+| vq0.1 c4 Nx64 vs 128 | >=480 | >=480 | >=480 |
+| vq0.1 Nx64 c4 Nn 64 vs 128 | 598.0 | >=600 | 555 (k4) |
+| vq0.1 Nx64 c 4 vs 1 | 620.0 | >=620 | 555 (k4) |
+| vq0.1 Nx64 c 4 vs 2 | 690.0 | >=693.5 | 555 (k4) |
+| vq0.1 Nx64 c 4 vs 8 | >=760 | >=760 | 555 (k4) |
+| vq0.03 c1 Nx32 vs 64 | 896.5 | >=900 | 891.5 (k4) |
+| vq0.03 c4 Nx32 vs 64 | >=1000 | >=1000 | >=1000 |
+| vq0.03 c1 Nx64 vs 128 | >=720 | >=720 | >=720 |
+| vq0.03 c4 Nx64 vs 128 | >=960 | >=960 | 951.5 (k5) |
+| vq0.03 Nx64 c 4 vs 1 | 896.5 | >=900 | 757.5 (k4) |
+| vq0.03 Nx64 c 4 vs 8 | >=1000 | >=1000 | 723 (k4) |
+
+| Hermite c = 4 vs grid | dK_e | W_ext | field spectrum |
+|---|---|---|---|
+| g_vq0.03_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 | >=960 | >=960 | 767 (k4) |
+| g_vq0.03_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 | >=1000 | >=1000 | 767 (k4) |
+| g_vq0.03_Nx64_Nv4096_dt0.02_osc_v32_spectral_xmask23 | >=1000 | >=1000 | 767 (k4) |
+| g_vq0.1_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 | >=480 | >=480 | >=480 |
+| g_vq0.1_Nx32_Nv4096_dt0.01_osc_v32_spectral_xmask23 | >=700 | >=700 | 554.5 (k4) |
+| g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 | 818.0 | >=820 | 555 (k4) |
+| g_vq0.1_Nx64_Nv4096_dt0.02_osc_v32_spectral_xmask23 | >=760 | >=760 | 555 (k4) |
+| g_vq0.1_Nx64_Nv8192_dt0.02_osc_v32_spectral_xmask23 | >=760 | >=760 | 555 (k4) |
+
+| grid run | first f < -1e-3 max f | min f / max f | max edge fraction | max energy defect / W |
+|---|---|---|---|---|
+| g_vq0.03_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 | 887.5 | -0.6 | 0.11 | 6.8e-03 |
+| g_vq0.03_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 | 871.5 | -0.032 | 3.1e-09 | 2.3e-07 |
+| g_vq0.03_Nx64_Nv4096_dt0.02_osc_v32_spectral_xmask23 | 959.0 | -0.0055 | 9.2e-09 | 2.3e-07 |
+| g_vq0.1_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 | 695.5 | -0.99 | 0.99 | 1.4e-01 |
+| g_vq0.1_Nx16_Nv4096_dt0.02_lab_v64_pfc | None | -2.3e-63 | 0 | 2.0e-06 |
+| g_vq0.1_Nx16_Nv4096_dt0.02_lab_v64_spectral | None | -8.9e-14 | 6.8e-14 | 2.0e-06 |
+| g_vq0.1_Nx16_Nv4096_dt0.02_osc_v24_pfc | None | -6.8e-67 | 3.9e-116 | 2.0e-06 |
+| g_vq0.1_Nx16_Nv4096_dt0.02_osc_v24_spectral | None | -3.4e-13 | 1.5e-13 | 2.0e-06 |
+| g_vq0.1_Nx16_Nv4096_dt0.02_osc_v32_pfc | 461.0 | -0.78 | 0.35 | 1.0e-01 |
+| g_vq0.1_Nx16_Nv4096_dt0.02_osc_v32_pfc_xpfc | None | 2.5e-223 | 0.75 | 2.0e-01 |
+| g_vq0.1_Nx16_Nv4096_dt0.02_osc_v32_spectral | 457.5 | -0.75 | 0.21 | 1.5e-01 |
+| g_vq0.1_Nx16_Nv8192_dt0.01_osc_v32_pfc | 460.5 | -0.74 | 0.5 | 3.1e-01 |
+| g_vq0.1_Nx16_Nv8192_dt0.02_osc_v32_filtered | 457.5 | -0.75 | 0.24 | 1.4e-01 |
+| g_vq0.1_Nx16_Nv8192_dt0.02_osc_v32_pfc | 460.5 | -0.76 | 0.28 | 1.3e-01 |
+| g_vq0.1_Nx16_Nv8192_dt0.02_osc_v32_spectral | 457.5 | -0.75 | 0.24 | 1.4e-01 |
+| g_vq0.1_Nx32_Nv4096_dt0.01_osc_v32_spectral_xmask23 | 495.0 | -0.15 | 1.4e-05 | 8.7e-07 |
+| g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral | 541.5 | -1.3 | 1.1 | 7.4e-01 |
+| g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 | 498.0 | -0.97 | 0.99 | 1.0e+00 |
+| g_vq0.1_Nx64_Nv4096_dt0.02_osc_v32_spectral | 506.5 | -1.3 | 1 | 6.6e-01 |
+| g_vq0.1_Nx64_Nv4096_dt0.02_osc_v32_spectral_xmask23 | 645.5 | -0.84 | 0.99 | 3.9e-01 |
+| g_vq0.1_Nx64_Nv8192_dt0.02_osc_v32_spectral | 504.0 | -1.3 | 0.96 | 3.0e-01 |
+| g_vq0.1_Nx64_Nv8192_dt0.02_osc_v32_spectral_xmask23 | 645.5 | -0.84 | 1 | 1.8e-01 |
+
+**Certified windows (supersede the Nx = 8 lane windows and the conversion-figure panel):** v_q/v_te = 0.03: dK_e and W_ext to t ~ 960-1000 (c = 4, Nx >= 32), field spectra to ~720-770. v_q/v_te = 0.1: dK_e and W_ext to t <~ 600, limited by the asymmetric-Hermite truncation instability (more Nx or Nn fails sooner); field spectra to ~555. The grid reference at v_q/v_te = 0.1 is valid only to t ~ 650 at vmax = 32 v_te (f reaches the velocity-box edge), independent of Nv.
+
 ## The physical high-k instability is the oscillating two-stream instability (`studies/instab_otsi.py`)
 
 Linear pump-frame Hermite model under a constant dipole pump E0 cos(w0 t); Floquet rate from the one-period monodromy, compared with the exact kinetic Silin matrix dispersion relation (Bessel orders |l| <= 4).

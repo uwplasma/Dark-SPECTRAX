@@ -197,10 +197,13 @@ integrated along the H05 excursion they predict the measured high-k gain to with
 record [studies/instab/otsi.json](studies/instab/otsi.json); basis options in [docs/design/l2-stable-basis.md](docs/design/l2-stable-basis.md)).
 
 Not established: any physics beyond $t_{\rm res}$ (saturation, late heating, partition), any $v_q/v_{te}=0.1$
-result at $t=1000$, convergence in $N_x$, or portability of the $t_{\rm res}$ law to other seeds, grids, mass
+result at $t=1000$, or portability of the $t_{\rm res}$ law to other seeds, grids, mass
 ratios or relativistic drive. The certified-time panel above is the Nx = 8 lane result; x-refinement with the
-field-scaled closure (SPECTRAX #66) supersedes it: certified to t of about 672 (0.1) and 942-952 (0.03), ended by a
-physical high-k instability ([high-k section](docs/results.md#h05-x-refinement-aw-truncation-instability-field-scaled-closure-physical-high-k-limit-studieshighk_py)). Records: [lane C](studies/lane_c/summary.json) · [lane B](studies/lane_b/summary.json) ·
+field-scaled closure (SPECTRAX #66) supersedes it. The Nx 32/64/128 study against a masked spectral grid code
+certifies $\Delta K_e$ and $W_{\rm ext}$ to t of about 960-1000 at 0.03 (c = 4, Nx >= 32) but only to about 600 at
+0.1, where more Nx or Nn fails sooner (asymmetric-Hermite truncation instability) and the grid reference itself is
+valid only to about 650 ([Nx convergence](docs/results.md#h05-nx-convergence-to-t--1000-hermite-nx-3264128-vs-masked-spectral-grid-studiesnxconv_py)).
+The broadband finite-k growth is the oscillating two-stream instability ([high-k section](docs/results.md#h05-x-refinement-aw-truncation-instability-field-scaled-closure-physical-high-k-limit-studieshighk_py)). Records: [lane C](studies/lane_c/summary.json) · [lane B](studies/lane_b/summary.json) ·
 [H00-H07](studies/hhs/run.json); table and limits in [docs/results.md](docs/results.md).
 
 ## Conservation and convergence
