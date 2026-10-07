@@ -761,15 +761,16 @@ def fig_djic_phase(*args):
     p = plt()
     case, c = "two_stream", PHASE_CASES["two_stream"]
     rec = load_json("docs/_static/phase_space/run.json")["cases"][case]
+    c.update({k: rec["inputs"][k] for k in ("Nx", "field_nu") if k in rec["inputs"]})
     pic_rec = load_json("studies/djic_phase/run.json")
     pic = load_npz("artifacts/djic_phase/two_stream.npz")
     herm = load_npz("docs/_static/phase_space/data.npz")
     t_res = rec["t_drawn"]  # Hermite frames end where Nn and 2Nn stop agreeing on f or field energy
     fs = {}
     for mdl in ("ordinary", "dark"):
-        z = np.load(CACHE / f"{case}_{mdl}_Nn{c['Nn']}.npz")
+        z = np.load(CACHE / f"{case}_{phase_tag(mdl == 'dark', c['Nn'], c['Nx'], c)}.npz")
         keep = np.isfinite(z["t_frames"]) & (z["t_frames"] < t_res) & (z["t_frames"] > 0)
-        x, v, f = phase_f(case, mdl == "dark", c["Nn"], z["Ck"][keep], nx=64, nv=80)
+        x, v, f = phase_f(case, mdl == "dark", c["Nn"], z["Ck"][keep], nx=max(64, 2 * c["Nx"]), nv=80)
         fs[mdl] = (z["t_frames"][keep], f)
     n = min(len(fs["ordinary"][0]), len(fs["dark"][0]))
     tf = fs["ordinary"][0][:n]
@@ -801,7 +802,7 @@ def fig_djic_phase(*args):
         fig.colorbar(im, ax=fig.axes, shrink=0.7, label=r"$f(x,v_x)$")
         ax = fig.add_subplot(gs[2, :])
         for mdl in ("ordinary", "dark"):
-            key = f"{case}_{mdl}_Nn{c['Nn']}"
+            key = f"{case}_{phase_tag(mdl == 'dark', c['Nn'], c['Nx'], c)}"
             th, Eh = herm[f"{key}_t"], herm[f"{key}_E1"]
             m = np.isfinite(th) & (th <= t_res)
             i0 = int(np.argmin(np.abs(th - tp[0])))
@@ -826,7 +827,7 @@ def fig_djic_phase(*args):
     gr = {}
     for mdl in ("ordinary", "dark"):  # growth of |E_k1| over the same window, both codes
         w = (10.0, 20.0)  # exponential phase in both codes (Hermite linear root 0.2616 / 0.2664)
-        key = f"{case}_{mdl}_Nn{c['Nn']}"
+        key = f"{case}_{phase_tag(mdl == 'dark', c['Nn'], c['Nx'], c)}"
         th, Eh = herm[f"{key}_t"], np.abs(herm[f"{key}_E1"])
         mh, mp = (th >= w[0]) & (th <= w[1]), (tp >= w[0]) & (tp <= w[1])
         gr[mdl] = {"window": w, "hermite": float(np.polyfit(th[mh], np.log(Eh[mh]), 1)[0]),
