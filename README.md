@@ -185,6 +185,14 @@ it returns and re-absorbs all of $U_D(0)$ on the beat period.
 
 <img src="docs/_static/conversion/figure.png" width="900" alt="Work against the exact linear resonant law, energy partition, certified time by lane and drive amplitude, and prescribed versus finite-reservoir work">
 
+That high-k instability is the oscillating two-stream instability (OTSI) of the dipole pump, a known parametric
+instability (Silin, Nishikawa) in a new regime: a resonant pump with a secularly growing excursion at $T_i=T_e$.
+Floquet rates of the linear pump-frame model match the exact kinetic Silin dispersion relation to 1.3% at 22
+unstable points, vanish with fixed ions, are purely growing, and vanish on the decay (PDI) side of the resonance;
+integrated along the H05 excursion they predict the measured high-k gain to within 0.6-0.8 decades
+([OTSI section](docs/results.md#the-physical-high-k-instability-is-the-oscillating-two-stream-instability-studiesinstab_otsipy),
+record [studies/instab/otsi.json](studies/instab/otsi.json); basis options in [docs/design/l2-stable-basis.md](docs/design/l2-stable-basis.md)).
+
 Not established: any physics beyond $t_{\rm res}$ (saturation, late heating, partition), any $v_q/v_{te}=0.1$
 result at $t=1000$, convergence in $N_x$, or portability of the $t_{\rm res}$ law to other seeds, grids, mass
 ratios or relativistic drive. The certified-time panel above is the Nx = 8 lane result; x-refinement with the
