@@ -30,6 +30,7 @@ hk = json.loads((root / "studies/highk/summary.json").read_text())
 hk_lin = json.loads((root / "studies/highk/linear_vq0.1.json").read_text())
 hk_eig = json.loads((root / "studies/highk/eig.json").read_text())
 hk_flq = json.loads((root / "studies/highk/floquet.json").read_text())
+otsi = json.loads((root / "studies/instab/otsi.json").read_text())
 ba = {p.stem[len("before_after_"):]: json.loads(p.read_text()) for p in (root / "studies/consolidate").glob("before_after_*.json")}
 
 
@@ -209,6 +210,34 @@ def highk_section():
     return "\n".join(L)
 
 
+def otsi_section():
+    """The physical finite-k instability of H05 is the oscillating two-stream instability (studies/instab_otsi.py)."""
+    sc = otsi["scan"]
+    un = [r for r in sc if r["gamma_floquet"] > 1e-8]
+    dmax = max(abs(r["gamma_floquet"] - r["gamma_nishikawa"]) / r["gamma_floquet"] for r in un)
+    fixed = max(abs(r["gamma_fixed_ions"]) for r in sc)
+    det = ", ".join(f"{d['w0']:g}: {d['floquet'][0] if d['floquet'][0] > 1e-8 else 0:.2g}" for d in otsi["detune"])
+    L = ["## The physical high-k instability is the oscillating two-stream instability (`studies/instab_otsi.py`)", "",
+         "Linear pump-frame Hermite model under a constant dipole pump E0 cos(w0 t); Floquet rate from the one-period "
+         "monodromy, compared with the exact kinetic Silin matrix dispersion relation (Bessel orders |l| <= 4).", "",
+         f"- Floquet and the Silin relation agree to {100 * dmax:.1f}% at all {len(un)} unstable (k, pump) points "
+         "(v_os/v_te 0.3-10, k = 2-30 k1); the modes are purely growing in the ion frame (OTSI, not decay/PDI).",
+         f"- With fixed ions every rate is below {fixed:.0e}: there is no electron-only mechanism.",
+         f"- Detuning (k12, v_os = 3 v_te), w0/w_pe: rate = {det}. Unstable only on the OTSI side; "
+         "the decay side is stable at T_i = T_e. Insensitive to T_i/T_e; rate scales as m_i^-0.29.",
+         "- Integrating 2 int gamma(k, v_rel(t)) dt with the secular H05 excursion predicts log10 |E_k|^2 gain at t = 700 of "
+         + ", ".join(f"k{k} {otsi['adiabatic_h05'][k]['log10_amp_700']:.2f}" for k in ("2", "5", "8"))
+         + " against the Hermite H05 linear run "
+         + ", ".join(f"{__import__('math').log10(hk_lin['res']['k' + k]['herm64_E2_end_over_0']):.2f}" for k in ("2", "5", "8"))
+         + " (uniformly 0.6-0.8 decades high): the H05 high-k growth is the quasi-static OTSI.",
+         "- This is known physics (Silin/Nishikawa) in a new regime (resonant pump, secular excursion, T_i = T_e).", "",
+         "Two-stream movie negativity (`studies/instab_twostream.py`): at Nx = 16 it is x-truncation, insensitive to Nn "
+         "and the closure; raising Nx without the closure triggers the AW truncation instability; Nx = 64 with the "
+         "#66 closure (c = 1) brings min f from -0.37 to -0.02. The L2-stable basis options are compared in "
+         "`docs/design/l2-stable-basis.md`."]
+    return "\n".join(L)
+
+
 def noise_floor_section():
     fl = ("1e-16", "1e-15", "1e-14", "1e-13", "1e-12", "1e-10")
     g = lambda part, f, key: nfs.get((part, None if f is None else float(f), key))  # noqa: E731
@@ -247,27 +276,31 @@ def phase_space():
         i, r = e["inputs"], e["runs"]
         reach = [(v["valid"] - 1) * i["T"] / 400 for v in r.values()]
         st = ", ".join(sorted({v["status"] for v in r.values()}))
-        rows.append(f"| {k} | {i['Nn']} / {2 * i['Nn']}, nu = {i['nu']:g} | {st} ({min(reach):g}-{max(reach):g}) | "
-                    f"{e['t_res_ordinary']:g} / {e['t_res_dark']:g} | {e['t_res_f_ordinary']:g} / {e['t_res_f_dark']:g} | "
-                    f"{e['movie']['min_f_over_max_ordinary']:.3f} / {e['movie']['min_f_over_max_dark']:.3f} |")
-    return """## Phase-space movies: resolution of the reconstructed f (`python studies/figures.py phase`)
+        rows.append(f"| {k} | {i['Nn']} / {2 * i['Nn']}, Nx {i['Nx']} / {2 * i['Nx']}, nu = {i['nu']:g}, c = {i.get('field_nu', 0):g} | "
+                    f"{st} ({min(reach):g}-{max(reach):g}) | "
+                    f"{e['t_res_ordinary']:g} / {e['t_res_dark']:g} | {e['t_res_x_ordinary']:g} / {e['t_res_x_dark']:g} | "
+                    f"{e['t_res_f_ordinary']:g} / {e['t_res_f_dark']:g} | {e['t_res_fx_ordinary']:g} / {e['t_res_fx_dark']:g} | "
+                    f"{e['t_drawn']:g} | {e['movie']['min_f_over_max_ordinary']:.4f} / {e['movie']['min_f_over_max_dark']:.4f} |")
+    return """## Phase-space movies: resolution of the reconstructed f (`python studies/figures.py phase --Nx 64 --field-nu 1`)
 
 Question: how long do fixed-basis Hermite runs resolve f(x, v) itself (not only the field) once trapping starts?
-Input: `PHASE_CASES` in studies/figures.py (electrostatic units mapped with v_t/c = 0.1, Nx = 16, seeds at the box
-mode, ordinary and dark eta = 0.3, Omega_D = omega_pe), each at Nn and 2Nn, Dopri8 rtol 1e-8, 200000-step budget.
+Input: `PHASE_CASES` in studies/figures.py (electrostatic units mapped with v_t/c = 0.1, seeds at the box mode,
+ordinary and dark eta = 0.3, Omega_D = omega_pe), Nx = 64 with the field-scaled AW closure of SPECTRAX #66
+(c = 1), each at (Nn, Nx), (2Nn, Nx) and (Nn, 2Nx); Dopri8 rtol 1e-8, 200000-step budget, step floor 1e-6.
 Measurement: t_res by field energy (10% of the running max, as for H05) and by f (first frame with
-max|f_Nn - f_2Nn| > 0.1 max f on a 96 x 160 grid); frames are drawn only before the earlier one.
+max|f_a - f_b| > 0.1 max f on a 256 x 160 grid), each for Nn vs 2Nn and for Nx vs 2Nx; frames are drawn only
+before the earliest of the eight times (t drawn); a time equal to T means no disagreement up to T.
 
-| case | Nn / 2Nn, closure | solver status (t reached) | t_res field energy (ord / dark) | t_res f (ord / dark) | min f / max f drawn (ord / dark) |
-|---|---|---|---|---|---|
+| case | Nn, Nx, closures | solver status (t reached) | t_res U_E Nn (ord / dark) | t_res U_E Nx | t_res f Nn | t_res f Nx | t drawn | min f / max f drawn (ord / dark) |
+|---|---|---|---|---|---|---|---|---|
 """ + "\n".join(rows) + """
 
-The field-energy rule alone is too lenient for phase-space pictures: in the two-stream and bump-on-tail runs f
-differs by more than 10% between Nn and 2Nn 13-18 time units before the field energies do, and every two-stream
-and bump-on-tail run later exhausts its step budget. Negative f is not removed by doubling Nn (two-stream: about
--31% / -37% of max f at the last drawn frame while Nn and 2Nn agree to 0.8%); Nx was not varied, so x truncation and
-the nu = 1 closure are the untested candidates. The nonlinear Landau runs (no closure) stay above -0.7% of max f to
-the drawn end. The movies illustrate the onset of trapping only."""
+At Nx = 64 with the closure the drawn time is set by f: Nn vs 2Nn for bump-on-tail (the x rule fails later), and
+both rules at the same frame for two-stream, so x and Hermite truncation end the two-stream window together. Negative f is much smaller than in the earlier Nx = 16 movies (two-stream -31% / -37%, bump-on-tail
+-7% / -9%, nonlinear Landau -0.6% at t = 71.25): the Nx = 16 negativity was x truncation
+(`studies/instab_twostream.py`). The two-stream runs stop at the 1e-6 step floor after the drawn window; the
+other runs reach T. The nonlinear Landau runs are resolved by all rules to T = 100. Two-stream and bump-on-tail
+remain illustrations of trapping onset only."""
 
 
 def third_round():
@@ -584,6 +617,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {lanes()}
 
 {highk_section()}
+
+{otsi_section()}
 
 {phase_space()}
 

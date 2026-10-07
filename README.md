@@ -12,7 +12,7 @@ below. Tested on CPU in float64; GPU and differentiation are not yet tested here
 
 <img src="docs/_static/phase_space/two_stream.webp" width="860" alt="Two-stream phase space reconstructed from Hermite coefficients, ordinary and dark side by side, with the field history">
 
-*Two electron beams ($\pm v_0$, $v_t=0.3v_0$, $kv_0/\omega_{pe}=0.4$, density seed $10^{-3}$) without (left) and with (right) a mixed field, $\eta=0.3$, $\Omega_D=\omega_{pe}$; $f(x,v_x)$ is reconstructed from the Hermite coefficients ($N_n=128$ per beam, $N_x=16$, declared closure $\nu=1$). Frames stop at $\omega_{pe}t=29.25$, the first time $N_n=128$ and $256$ differ by 10% in $f$ itself; before that they agree to 0.8%. Negative $f$ (cyan, down to $-31\%$ / $-37\%$ of $\max f$ in the last frames) is not removed by doubling $N_n$; $N_x$ was not varied, and every run stops near $t=46$ on the step budget. The movie illustrates the onset of trapping; growth rates come from the linear runs below. 39 frames, 0.32 MB.*
+*Two electron beams ($\pm v_0$, $v_t=0.3v_0$, $kv_0/\omega_{pe}=0.4$, density seed $10^{-3}$) without (left) and with (right) a mixed field, $\eta=0.3$, $\Omega_D=\omega_{pe}$; $f(x,v_x)$ is reconstructed from the Hermite coefficients ($N_n=128$ per beam, $N_x=64$, declared closure $\nu=1$ plus the field-scaled closure of SPECTRAX #66, $c=1$). Frames stop at $\omega_{pe}t=29.25$, the first time $N_n=128$ and $256$, and also $N_x=64$ and $128$, differ by 10% in $f$ itself; before that both pairs agree to 4%. Negative $f$ (cyan) stays above $-0.06\%$ / $-2.4\%$ of $\max f$; at $N_x=16$ it reached $-31\%$ / $-37\%$, which was x truncation, not Hermite truncation. The runs stop near $t=45$-$48$ at the $10^{-6}$ step floor, after the drawn window. The movie illustrates the onset of trapping; growth rates come from the linear runs below. 39 frames, 0.31 MB.*
 
 [Movie and record](docs/_static/phase_space/run.json) · `python studies/figures.py phase two_stream`
 
@@ -33,9 +33,10 @@ python -m pip install -e ".[test]"
 python -m darkspectrax examples/landau.toml --out artifacts/landau
 ```
 
-The parent is pinned to SPECTRAX commit `16400f887f0609b7699cd5df5b1188fbfb74ef5e`: the SPECTRAX integration branch
+The parent is pinned to SPECTRAX commit `26605e5a9f759e632f87c7deccc37b15ee20a7cd`: the SPECTRAX integration branch
 `integration/dark-baseline` of unmerged PRs (main `ab87385` plus #48, #46, #13, #12, #9, #55, #50, #44, #18, #51,
-the moving-Hermite-basis stack #56-#60, the lane-A filter #61 and the field-scaled closure #66), not a release.
+the moving-Hermite-basis stack #56-#60, the lane-A filter #61, the field-scaled closure #66 and the
+species-TOML usability stack #62-#65), not a release.
 `--out` receives `run.json` (provenance, solver statistics, ledger and Gauss maxima) and `run.npz`;
 `--resume previous/run.npz` continues from a saved final state.
 
@@ -111,25 +112,27 @@ Records: [B00](docs/_static/b00/run.json) ([script](examples/plasma.py)) ·
 ## Phase-space dynamics
 
 Each movie shows the ordinary (left) and dark (right, $\eta=0.3$, $\Omega_D=\omega_{pe}$) runs from the same
-seed, reconstructed from the Hermite coefficients, and is cut where an $N_n$ and a $2N_n$ run first differ by 10% in
-$f$ or in field energy. The cut is part of the result: past it these settings no longer resolve $f$.
+seed, reconstructed from the Hermite coefficients, at $N_x=64$ with the field-scaled closure of SPECTRAX #66
+($c=1$). Each movie is cut where an $N_n$ and a $2N_n$ run, or an $N_x$ and a $2N_x$ run, first differ by 10% in $f$
+or in field energy. The cut is part of the result: past it these settings no longer resolve $f$.
 
-**Nonlinear Landau damping** ($k\lambda_{De}=0.3$, $\delta n/n=0.05$, $N_n=512$, no closure), shown as
+**Nonlinear Landau damping** ($k\lambda_{De}=0.3$, $\delta n/n=0.05$, $N_n=512$), shown as
 $f-\langle f\rangle_x$. Mixing shifts the bounce-modulated field (bottom) and the trapped-particle pattern; the
-runs stay resolved to $\omega_{pe}t=71.25$ with $\min f/\max f=-0.6\%$, and the $N_n=1024$ field histories match
+runs stay resolved to the end, $\omega_{pe}t=100$, with $\min f/\max f=-0.1\%$ (at $N_x=16$: 71.25 and $-0.6\%$), and the earlier $N_x=16$, $N_n=1024$ field histories match
 the independent grid solvers below.
 
 <img src="docs/_static/phase_space/landau.webp" width="760" alt="Nonlinear Landau damping: f minus its spatial average, ordinary and dark, with the field history">
 
 **Bump-on-tail** ($k\lambda_{De}=0.3$, beam fraction 0.1 at $4.05\,v_{te}$, $N_n=128$ per population, $\nu=1$). The
 beam rolls up into a vortex at the resonant velocity; the dark run grows faster (rate 0.209 against 0.198 in the
-linear runs). Resolved to $t=37.5$; negative $f$ reaches $-7\%$ / $-9\%$ of $\max f$ inside the vortex.
+linear runs). Resolved to $t=38.75$ (set by $N_n$; $N_x$ vs $2N_x$ agrees to 63.75); negative $f$ reaches
+$-0.4\%$ / $-2\%$ of $\max f$ (at $N_x=16$: $-7\%$ / $-9\%$).
 
 <img src="docs/_static/phase_space/bump_on_tail.webp" width="760" alt="Bump-on-tail phase space, ordinary and dark, with the field history">
 
 The echo ($k_3=k_2-k_1$ memory of two pulses) is compared with grid solvers in the next section.
-Record: [docs/_static/phase_space/run.json](docs/_static/phase_space/run.json) (solver status, $t_{\rm res}$ by both
-rules, per-frame $f$ difference, negativity) · `python studies/figures.py phase` (about 55 min CPU, 12 runs) or
+Record: [docs/_static/phase_space/run.json](docs/_static/phase_space/run.json) (solver status, $t_{\rm res}$ by all
+rules, per-frame $f$ difference, negativity) · `python studies/figures.py phase --Nx 64 --field-nu 1` (about 35 min CPU, 18 runs) or
 `... phase --draw` from the cached coefficients.
 
 ## Independent grid codes
@@ -156,7 +159,7 @@ converged yet: doubling particles or cells moves the dark damping fit by about t
 
 <img src="docs/_static/djic/figure.png" width="900" alt="Landau field histories from Hermite and PIC, and fitted damping rates against particle number">
 
-The two-stream case of the opening movie was also run in Dark-JAX-in-Cell with the same physical inputs (128 cells,
+The two-stream case of the opening movie (its earlier $N_x=16$ Hermite runs, not yet redrawn) was also run in Dark-JAX-in-Cell with the same physical inputs (128 cells,
 262,144 quiet-start markers, $\omega_{pe}\Delta t=0.006$, about 80 s per run on CPU). Both codes form the same vortex
 at the same phase; over $10\le\omega_{pe}t\le20$ the fitted growth of $|E_k|$ agrees to 1.3% (ordinary: Hermite
 0.2442, PIC 0.2474) and 1.9% (dark: 0.2603, 0.2653), with mixing raising it in both. The PIC run continues through
@@ -184,6 +187,14 @@ dark reservoir with the same initial force follows the prescribed drive only whi
 it returns and re-absorbs all of $U_D(0)$ on the beat period.
 
 <img src="docs/_static/conversion/figure.png" width="900" alt="Work against the exact linear resonant law, energy partition, certified time by lane and drive amplitude, and prescribed versus finite-reservoir work">
+
+That high-k instability is the oscillating two-stream instability (OTSI) of the dipole pump, a known parametric
+instability (Silin, Nishikawa) in a new regime: a resonant pump with a secularly growing excursion at $T_i=T_e$.
+Floquet rates of the linear pump-frame model match the exact kinetic Silin dispersion relation to 1.3% at 22
+unstable points, vanish with fixed ions, are purely growing, and vanish on the decay (PDI) side of the resonance;
+integrated along the H05 excursion they predict the measured high-k gain to within 0.6-0.8 decades
+([OTSI section](docs/results.md#the-physical-high-k-instability-is-the-oscillating-two-stream-instability-studiesinstab_otsipy),
+record [studies/instab/otsi.json](studies/instab/otsi.json); basis options in [docs/design/l2-stable-basis.md](docs/design/l2-stable-basis.md)).
 
 Not established: any physics beyond $t_{\rm res}$ (saturation, late heating, partition), any $v_q/v_{te}=0.1$
 result at $t=1000$, convergence in $N_x$, or portability of the $t_{\rm res}$ law to other seeds, grids, mass

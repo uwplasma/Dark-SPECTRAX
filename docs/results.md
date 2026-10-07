@@ -381,26 +381,40 @@ This instability, not the closure, ends x-converged agreement: at Nx = 32 the He
 
 Superseded: the certified-time panel of `docs/_static/conversion/figure.png` and the Lane C t_res values for 0.03 and 0.1 above are Nx = 8 results; they are kept as records but the windows here replace them. The t_res law in the lane section is an Nx = 8 law. Grid caveat: the grid reference goes negative (f < -1e-3) before the Hermite runs do, so it is not a better reference late in the run.
 
-## Phase-space movies: resolution of the reconstructed f (`python studies/figures.py phase`)
+## The physical high-k instability is the oscillating two-stream instability (`studies/instab_otsi.py`)
+
+Linear pump-frame Hermite model under a constant dipole pump E0 cos(w0 t); Floquet rate from the one-period monodromy, compared with the exact kinetic Silin matrix dispersion relation (Bessel orders |l| <= 4).
+
+- Floquet and the Silin relation agree to 1.3% at all 22 unstable (k, pump) points (v_os/v_te 0.3-10, k = 2-30 k1); the modes are purely growing in the ion frame (OTSI, not decay/PDI).
+- With fixed ions every rate is below 2e-12: there is no electron-only mechanism.
+- Detuning (k12, v_os = 3 v_te), w0/w_pe: rate = 0.9: 0.0067, 0.97: 0.01, 1: 0.012, 1.003: 0.0097, 1.01: 0.0077, 1.05: 0, 1.2: 0. Unstable only on the OTSI side; the decay side is stable at T_i = T_e. Insensitive to T_i/T_e; rate scales as m_i^-0.29.
+- Integrating 2 int gamma(k, v_rel(t)) dt with the secular H05 excursion predicts log10 |E_k|^2 gain at t = 700 of k2 2.61, k5 6.41, k8 9.90 against the Hermite H05 linear run 1.80, 5.78, 9.31 (uniformly 0.6-0.8 decades high): the H05 high-k growth is the quasi-static OTSI.
+- This is known physics (Silin/Nishikawa) in a new regime (resonant pump, secular excursion, T_i = T_e).
+
+Two-stream movie negativity (`studies/instab_twostream.py`): at Nx = 16 it is x-truncation, insensitive to Nn and the closure; raising Nx without the closure triggers the AW truncation instability; Nx = 64 with the #66 closure (c = 1) brings min f from -0.37 to -0.02. The L2-stable basis options are compared in `docs/design/l2-stable-basis.md`.
+
+## Phase-space movies: resolution of the reconstructed f (`python studies/figures.py phase --Nx 64 --field-nu 1`)
 
 Question: how long do fixed-basis Hermite runs resolve f(x, v) itself (not only the field) once trapping starts?
-Input: `PHASE_CASES` in studies/figures.py (electrostatic units mapped with v_t/c = 0.1, Nx = 16, seeds at the box
-mode, ordinary and dark eta = 0.3, Omega_D = omega_pe), each at Nn and 2Nn, Dopri8 rtol 1e-8, 200000-step budget.
+Input: `PHASE_CASES` in studies/figures.py (electrostatic units mapped with v_t/c = 0.1, seeds at the box mode,
+ordinary and dark eta = 0.3, Omega_D = omega_pe), Nx = 64 with the field-scaled AW closure of SPECTRAX #66
+(c = 1), each at (Nn, Nx), (2Nn, Nx) and (Nn, 2Nx); Dopri8 rtol 1e-8, 200000-step budget, step floor 1e-6.
 Measurement: t_res by field energy (10% of the running max, as for H05) and by f (first frame with
-max|f_Nn - f_2Nn| > 0.1 max f on a 96 x 160 grid); frames are drawn only before the earlier one.
+max|f_a - f_b| > 0.1 max f on a 256 x 160 grid), each for Nn vs 2Nn and for Nx vs 2Nx; frames are drawn only
+before the earliest of the eight times (t drawn); a time equal to T means no disagreement up to T.
 
-| case | Nn / 2Nn, closure | solver status (t reached) | t_res field energy (ord / dark) | t_res f (ord / dark) | min f / max f drawn (ord / dark) |
-|---|---|---|---|---|---|
-| landau | 512 / 1024, nu = 0 | success (100-100) | 100 / 100 | 71.25 / 71.25 | -0.006 / -0.006 |
-| two_stream | 128 / 256, nu = 1 | failure (45.9-47.4) | 43.5 / 43.05 | 30 / 29.25 | -0.312 / -0.373 |
-| bump_on_tail | 128 / 256, nu = 1 | failure (57-64.25) | 56.75 / 54.5 | 38.75 / 37.5 | -0.070 / -0.090 |
+| case | Nn, Nx, closures | solver status (t reached) | t_res U_E Nn (ord / dark) | t_res U_E Nx | t_res f Nn | t_res f Nx | t drawn | min f / max f drawn (ord / dark) |
+|---|---|---|---|---|---|---|---|---|
+| landau | 512 / 1024, Nx 64 / 128, nu = 0, c = 1 | success (100-100) | 100 / 100 | 100 / 100 | 100 / 100 | 100 / 100 | 100 | -0.0010 / -0.0008 |
+| two_stream | 128 / 256, Nx 64 / 128, nu = 1, c = 1 | failure (44.85-48.45) | 37.8 / 37.2 | 38.1 / 37.65 | 30 / 29.25 | 30 / 29.25 | 29.25 | -0.0006 / -0.0238 |
+| bump_on_tail | 128 / 256, Nx 64 / 128, nu = 1, c = 1 | success (100-100) | 56 / 59 | 100 / 100 | 40 / 38.75 | 63.75 / 66.25 | 38.75 | -0.0040 / -0.0195 |
 
-The field-energy rule alone is too lenient for phase-space pictures: in the two-stream and bump-on-tail runs f
-differs by more than 10% between Nn and 2Nn 13-18 time units before the field energies do, and every two-stream
-and bump-on-tail run later exhausts its step budget. Negative f is not removed by doubling Nn (two-stream: about
--31% / -37% of max f at the last drawn frame while Nn and 2Nn agree to 0.8%); Nx was not varied, so x truncation and
-the nu = 1 closure are the untested candidates. The nonlinear Landau runs (no closure) stay above -0.7% of max f to
-the drawn end. The movies illustrate the onset of trapping only.
+At Nx = 64 with the closure the drawn time is set by f: Nn vs 2Nn for bump-on-tail (the x rule fails later), and
+both rules at the same frame for two-stream, so x and Hermite truncation end the two-stream window together. Negative f is much smaller than in the earlier Nx = 16 movies (two-stream -31% / -37%, bump-on-tail
+-7% / -9%, nonlinear Landau -0.6% at t = 71.25): the Nx = 16 negativity was x truncation
+(`studies/instab_twostream.py`). The two-stream runs stop at the 1e-6 step floor after the drawn window; the
+other runs reach T. The nonlinear Landau runs are resolved by all rules to T = 100. Two-stream and bump-on-tail
+remain illustrations of trapping onset only.
 
 ## Test suite (local, CPU, float64)
 
