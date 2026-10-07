@@ -539,26 +539,37 @@ PHASE_FRAMES = 81
 CACHE = ROOT / "artifacts" / "phase_space"  # full coefficient histories (not committed; rebuilt by the run)
 
 
-def phase_model(case, dark, Nn):
+def phase_model(case, dark, Nn, Nx=None):
     import darkspectrax as ds
     c = PHASE_CASES[case]
     pops = [(fr, BETA * vt, BETA * u) for fr, vt, u in c["pops"]]
-    return ds.Model(Nx=c["Nx"], Nn=Nn, Lx=2 * np.pi / c["k"] * BETA, qs=(-1.0,) * len(pops),
+    return ds.Model(Nx=Nx or c["Nx"], Nn=Nn, Lx=2 * np.pi / c["k"] * BETA, qs=(-1.0,) * len(pops),
                     Omega_cs=(1.0,) * len(pops), alpha_s=tuple(np.repeat([np.sqrt(2) * vt for _, vt, _ in pops], 3)),
                     u_s=tuple(v for _, _, u in pops for v in (u, 0.0, 0.0)), rho_background=1.0, nu=c["nu"],
                     mode="self_consistent" if dark else "ordinary", eta=ETA if dark else 0.0, Omega_D=OMEGA_D), pops
 
 
-def phase_simulate(case, dark, Nn):
-    """One Hermite run; returns E_k1(t) (electrostatic units), U_E(t), the ledger and Ck at the movie frames."""
+def phase_simulate(case, dark, Nn, Nx=None):
+    """One Hermite run; returns E_k1(t) (electrostatic units), U_E(t), the ledger and Ck at the movie frames.
+
+    ``field_nu`` > 0 in the case adds the field-scaled AW closure of SPECTRAX #66 (``studies/highk_run.py``)."""
     import darkspectrax as ds
+    from darkspectrax import _simulation as _sim
     c = PHASE_CASES[case]
-    m, pops = phase_model(case, dark, Nn)
+    m, pops = phase_model(case, dark, Nn, Nx)
     pert = [(s, (1, 0, 0), 0.5 * fr * c["seed"]) for s, (fr, _, _) in enumerate(pops)]
     y = ds.consistent_fields(m, ds.maxwellian(m, [fr for fr, _, _ in pops], pert))
     stride = 5
-    out = ds.run(m, y, c["T"], n_save=stride * (PHASE_FRAMES - 1) + 1, rtol=1e-8, atol=1e-14, max_steps=200_000,
-                 dtmin=1e-6)
+    rhs0 = _sim.rhs
+    if c.get("field_nu", 0.0) > 0:
+        sys.path.insert(0, str(STUDIES))
+        from highk_run import _install_field_closure
+        _install_field_closure(m, c["field_nu"])
+    try:
+        out = ds.run(m, y, c["T"], n_save=stride * (PHASE_FRAMES - 1) + 1, rtol=1e-8, atol=1e-14,
+                     max_steps=200_000, dtmin=1e-6)
+    finally:
+        _sim.rhs = rhs0
     t = out["t"]
     ok = np.isfinite(t) & np.isfinite(out["K"])
     return {"t": t, "E1": out["Fk"][:, 0, 0, 1, 0] / BETA, "U_E": out["U_gamma"], "K": out["K"], "W": out["W"],
@@ -574,10 +585,13 @@ def disagreement_time(t, a, b, tol=0.1, t_min=1.0):
     return float(t[np.argmax(bad)]) if bad.any() else None
 
 
-def phase_f(case, dark, Nn, Ck_frames, nx=96, nv=160):
-    """Total reduced f(x, v_x) (electrostatic velocity units) on the display grid for each frame."""
+def phase_f(case, dark, Nn, Ck_frames, nx=None, nv=160, Nx=None):
+    """Total reduced f(x, v_x) (electrostatic velocity units) on the display grid for each frame.
+
+    The display grid has max(96, 4 Nx_case) points so that runs at Nx and 2Nx are compared on the same grid."""
     c = PHASE_CASES[case]
-    m, pops = phase_model(case, dark, Nn)
+    nx = nx or max(96, 4 * c["Nx"])
+    m, pops = phase_model(case, dark, Nn, Nx)
     v = np.linspace(*c["v"], nv) * BETA
     a = np.asarray(m.alpha_s).reshape(-1, 3)
     u = np.asarray(m.u_s).reshape(-1, 3)
@@ -585,7 +599,7 @@ def phase_f(case, dark, Nn, Ck_frames, nx=96, nv=160):
     f = np.zeros((len(Ck_frames), nx, nv))
     for i, Ck in enumerate(Ck_frames):
         for s in range(len(pops)):
-            f[i] += reconstruct(Ck[s * H:(s + 1) * H], Nn, c["Nx"], a[s], u[s], v, x_points=nx)
+            f[i] += reconstruct(Ck[s * H:(s + 1) * H], Nn, m.Nx, a[s], u[s], v, x_points=nx)
     return np.linspace(0, 2 * np.pi / c["k"], nx, endpoint=False), v / BETA, f * BETA
 
 
@@ -597,13 +611,14 @@ def phase_run(cases):
     data = dict(load_npz("docs/_static/phase_space/data.npz")) if (STATIC / "phase_space" / "data.npz").exists() else {}
     for case in cases:
         c = PHASE_CASES[case]
+        data = {k: v for k, v in data.items() if not k.startswith(f"{case}_")}  # drop this case's earlier runs
         entry = {"inputs": {k: v for k, v in c.items() if k not in ("title", "units", "delta")}, "eta": ETA, "Omega_D": OMEGA_D,
                  "beta": BETA, "rtol": 1e-8, "atol": 1e-14, "solver": "Dopri8", "runs": {}}
         res = {}
         for dark in (False, True):
-            for Nn in (c["Nn"], 2 * c["Nn"]):
-                tag = f"{'dark' if dark else 'ordinary'}_Nn{Nn}"
-                r = phase_simulate(case, dark, Nn)
+            for Nn, Nx in ((c["Nn"], c["Nx"]), (2 * c["Nn"], c["Nx"]), (c["Nn"], 2 * c["Nx"])):
+                tag = phase_tag(dark, Nn, Nx, c)
+                r = phase_simulate(case, dark, Nn, Nx)
                 res[tag] = r
                 print(case, tag, r["status"], r["failure_reason"], f"{r['run_time']:.1f}s", flush=True)
                 np.savez_compressed(CACHE / f"{case}_{tag}.npz", Ck=r["Ck"], t_frames=r["t_frames"])
@@ -613,18 +628,26 @@ def phase_run(cases):
                 data[f"{case}_{tag}_t"], data[f"{case}_{tag}_E1"] = r["t"], r["E1"]
                 data[f"{case}_{tag}_U_E"] = r["U_E"]
         for mdl in ("ordinary", "dark"):
-            a, b = res[f"{mdl}_Nn{c['Nn']}"], res[f"{mdl}_Nn{2 * c['Nn']}"]
-            n = min(a["valid"], b["valid"])
-            tr = disagreement_time(a["t"][:n], a["U_E"][:n], b["U_E"][:n])
-            entry[f"t_res_{mdl}"] = tr if tr is not None else float(a["t"][n - 1])
-            entry[f"t_res_{mdl}_censored"] = tr is None
+            a = res[phase_tag(mdl == "dark", c["Nn"], c["Nx"], c)]
+            for key, b in (("", res[phase_tag(mdl == "dark", 2 * c["Nn"], c["Nx"], c)]),
+                           ("x_", res[phase_tag(mdl == "dark", c["Nn"], 2 * c["Nx"], c)])):
+                n = min(a["valid"], b["valid"])
+                tr = disagreement_time(a["t"][:n], a["U_E"][:n], b["U_E"][:n])
+                entry[f"t_res_{key}{mdl}"] = tr if tr is not None else float(a["t"][n - 1])
+                entry[f"t_res_{key}{mdl}_censored"] = tr is None
         rec["cases"][case] = entry
-    rec.update({"command": "python studies/figures.py phase", "repository_commit": git_sha(),
-                "t_res_rule": "first t > 1 where |U_E(Nn) - U_E(2Nn)| > 0.1 running max (t_res_*), and first frame where max|f(Nn) - f(2Nn)| > 0.1 max f (t_res_f_*); frames at or after the earliest of the four are not drawn (t_drawn)",
+    rec.update({"command": "python studies/figures.py phase " + " ".join(sys.argv[2:]), "repository_commit": git_sha(),
+                "t_res_rule": "first t > 1 where |U_E| of (Nn, Nx) and (2Nn, Nx) differ by > 0.1 running max (t_res_*), same for (Nn, Nx) vs (Nn, 2Nx) (t_res_x_*), and first frame where max|f(Nn) - f(2Nn)| > 0.1 max f (t_res_f_*) or max|f(Nx) - f(2Nx)| > 0.1 max f (t_res_fx_*); frames at or after the earliest of the eight are not drawn (t_drawn)",
                 "reconstruction": "f(x, v_x) = a_y a_z sum_n C_n(x) psi_n((v - u)/a_x) per population, Nn-run"})
     (STATIC / "phase_space").mkdir(parents=True, exist_ok=True)
     rec_path.write_text(json.dumps(rec, indent=2, default=float) + "\n")
     np.savez_compressed(STATIC / "phase_space" / "data.npz", **data)
+
+
+def phase_tag(dark, Nn, Nx, c):
+    """Run label for the coefficient cache and data.npz keys."""
+    tag = f"{'dark' if dark else 'ordinary'}_Nn{Nn}"
+    return tag + f"_Nx{Nx}" + (f"_c{c['field_nu']:g}" if c.get("field_nu", 0.0) > 0 else "")
 
 
 def phase_draw(cases):
@@ -634,21 +657,29 @@ def phase_draw(cases):
     rec = load_json("docs/_static/phase_space/run.json")
     data = load_npz("docs/_static/phase_space/data.npz")
     for case in cases:
-        c, e = PHASE_CASES[case], rec["cases"][case]
+        e = rec["cases"][case]
+        PHASE_CASES[case].update({k: e["inputs"][k] for k in ("Nx", "field_nu") if k in e["inputs"]})
+        c = PHASE_CASES[case]
         fs = {}
         for mdl in ("ordinary", "dark"):
-            z1, z2 = (np.load(CACHE / f"{case}_{mdl}_Nn{n}.npz") for n in (c["Nn"], 2 * c["Nn"]))
-            n = int(min(np.isfinite(z1["t_frames"]).sum(), np.isfinite(z2["t_frames"]).sum()))
-            x, v, f1 = phase_f(case, mdl == "dark", c["Nn"], z1["Ck"][:n])
-            f2 = phase_f(case, mdl == "dark", 2 * c["Nn"], z2["Ck"][:n])[2]
-            diff = np.abs(f1 - f2).max(axis=(1, 2)) / f2.max(axis=(1, 2))  # Nn vs 2Nn, L-inf / max f
-            bad = np.nonzero(diff > 0.1)[0]
-            t_f = float(z1["t_frames"][bad[0]]) if bad.size else float(z1["t_frames"][n - 1])
-            e[f"t_res_f_{mdl}"], e[f"t_res_f_{mdl}_censored"] = t_f, not bad.size
-            e[f"f_difference_{mdl}"] = diff.tolist()
-            fs[mdl] = (z1["t_frames"][:n], f1, diff)
-        # Frames drawn: both models resolved by both rules (field energy and f itself, Nn vs 2Nn, 10%).
-        t_res = min(e["t_res_ordinary"], e["t_res_dark"], e["t_res_f_ordinary"], e["t_res_f_dark"])
+            d = mdl == "dark"
+            z1, z2, z3 = (np.load(CACHE / f"{case}_{phase_tag(d, n, nx, c)}.npz")
+                          for n, nx in ((c["Nn"], c["Nx"]), (2 * c["Nn"], c["Nx"]), (c["Nn"], 2 * c["Nx"])))
+            n = int(min(np.isfinite(z["t_frames"]).sum() for z in (z1, z2, z3)))
+            x, v, f1 = phase_f(case, d, c["Nn"], z1["Ck"][:n])
+            for key, z, Nn, Nx in (("f", z2, 2 * c["Nn"], c["Nx"]), ("fx", z3, c["Nn"], 2 * c["Nx"])):
+                f2 = phase_f(case, d, Nn, z["Ck"][:n], Nx=Nx)[2]
+                diff = np.abs(f1 - f2).max(axis=(1, 2)) / f2.max(axis=(1, 2))  # L-inf / max f
+                bad = np.nonzero(diff > 0.1)[0]
+                t_f = float(z1["t_frames"][bad[0]]) if bad.size else float(z1["t_frames"][n - 1])
+                e[f"t_res_{key}_{mdl}"], e[f"t_res_{key}_{mdl}_censored"] = t_f, not bad.size
+                e[f"{'f' if key == 'f' else 'fx'}_difference_{mdl}"] = diff.tolist()
+                if key == "f":
+                    fs[mdl] = (z1["t_frames"][:n], f1, diff)
+                else:
+                    fs[mdl] = fs[mdl][:2] + (np.maximum(fs[mdl][2], diff),)
+        # Frames drawn: both models resolved by all rules (field energy and f, Nn vs 2Nn and Nx vs 2Nx, 10%).
+        t_res = min(e[f"t_res_{k}{m}"] for k in ("", "x_", "f_", "fx_") for m in ("ordinary", "dark"))
         keep = {m: fs[m][0] < t_res for m in fs}
         nd = min(keep["ordinary"].sum(), keep["dark"].sum())
         tf = fs["ordinary"][0][:nd]
@@ -686,16 +717,17 @@ def phase_draw(cases):
                          label=r"$f-\langle f\rangle_x$" if c.get("delta") else r"$f(x,v_x)$ (square-root scale)")
             ax = fig.add_subplot(gs[1, :])
             for mdl in ("ordinary", "dark"):
-                key = f"{case}_{mdl}_Nn{c['Nn']}"
+                key = f"{case}_{phase_tag(mdl == 'dark', c['Nn'], c['Nx'], c)}"
                 tt, E = data[f"{key}_t"], data[f"{key}_E1"]
                 m = np.isfinite(tt) & (tt <= t_res)
                 ax.semilogy(tt[m], np.abs(E[m]), color=COLOR[mdl], lw=1, label=mdl)
             ax.axvline(tf[i], color="0.3", lw=0.8)
-            shade_uncertified(ax, t_res, c["T"], label="not resolved (Nn vs 2Nn: field or f differ > 10%)")
+            shade_uncertified(ax, t_res, c["T"], label="not resolved (Nn vs 2Nn or Nx vs 2Nx: field or f differ > 10%)")
             ax.set(xlim=(0, c["T"]), ylabel=r"$|E_{x,k}|$")
             time_axis(ax)
             ax.legend(loc="lower right", fontsize=7.5, ncol=3)
-            fig.suptitle(f"{c['title']}  (Hermite Nn = {c['Nn']}, Nx = {c['Nx']}, nu = {c['nu']:g})", fontsize=10)
+            clo = f", closure c = {c['field_nu']:g}" if c.get("field_nu", 0.0) > 0 else ""
+            fig.suptitle(f"{c['title']}  (Hermite Nn = {c['Nn']}, Nx = {c['Nx']}, nu = {c['nu']:g}{clo})", fontsize=10)
             fig.canvas.draw()
             frames.append(Image.fromarray(np.asarray(fig.canvas.buffer_rgba())[..., :3]))
             p.close(fig)
@@ -710,7 +742,14 @@ def phase_draw(cases):
 
 
 def fig_phase(*args):
+    """``phase [CASES] [--Nx N] [--field-nu C] [--draw]``: Nx overrides every case's Fourier resolution; C > 0 adds
+    the field-scaled AW closure of SPECTRAX #66 with coefficient C (needed for Nx >= 32, studies/instab_twostream.py)."""
     cases = [a for a in args if a in PHASE_CASES] or list(PHASE_CASES)
+    for flag, key, cast in (("--Nx", "Nx", int), ("--field-nu", "field_nu", float)):
+        if flag in args:
+            val = cast(args[args.index(flag) + 1])
+            for case in cases:
+                PHASE_CASES[case][key] = val
     if "--draw" not in args:
         phase_run(cases)
     phase_draw(cases)
