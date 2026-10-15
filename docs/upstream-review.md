@@ -7,6 +7,7 @@ review; every recommendation is for the owner to act on.
 - Identity: all new commits are by Rogerio Jorge. Original authors are kept.
 - Rewritten branches: updated with `--force-with-lease`, with local backup branches kept.
 - Tests are local runs. Where GitHub CI is cited, it is Python 3.11/3.12 plus codecov on the new head.
+- Heads in the table are as of 2026-10-03. The PR branches were updated on 2026-10-07 and their current heads differ (`gh pr list -R uwplasma/SPECTRAX`); the integration branch `f33dfda` is built from these branches.
 
 ## Open pull requests
 

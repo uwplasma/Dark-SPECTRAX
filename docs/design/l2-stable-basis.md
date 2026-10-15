@@ -21,7 +21,7 @@ field-scaled order-2 hypercollision of SPECTRAX PR #66. This note compares three
 
 ## What to test (decisive experiment)
 
-1. Frozen-field and Floquet spectra (studies `highk_eig.py`, `highk_floquet.py` on branch highk) for B and C at the
+1. Frozen-field and Floquet spectra (studies `highk_eig.py`, `highk_floquet.py`, on main) for B and C at the
    same (K, Nn, E1, omega): accept only if max Re lambda <= 1e-10 for every case where A without closure is unstable.
 2. Linear OTSI benchmark (studies/instab_otsi.py): the per-k Floquet rate of the quivering two-species plasma must
    match the exact kinetic Silin matrix dispersion relation to 1% at k5, k12, k20 (A already does, Nn 32-128).

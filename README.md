@@ -24,6 +24,8 @@ below. Tested on CPU in float64; GPU and differentiation are not yet tested here
 [Conservation and convergence](#conservation-and-convergence) · [Performance](#performance) ·
 [Reproducing the figures](#reproducing-the-figures) · [Credit](#credit-citation-and-license)
 
+Project status, test-ladder progress and next steps: [docs/status.md](docs/status.md).
+
 ## Install and run
 
 ```sh
