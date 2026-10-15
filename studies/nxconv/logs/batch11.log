@@ -1,0 +1,129 @@
+start 13:23:06 : --vq 0.1 --T 50 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 done 747s
+exit 0 13:35:33 : --vq 0.1 --T 50 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+start 13:36:11 : --vq 0.1 --T 200 --Nx 64 --Nv 16384 --vmax 64 --dt 0.01
+start 13:36:11 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+start 13:36:11 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+start 13:36:11 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 checkpoint t=100 wall=934
+exit 3 13:51:45 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+start 13:51:45 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 checkpoint t=100 wall=1386
+exit 3 13:59:18 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+start 13:59:18 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=100 wall=1896
+exit 3 14:07:47 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+start 14:07:47 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 checkpoint t=200 wall=2006
+exit 3 14:09:38 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+start 14:09:38 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 checkpoint t=200 wall=3215
+exit 3 14:29:47 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+start 14:29:47 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 checkpoint t=300 wall=3324
+exit 3 14:31:37 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+start 14:31:37 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv16384_dt0.01_osc_v64_spectral_xmask23 checkpoint t=100 wall=4170
+exit 3 14:45:42 : --vq 0.1 --T 200 --Nx 64 --Nv 16384 --vmax 64 --dt 0.01
+start 14:45:42 : --vq 0.1 --T 200 --Nx 64 --Nv 16384 --vmax 64 --dt 0.01
+g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=200 wall=4227
+exit 3 14:46:39 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+start 14:46:39 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 checkpoint t=400 wall=4321
+exit 3 14:48:15 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+start 14:48:15 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 checkpoint t=300 wall=4670
+exit 3 14:54:03 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+start 14:54:03 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 checkpoint t=500 wall=5186
+exit 3 15:02:41 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+start 15:02:41 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=300 wall=5850
+exit 3 15:13:43 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+start 15:13:43 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 checkpoint t=400 wall=5926
+exit 3 15:15:00 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+start 15:15:00 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 checkpoint t=600 wall=6018
+exit 3 15:16:33 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+start 15:16:33 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 checkpoint t=700 wall=6816
+exit 3 15:29:52 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+start 15:29:52 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 checkpoint t=500 wall=7074
+exit 3 15:34:09 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+start 15:34:09 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+g_vq0.1_Nx64_Nv16384_dt0.01_osc_v64_spectral_xmask23 done 7324s
+exit 0 15:38:16 : --vq 0.1 --T 200 --Nx 64 --Nv 16384 --vmax 64 --dt 0.01
+g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=400 wall=7412
+exit 3 15:39:46 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+start 15:39:46 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 checkpoint t=800 wall=7639
+exit 3 15:43:35 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+start 15:43:35 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 checkpoint t=600 wall=8214
+exit 3 15:53:09 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+start 15:53:09 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 checkpoint t=900 wall=8411
+exit 3 15:56:28 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+start 15:56:28 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=500 wall=8857
+exit 3 16:03:51 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+start 16:03:51 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 done 9116s
+exit 0 16:08:13 : --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
+start 16:08:13 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 checkpoint t=700 wall=9244
+exit 3 16:10:19 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+start 16:10:19 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=100 wall=663
+exit 3 16:19:17 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+start 16:19:17 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=600 wall=10315
+exit 3 16:28:10 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+start 16:28:10 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 checkpoint t=800 wall=10366
+exit 3 16:29:02 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+start 16:29:02 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=200 wall=1444
+exit 3 16:32:19 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+start 16:32:19 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=300 wall=2080
+exit 3 16:42:55 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+start 16:42:55 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 checkpoint t=900 wall=11334
+exit 3 16:45:10 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+start 16:45:10 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=700 wall=11554
+exit 3 16:48:49 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+start 16:48:49 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=400 wall=2598
+exit 3 16:51:33 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+start 16:51:33 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 done 12185s
+exit 0 16:59:22 : --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=500 wall=3192
+exit 3 17:01:27 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+start 17:01:27 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=800 wall=12988
+exit 3 17:12:44 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+start 17:12:44 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=600 wall=4097
+exit 3 17:16:33 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+start 17:16:33 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=700 wall=4992
+exit 3 17:31:28 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+start 17:31:28 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=900 wall=14749
+exit 3 17:42:04 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+start 17:42:04 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=800 wall=5870
+exit 3 17:46:07 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+start 17:46:07 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 checkpoint t=900 wall=6522
+exit 3 17:56:59 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+start 17:56:59 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 done 16072s
+exit 0 18:04:08 : --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
+g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 done 7120s
+exit 0 18:06:57 : --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02

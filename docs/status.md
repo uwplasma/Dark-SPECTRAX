@@ -91,7 +91,7 @@ Status: **done** = passing test or record on main; **partial** = covered in part
 | H01, H02 | finite-k weak/strong drive, mobile ions | done as pilots ([record](../studies/hhs/run.json)) |
 | H03 | PIC-noise loading | not started (needs Dark-JAX-in-Cell runs with HHS loading) |
 | H04 | relativistic drive | blocked: the model is nonrelativistic; needs a relativistic Hermite formulation or the PIC code |
-| H05 | strong resonant drive | partial: certified windows v_q/v_te = 0.01 to 1000, 0.03 to about 960-1000, 0.1 to about 600; 0.1 to t = 1000 blocked by the AW truncation instability and the OTSI high-k stage |
+| H05 | strong resonant drive | partial: certified windows v_q/v_te = 0.01 to 1000, 0.03 to about 960-1000, 0.1 to about 600 (grid reference to about 750); 0.1 to t = 1000 blocked by the AW truncation instability and the OTSI high-k stage |
 | H06 | swept drive | partial: homogeneous check done; kinetic runs lose resolution before the crossing |
 | H07 | finite dark reservoir | done (homogeneous, eta 1e-3 / 0.03) |
 | H08 | collisions | blocked (as B11) |
@@ -130,10 +130,11 @@ physics.md sets the rule: only full-text sources may set a benchmark.
    OTSI rates wrong); the same Galerkin method written in symmetric Hermite functions of width a/sqrt2 passes gates 1-2
    (max Re lambda <= 6e-15, OTSI within 0.96% of Silin). Keep option A (#66 closure); the next candidate is option B (SW),
    whose design tests 3-4 (H05 0.1 to t = 700/1000, energy ledger) are the follow-up.
-2. **v_q/v_te = 0.1 grid reference with vmax > 32 v_te** (running now as lane "gridref", office). The current grid
-   is valid only to t of about 650 because f reaches the velocity-box edge. Decisive: with vmax 48-64, does the edge
-   fraction stay < 1e-6 past t = 700, and do the grid's dK_e and W_ext agree with Hermite c = 4 past 600? This decides
-   whether the 0.1 window is limited by the Hermite method or by physics (the OTSI turbulent stage).
+2. **v_q/v_te = 0.1 grid reference with vmax > 32 v_te: done** (lane "gridref", batch 11, results.md). vmax 48/64
+   moves edge contact only from t = 701.5 to 754.5 (tail accelerated past 64 v_te), and negativity at t = 645.5 is
+   set by Nx, not the box. Grid reference certified for dK_e/W_ext to about 750, spectrum to about 640; Hermite c = 4
+   agrees with it in dK_e/W_ext to >= 760 and in the spectrum to 555. A t = 1000 reference at 0.1 needs a different
+   method (e.g. larger Nx with an adaptive or mapped v box); the Hermite window near 600 is a Hermite limit.
 3. **Rerun the B00/B02/B03/B06 records at the current pin** (minutes of CPU). Decisive: the numbers are unchanged to
    the printed digits, after which the record parent stamps can be updated. This is cheap provenance hygiene.
 4. **Fetch and read the three open-access papers** (1903.08062, 2005.01515, 2005.13539). Decisive for the mixing

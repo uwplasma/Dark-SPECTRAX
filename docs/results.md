@@ -408,10 +408,15 @@ Records made with parent integration/dark-baseline 16400f8 (pump frame, remap, #
 | g_vq0.03_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 | >=1000 | >=1000 | 767 (k4) |
 | g_vq0.03_Nx64_Nv4096_dt0.02_osc_v32_spectral_xmask23 | >=1000 | >=1000 | 767 (k4) |
 | g_vq0.1_Nx128_Nv4096_dt0.02_osc_v32_spectral_xmask23 | >=480 | >=480 | >=480 |
+| g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 | 818.0 | >=820 | 555 (k4) |
 | g_vq0.1_Nx32_Nv4096_dt0.01_osc_v32_spectral_xmask23 | >=700 | >=700 | 554.5 (k4) |
 | g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 | 818.0 | >=820 | 555 (k4) |
+| g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 | >=760 | >=760 | 555 (k4) |
+| g_vq0.1_Nx64_Nv16384_dt0.01_osc_v64_spectral_xmask23 | >=200 | >=200 | >=200 |
+| g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 | >=760 | >=760 | 555 (k4) |
 | g_vq0.1_Nx64_Nv4096_dt0.02_osc_v32_spectral_xmask23 | >=760 | >=760 | 555 (k4) |
 | g_vq0.1_Nx64_Nv8192_dt0.02_osc_v32_spectral_xmask23 | >=760 | >=760 | 555 (k4) |
+| g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 | >=760 | >=760 | 555 (k4) |
 
 | grid run | first f < -1e-3 max f | min f / max f | max edge fraction | max energy defect / W |
 |---|---|---|---|---|
@@ -430,15 +435,40 @@ Records made with parent integration/dark-baseline 16400f8 (pump frame, remap, #
 | g_vq0.1_Nx16_Nv8192_dt0.02_osc_v32_filtered | 457.5 | -0.75 | 0.24 | 1.4e-01 |
 | g_vq0.1_Nx16_Nv8192_dt0.02_osc_v32_pfc | 460.5 | -0.76 | 0.28 | 1.3e-01 |
 | g_vq0.1_Nx16_Nv8192_dt0.02_osc_v32_spectral | 457.5 | -0.75 | 0.24 | 1.4e-01 |
+| g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23 | 498.0 | -1 | 0.89 | 6.0e-01 |
 | g_vq0.1_Nx32_Nv4096_dt0.01_osc_v32_spectral_xmask23 | 495.0 | -0.15 | 1.4e-05 | 8.7e-07 |
 | g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral | 541.5 | -1.3 | 1.1 | 7.4e-01 |
 | g_vq0.1_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23 | 498.0 | -0.97 | 0.99 | 1.0e+00 |
+| g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23 | 645.5 | -0.91 | 0.97 | 4.2e-01 |
+| g_vq0.1_Nx64_Nv16384_dt0.01_osc_v64_spectral_xmask23 | None | -8.2e-13 | 4.8e-13 | 5.1e-07 |
+| g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23 | 645.5 | -0.97 | 0.75 | 2.4e-01 |
 | g_vq0.1_Nx64_Nv4096_dt0.02_osc_v32_spectral | 506.5 | -1.3 | 1 | 6.6e-01 |
 | g_vq0.1_Nx64_Nv4096_dt0.02_osc_v32_spectral_xmask23 | 645.5 | -0.84 | 0.99 | 3.9e-01 |
 | g_vq0.1_Nx64_Nv8192_dt0.02_osc_v32_spectral | 504.0 | -1.3 | 0.96 | 3.0e-01 |
 | g_vq0.1_Nx64_Nv8192_dt0.02_osc_v32_spectral_xmask23 | 645.5 | -0.84 | 1 | 1.8e-01 |
+| g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23 | 645.5 | -0.89 | 0.74 | 5.8e-01 |
 
-**Certified windows (supersede the Nx = 8 lane windows and the conversion-figure panel):** v_q/v_te = 0.03: dK_e and W_ext to t ~ 960-1000 (c = 4, Nx >= 32), field spectra to ~720-770. v_q/v_te = 0.1: dK_e and W_ext to t <~ 600, limited by the asymmetric-Hermite truncation instability (more Nx or Nn fails sooner); field spectra to ~555. The grid reference at v_q/v_te = 0.1 is valid only to t ~ 650 at vmax = 32 v_te (f reaches the velocity-box edge), independent of Nv.
+**Certified windows (supersede the Nx = 8 lane windows and the conversion-figure panel):** v_q/v_te = 0.03: dK_e and W_ext to t ~ 960-1000 (c = 4, Nx >= 32), field spectra to ~720-770. v_q/v_te = 0.1: dK_e and W_ext to t <~ 600, limited by the asymmetric-Hermite truncation instability (more Nx or Nn fails sooner); field spectra to ~555. The grid reference at v_q/v_te = 0.1 is valid only to t ~ 645 for positivity and t ~ 700-755 for the box edge; widening the box does not extend it to t = 1000 (next paragraph).
+
+**Wide-box grid reference at v_q/v_te = 0.1 (batch 11, `studies/nxconv/batch11.sh`, records at `7a4582a`).** Reference = Nx 64, Nv 16384, vmax 64 v_te, dt 0.02, masked spectral, to t = 1000. Pairs, same 10% rule:
+
+| grid pair (reference vmax 64, Nv 16384, Nx 64, dt 0.02) | dK_e | W_ext | field spectrum |
+|---|---|---|---|
+| vmax 64 vs 32 (Nv 8192) | 800.0 | >=1000 | 694.5 (k20) |
+| vmax 64 vs 48 (same dv) | 788.5 | >=1000 | 694.5 (k20) |
+| vmax 64 Nv 16384 vs 8192 | 797.5 | >=1000 | 694.5 (k20) |
+| vmax 64 Nx 64 vs 32 | 803.5 | >=1000 | 636.5 (k4) |
+| vmax 64 dt 0.02 vs 0.01 | >=200 | >=200 | >=200 |
+
+| wide-box grid run | first f < -1e-3 max f | first edge > 1e-6 / 1e-3 | first energy defect / W > 1e-6 / 1e-3 | Hermite c = 4 vs grid: dK_e, W_ext, spectrum |
+|---|---|---|---|---|
+| Nx 64, Nv 8192, vmax 32 | 645.5 | 701.5 / 761 | 731 / 771.5 | >=760, >=760, 555 (k4) |
+| Nx 64, Nv 12288, vmax 48 | 645.5 | 726.5 / 770 | 754 / 778.5 | >=760, >=760, 555 (k4) |
+| Nx 64, Nv 8192, vmax 64 | 645.5 | 752 / 782.5 | 770.5 / 785 | >=760, >=760, 555 (k4) |
+| Nx 64, Nv 16384, vmax 64 | 645.5 | 754.5 / 792 | 770 / 797.5 | >=760, >=760, 555 (k4) |
+| Nx 32, Nv 16384, vmax 64 | 498.0 | 755 / 818 | 767 / 842 | 818.0, >=820, 555 (k4) |
+
+Findings. (1) Widening the box from 32 to 64 v_te moves the first edge contact only from t ~ 700 to ~755: the tail is accelerated past 64 v_te within ~50 time units, so no affordable box reaches t = 1000. (2) The first negativity (t = 645.5 at Nx 64, 498 at Nx 32) does not depend on vmax, Nv or (to t = 200) dt; it is set by the x resolution. The earlier attribution of the t ~ 650 limit to the box edge was wrong: at vmax 32 the edge is still below 1e-6 at t = 700. (3) The wide-box grids agree with each other in dK_e to t ~ 790-800 and in W_ext to 1000; Hermite c = 4 agrees with every grid in dK_e and W_ext to the end of the Hermite run (760) and in the field spectrum to 555 (k4), as at vmax 32. **Certified windows at v_q/v_te = 0.1:** grid reference dK_e and W_ext to t ~ 750 (edge contact and energy-defect onset; the later agreement is not certified), field spectrum to ~640 (Nx 32 vs 64 at k4); Hermite c = 4 matches it in dK_e and W_ext to t >= 760 and in the field spectrum to 555. Past ~750 this grid cannot certify v_q 0.1; the Hermite-pair limit near 600 is a Hermite truncation effect, since the grid is converged there.
 
 ## The physical high-k instability is the oscillating two-stream instability (`studies/instab_otsi.py`)
 

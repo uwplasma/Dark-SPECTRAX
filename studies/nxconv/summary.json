@@ -515,6 +515,17 @@
    "max_energy_defect_over_W": 0.14401267680598848,
    "max_mass_drift": 1.3322676295501878e-14
   },
+  "g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23": {
+   "T": 1000.0,
+   "finite": true,
+   "wall_time": 7119.561876857071,
+   "t_fneg_1e-3": 498.0,
+   "min_f_rel": -1.0217060811976089,
+   "max_negfrac": 0.29306348598732157,
+   "max_edge": 0.8929364595448197,
+   "max_energy_defect_over_W": 0.603153164047048,
+   "max_mass_drift": 4.884981308350689e-15
+  },
   "g_vq0.1_Nx32_Nv4096_dt0.01_osc_v32_spectral_xmask23": {
    "T": 700.0,
    "finite": true,
@@ -547,6 +558,39 @@
    "max_edge": 0.9856304317832674,
    "max_energy_defect_over_W": 1.0496323600090647,
    "max_mass_drift": 5.551115123125783e-15
+  },
+  "g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23": {
+   "T": 1000.0,
+   "finite": true,
+   "wall_time": 12184.991180896992,
+   "t_fneg_1e-3": 645.5,
+   "min_f_rel": -0.9062314999238199,
+   "max_negfrac": 0.3004519691365795,
+   "max_edge": 0.9747805382001409,
+   "max_energy_defect_over_W": 0.4215199977631092,
+   "max_mass_drift": 2.7347013542566856e-12
+  },
+  "g_vq0.1_Nx64_Nv16384_dt0.01_osc_v64_spectral_xmask23": {
+   "T": 200.0,
+   "finite": true,
+   "wall_time": 7323.904193308088,
+   "t_fneg_1e-3": null,
+   "min_f_rel": -8.220904399760876e-13,
+   "max_negfrac": 4.0956250265877404e-12,
+   "max_edge": 4.836117288942396e-13,
+   "max_energy_defect_over_W": 5.088417514824421e-07,
+   "max_mass_drift": 1.2878587085651816e-14
+  },
+  "g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23": {
+   "T": 1000.0,
+   "finite": true,
+   "wall_time": 16072.365014045849,
+   "t_fneg_1e-3": 645.5,
+   "min_f_rel": -0.9734891763982365,
+   "max_negfrac": 0.32253981170873275,
+   "max_edge": 0.7490681485554306,
+   "max_energy_defect_over_W": 0.23568756622195014,
+   "max_mass_drift": 6.661338147750939e-15
   },
   "g_vq0.1_Nx64_Nv4096_dt0.02_osc_v32_spectral": {
    "T": 1000.0,
@@ -591,6 +635,17 @@
    "max_edge": 1.0,
    "max_energy_defect_over_W": 0.18250237431034141,
    "max_mass_drift": 3.774758283725532e-15
+  },
+  "g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23": {
+   "T": 1000.0,
+   "finite": true,
+   "wall_time": 9116.084533313871,
+   "t_fneg_1e-3": 645.5,
+   "min_f_rel": -0.8865715079424665,
+   "max_negfrac": 0.32070187622835306,
+   "max_edge": 0.7394347940578094,
+   "max_energy_defect_over_W": 0.580410350021139,
+   "max_mass_drift": 4.884981308350689e-15
   }
  },
  "grid_pairs": {
@@ -663,6 +718,31 @@
    "dK_e": ">=1000",
    "W_ext": ">=1000",
    "Ek2 k<21": "942 (k5)"
+  },
+  "gridref vq0.1 vmax 64 vs 32 (Nv 8192)": {
+   "dK_e": 800.0,
+   "W_ext": ">=1000",
+   "Ek2 k<21": "694.5 (k20)"
+  },
+  "gridref vq0.1 vmax 64 vs 48 (same dv)": {
+   "dK_e": 788.5,
+   "W_ext": ">=1000",
+   "Ek2 k<21": "694.5 (k20)"
+  },
+  "gridref vq0.1 vmax 64 Nv 16384 vs 8192": {
+   "dK_e": 797.5,
+   "W_ext": ">=1000",
+   "Ek2 k<21": "694.5 (k20)"
+  },
+  "gridref vq0.1 vmax 64 Nx 64 vs 32": {
+   "dK_e": 803.5,
+   "W_ext": ">=1000",
+   "Ek2 k<10": "636.5 (k4)"
+  },
+  "gridref vq0.1 vmax 64 dt 0.02 vs 0.01": {
+   "dK_e": ">=200",
+   "W_ext": ">=200",
+   "Ek2 k<21": ">=200"
   }
  },
  "hermite_vs_grid": {
@@ -686,6 +766,11 @@
    "W_ext": ">=480",
    "Ek2 k<42": ">=480"
   },
+  "g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23": {
+   "dK_e": 818.0,
+   "W_ext": ">=820",
+   "Ek2 k<10": "555 (k4)"
+  },
   "g_vq0.1_Nx32_Nv4096_dt0.01_osc_v32_spectral_xmask23": {
    "dK_e": ">=700",
    "W_ext": ">=700",
@@ -696,12 +781,32 @@
    "W_ext": ">=820",
    "Ek2 k<10": "555 (k4)"
   },
+  "g_vq0.1_Nx64_Nv12288_dt0.02_osc_v48_spectral_xmask23": {
+   "dK_e": ">=760",
+   "W_ext": ">=760",
+   "Ek2 k<21": "555 (k4)"
+  },
+  "g_vq0.1_Nx64_Nv16384_dt0.01_osc_v64_spectral_xmask23": {
+   "dK_e": ">=200",
+   "W_ext": ">=200",
+   "Ek2 k<21": ">=200"
+  },
+  "g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23": {
+   "dK_e": ">=760",
+   "W_ext": ">=760",
+   "Ek2 k<21": "555 (k4)"
+  },
   "g_vq0.1_Nx64_Nv4096_dt0.02_osc_v32_spectral_xmask23": {
    "dK_e": ">=760",
    "W_ext": ">=760",
    "Ek2 k<21": "555 (k4)"
   },
   "g_vq0.1_Nx64_Nv8192_dt0.02_osc_v32_spectral_xmask23": {
+   "dK_e": ">=760",
+   "W_ext": ">=760",
+   "Ek2 k<21": "555 (k4)"
+  },
+  "g_vq0.1_Nx64_Nv8192_dt0.02_osc_v64_spectral_xmask23": {
    "dK_e": ">=760",
    "W_ext": ">=760",
    "Ek2 k<21": "555 (k4)"

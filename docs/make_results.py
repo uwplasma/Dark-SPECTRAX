@@ -4,6 +4,8 @@ import json
 import re
 from pathlib import Path
 
+import numpy as np
+
 root = Path(__file__).resolve().parents[1]
 rec = json.loads((root / "docs/_static/b00/run.json").read_text())
 inst = json.loads((root / "docs/_static/b02_b03/run.json").read_text())
@@ -232,8 +234,51 @@ def nxconv_section():
           "v_q/v_te = 0.03: dK_e and W_ext to t ~ 960-1000 (c = 4, Nx >= 32), field spectra to ~720-770. "
           "v_q/v_te = 0.1: dK_e and W_ext to t <~ 600, limited by the asymmetric-Hermite truncation instability "
           "(more Nx or Nn fails sooner); field spectra to ~555. The grid reference at v_q/v_te = 0.1 is valid only to "
-          "t ~ 650 at vmax = 32 v_te (f reaches the velocity-box edge), independent of Nv."]
-    return "\n".join(L)
+          "t ~ 645 for positivity and t ~ 700-755 for the box edge; widening the box does not extend it to t = 1000 "
+          "(next paragraph)."]
+    return "\n".join(L + gridref_lines(d))
+
+
+def first_above(x, t, th):
+    i = np.nonzero(np.abs(x) > th)[0]
+    return f"{t[i[0]]:g}" if i.size else "none"
+
+
+def gridref_lines(d):
+    """Batch 11: wide-box (vmax 48/64 v_te) grid reference for H05 v_q/v_te = 0.1."""
+    G = root / "studies/nxconv/grid"
+    L = ["", "**Wide-box grid reference at v_q/v_te = 0.1 (batch 11, `studies/nxconv/batch11.sh`, records at "
+         "`7a4582a`).** Reference = Nx 64, Nv 16384, vmax 64 v_te, dt 0.02, masked spectral, to t = 1000. Pairs, "
+         "same 10% rule:", "",
+         "| grid pair (reference vmax 64, Nv 16384, Nx 64, dt 0.02) | dK_e | W_ext | field spectrum |",
+         "|---|---|---|---|"]
+    for k, v in d["grid_pairs"].items():
+        if k.startswith("gridref"):
+            L.append(f"| {k[len('gridref vq0.1 '):]} | {v['dK_e']} | {v['W_ext']} | "
+                     f"{next(x for kk, x in v.items() if kk.startswith('Ek2'))} |")
+    L += ["", "| wide-box grid run | first f < -1e-3 max f | first edge > 1e-6 / 1e-3 | "
+          "first energy defect / W > 1e-6 / 1e-3 | Hermite c = 4 vs grid: dK_e, W_ext, spectrum |",
+          "|---|---|---|---|---|"]
+    for nx, nv, vm in ((64, 8192, 32), (64, 12288, 48), (64, 8192, 64), (64, 16384, 64), (32, 16384, 64)):
+        tag = f"g_vq0.1_Nx{nx}_Nv{nv}_dt0.02_osc_v{vm}_spectral_xmask23"
+        z = np.load(G / f"{tag}.npz")
+        h = d["hermite_vs_grid"][tag]
+        L.append(f"| Nx {nx}, Nv {nv}, vmax {vm} | {d['grid'][tag]['t_fneg_1e-3']} | "
+                 f"{first_above(z['edge'], z['t'], 1e-6)} / {first_above(z['edge'], z['t'], 1e-3)} | "
+                 f"{first_above(z['energy_defect'], z['t'], 1e-6)} / {first_above(z['energy_defect'], z['t'], 1e-3)} | "
+                 f"{h['dK_e']}, {h['W_ext']}, {next(x for kk, x in h.items() if kk.startswith('Ek2'))} |")
+    L += ["", "Findings. (1) Widening the box from 32 to 64 v_te moves the first edge contact only from t ~ 700 to "
+          "~755: the tail is accelerated past 64 v_te within ~50 time units, so no affordable box reaches t = 1000. "
+          "(2) The first negativity (t = 645.5 at Nx 64, 498 at Nx 32) does not depend on vmax, Nv or (to t = 200) dt; "
+          "it is set by the x resolution. The earlier attribution of the t ~ 650 limit to the box edge was wrong: at "
+          "vmax 32 the edge is still below 1e-6 at t = 700. (3) The wide-box grids agree with each other in dK_e to "
+          "t ~ 790-800 and in W_ext to 1000; Hermite c = 4 agrees with every grid in dK_e and W_ext to the end of the "
+          "Hermite run (760) and in the field spectrum to 555 (k4), as at vmax 32. **Certified windows at v_q/v_te = "
+          "0.1:** grid reference dK_e and W_ext to t ~ 750 (edge contact and energy-defect onset; the later "
+          "agreement is not certified), field spectrum to ~640 (Nx 32 vs 64 at k4); Hermite c = 4 matches it in dK_e "
+          "and W_ext to t >= 760 and in the field spectrum to 555. Past ~750 this grid cannot certify v_q 0.1; the "
+          "Hermite-pair limit near 600 is a Hermite truncation effect, since the grid is converged there."]
+    return L
 
 
 def otsi_section():
