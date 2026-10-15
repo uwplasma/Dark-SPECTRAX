@@ -21,7 +21,8 @@ impractical, and which already fails gate 1 at smaller sizes; recorded as not ru
 Magnus at K 5, Nn 64 for AW_c0, AW_c1 and DAI_SW.
 Also: L2(dv) norm growth of DAI_AW under exact-exponential stepping to t = 1000 (frozen E1 = 1e-2), norm evaluated
 as ||Lambda^{1/2} L11^T g|| with the Cholesky factor of paper Prop. 7.7.
-Run: python studies/dai/dai_spectra.py PART   (PART in frozen, floquet, floquet_big, norm) -> studies/dai/spectra_PART.json
+Run: python studies/dai/dai_spectra.py PART [K Nn E1]  (PART in frozen, floquet, floquet_big, norm)
+     -> studies/dai/spectra_PART[_K_Nn_E1].json
 """
 import json
 import subprocess
@@ -126,8 +127,11 @@ def run(part):
                     print(json.dumps(res[-1]), flush=True)
     elif part == "floquet_big":
         big = tuple(v for v in VARIANTS if v != "DAI_AW")
-        for K, Nn, vs in [(5, 64, ("AW_c0", "AW_c1", "DAI_SW")), (5, 128, big), (10, 64, big), (10, 128, big)]:
-            for E1 in (8e-3, 2e-2):
+        cases = [(5, 64, ("AW_c0", "AW_c1", "DAI_SW")), (5, 128, big), (10, 64, big), (10, 128, big)]
+        if len(sys.argv) > 2:  # optional split: K Nn E1 (same computation, run as parallel processes)
+            cases = [(int(sys.argv[2]), int(sys.argv[3]), big)]
+        for K, Nn, vs in cases:
+            for E1 in ((float(sys.argv[4]),) if len(sys.argv) > 4 else (8e-3, 2e-2)):
                 for var in vs:
                     t0 = time.perf_counter()
                     res.append(dict(K=K, Nn=Nn, E1=E1, variant=var, method="dop853",
@@ -155,7 +159,9 @@ def run(part):
                     print(json.dumps(res[-1]), flush=True)
     out = dict(part=part, sha=sha(), wall_s=time.perf_counter() - tic, command=f"python studies/dai/dai_spectra.py {part}",
                a=A, k1=d.k1, results=res)
-    (OUT / f"spectra_{part}.json").write_text(json.dumps(out, indent=0) + "\n")
+    tag = "_".join([part] + sys.argv[2:])
+    out["command"] = "python studies/dai/dai_spectra.py " + " ".join(sys.argv[1:])
+    (OUT / f"spectra_{tag}.json").write_text(json.dumps(out, indent=0) + "\n")
 
 
 if __name__ == "__main__":
