@@ -13,10 +13,12 @@ Declared before running (gate 1): a variant passes iff max Re lambda <= 1e-10 (f
 at EVERY point.  Equivalence check: max over eigenvalues of DAI_AW of the distance to the DAI_SW spectrum.
 A pilot (K 2/5, Nn 32/64, E1 1e-2) run before this file was committed already showed DAI_AW max Re 2.3e-11 / 3.1e-3:
 the declaration of two DAI implementations was made after that pilot and is reported as such.
-Floquet: exponential midpoint (2nd-order Magnus, 100 substeps, as studies/highk_floquet.py) except K = 10, Nn = 128,
-where a dense 2688^2 expm x 100 costs hours: there DOP853 on the sparse operator (rtol 1e-12) for all variants but
-DAI_AW (whose ~1e10 column entries make the explicit integrator impractical; recorded as not run); cross-checked
-against Magnus at K = 10, Nn = 64 for AW_c1 and DAI_SW.
+Floquet: exponential midpoint (2nd-order Magnus, 100 substeps, as studies/highk_floquet.py) for operator dimension
+<= 704 (K 2 all Nn; K 5 Nn 32/64; K 10 Nn 32).  Amendment (after the first office batch measured 75 s per Magnus
+monodromy at dimension 640, i.e. ~5 h for the larger sizes): K 5 Nn 128, K 10 Nn 64 and K 10 Nn 128 use DOP853 on the
+sparse operator (rtol 1e-12) for all variants but DAI_AW (whose ~1e10 column entries make the explicit integrator
+impractical, and which already fails gate 1 at smaller sizes; recorded as not run); DOP853 is cross-checked against
+Magnus at K 5, Nn 64 for AW_c0, AW_c1 and DAI_SW.
 Also: L2(dv) norm growth of DAI_AW under exact-exponential stepping to t = 1000 (frozen E1 = 1e-2), norm evaluated
 as ||Lambda^{1/2} L11^T g|| with the Cholesky factor of paper Prop. 7.7.
 Run: python studies/dai/dai_spectra.py PART   (PART in frozen, floquet, floquet_big, norm) -> studies/dai/spectra_PART.json
@@ -115,7 +117,7 @@ def run(part):
                                     max_abs_lambda=float(np.abs(lam["DAI_SW"]).max())))
                     print(json.dumps(res[-1]), flush=True)
     elif part == "floquet":
-        for K, Nn in [(2, 32), (2, 64), (2, 128), (5, 32), (5, 64), (5, 128), (10, 32), (10, 64)]:
+        for K, Nn in [(2, 32), (2, 64), (2, 128), (5, 32), (5, 64), (10, 32)]:
             for E1 in (8e-3, 2e-2):
                 for var in VARIANTS:
                     t0 = time.perf_counter()
@@ -123,7 +125,8 @@ def run(part):
                                     floquet=floquet_magnus(K, Nn, E1, var), s=time.perf_counter() - t0))
                     print(json.dumps(res[-1]), flush=True)
     elif part == "floquet_big":
-        for K, Nn, vs in [(10, 64, ("AW_c1", "DAI_SW")), (10, 128, tuple(v for v in VARIANTS if v != "DAI_AW"))]:
+        big = tuple(v for v in VARIANTS if v != "DAI_AW")
+        for K, Nn, vs in [(5, 64, ("AW_c0", "AW_c1", "DAI_SW")), (5, 128, big), (10, 64, big), (10, 128, big)]:
             for E1 in (8e-3, 2e-2):
                 for var in vs:
                     t0 = time.perf_counter()
