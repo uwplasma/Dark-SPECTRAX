@@ -1,7 +1,7 @@
 {
  "case_id": "B01_B06",
- "parent_commit": "9d0982d6fb3ec2cb602b930ed66a87845f77e570",
- "repository_commit": "e531878fab1dfea3eb52fe73ccb0c2065ceaca0c",
+ "parent_commit": "f33dfdab2a413c51722846748ee1e9dda5677d72",
+ "repository_commit": "3cbd9451bc0051893e28ed87147f1ad88d70bab4",
  "command": "python studies/b01_b06.py",
  "beta": 0.1,
  "eta": 0.3,
@@ -20,8 +20,8 @@
    "env_min": [],
    "env_max": [],
    "ledger_defect": 9.185496330568754e-16,
-   "compile_time": 0.563763290992938,
-   "run_time": 8.842419792024884,
+   "compile_time": 1.1411528329917928,
+   "run_time": 12.792476583010284,
    "steps": 3522,
    "first_t_logenv_dev_gt_0p1": 85.0
   },
@@ -32,8 +32,8 @@
    ],
    "env_max": [],
    "ledger_defect": 8.985189979202057e-16,
-   "compile_time": 0.5157064580125734,
-   "run_time": 9.069802083016839,
+   "compile_time": 1.2174685840000166,
+   "run_time": 12.62124033299915,
    "steps": 3635
   },
   "ordinary_N1024_nu0.0": {
@@ -43,8 +43,8 @@
    ],
    "env_max": [],
    "ledger_defect": 1.190684378350737e-15,
-   "compile_time": 0.5427343749906868,
-   "run_time": 18.772447250026744,
+   "compile_time": 0.9594089999882272,
+   "run_time": 26.994036167001468,
    "steps": 4004,
    "first_t_logenv_dev_gt_0p1": null
   },
@@ -55,8 +55,8 @@
    ],
    "env_max": [],
    "ledger_defect": 1.1141125999189483e-15,
-   "compile_time": 0.6101040840148926,
-   "run_time": 19.590311665961053,
+   "compile_time": 1.1150312090030639,
+   "run_time": 28.351262999989558,
    "steps": 4116
   },
   "ordinary_N512_nu1.0": {
@@ -64,8 +64,8 @@
    "env_min": [],
    "env_max": [],
    "ledger_defect": 8.575361558002537e-16,
-   "compile_time": 0.507523583015427,
-   "run_time": 8.896586166985799,
+   "compile_time": 1.2942991250019986,
+   "run_time": 11.894077707998804,
    "steps": 3344,
    "first_t_logenv_dev_gt_0p1": null
   },
@@ -74,8 +74,8 @@
    "env_min": [],
    "env_max": [],
    "ledger_defect": 8.73555242898727e-16,
-   "compile_time": 0.6156465419917367,
-   "run_time": 8.817743458028417,
+   "compile_time": 1.0056864579964895,
+   "run_time": 11.038512750004884,
    "steps": 3305
   },
   "dark_vs_ordinary_N512_nu0.0_rms_log_env_diff_t_le_60": 0.09278372186221452,
@@ -93,12 +93,12 @@
     "success",
     "success"
    ],
-   "t_echo": 29.049999999999997,
+   "t_echo": 29.05,
    "amp": 0.0011586996266458405,
    "kinetic_energy_from_kick": 6.249999999999312e-06,
    "ledger_defect_after_kick": 6.101430130247126e-11,
-   "run_time": 8.405171457969118,
-   "compile_time": 1.0612501249997877,
+   "run_time": 11.937475625003572,
+   "compile_time": 2.3270854169968516,
    "amp_rel_to_grid": -2.2654685208234326e-05,
    "max_abs_dev_k3_over_grid_echo": 0.08027538606958946,
    "max_k1_after_t20": 0.004177104732278238
@@ -108,66 +108,66 @@
     "success",
     "success"
    ],
-   "t_echo": 28.999999999999996,
+   "t_echo": 29.0,
    "amp": 0.0011209881636688912,
    "kinetic_energy_from_kick": 6.249999999999312e-06,
    "ledger_defect_after_kick": 6.649872367612983e-11,
-   "run_time": 9.5103460829705,
-   "compile_time": 1.0441564579959959
+   "run_time": 13.526378376001958,
+   "compile_time": 1.9948423329915386
   },
   "ordinary_N512_nu0.0": {
    "status": [
     "success",
     "success"
    ],
-   "t_echo": 29.049999999999997,
-   "amp": 0.0011587488444097733,
+   "t_echo": 29.05,
+   "amp": 0.001158748844409773,
    "kinetic_energy_from_kick": 6.249999999999312e-06,
-   "ledger_defect_after_kick": 5.99090625804379e-11,
-   "run_time": 15.142648624954745,
-   "compile_time": 1.075736875005532,
-   "amp_rel_to_grid": 1.9821076229886714e-05,
+   "ledger_defect_after_kick": 5.990906256932059e-11,
+   "run_time": 21.371291584000573,
+   "compile_time": 1.9589189999969676,
+   "amp_rel_to_grid": 1.982107622966467e-05,
    "max_abs_dev_k3_over_grid_echo": 0.00028858177529279843,
-   "max_k1_after_t20": 0.003762230594216378
+   "max_k1_after_t20": 0.0037622305942163793
   },
   "dark_N512_nu0.0": {
    "status": [
     "success",
     "success"
    ],
-   "t_echo": 28.999999999999996,
+   "t_echo": 29.0,
    "amp": 0.0011210052018422673,
    "kinetic_energy_from_kick": 6.249999999999312e-06,
-   "ledger_defect_after_kick": 6.529470593912427e-11,
-   "run_time": 15.549468957993668,
-   "compile_time": 1.0075866249972023
+   "ledger_defect_after_kick": 6.529470592747756e-11,
+   "run_time": 21.52486062500975,
+   "compile_time": 2.1398417499876814
   },
   "ordinary_N512_nu1.0": {
    "status": [
     "success",
     "success"
    ],
-   "t_echo": 29.049999999999997,
+   "t_echo": 29.05,
    "amp": 0.0011221956864746925,
    "kinetic_energy_from_kick": 6.249999999999312e-06,
    "ledger_defect_after_kick": 5.8200167251734806e-11,
-   "run_time": 8.176877916965168,
-   "compile_time": 1.2096477909944952,
+   "run_time": 10.611403125018114,
+   "compile_time": 2.3995174169831444,
    "amp_rel_to_grid": -0.031526171512552326,
    "max_abs_dev_k3_over_grid_echo": 0.03338054888185498,
-   "max_k1_after_t20": 3.6305114727377597e-06
+   "max_k1_after_t20": 3.63051147273776e-06
   },
   "dark_N512_nu1.0": {
    "status": [
     "success",
     "success"
    ],
-   "t_echo": 28.999999999999996,
+   "t_echo": 29.0,
    "amp": 0.0010859703423532555,
    "kinetic_energy_from_kick": 6.249999999999312e-06,
    "ledger_defect_after_kick": 6.343211687648866e-11,
-   "run_time": 8.377775707980618,
-   "compile_time": 1.2039600840071216
+   "run_time": 10.359857874995214,
+   "compile_time": 1.8969803750078427
   }
  }
 }

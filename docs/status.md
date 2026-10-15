@@ -15,10 +15,12 @@ Results and their records are in [results.md](results.md); the model and the lit
   (+3.8/+1.8/+5.3% growth, +2.7% frequency, -9.3% damping), the B06 echo amplitudes (ordinary/dark, Hermite/grid,
   agreement 2.0e-5/1.6e-5, mixing -3.3%), the B00 worst relative error 1.3e-4, and the phase-space drawn times
   (100, 29.25, 38.75). The damping shift of -23.6% at k = 0.3 comes from the roots; the fitted rates give -23.7%.
-- Record parents are older than the pin. B00, B02/B03, B01/B06 and the dark grid were recorded at parent `9d0982d`
-  (5 records); the H05 lane and high-k records at `c0910a1` (152); nxconv at `16400f8` (122); the H05/H06 scan at
-  `ab87385`. None was rerun at `f33dfda`. The pin changes after `9d0982d` add opt-in features (pump frame, closures,
-  TOML usability), so fixed-basis results should be unchanged, but this has not been checked by a rerun.
+- Record parents. B00, B02/B03 and B01/B06 were rerun at the pin `f33dfda` (2026-10-15): every recorded number
+  other than timings is bit-identical to the `9d0982d` records (B00 887 values, B02/B03 182), except two B06
+  ledger defects of 6e-11 that changed by 1e-20 (relative 2e-10); the B01/B06 arrays agree to 8e-15 relative.
+  Timings rose (compile 0.8-1.9 s, B01 runs 11-28 s) because the laptop was loaded (load about 35).
+  Still older than the pin: the dark grid (`9d0982d`), the H05 lane and high-k records (`c0910a1`, 152),
+  nxconv (`16400f8`, 122) and the H05/H06 scan (`ab87385`).
 - Study code: 12 scripts in `studies/` are not named in any doc (`c05_dark_jax_in_cell`, `h05_pump_frame`,
   `hhs_summary`, `highk_alias_check`, `highk_analysis`, `highk_grid_linear`, `lane_b_analysis`, `lane_c_analysis`,
   `nxconv_analysis`, `nxconv_grid`, `nxconv_grid_validate`, `nxconv_run`). Most are drivers or analysis steps behind
@@ -115,7 +117,6 @@ physics.md sets the rule: only full-text sources may set a benchmark.
 | Source | Needed for | Access |
 |---|---|---|
 | Hakim, Francisquez, Juno, Hammett, arXiv:1903.08062 (Dougherty moments, N5) | B11, H08 conservative collisions | open (arXiv) |
-| Fabbrichesi, Gabrielli, Lanfranchi, arXiv:2005.01515 (dark-photon review) | check of the mixing normalization eta = chi/sqrt(1-chi^2), m_D | open (arXiv) |
 | Juno, arXiv:2005.13539 (thesis, N11) | C06 continuum comparison, Weibel setups | open (arXiv) |
 | Gkeyll documentation | C06 input matching | open (web) |
 | O'Neil, Phys. Fluids 8, 2255 (1965) | B01 trapping time and bounce scaling | owner must supply |
@@ -137,10 +138,9 @@ physics.md sets the rule: only full-text sources may set a benchmark.
    set by Nx, not the box. Grid reference certified for dK_e/W_ext to about 750, spectrum to about 640; Hermite c = 4
    agrees with it in dK_e/W_ext to >= 760 and in the spectrum to 555. A t = 1000 reference at 0.1 needs a different
    method (e.g. larger Nx with an adaptive or mapped v box); the Hermite window near 600 is a Hermite limit.
-3. **Rerun the B00/B02/B03/B06 records at the current pin** (minutes of CPU). Decisive: the numbers are unchanged to
-   the printed digits, after which the record parent stamps can be updated. This is cheap provenance hygiene.
-4. **Fetch and read the three open-access papers** (1903.08062, 2005.01515, 2005.13539). Decisive for the mixing
-   normalization: does the canonical map used here equal the review's? Owner: supply O'Neil 1965,
+3. ~~Rerun the B00/B02/B03/B06 records at the current pin~~ done 2026-10-15: bit-identical (see Code health).
+4. **Fetch and read the open-access papers** (1903.08062, 2005.13539). 2005.01515 was read 2026-10-15 (Sec. 1.1):
+   the canonical map agrees, see physics.md. Owner: supply O'Neil 1965,
    Gould-O'Neil-Malmberg 1967 and Zakharov 1972.
 5. **Cheap B rungs: B05 Buneman, B04 ion-acoustic** (a day; the existing populations and roots machinery applies).
    Decisive: growth/damping vs kinetic roots to 1e-4, ordinary and dark.

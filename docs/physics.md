@@ -99,7 +99,7 @@ Re-derived by hand and, where marked, checked numerically by the tests:
 | Item | Verdict |
 |---|---|
 | Proca equations, Lorenz condition, dark Gauss law from $\partial_\mu F^{\mu\nu}+m^2A^\nu=j^\nu$ | correct (A02, A05) |
-| Canonical mixing map $\eta=\chi/\sqrt{1-\chi^2}$, $m_D=m_0/\sqrt{1-\chi^2}$ | correct (algebra only) |
+| Canonical mixing map $\eta=\chi/\sqrt{1-\chi^2}$, $m_D=m_0/\sqrt{1-\chi^2}$ | correct (algebra only); agrees with Fabbrichesi et al. 2005.01515 eqs. 1.1-1.10 (below) |
 | $U_D$ with $+\Omega_D^2(A_D^2+\phi_D^2/c^2)$ and flux $\epsilon_0c^2E_D\times B_D+\epsilon_0\Omega_D^2\phi_DA_D$ | correct (A02, A03) |
 | Hermite ladders $V_i$, $D_i$, moments $M_i$, $M_{ii}$, $M_{ij}$, Levi-Civita magnetic term | correct (A00 quadrature, 1e-12) |
 | $E_{D,x}/E_x=\eta Q/(Q-\Omega_D^2)$, $D_L=(Q-\Omega_D^2)(1+\chi)+\eta^2Q\chi$ | correct; the elimination uses $A_D=-i\omega E_D/Q$, so it assumes $\omega\neq0$, $Q\neq0$ (B00) |
@@ -122,7 +122,8 @@ E = exact identity, A = controlled approximation, N = numerical finding.
 | Dark-JAX-in-Cell, commit d547579 | README equations, `examples/dark_kinetic.py`, `physical_kinetic_{32,64,128}` records | canonical Proca, same eta convention | 1D3V PIC, quadratic shapes, Boris | C05 same-input Landau fits and roots (N) | independent kinetic discretization, same group conventions |
 | Imported references, `studies/refs` (6781d80 era) | all of `code/`, B00/B02 records | none (ordinary) | NumPy semi-Lagrangian 1D1V VP; wofz roots; Gkeyll p=2 records | B00, B02 against Hermite rerun on ab87385 (N) | non-Hermite continuum, ordinary only |
 | Plasma dispersion function (SciPy `wofz`, Faddeeva) | implementation used directly | - | linear Vlasov, Maxwellian populations | B00, B02, B03, C05 roots (E for the model) | linear, causal continuation, k > 0 |
-| Canonical kinetic mixing (derived here, Section "Independent re-derivation") | own derivation | Lagrangian rotation | - | eta, m_D mapping (E, algebra only) | not yet compared with [D10] |
+| Canonical kinetic mixing (derived here, Section "Independent re-derivation") | own derivation | Lagrangian rotation | - | eta, m_D mapping (E, algebra only) | compared with Fabbrichesi et al. (next row): same map |
+| Fabbrichesi, Gabrielli, Lanfranchi, arXiv:2005.01515 (review), Sec. 1.1 | eqs. 1.1-1.10 (kinetic mixing, rotation, Stueckelberg mass, massive dark photon) | $-\frac{\varepsilon}{2}F_aF_b$ mixing, rotation eq. 1.3 with $\theta=0$ for the massive case | - | canonical map check (E, algebra) | $\varepsilon\equiv\chi$ here; agreement below |
 | HHS v1 (arXiv:2510.13956v1) | full text incl. App. A-C (literature check) | prescribed uniform drive, electron omega_p | 1D1V relativistic PIC | H00-H02, H07 inputs (studies/hhs_ladder.py) | nonrelativistic, deterministic seeds: inspired by, not a reproduction |
 
 ### Literature reading status (2026-10-03 check)
@@ -145,7 +146,22 @@ Only F sources may set a benchmark; A/M sources have not had their equations ins
 | N22 | Bell, Campos Pinto, Possanner, Sonnendruecker, arXiv:2504.04929; J. Comput. Phys. 555, 114765 (2026), DOI 10.1016/j.jcp.2026.114765 (use this DOI, not the SSRN DOI on the arXiv record) | A |
 | D3 | Witte, Rosauro-Alcaraz, McDermott, Poulin, "Dark Photon Dark Matter in the Presence of Inhomogeneous Structure", arXiv:2003.13698; JHEP 06 (2020) 132 | M |
 | D5 | Brahma, Schutz, arXiv:2410.14771; related application: Brahma, Iles, Scherer, Schutz, "Resonant axion and dark photon production in magnetic white dwarfs", PRD 113, 083010 (2026), DOI 10.1103/9swg-ndgx | M |
+| D10 | Fabbrichesi, Gabrielli, Lanfranchi, "The Dark Photon", arXiv:2005.01515 | F for Sec. 1.1 (eqs. 1.1-1.10); rest A |
 | N6-N9, N12, N13, N16, N17, N19-N21, N23, N24, D2, D4, D6-D13 | as in the planning reading map (identifiers verified) | M |
+
+Fabbrichesi et al. Sec. 1.1 (F, read 2026-10-15), compared with the canonical map used here. Their eq. 1.1 mixes the two
+field strengths with $-\frac{\varepsilon}{2}F_a^{\mu\nu}F_{b\mu\nu}$, the same normalization as $\chi$ here
+($\varepsilon=\chi$). Eq. 1.3 removes the mixing with a non-orthogonal shear (dark field rescaled by
+$1/\sqrt{1-\varepsilon^2}$, ordinary field shifted by $-\varepsilon/\sqrt{1-\varepsilon^2}$ times it) followed by an
+arbitrary rotation $\theta$. A mass on the dark gauge field only (their $M_b=0$, $\delta=0$ in eqs. 1.7-1.9) fixes
+$\theta=0$; the ordinary photon then couples only to the ordinary current and the dark photon couples to it with strength
+$e\varepsilon/\sqrt{1-\varepsilon^2}$ (eqs. 1.5, 1.10). This is $\eta=\chi/\sqrt{1-\chi^2}$. The mass is not written
+out as a formula in the section, but substituting their eq. 1.3 at $\theta=0$ into the $M_a^2A_a^2/2$ term of eq. 1.7 gives
+$m_D=M_a/\sqrt{1-\varepsilon^2}$, i.e. $m_D=m_0/\sqrt{1-\chi^2}$. Differences: (i) their coupling carries an overall minus
+sign relative to the ordinary $eJA$ term; this is the field sign $A_D\to-A_D$, under which the model is symmetric
+in $\eta$ (A06); (ii) they quote the small-mixing form $e\varepsilon$ (eq. 1.10), which the code does not use;
+(iii) the massless "dark photon proper" choice ($\tan\theta=\varepsilon/\sqrt{1-\varepsilon^2}$, milli-charges) is a
+different model, not covered here. Verdict: the canonical map agrees.
 
 HHS v1 facts used here (F): uniform k = 0 drive A0 cos(omega t) with no stated ramp; v_q^D/v_te = 0.03 and 1e-3 for the
 resonant runs; m_i/m_e = 1836, T_e = T_i = 1e-3 m_e c^2, L = 40 c/omega_pe, 1000 cells; relativistic Vay pusher in 1D1V;
