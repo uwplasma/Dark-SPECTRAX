@@ -6,15 +6,15 @@
 cd "$(dirname "$0")/../.."
 PY=${PY:-.venv/bin/python}
 LOG=studies/nxconv/logs/batch11.log
-export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 grid() { for i in $(seq 1 60); do echo "start $(date +%T) : $*" >> $LOG
-         nice -n 10 $PY studies/nxconv_grid.py "$@" --chunk 100 --frame osc --vshift spectral --xshift mask23 >> $LOG 2>&1
+         nice -n 10 $PY studies/nxconv_grid.py "$@" --chunk 100 --workers 1 --frame osc --vshift spectral --xshift mask23 >> $LOG 2>&1
          rc=$?; echo "exit $rc $(date +%T) : $*" >> $LOG; [ $rc -eq 3 ] || return; done; }
 case "$1" in
  pilot) grid --vq 0.1 --T 50 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02 ;;
- a) grid --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02
-    grid --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
-    grid --vq 0.1 --T 300 --Nx 64 --Nv 16384 --vmax 64 --dt 0.01 ;;
- b) grid --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02
+ a) grid --vq 0.1 --T 1000 --Nx 64 --Nv 16384 --vmax 64 --dt 0.02 ;;
+ b) grid --vq 0.1 --T 1000 --Nx 64 --Nv 12288 --vmax 48 --dt 0.02 ;;
+ c) grid --vq 0.1 --T 1000 --Nx 64 --Nv 8192 --vmax 64 --dt 0.02
     grid --vq 0.1 --T 1000 --Nx 32 --Nv 16384 --vmax 64 --dt 0.02 ;;
+ d) grid --vq 0.1 --T 200 --Nx 64 --Nv 16384 --vmax 64 --dt 0.01 ;;
 esac

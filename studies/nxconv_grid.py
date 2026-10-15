@@ -34,7 +34,7 @@ import numpy as np
 import scipy.fft as sfft
 
 OUT = Path(__file__).resolve().parent / "nxconv" / "grid"
-W = 2  # fft workers (laptop load limit)
+W = 2  # fft workers (laptop load limit; --workers overrides)
 
 
 def fft(a, axis):
@@ -148,7 +148,10 @@ def main(argv=None):
     ap.add_argument("--unseeded", action="store_true")
     ap.add_argument("--save-every", type=float, default=0.5)
     ap.add_argument("--save-f", type=str, default="", help="comma-separated times at which to store f_e(x, v)")
+    ap.add_argument("--workers", type=int, default=2, help="scipy.fft workers")
     a = ap.parse_args(argv)
+    global W
+    W = a.workers
     se, si, fe, fi, vte, mi, Lx = setup(a)
     w = np.sqrt(1 + 1 / mi)
     E0 = a.vq * vte
