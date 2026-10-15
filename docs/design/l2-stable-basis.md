@@ -39,3 +39,14 @@ re-derived and checked to 1e-10 against finite differences, as done for AW.
 
 Keep A as the production path (exact conservation, tested). Prototype C first in a standalone linear 1D1V script (no
 SPECTRAX changes) to run tests 1-2; proceed to 3-4 only if they pass.
+
+## Verdict on C (2026-10-15, `studies/dai/`, docs/results.md)
+
+Test 1 fails for C as the paper writes it (eq. 27, AW coordinates, float64): max Re lambda 1e-2 to 1.1 at Nn 64-128
+(frozen) and Floquet exponents up to 1.0; the L2 norm grows by 1e88 by t = 1000 at Nn 64. The cause is round-off, not
+the method: Dai's trial space equals span of Hermite functions of width a/sqrt2, so the method is option B in disguise,
+and the AW-to-orthonormal change of basis has condition ~2^N (column entries ~3e10 at Nn 128). Written in that
+orthonormal basis it passes tests 1-2 (max Re lambda <= 6e-15; OTSI within 0.96% of Silin). C also conserves only
+the moments of one parity of N+1 (never density, momentum and energy together) and costs 1.4x nnz, 2.5x matvec.
+C is rejected; A stays in production and B is the remaining candidate for tests 3-4.
+

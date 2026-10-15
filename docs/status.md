@@ -121,15 +121,15 @@ physics.md sets the rule: only full-text sources may set a benchmark.
 | O'Neil, Phys. Fluids 8, 2255 (1965) | B01 trapping time and bounce scaling | owner must supply |
 | Gould, O'Neil, Malmberg, PRL 19, 219 (1967) | B06 echo theory | owner must supply |
 | Zakharov, Sov. Phys. JETP 35, 908 (1972) | B10 | owner must supply |
-| Dai, arXiv:2608.09827 (N15) | stable AW Galerkin (design note option C) | held locally; reading depth A in physics.md, full read needed for the prototype |
+| Dai, arXiv:2608.09827 (N15) | stable AW Galerkin (design note option C) | held locally; prototyped in studies/dai (gate 1 fails in AW form) |
 
 ## Next steps, in order
 
-1. **Dai stable-AW linear prototype** (running now as lane "dai"). This is test 1-2 of
-   [design/l2-stable-basis.md](design/l2-stable-basis.md). Cost: a standalone 1D1V script, under an hour of CPU.
-   Decisive experiment: frozen-field and Floquet max Re lambda <= 1e-10 wherever AW without a closure is unstable,
-   and the OTSI rates within 1% of the Silin relation at k5/k12/k20. Pass: go to design tests 3-4 (H05 0.1 to t = 700
-   with no closure, and the energy ledger). Fail: keep option A (#66 closure) and try option B (SW).
+1. **Dai stable-AW linear prototype: done, gate 1 failed** (lane "dai", `studies/dai/`, results.md section). Dai's
+   eq. 27 form in AW coordinates is unstable in float64 at Nn >= 64 (frozen max Re lambda up to 1.1, Floquet up to 1.0,
+   OTSI rates wrong); the same Galerkin method written in symmetric Hermite functions of width a/sqrt2 passes gates 1-2
+   (max Re lambda <= 6e-15, OTSI within 0.96% of Silin). Keep option A (#66 closure); the next candidate is option B (SW),
+   whose design tests 3-4 (H05 0.1 to t = 700/1000, energy ledger) are the follow-up.
 2. **v_q/v_te = 0.1 grid reference with vmax > 32 v_te** (running now as lane "gridref", office). The current grid
    is valid only to t of about 650 because f reaches the velocity-box edge. Decisive: with vmax 48-64, does the edge
    fraction stay < 1e-6 past t = 700, and do the grid's dK_e and W_ext agree with Hermite c = 4 past 600? This decides

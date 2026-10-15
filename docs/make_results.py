@@ -264,6 +264,42 @@ def otsi_section():
     return "\n".join(L)
 
 
+def dai_section():
+    """Dai (arXiv 2608.09827) stable AW Galerkin, linear prototype (studies/dai/)."""
+    fr = json.loads((root / "studies/dai/spectra_frozen.json").read_text())["results"]
+    fq = json.loads((root / "studies/dai/spectra_floquet.json").read_text())["results"]
+    ot = json.loads((root / "studies/dai/otsi.json").read_text())["rows"]
+    nm = json.loads((root / "studies/dai/spectra_norm.json").read_text())["results"]
+    cc = json.loads((root / "studies/dai/conserve_cost.json").read_text())
+    def mx(rs, var, key, nn):
+        v = [r[key] for r in rs if r["variant"] == var and r["Nn"] == nn]
+        return f"{max(v):.1e}" if v else "-"
+    L = ["## Dai stable AW Galerkin: linear prototype (`studies/dai/`)", "",
+         "Gate 1: max Re lambda (frozen, K 2/5/10, E1 1e-3..1e-2) and Floquet exponent (E1 8e-3/2e-2, w = 1, Magnus), "
+         "maximum over the points at each Nn. DAI_AW = the paper's eq. 27 form in float64 (AW tridiagonal + one dense "
+         "column); DAI_SW = the same Galerkin method in orthonormal Hermite functions of width a/sqrt2.", "",
+         "| Nn | AW_c0 frozen | DAI_AW frozen | DAI_SW frozen | AW_c0 Floquet | DAI_AW Floquet | DAI_SW Floquet |",
+         "|---|---|---|---|---|---|---|"]
+    for nn in (32, 64, 128):
+        L.append(f"| {nn} | {mx(fr, 'AW_c0', 'max_re', nn)} | {mx(fr, 'DAI_AW', 'max_re', nn)} | {mx(fr, 'DAI_SW', 'max_re', nn)} | "
+                 f"{mx(fq, 'AW_c0', 'floquet', nn)} | {mx(fq, 'DAI_AW', 'floquet', nn)} | {mx(fq, 'DAI_SW', 'floquet', nn)} |")
+    rel = lambda v: max(abs(r[v]["rel"]) for r in ot)
+    big = [r for r in nm if r["variant"] == "DAI_AW" and r["Nn"] == 64]
+    cst = cc["cost"]
+    L += ["", f"Gate 2 (OTSI Floquet rate vs Silin, {len(ot)} points): max relative error AW {100 * rel('AW'):.2f}%, "
+          f"DAI_SW {100 * rel('DAI_SW'):.2f}%, DAI_AW {rel('DAI_AW'):.0f}x (wrong beyond Nn = 32).",
+          f"L2(dv) norm of DAI_AW under exact stepping, Nn 64, t = 1000: grows by {big[0]['l2_norm_ratio']['1000']:.1e} "
+          "(DAI_SW: 1 to 1e-14). Gate 3 (structural): Dai's projected top mode breaks the moments of the parity of N+1: "
+          "even Nn keeps momentum exactly, odd Nn keeps density and energy exactly, never all three (AW keeps all three). "
+          f"Gate 4: block nnz {cst['DAI_AW']['nnz_ratio_vs_AW']:.2f}x AW, matvec "
+          f"{cst['DAI_AW']['matvec_s'] / cst['AW']['matvec_s']:.1f}x, largest entry {cst['DAI_AW']['max_abs_entry']:.0e}.", "",
+          "Verdict: gate 1 FAILS for Dai's AW-coordinate form at Nn >= 64 (round-off: the AW-to-orthonormal change of "
+          "basis has condition ~2^N), so the study stops as declared; the large Floquet cases (floquet_big) were not run. "
+          "The method itself is stable and Silin-accurate, but only when written as symmetric Hermite functions of width "
+          "a/sqrt2, i.e. option B of `docs/design/l2-stable-basis.md`, not a fix that keeps the AW basis."]
+    return "\n".join(L)
+
+
 def noise_floor_section():
     fl = ("1e-16", "1e-15", "1e-14", "1e-13", "1e-12", "1e-10")
     g = lambda part, f, key: nfs.get((part, None if f is None else float(f), key))  # noqa: E731
@@ -647,6 +683,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {nxconv_section()}
 
 {otsi_section()}
+
+{dai_section()}
 
 {phase_space()}
 

@@ -452,6 +452,21 @@ Linear pump-frame Hermite model under a constant dipole pump E0 cos(w0 t); Floqu
 
 Two-stream movie negativity (`studies/instab_twostream.py`): at Nx = 16 it is x-truncation, insensitive to Nn and the closure; raising Nx without the closure triggers the AW truncation instability; Nx = 64 with the #66 closure (c = 1) brings min f from -0.37 to -0.02. The L2-stable basis options are compared in `docs/design/l2-stable-basis.md`.
 
+## Dai stable AW Galerkin: linear prototype (`studies/dai/`)
+
+Gate 1: max Re lambda (frozen, K 2/5/10, E1 1e-3..1e-2) and Floquet exponent (E1 8e-3/2e-2, w = 1, Magnus), maximum over the points at each Nn. DAI_AW = the paper's eq. 27 form in float64 (AW tridiagonal + one dense column); DAI_SW = the same Galerkin method in orthonormal Hermite functions of width a/sqrt2.
+
+| Nn | AW_c0 frozen | DAI_AW frozen | DAI_SW frozen | AW_c0 Floquet | DAI_AW Floquet | DAI_SW Floquet |
+|---|---|---|---|---|---|---|
+| 32 | 7.0e-01 | 8.2e-11 | 3.2e-15 | 1.3e-01 | 9.0e-10 | 1.8e-15 |
+| 64 | 1.0e+00 | 1.0e-02 | 4.0e-15 | 1.5e-01 | 2.4e-02 | 2.9e-15 |
+| 128 | 1.7e+00 | 1.1e+00 | 6.2e-15 | 1.1e-01 | 1.0e+00 | 1.9e-15 |
+
+Gate 2 (OTSI Floquet rate vs Silin, 44 points): max relative error AW 1.36%, DAI_SW 0.96%, DAI_AW 452x (wrong beyond Nn = 32).
+L2(dv) norm of DAI_AW under exact stepping, Nn 64, t = 1000: grows by 8.8e+88 (DAI_SW: 1 to 1e-14). Gate 3 (structural): Dai's projected top mode breaks the moments of the parity of N+1: even Nn keeps momentum exactly, odd Nn keeps density and energy exactly, never all three (AW keeps all three). Gate 4: block nnz 1.38x AW, matvec 2.5x, largest entry 3e+10.
+
+Verdict: gate 1 FAILS for Dai's AW-coordinate form at Nn >= 64 (round-off: the AW-to-orthonormal change of basis has condition ~2^N), so the study stops as declared; the large Floquet cases (floquet_big) were not run. The method itself is stable and Silin-accurate, but only when written as symmetric Hermite functions of width a/sqrt2, i.e. option B of `docs/design/l2-stable-basis.md`, not a fix that keeps the AW basis.
+
 ## Phase-space movies: resolution of the reconstructed f (`python studies/figures.py phase --Nx 64 --field-nu 1`)
 
 Question: how long do fixed-basis Hermite runs resolve f(x, v) itself (not only the field) once trapping starts?
