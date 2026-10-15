@@ -139,7 +139,7 @@ def b04(quick):
             win = (0.5 * period, float(t_end))
             for dark in (False, True):
                 ref = wd if dark else w0
-                for Nn, Nx in (((32, 5),) if quick else ((32, 5), (64, 5), (32, 8))):
+                for Nn, Nx in (((32, 5),) if quick else ((32, 5), (64, 5), (128, 5), (32, 8))):
                     model = model_of(pops, k, Nn, Nx, dark, nu=nus)
                     pert = [(0, (1, 0, 0), seed), (1, (1, 0, 0), seed)]
                     y = ds.consistent_fields(model, ds.maxwellian(model, [1.0, 1.0], pert))
@@ -147,6 +147,13 @@ def b04(quick):
                     out = ds.run(model, y, tmax, n_save=801, rtol=1e-10, atol=1e-20)
                     t, z = out["t"], out["Fk"][:, 0, 0, 1, 0]
                     m = t >= win[0]
+                    if not np.all(np.isfinite(z)):
+                        rows.append({"case": f"B04_TeTi{TeTi:g}_k{kl}", "model": "dark" if dark else "ordinary",
+                                     "Te_over_Ti": TeTi, "k_lambda_De": kl, "Nn": Nn, "Nx": Nx, "nu": nus,
+                                     "fit_window": list(win), "omega_root": [ref.real, ref.imag],
+                                     "nonfinite_E_from_t": float(t[np.argmax(~np.isfinite(z))]), **common(out)})
+                        print(json.dumps(rows[-1]), flush=True)
+                        continue
                     guesses = [ref, -np.conj(ref), wL, -np.conj(wL)]
                     w, res = ds.fit_modes(t[m], z[m], guesses)
                     i = int(np.argmin(np.abs(w - ref)))
