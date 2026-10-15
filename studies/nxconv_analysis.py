@@ -7,6 +7,7 @@ for every k strictly below the top retained mode of the coarser run (k <= Nx/3 -
 |E_k|^2 >= FLOOR (1e-6) x running max |E_1|^2 of the reference run, reported as the first such t over those k (and which k).
 t_pos = first save with K_s <= 0 or k=0 T_x <= 0. Cost = summed steps, rejected, compile + run time over parts.
 Grid: t_fneg = first save with min f_e < -1e-3 max f_e (after either sub-step); edge, energy defect, mass drift.
+gridref: v_q 0.1 wide-box pairs against vmax 64 v_te, Nv 16384, Nx 64 (box, dv, Nx, dt).
 Run: python studies/nxconv_analysis.py -> studies/nxconv/summary.json (+ printed tables)
 """
 import json
@@ -157,6 +158,19 @@ def main():
             if a is not None and b is not None:
                 S["grid_pairs"][f"mask23 vq{vq:g} Nx{nx} vs {2*nx}"] = {"dK_e": t_res(a, b, "dKe"), "W_ext": t_res(a, b, "Wx"),
                                                                     f"Ek2 k<{kmax(nx)}": spec_res(a, b, kmax(nx))}
+    # gridref (batch 11): wider v-box at v_q 0.1, reference = vmax 64 v_te, Nv 16384 (dv as Nv 8192 / vmax 32), Nx 64
+    gr = "g_vq0.1_Nx{}_Nv{}_dt{}_osc_v{}_spectral_xmask23"
+    ref = gd.get(gr.format(64, 16384, 0.02, 64))
+    if ref is not None:
+        for lab, (nx, nv, dt, vm) in {"vmax 64 vs 32 (Nv 8192)": (64, 8192, 0.02, 32),
+                                      "vmax 64 vs 48 (same dv)": (64, 12288, 0.02, 48),
+                                      "vmax 64 Nv 16384 vs 8192": (64, 8192, 0.02, 64),
+                                      "vmax 64 Nx 64 vs 32": (32, 16384, 0.02, 64),
+                                      "vmax 64 dt 0.02 vs 0.01": (64, 16384, 0.01, 64)}.items():
+            b = gd.get(gr.format(nx, nv, dt, vm))
+            if b is not None:
+                S["grid_pairs"][f"gridref vq0.1 {lab}"] = {"dK_e": t_res(ref, b, "dKe"), "W_ext": t_res(ref, b, "Wx"),
+                                                         f"Ek2 k<{kmax(nx)}": spec_res(ref, b, kmax(nx))}
     (D / "nxconv" / "summary.json").write_text(json.dumps(S, indent=1, default=str) + "\n")
     print(json.dumps(S, indent=1, default=str))
 
