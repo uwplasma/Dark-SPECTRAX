@@ -35,10 +35,11 @@ python -m pip install -e ".[test]"
 python -m darkspectrax examples/landau.toml --out artifacts/landau
 ```
 
-The parent is pinned to SPECTRAX commit `f33dfdab2a413c51722846748ee1e9dda5677d72`: the SPECTRAX integration branch
+The parent is pinned to SPECTRAX commit `d6cedcbea9fa4ba99eb283596098998e8b5839bd`: the SPECTRAX integration branch
 `integration/dark-baseline` of unmerged PRs (main `bf41830` plus #48, #46, #13, #12, #9, #55, #50, #44, #18, #51,
 the moving-Hermite-basis stack #56-#60, the lane-A filter #61, the field-scaled closure #66 and the
-species-TOML usability stack #62-#65), not a release.
+species-TOML usability stack #62-#65, then the public mask/weights names #70, separate rtol/atol and
+the per-component error floor #69, and the fixed-step adjoint regression test #68), not a release.
 `--out` receives `run.json` (provenance, solver statistics, ledger and Gauss maxima) and `run.npz`;
 `--resume previous/run.npz` continues from a saved final state.
 

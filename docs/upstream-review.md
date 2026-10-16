@@ -57,3 +57,21 @@ Earlier pins: `9d0982d` (first ten PRs), `c0910a1` (+ #56-#60), `16400f8` (+ #61
 - **#66 (field-scaled closure):** `studies/highk_run.py` calls `spectrax.field_scaled_closure_rate`; equal to the
   former study implementation to 3.4e-16 (`studies/highk_parent_equiv.py`).
 - **#48 (dependencies):** the companion still declares the dependencies itself.
+
+## Upstream PRs of 2026-10-16
+
+Opened from the gap inventory of 2026-10-16. Each PR is stacked, so it gets no CI; the tests were run locally. All three are merged into
+`integration/dark-baseline` `d6cedcb`, where the full suite gives 201 passed and 1 xfailed.
+
+- **#68** (on #44): a strict-xfail regression test for the Diffrax 0.7.2 checkpoint-adjoint defect (201 saves on the
+  fixed-step grid, 2.5% off ForwardMode), a passing test of `checkpoints = max_steps`, and a docstring warning. The default is
+  not changed: the step count is traced inside `simulation`, and the default `max_steps = 1e6` rules out storing a checkpoint
+  for every step.
+- **#69** (on #50): `ode_rtol` and `ode_atol` (default `ode_tolerance`, bitwise unchanged), and `FlooredPIDController` (a
+  per-component absolute error floor). Dark-SPECTRAX `noise_floor` now uses it, and the former `_FlooredPID` is removed.
+- **#70** (on #9): the public names `rfft_weights` and `twothirds_mask`. The adapter in `darkspectrax/_model.py` now imports only
+  public parent names. Study scripts keep their recorded imports.
+
+Kept in the companion: the differentiable `solve`/`with_params`, compile-once segments with a traced `t0`, the positivity stop
+and the per-species row policy of `noise_floor`. The field-scaled closure is installed by wrapping `rhs` in the studies; that
+needs a companion RHS hook, not a parent change.

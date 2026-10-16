@@ -16,6 +16,7 @@ import diffrax
 import jax
 import jax.numpy as jnp
 import numpy as np
+import spectrax
 
 from ._diagnostics import charge_density, energies, gauss_residuals, moments
 from ._model import PARENT_COMMIT, Model, rhs
@@ -105,26 +106,16 @@ def _compile(model, y0, t_max, n_save, rtol, atol, dt0, solver, max_steps, progr
         elif noise_floor is None:
             controller = diffrax.PIDController(rtol=rtol, atol=atol, dtmin=dtmin, force_dtmin=False)
         else:
-            controller = _FlooredPID(rtol=rtol, atol=atol, dtmin=dtmin, force_dtmin=False,
-                                     floor=_row_floor(model, y0["Ck"], noise_floor))
+            floor = {k: None for k in y0}
+            floor["Ck"] = _row_floor(model, y0["Ck"], noise_floor)
+            controller = spectrax.FlooredPIDController(rtol=rtol, atol=atol, dtmin=dtmin, force_dtmin=False,
+                                                       floor=floor)
         ts = t0 + jnp.linspace(0.0, t_max, n_save)
         return diffrax.diffeqsolve(
             term, solver, t0, t0 + t_max, dt0, y0, saveat=diffrax.SaveAt(ts=ts),
             stepsize_controller=controller, max_steps=max_steps, throw=False, progress_meter=meter)
 
     return solve.lower(y0, jnp.asarray(0.0)).compile()
-
-
-class _FlooredPID(diffrax.PIDController):
-    """PID control with an absolute error floor per Ck row (``floor``): err / (atol + floor + rtol |y|)."""
-
-    floor: jax.Array = None
-
-    def adapt_step_size(self, t0, t1, y0, y1_candidate, args, y_error, error_order, controller_state):
-        y = jnp.maximum(jnp.abs(y0["Ck"]), jnp.abs(jnp.nan_to_num(y1_candidate["Ck"])))
-        shrink = (self.atol + self.rtol * y) / (self.atol + self.floor + self.rtol * y)
-        y_error = {**y_error, "Ck": y_error["Ck"] * shrink}
-        return super().adapt_step_size(t0, t1, y0, y1_candidate, args, y_error, error_order, controller_state)
 
 
 CONTROLS = {"noise_floor": 1e-14}
@@ -156,7 +147,8 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
     Step limits follow the parent's PR #50 semantics: ``max_steps`` is the step budget and
     ``dtmin`` (default None: no floor) stops the solve with ``dt_min_reached`` instead of
     crawling; ``num_valid_times`` counts the saves that hold a solution.
-    ``noise_floor`` (default None: plain PID) adds ``noise_floor * |C_000,s(k=0)|`` to ``atol`` on the
+    ``noise_floor`` (default None: plain PID; otherwise the parent's ``FlooredPIDController``) adds
+    ``noise_floor * |C_000,s(k=0)|`` to ``atol`` on the
     rows of species ``s``, so round-off in coefficients far below a species' own scale cannot drive the
     step size (see docs/results.md, unseeded pump-frame stall). ``cache`` (a dict) reuses the compiled
     solve across calls with equal settings and shapes; ``t0`` is a traced argument.
@@ -239,8 +231,9 @@ def solve(model: Model, y0, t_max, n_save=2, params=None, rtol=1e-10, atol=1e-12
     ``jax.jvp``. ``params`` (dict) are passed to ``with_params``; ``adjoint`` is passed to Diffrax
     (default ``RecursiveCheckpointAdjoint()``; use ``diffrax.ForwardMode()`` for ``jax.jvp``/``jacfwd``).
     With ``fixed_dt`` and many saves on step boundaries, Diffrax 0.7.2 ``RecursiveCheckpointAdjoint`` gradients
-    were measured wrong by a few percent (studies/c09, docs/results.md C09); use ``DirectAdjoint()`` or
-    ``ForwardMode()`` there. Objectives of the final state only (``n_save=2``) were exact.
+    were measured wrong by a few percent (studies/c09, docs/results.md C09; parent test in SPECTRAX #68);
+    use ``DirectAdjoint()``, ``ForwardMode()`` or
+    ``RecursiveCheckpointAdjoint(checkpoints=max_steps)`` there. Objectives of the final state only (``n_save=2``) were exact.
     """
     m = with_params(model, **(params or {}))
     term = diffrax.ODETerm(lambda t, y, args: rhs(t, y, m))
@@ -261,7 +254,7 @@ def adapt_basis(model: Model, y, t=None, schedule_basis=None, **trigger):
     its record. Replay: ``schedule_basis`` is a recorded basis, applied without any decision.
     Returns ``(y, record)``; ``record`` is None when nothing fired.
     """
-    from spectrax._remap import remap, remap_event, remap_trigger
+    from spectrax import remap, remap_event, remap_trigger
 
     shape = (model.Nn, model.Nm, model.Np, model.Ns)
     if schedule_basis is not None:

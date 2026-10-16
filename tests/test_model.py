@@ -9,7 +9,7 @@ import pytest
 from numpy.polynomial import hermite as H
 
 import darkspectrax as ds
-from spectrax._simulation import ode_system as parent_ode_system
+from spectrax import ode_system as parent_ode_system
 
 ORD = (5, 4, 3)  # unequal (Nn, Nm, Np) catch axis permutations
 A_S = (0.7, 1.1, 0.9, 0.35, 0.25, 0.45)
@@ -258,7 +258,7 @@ def test_kx0_perturbation_keeps_conjugate_pair():
 @pytest.mark.parametrize("Nx", [1, 2, 3, 6, 7, 8, 9])
 def test_inner_weights_are_parent_parseval_weights(Nx):
     """inner() uses the parent's rfft weights (PR #9); they reproduce the real-space box average."""
-    from spectrax._diagnostics import _rfft_weights
+    from spectrax import rfft_weights as _rfft_weights
     from darkspectrax._model import _weights
     assert np.array_equal(np.asarray(_weights(Nx, (1, Nx // 2 + 1, 1)))[0, :, 0], np.asarray(_rfft_weights(Nx, Nx // 2 + 1)))
     rng = np.random.default_rng(Nx)

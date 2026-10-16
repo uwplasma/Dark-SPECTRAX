@@ -20,19 +20,19 @@ import jax.numpy as jnp
 import numpy as np
 
 # ---------------------------------------------------------------------------
-# Version-pinned adapter to the parent (private names at the pinned commit).
+# Version-pinned adapter to the parent (public names since SPECTRAX #70).
 # ---------------------------------------------------------------------------
-from spectrax._initialization import initialize_simulation_parameters as _parent_init
-from spectrax._diagnostics import _rfft_weights as _parent_rfft_weights
-from spectrax._model import Hermite_Fourier_system as _parent_kinetic
-from spectrax._model import plasma_current as _parent_current
-from spectrax._model import uniform_acceleration as _parent_uniform_acceleration
-from spectrax._simulation import _twothirds_mask as _parent_mask
-from spectrax._simulation import cross_product as _cross
+from spectrax import Hermite_Fourier_system as _parent_kinetic
+from spectrax import cross_product as _cross
+from spectrax import initialize_simulation_parameters as _parent_init
+from spectrax import plasma_current as _parent_current
+from spectrax import rfft_weights as _parent_rfft_weights
+from spectrax import twothirds_mask as _parent_mask
+from spectrax import uniform_acceleration as _parent_uniform_acceleration
 
 jax.config.update("jax_enable_x64", True)
 
-PARENT_COMMIT = "f33dfdab2a413c51722846748ee1e9dda5677d72"  # SPECTRAX integration/dark-baseline, not a release
+PARENT_COMMIT = "d6cedcbea9fa4ba99eb283596098998e8b5839bd"  # SPECTRAX integration/dark-baseline, not a release
 MODES = ("ordinary", "prescribed_drive", "self_consistent")
 FRAMES = ("fixed", "pump")
 _FFT_AXES = (-1, -3, -2)  # parent convention: rfft along x, stored on axis -2
@@ -146,7 +146,7 @@ def basis_of(model: Model, y=None):
 
 
 def _weights(Nx, shape):
-    """Parseval weights for rfft storage along x: <f g> = sum w Re(f_k g_k*) (parent's, from PR #9)."""
+    """Parseval weights for rfft storage along x: <f g> = sum w Re(f_k g_k*) (parent's ``rfft_weights``, PR #9/#70)."""
     return _parent_rfft_weights(Nx, shape[1])[None, :, None]
 
 
