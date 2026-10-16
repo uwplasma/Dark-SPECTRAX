@@ -109,6 +109,15 @@
    "passed_resolution": false,
    "passed_estimate": true,
    "passed_ledger_gauss": true,
+   "pair_c2": {
+    "T_res": 133.5,
+    "t_end_refined": 139.0,
+    "t_peak_base": 120.5,
+    "t_peak_refined": 120.5,
+    "B_peak_refined": 0.0901059377397902,
+    "peak_agreement": 0.004285237162706927,
+    "passed": true
+   },
    "dark_over_ordinary_B_peak": 1.0,
    "dark_over_ordinary_estimate": 1.0
   },
@@ -210,6 +219,15 @@
    "passed_resolution": false,
    "passed_estimate": true,
    "passed_ledger_gauss": true,
+   "pair_c2": {
+    "T_res": 124.0,
+    "t_end_refined": 127.5,
+    "t_peak_base": 115.5,
+    "t_peak_refined": 115.5,
+    "B_peak_refined": 0.09610189648110186,
+    "peak_agreement": 0.004034262796089512,
+    "passed": true
+   },
    "dark_over_ordinary_B_peak": 1.0667248664856264,
    "dark_over_ordinary_estimate": 1.0914471821724159
   },
@@ -311,12 +329,21 @@
    "passed_resolution": false,
    "passed_estimate": true,
    "passed_ledger_gauss": true,
+   "pair_c2": {
+    "T_res": 127.0,
+    "t_end_refined": 133.0,
+    "t_peak_base": 117.5,
+    "t_peak_refined": 117.5,
+    "B_peak_refined": 0.09331984697721196,
+    "peak_agreement": 0.00412403753465012,
+    "passed": true
+   },
    "dark_over_ordinary_B_peak": 1.0357997973781061,
    "dark_over_ordinary_estimate": 1.0493839450766795
   }
  ],
- "repository_commit": "ef0173360402fb1029a5d5b099993eb54ae1b096",
+ "repository_commit": "ce4746feae8a230cb51ffb1c8f5694aea6553347",
  "parent_commit": "d6cedcbea9fa4ba99eb283596098998e8b5839bd",
  "command": "python studies/b09_closure.py satan",
- "wall_time": 1.5717618750059046
+ "wall_time": 0.3727472499886062
 }

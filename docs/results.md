@@ -322,7 +322,37 @@ Relative growth error |gamma_fit - gamma_root|/gamma_root. Levels (Nx, Nn, Nm): 
 - Ledger: max relative defect over all 162 linear runs 1.1e-07 (gate 1e-6); Gauss residuals at or below 1e-15 of max |F_k| everywhere (gate 1e-10).
 - k <= 1.2: all levels pass. k >= 1.6: Nn = 32/64 are unconverged (small xi = gamma/(k a_x), resonant width gamma/k << a_x); the ladder reaches the 1e-3 accuracy at Nn = 512 for every case, and the 1e-4 Nn/2 -> Nn step everywhere except Weibel at k = 2.4 (all three models), which fails the step gate.
 - One Part-1 failure is a fit-selection artifact: Weibel dark Omega_D = 0.3, k = 0.4, x-refined level, where the largest-Im fitted mode was spurious (Re w / gamma = 8.5); the ladder uses the mode nearest i gamma_root instead.
-- Nonlinear part (k0 = 1.2, levels (16,32,16)/(16,64,32)/(32,32,16)): NOT completed, no record. The full run ended in status failure at the base and v-doubled Weibel levels (1.5 h and 5.4 h of run time, no peak found; stopped before the remaining levels); a later uncommitted probe of the ordinary Weibel base level showed linear growth to U_B = 1.5e-3 by t = 113 with the adaptive step count jumping from 514 (t = 110) to 55150 (t = 113) while U_B was still rising, so the saturation peak (bounce estimate B_sat = 4.6e-2) is not reached at affordable cost. No saturation claim is made.
+- Nonlinear part of `studies/b09.py` (no record): the full run ended in status failure at the base and v-doubled Weibel levels; it is replaced by the chunked closure study below.
+
+### B09 nonlinear: step collapse = AW truncation instability driven by the magnetic force (`python studies/b09_closure.py probe|spectrum|sat|satan`)
+
+Weibel, k0 = 1.2, seed B_z = 1e-6, chunks of 2 time units with checkpoints; declared criteria and three amendments (each committed before its runs) in the script docstring. Closures (order-2 hypercollision, rows of degree <= 2 untouched): E = the SPECTRAX #66 rate c |q/m| sqrt(2N) max|E - <E>|/a; EB = the same with the per-axis Lorentz force scale |E_i - <E_i>| + sum_j V_j |B_l - <B_l>|, V_j = |u_j| + a_j sqrt(2 N_j).
+
+| closure (base level, ordinary) | chunk that fails (20000-step budget) | top-third Hermite energy > 0.1 at |
+|---|---|---|
+| none_c0 | t = 112.0 | t = 110.0 |
+| E_c1 | t = 114.0 | t = 110.0 |
+| EB_c1 | t = 148.0 | t = None |
+
+Frozen-field kinetic spectrum (fields frozen at the c = 0 state, ARPACK on the JVP): largest Re lambda (the Weibel growth rate is 0.108) and the fraction of that mode's energy in the top third of the Hermite ladder.
+
+| t | U_B | c = 0 | E, c = 1 | EB, c = 1 |
+|---|---|---|---|---|
+| 100 | 1.72e-04 | 1.31 (1) | 1.23 (1) | 0.00221 (4.7e-07) |
+| 108 | 7.58e-04 | 2.65 (1) | 2.39 (1) | 0.247 (0.054) |
+
+Saturation with EB (to t = 140). B_peak = 2|B_force,z(k0)| at the first maximum of U_B; B_sat = gamma^2/(k0 v_perp). G3a over all four comparisons at c = 1 fails for every model, because the velocity-doubled run (16,64,32) at c = 1 fails before the peak; amendment 3 pairs base and velocity-doubled at c = 2.
+
+| model | gamma | B_sat | t_peak | B_peak (base c=1) | B_peak/B_sat | x-doubled, c=0.5, c=2: max peak change | v-doubled c=2 vs base c=2: peak change, T_res | dark/ordinary B_peak (estimate) |
+|---|---|---|---|---|---|---|---|---|
+| ordinary | 0.1078 | 4.561e-02 | 120.5 | 0.0900 | 1.97 | 2.6e-03 | 4.3e-03, 133.5 | 1.000 (1.000) |
+| OD0.3 | 0.1126 | 4.978e-02 | 115.5 | 0.0960 | 1.93 | 2.6e-03 | 4.0e-03, 124.0 | 1.067 (1.091) |
+| OD1.2 | 0.1104 | 4.786e-02 | 117.5 | 0.0932 | 1.95 | 2.6e-03 | 4.1e-03, 127.0 | 1.036 (1.049) |
+
+- Ledger <= 2.6e-14 of the max field perturbation energy, Gauss <= 1e-14 in every saturation run.
+- Mechanism: at c = 0 the frozen-field operator has a growing mode with Re lambda 12-25x the Weibel rate, all in the top third of the Hermite ladder (the AW truncation instability of the H05 section, here driven by v x B); the electric-only #66 rate barely changes it (E_x is small in Weibel), the EB rate removes it at t = 100 and reduces it 10x at t = 108.
+- EB at c = 1 only postpones the collapse (t = 110 -> 146 at the base level), c = 0.5 becomes truncation-dominated at t = 126-132, and the velocity-doubled level fails at t = 112-118 at c = 1 and 126-138 at c = 2 (there with top-third energy ~1e-6, so that late failure is not the Hermite top-mode instability). Nothing is claimed after the first U_B maximum.
+- Claim (within the resolved window, t <= T_res): the first magnetic-energy maximum is at t = 115.5-120.5 with B_peak = 1.93-1.97 B_sat for ordinary and both dark models, unchanged to <= 0.5% by x-doubling, closure strength 0.5/2 and (at c = 2) velocity doubling. The dark/ordinary ratio of B_peak follows the bounce estimate to 2.3% (OD 0.3) and 1.3% (OD 1.2). Filamentation was not run.
 
 ## B11: collisional relaxation with the conservative Dougherty operator (`python studies/b11.py`)
 
