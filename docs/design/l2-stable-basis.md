@@ -50,3 +50,10 @@ orthonormal basis it passes tests 1-2 (max Re lambda <= 6e-15; OTSI within 0.96%
 the moments of one parity of N+1 (never density, momentum and energy together) and costs 1.4x nnz, 2.5x matvec.
 C is rejected; A stays in production and B is the remaining candidate for tests 3-4.
 
+## Verdict on B (2026-10-15, `studies/sw/`, docs/results.md)
+
+Tests 3-4 fail as declared. H05 v_q 0.1, nu = 0, RK4 dt 0.02: every SW run (Nx 16/32, Nn 64-256) goes non-finite
+between t = 637.5 and 737.5, and Nn 256 dies earlier than Nn 128 at Nx 32. The Nx16 Nn pair agrees only to t = 634
+(rejection threshold 650) and the Nx16 Nn64 energy ledger reaches 1.2e-3 W_ext before t = 600 (Nx32: <= 1.9e-5).
+Until blow-up SW tracks the grid through the OTSI growth. Electron density and momentum are not exact (2.3e-3 and
+1.1e-3 at Nx16 Nn64, down to ~5e-8 at Nx32 Nn256). B is rejected; A (#66 closure) stays in production.

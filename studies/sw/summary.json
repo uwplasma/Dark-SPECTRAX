@@ -1,0 +1,241 @@
+{
+ "vs_grid": [
+  {
+   "run": "sw_vq0.1_Nx16_Nn128_dt0.02_T1000",
+   "grid": "g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23",
+   "dK_e": ">=703.5",
+   "W_ext": ">=703.5",
+   "spectrum": "461.5 (k3)"
+  },
+  {
+   "run": "sw_vq0.1_Nx16_Nn128_dt0.02_T1000",
+   "grid": "g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23",
+   "dK_e": ">=703.5",
+   "W_ext": ">=703.5",
+   "spectrum": "461.5 (k3)"
+  },
+  {
+   "run": "sw_vq0.1_Nx16_Nn64_dt0.02_T1000",
+   "grid": "g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23",
+   "dK_e": 634.5,
+   "W_ext": 637.5,
+   "spectrum": "445.5 (k3)"
+  },
+  {
+   "run": "sw_vq0.1_Nx16_Nn64_dt0.02_T1000",
+   "grid": "g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23",
+   "dK_e": 634.5,
+   "W_ext": 637.5,
+   "spectrum": "445.5 (k3)"
+  },
+  {
+   "run": "sw_vq0.1_Nx32_Nn128_dt0.02_T1000",
+   "grid": "g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23",
+   "dK_e": 737.5,
+   "W_ext": ">=738",
+   "spectrum": "619.5 (k4)"
+  },
+  {
+   "run": "sw_vq0.1_Nx32_Nn128_dt0.02_T1000",
+   "grid": "g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23",
+   "dK_e": 737.5,
+   "W_ext": ">=738",
+   "spectrum": "633 (k4)"
+  },
+  {
+   "run": "sw_vq0.1_Nx32_Nn256_dt0.02_T1000",
+   "grid": "g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23",
+   "dK_e": ">=685",
+   "W_ext": ">=685",
+   "spectrum": "622.5 (k4)"
+  },
+  {
+   "run": "sw_vq0.1_Nx32_Nn256_dt0.02_T1000",
+   "grid": "g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23",
+   "dK_e": ">=685",
+   "W_ext": ">=685",
+   "spectrum": "638 (k5)"
+  },
+  {
+   "run": "sw_vq0.1_Nx32_Nn64_dt0.02_T1000",
+   "grid": "g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23",
+   "dK_e": 681.0,
+   "W_ext": ">=681.5",
+   "spectrum": "557 (k4)"
+  },
+  {
+   "run": "sw_vq0.1_Nx32_Nn64_dt0.02_T1000",
+   "grid": "g_vq0.1_Nx32_Nv16384_dt0.02_osc_v64_spectral_xmask23",
+   "dK_e": 681.0,
+   "W_ext": ">=681.5",
+   "spectrum": "557 (k4)"
+  }
+ ],
+ "pairs": [
+  {
+   "a": "sw_vq0.1_Nx32_Nn128_dt0.02_T1000",
+   "b": "sw_vq0.1_Nx32_Nn64_dt0.02_T1000",
+   "dK_e": 680.5,
+   "W_ext": ">=681.5",
+   "spectrum": "557 (k4)"
+  },
+  {
+   "a": "sw_vq0.1_Nx32_Nn256_dt0.02_T1000",
+   "b": "sw_vq0.1_Nx32_Nn128_dt0.02_T1000",
+   "dK_e": ">=685",
+   "W_ext": ">=685",
+   "spectrum": "633.5 (k4)"
+  },
+  {
+   "a": "sw_vq0.1_Nx16_Nn128_dt0.02_T1000",
+   "b": "sw_vq0.1_Nx16_Nn64_dt0.02_T1000",
+   "dK_e": 634.0,
+   "W_ext": 637.5,
+   "spectrum": "456 (k4)"
+  },
+  {
+   "a": "sw_vq0.1_Nx32_Nn64_dt0.02_T1000",
+   "b": "sw_vq0.1_Nx16_Nn64_dt0.02_T1000",
+   "dK_e": 634.0,
+   "W_ext": 637.5,
+   "spectrum": "445.5 (k3)"
+  },
+  {
+   "a": "sw_vq0.1_Nx32_Nn128_dt0.02_T1000",
+   "b": "sw_vq0.1_Nx16_Nn128_dt0.02_T1000",
+   "dK_e": ">=703.5",
+   "W_ext": ">=703.5",
+   "spectrum": "464 (k3)"
+  }
+ ],
+ "ledger": [
+  {
+   "case": "sw_vq0.1_Nx16_Nn128_dt0.02_T1000",
+   "T": 703.5,
+   "finite": false,
+   "wall_time": 43.6670123750082,
+   "steps": 35175,
+   "rhs_evals": 140700,
+   "max_energy_defect_over_runmaxW_t<=600": 0.00040729988675480947,
+   "first_energy_defect_over_W_gt_1e-3": 629.0,
+   "max_mass_drift_e": NaN,
+   "max_mass_drift_i": NaN,
+   "max_momentum_drift": NaN,
+   "max_momentum_drift_t<=600": 0.00024627838595647766,
+   "max_L2_drift_e": NaN,
+   "max_top_frac": NaN,
+   "repository_commit": "70f5d129fddf0e46bf855f536fad35df887dcc76",
+   "command": "python studies/sw/sw_run.py --vq 0.1 --T 1000 --dt 0.02 --Nx 16 --Nn 128"
+  },
+  {
+   "case": "sw_vq0.1_Nx16_Nn64_dt0.02_T1000",
+   "T": 638.0,
+   "finite": false,
+   "wall_time": 18.090278042000136,
+   "steps": 31900,
+   "rhs_evals": 127600,
+   "max_energy_defect_over_runmaxW_t<=600": 0.0011569920769267889,
+   "first_energy_defect_over_W_gt_1e-3": 590.5,
+   "max_mass_drift_e": NaN,
+   "max_mass_drift_i": NaN,
+   "max_momentum_drift": NaN,
+   "max_momentum_drift_t<=600": 0.0011203559930585971,
+   "max_L2_drift_e": NaN,
+   "max_top_frac": NaN,
+   "repository_commit": "70f5d129fddf0e46bf855f536fad35df887dcc76",
+   "command": "python studies/sw/sw_run.py --vq 0.1 --T 1000 --dt 0.02 --Nx 16 --Nn 64"
+  },
+  {
+   "case": "sw_vq0.1_Nx32_Nn128_dt0.02_T1000",
+   "T": 738.0,
+   "finite": false,
+   "wall_time": 56.516649291006615,
+   "steps": 36900,
+   "rhs_evals": 147600,
+   "max_energy_defect_over_runmaxW_t<=600": 7.866735992198566e-06,
+   "first_energy_defect_over_W_gt_1e-3": 704.5,
+   "max_mass_drift_e": NaN,
+   "max_mass_drift_i": NaN,
+   "max_momentum_drift": NaN,
+   "max_momentum_drift_t<=600": 1.7450180067601906e-06,
+   "max_L2_drift_e": NaN,
+   "max_top_frac": NaN,
+   "repository_commit": "70f5d129fddf0e46bf855f536fad35df887dcc76",
+   "command": "python studies/sw/sw_run.py --vq 0.1 --T 1000 --dt 0.02 --Nx 32 --Nn 128"
+  },
+  {
+   "case": "sw_vq0.1_Nx32_Nn256_dt0.02_T1000",
+   "T": 685.0,
+   "finite": false,
+   "wall_time": 178.81750787499186,
+   "steps": 34250,
+   "rhs_evals": 137000,
+   "max_energy_defect_over_runmaxW_t<=600": 7.866735992198566e-06,
+   "first_energy_defect_over_W_gt_1e-3": 682.0,
+   "max_mass_drift_e": NaN,
+   "max_mass_drift_i": NaN,
+   "max_momentum_drift": NaN,
+   "max_momentum_drift_t<=600": 3.787371183339161e-08,
+   "max_L2_drift_e": NaN,
+   "max_top_frac": NaN,
+   "repository_commit": "70f5d129fddf0e46bf855f536fad35df887dcc76",
+   "command": "python studies/sw/sw_run.py --vq 0.1 --T 1000 --dt 0.02 --Nx 32 --Nn 256"
+  },
+  {
+   "case": "sw_vq0.1_Nx32_Nn64_dt0.02_T1000",
+   "T": 681.5,
+   "finite": false,
+   "wall_time": 23.152821959010907,
+   "steps": 34075,
+   "rhs_evals": 136300,
+   "max_energy_defect_over_runmaxW_t<=600": 1.8506696506832714e-05,
+   "first_energy_defect_over_W_gt_1e-3": 658.0,
+   "max_mass_drift_e": NaN,
+   "max_mass_drift_i": NaN,
+   "max_momentum_drift": NaN,
+   "max_momentum_drift_t<=600": 1.4806973031245008e-05,
+   "max_L2_drift_e": NaN,
+   "max_top_frac": NaN,
+   "repository_commit": "70f5d129fddf0e46bf855f536fad35df887dcc76",
+   "command": "python studies/sw/sw_run.py --vq 0.1 --T 1000 --dt 0.02 --Nx 32 --Nn 64"
+  }
+ ],
+ "cost": [
+  {
+   "case": "vq0.1_Nx32_Nn64_c4_nf1e-14",
+   "T": 820.0,
+   "steps": 35619,
+   "rejected": 13663,
+   "run_time": 67.55672412470449,
+   "wall_time": 115.8456641669618
+  },
+  {
+   "case": "vq0.1_Nx64_Nn64_c4_nf1e-14",
+   "T": 760.0,
+   "steps": 28022,
+   "rejected": 11689,
+   "run_time": 87.5358027057955,
+   "wall_time": 128.92536954197567
+  }
+ ],
+ "gates": {
+  "G3_t_vs_grid": {
+   "sw_vq0.1_Nx16_Nn128_dt0.02_T1000": 703.5,
+   "sw_vq0.1_Nx16_Nn64_dt0.02_T1000": 634.5,
+   "sw_vq0.1_Nx32_Nn128_dt0.02_T1000": 737.5,
+   "sw_vq0.1_Nx32_Nn256_dt0.02_T1000": 685.0,
+   "sw_vq0.1_Nx32_Nn64_dt0.02_T1000": 681.0
+  },
+  "G3_pairs_min": 634.0,
+  "G3_pass": false,
+  "G3_reject_before_650": true,
+  "G4_max": {
+   "sw_vq0.1_Nx16_Nn128_dt0.02_T1000": 0.00040729988675480947,
+   "sw_vq0.1_Nx16_Nn64_dt0.02_T1000": 0.0011569920769267889,
+   "sw_vq0.1_Nx32_Nn128_dt0.02_T1000": 7.866735992198566e-06,
+   "sw_vq0.1_Nx32_Nn256_dt0.02_T1000": 7.866735992198566e-06,
+   "sw_vq0.1_Nx32_Nn64_dt0.02_T1000": 1.8506696506832714e-05
+  },
+  "G4_pass": false
+ }
+}

@@ -130,6 +130,8 @@ physics.md sets the rule: only full-text sources may set a benchmark.
    OTSI rates wrong); the same Galerkin method written in symmetric Hermite functions of width a/sqrt2 passes gates 1-2
    (max Re lambda <= 6e-15, OTSI within 0.96% of Silin). Keep option A (#66 closure); the next candidate is option B (SW),
    whose design tests 3-4 (H05 0.1 to t = 700/1000, energy ledger) are the follow-up.
+   **Option B (SW) tests 3-4: done, rejected** (`studies/sw/`, results.md): all SW runs blow up at t = 637-738,
+   the Nx16 Nn pair agrees only to t = 634 and the Nx16 Nn64 ledger hits 1.2e-3 W_ext before t = 600. A stays.
 2. **v_q/v_te = 0.1 grid reference with vmax > 32 v_te: done** (lane "gridref", batch 11, results.md). vmax 48/64
    moves edge contact only from t = 701.5 to 754.5 (tail accelerated past 64 v_te), and negativity at t = 645.5 is
    set by Nx, not the box. Grid reference certified for dK_e/W_ext to about 750, spectrum to about 640; Hermite c = 4

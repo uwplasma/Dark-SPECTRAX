@@ -1,0 +1,18 @@
+{
+ "case": "sw_vq0.1_Nx16_Nn128_dt0.02_T1000",
+ "T": 703.5,
+ "finite": false,
+ "wall_time": 43.6670123750082,
+ "steps": 35175,
+ "rhs_evals": 140700,
+ "max_energy_defect_over_runmaxW_t<=600": 0.00040729988675480947,
+ "first_energy_defect_over_W_gt_1e-3": 629.0,
+ "max_mass_drift_e": NaN,
+ "max_mass_drift_i": NaN,
+ "max_momentum_drift": NaN,
+ "max_momentum_drift_t<=600": 0.00024627838595647766,
+ "max_L2_drift_e": NaN,
+ "max_top_frac": NaN,
+ "repository_commit": "70f5d129fddf0e46bf855f536fad35df887dcc76",
+ "command": "python studies/sw/sw_run.py --vq 0.1 --T 1000 --dt 0.02 --Nx 16 --Nn 128"
+}
