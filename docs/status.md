@@ -6,11 +6,12 @@ Results and their records are in [results.md](results.md); the model and the lit
 
 ## Code health
 
-- Parent pin: SPECTRAX `integration/dark-baseline` `d6cedcb` (main `bf41830` plus the open PRs listed in the README).
+- Parent pin: SPECTRAX `integration/dark-baseline` `a4bdd72` (main `bf41830` plus the open PRs listed in the README).
+  The repin from `d6cedcb` (2026-10-16) only adds #71 (Dougherty collisions, default off, RHS unchanged when off).
   Records made before 2026-10-16 name `f33dfda`; the repin to `d6cedcb` only adds #68-#70 and changes no record: a seeded pump-frame run
   with plain PID and with `noise_floor = 1e-14` is bitwise equal before and after.
   This is the current head of that branch. It is not a release, and none of those PRs is merged upstream.
-- Tests: 62 pass locally (CPU, float64, Python 3.13, `pytest -n 2 --cov`), coverage 99.8% of 460 statements;
+- Tests: 65 pass locally (CPU, float64, Python 3.13, `pytest -n 2 --cov`), coverage 99.8% of 460 statements;
   flake8 is clean. GitHub CI runs the same tests on Python 3.11 and 3.13.
 - Spot check: 10 README numbers were compared with their JSON records, and all match to the printed digits:
   the B00 roots and fits at k = 0.2-0.7, the two-stream and bump-on-tail growth rates, the mixing shifts
@@ -69,7 +70,7 @@ Status: **done** = passing test or record on main; **partial** = covered in part
 | B08 | magnetized rotation, EM waves | done for uniform B0 ([records](../studies/b08/), results.md): rotation of U, E_0 and the full covariance vs the exact 6x6/expm reference to 2e-11 for four B0 directions and both charge signs, zero magnetic work; 40 cold R/L/whistler/Langmuir/O/X eigenmodes (ordinary and dark, eta = 0.3, Omega_D = 1.2) from the full field-current eigenproblem, fit within 1e-3 at v_t = 0.01, warm error scaling as v_t^2, Nn-converged; Proca flux incl. Omega_D^2 phi_D A_D closes pointwise to 3e-14. Failed gates (n = 1e-4 rotation: fit window, small-K0 ledger ratio, mis-specified K_perp gate) documented. Open: warm/Bernstein reference, nonuniform B0 |
 | B09 | Weibel, filamentation | linear done in 1D3V ([records](../studies/b09/), results.md): bi-Maxwellian Weibel and counter-streaming filamentation, ordinary and dark (eta = 0.3, Omega_D = 0.3 near the transverse Proca branch and 1.2), growth vs an independent kinetic transverse dispersion relation with Proca coupling, k = 0.4-2.4; within 1e-3 at every k (Nn = 512 needed at k >= 1.6), ledger <= 1.1e-7. Failed gates: Weibel k = 2.4 Nn 256->512 step > 1e-4 (all models), one spurious fit-mode pick (dark Omega_D = 0.3, k = 0.4, Nx = 9). Open: nonlinear saturation not reached (adaptive step collapse at t ~ 110-113 just before the peak; no claim) |
 | B10 | Langmuir modulational / Zakharov | not started; Zakharov 1972 Secs. 1-2 read (physics.md C3): use eqs. 2.8/2.9 directly, the printed gamma_max = q w omega_p/16 does not follow from 2.8 (gives /4); no dark term at that order |
-| B11 | collisional relaxation | blocked: Dark-SPECTRAX has no physical collision operator (the parent `nu` is a numerical closure); Dougherty moments derived (algebra only), Hakim et al. not read |
+| B11 | collisional relaxation | done for homogeneous uncharged cases ([record](../studies/b11/run.json), results.md B11): conservative Dougherty operator (parent #71, `collision_model = "dougherty"`); two-beam relaxation at exactly n nu per mode, 3V anisotropy exp(-2 nu t) to 4e-11, two-species temperature equilibration (m ratio 4, 100) and drift relaxation vs the exact rates to 1e-13, momentum and energy to round-off. Open: inhomogeneous (collisional Landau), dark-coupled and charged cases; cross-species beta convention not checked against Francisquez et al. |
 | B12 | off-resonant forcing with drag | partial: response and absorbed power derived (algebra only); no run |
 
 ### C: numerical verification
@@ -98,7 +99,7 @@ Status: **done** = passing test or record on main; **partial** = covered in part
 | H05 | strong resonant drive | partial: certified windows v_q/v_te = 0.01 to 1000, 0.03 to about 960-1000, 0.1 to about 600 (grid reference to about 750); 0.1 to t = 1000 blocked by the AW truncation instability and the OTSI high-k stage |
 | H06 | swept drive | partial: homogeneous check done; kinetic runs lose resolution before the crossing |
 | H07 | finite dark reservoir | done (homogeneous, eta 1e-3 / 0.03) |
-| H08 | collisions | blocked (as B11) |
+| H08 | collisions | unblocked: operator available (B11, parent #71); no HHS collisional run yet |
 | H09 | 1D3V / 2D3V | partial: all runs are 1D3V; 2D3V not run |
 | H10 | reduced envelope model | not started |
 
@@ -107,7 +108,7 @@ Status: **done** = passing test or record on main; **partial** = covered in part
 | ID | Item | Status |
 |---|---|---|
 | R1 | finite coherence / reservoir | partial: H07 homogeneous only |
-| R2 | collisions / cosmology | blocked (no collision operator) |
+| R2 | collisions / cosmology | unblocked: conservative Dougherty operator available (B11); not started |
 | R3 | inhomogeneous / magnetized | not started (uniform-B0 B08 done 2026-10-15) |
 | R4 | observational (PSP) | not started here; the PSP chirp study lives in a separate repository |
 | R5 | charged dark plasma | not started (the companion carries only the visible charge with mixing) |
@@ -118,7 +119,7 @@ physics.md sets the rule: only full-text sources may set a benchmark.
 
 | Source | Needed for | Access |
 |---|---|---|
-| Hakim, Francisquez, Juno, Hammett, arXiv:1903.08062 (Dougherty moments, N5) | B11, H08 conservative collisions | open (arXiv) |
+| Hakim, Francisquez, Juno, Hammett, arXiv:1903.08062 (Dougherty moments, N5) | B11, H08 conservative collisions | read 2026-10-16, Sec. 2 (operator, moments, d_v convention); multispecies coefficients deferred there |
 | Juno, arXiv:2005.13539 (thesis, N11) | C06 continuum comparison, Weibel setups | open (arXiv) |
 | Gkeyll documentation | C06 input matching | open (web) |
 | O'Neil, Phys. Fluids 8, 2255 (1965) | B01 trapping time and bounce scaling | read 2026-10-15 (physics.md C1) |
@@ -149,5 +150,5 @@ physics.md sets the rule: only full-text sources may set a benchmark.
 6. ~~B08 magnetized rotation and EM waves~~ done 2026-10-15 for uniform B0 (results.md; transverse dark branch now tested);
    ~~B09 Weibel~~ linear done 2026-10-16; nonlinear saturation open (step collapse before the peak: needs a cheaper/implicit stepper or filtering). Open from B08: a warm (Bernstein) reference for the lower X branch near 2|Omega_ce|.
 7. C09 done (2026-10-15). Open: gradient of a fitted Landau damping rate, through `run_adaptive` remaps, Diffrax checkpoint defect reported upstream as [diffrax#788](https://github.com/patrick-kidger/diffrax/issues/788). C08 CPU/GPU after the office GPUs are free.
-8. **Collisions (B11/H08/R2)**: needs a conservative Dougherty operator upstream. This waits on reading Hakim et al.
-   and an owner decision on the parent API.
+8. **Collisions (B11/H08/R2)**: B11 done 2026-10-16 with the parent Dougherty operator (#71). Next: collisional
+   Landau damping vs a kinetic root, H08 HHS run with collisions, R2.

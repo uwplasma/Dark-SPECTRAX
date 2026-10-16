@@ -63,6 +63,9 @@ Earlier pins: `9d0982d` (first ten PRs), `c0910a1` (+ #56-#60), `16400f8` (+ #61
 Opened from the gap inventory of 2026-10-16. Each PR is stacked, so it gets no CI; the tests were run locally. All three are merged into
 `integration/dark-baseline` `d6cedcb`, where the full suite gives 201 passed and 1 xfailed.
 
+- **#71** (on #66): conservative Dougherty collision operator, exact in the moving Hermite basis (lower-triangular
+  projection; density, momentum, energy conserved to round-off for N >= 3; pair collisions with Greene beta = 0), opt-in via
+  `collision_model = "dougherty"`. Merged into `integration/dark-baseline` as `a4bdd72` (212 passed, 1 xfailed). Used by B11.
 - **#68** (on #44): a strict-xfail regression test for the Diffrax 0.7.2 checkpoint-adjoint defect ([diffrax#788](https://github.com/patrick-kidger/diffrax/issues/788); 201 saves on the
   fixed-step grid, 2.5% off ForwardMode), a passing test of `checkpoints = max_steps`, and a docstring warning. The default is
   not changed: the step count is traced inside `simulation`, and the default `max_steps = 1e6` rules out storing a checkpoint

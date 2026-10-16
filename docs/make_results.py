@@ -907,6 +907,44 @@ def b09_section():
     return "\n".join(L)
 
 
+def b11_section():
+    r = json.loads((root / "studies/b11/run.json").read_text())
+    res = {x["case"]: x for x in r["results"]}
+    A, B, D = res["A two-beam"], res["B anisotropy 3V"], res["D drift relaxation m_r/m_s=4"]
+    C4, C100 = res["C T-equilibration m_r/m_s=4"], res["C T-equilibration m_r/m_s=100"]
+    ok = lambda x: "pass" if x["passed"] else "FAIL"
+    L = ["## B11: collisional relaxation with the conservative Dougherty operator (`python studies/b11.py`)", "",
+         f"Record: [run.json](../studies/b11/run.json) (made at {r['repository_commit'][:7]}, parent "
+         f"{r['parent_commit'][:7]} = SPECTRAX integration with #71). Operator, analytic references and gates G1-G5 are "
+         "in the script docstring, declared before the recorded run. Homogeneous and uncharged (qs = 0), so the "
+         f"collision operator is the whole dynamics; Dopri8, rtol = atol = 1e-12. Overall: {'passed' if r['passed'] else 'FAILED'}.", "",
+         "| case | reference | error | conservation | gate |", "|---|---|---|---|---|",
+         f"| A two beams (d = 0.6, v_t = 0.5), 1V, Nn = 96, nu = 1 | C_n = C_n(0) exp(-n nu t), shifted-centred basis | "
+         f"abs {max(A['mode_abs_errors'].values()):.1e} of C_0; rel {max(A['mode_rel_errors'].values()):.1e} (n = 4, 6, 8) | "
+         f"rows 0-2 {A['rows_0_2_change']:.0e} | {ok(A)} |",
+         f"| B anisotropy T = (0.25, 0.16, 0.09), 3V, N = 12^3, nu = 0.5 | T_i - theta ~ exp(-2 nu t) | {B['rel_error']:.1e} of theta | "
+         f"theta {B['theta_change']:.0e} | {ok(B)} |",
+         f"| C T_s = 1, T_r = 0.2, m_r/m_s = 4 | dT ~ exp(-2 (nu_sr m_s + nu_rs m_r) t / (m_s + m_r)) | {C4['rel_error']:.1e} | "
+         f"energy {C4['energy_change']:.0e} | {ok(C4)} |",
+         f"| C same, m_r/m_s = 100 | same | {C100['rel_error']:.1e} | energy {C100['energy_change']:.0e} | {ok(C100)} |",
+         f"| D drift U = (0.3, -0.075), m_r/m_s = 4 | dU ~ exp(-(nu_sr + nu_rs) t / 2) | {D['rel_error']:.1e} | "
+         f"momentum {D['momentum_change']:.0e}, energy {D['energy_change']:.0e} | {ok(D)} |",
+         "",
+         f"- A: the non-Maxwellian part (modes n >= 3) falls from {A['nonmaxwellian_norm'][0]:.3f} to "
+         f"{A['nonmaxwellian_norm'][1]:.1e} by t = 5. The relative mode error grows as C_n decays toward the 1e-12 absolute "
+         "tolerance; G1 was restated from a whole-window relative error to absolute plus windowed relative after an "
+         "uncommitted pre-run (stated in the script).",
+         "- B and C use truncated series of Maxwellians whose width differs from the basis. Only rows n <= 2 set the "
+         "moments and the operator is lower-triangular in n, so the temperature rates are exact despite the truncation.",
+         f"- D: the drift energy becomes heat; final T = ({D['T_final'][0]:.4f}, {D['T_final'][1]:.4f}) from 0.5 each.",
+         "- Cross-species coefficients: Greene's form with beta = 0, derived in #71 from momentum and energy conservation. "
+         "arXiv:1903.08062 defers multispecies coefficients and the Gkeyll docs page was unreachable, so the beta convention "
+         "was not checked against Francisquez et al. The conservation is what is tested.",
+         "- Not covered: inhomogeneous collisional runs (collisional Landau damping vs a kinetic root with the Dougherty "
+         "operator), dark-coupled collisional runs, and charged two-species relaxation (fields respond to the current)."]
+    return "\n".join(L)
+
+
 def b08_section():
     d = root / "studies/b08"
     rot, wav, flx = (json.loads((d / f"{n}.json").read_text()) for n in ("rotation", "waves", "flux"))
@@ -1057,6 +1095,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {b08_section()}
 
 {b09_section()}
+
+{b11_section()}
 
 {third_round()}
 

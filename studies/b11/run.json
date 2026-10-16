@@ -1,7 +1,7 @@
 {
   "case_id": "B11",
   "command": "python studies/b11.py ",
-  "repository_commit": "ef0173360402fb1029a5d5b099993eb54ae1b096",
+  "repository_commit": "81faf332cdb1ca6cad768f1c5001d771bbda606b",
   "parent_commit": "a4bdd72d28df87ea73f0c2719569301e372722d9",
   "units": "parent normalization; homogeneous, uncharged (qs = 0)",
   "settings": {
@@ -14,8 +14,8 @@
     "diffrax": "0.7.2",
     "spectrax": "0.2.1.post140"
   },
-  "wall_time": 24.431290864944458,
-  "passed": false,
+  "wall_time": 33.0721800327301,
+  "passed": true,
   "results": [
     {
       "case": "A two-beam",
@@ -24,6 +24,11 @@
       "vt": 0.5,
       "Nn": 96,
       "status": "success",
+      "mode_abs_errors": {
+        "4": 3.0543543425813336e-11,
+        "6": 4.2669705064997614e-11,
+        "8": 3.637583320375417e-11
+      },
       "mode_rel_errors": {
         "4": 1.1728099491570276e-08,
         "6": 1.4044775475952065e-07,
@@ -35,8 +40,8 @@
         2.6533960499279695e-10
       ],
       "num_steps": 118,
-      "run_time": 0.0679696659790352,
-      "passed": false
+      "run_time": 0.0835095829970669,
+      "passed": true
     },
     {
       "case": "B anisotropy 3V",
@@ -60,7 +65,7 @@
         0.16526246768519776
       ],
       "num_steps": 29,
-      "run_time": 0.11280662499484606,
+      "run_time": 0.104355832998408,
       "passed": true
     },
     {
@@ -76,7 +81,7 @@
         0.5637128186842356
       ],
       "num_steps": 65,
-      "run_time": 0.055986834020586684,
+      "run_time": 0.04242412498570047,
       "passed": true
     },
     {
@@ -92,7 +97,7 @@
         0.4780823599474317
       ],
       "num_steps": 690,
-      "run_time": 0.3739843330113217,
+      "run_time": 0.3300875409913715,
       "passed": true
     },
     {
@@ -109,7 +114,7 @@
         0.5526812163894942
       ],
       "num_steps": 89,
-      "run_time": 0.06572049998794682,
+      "run_time": 0.059475457994267344,
       "passed": true
     }
   ]

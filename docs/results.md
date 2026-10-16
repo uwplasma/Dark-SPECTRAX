@@ -324,6 +324,24 @@ Relative growth error |gamma_fit - gamma_root|/gamma_root. Levels (Nx, Nn, Nm): 
 - One Part-1 failure is a fit-selection artifact: Weibel dark Omega_D = 0.3, k = 0.4, x-refined level, where the largest-Im fitted mode was spurious (Re w / gamma = 8.5); the ladder uses the mode nearest i gamma_root instead.
 - Nonlinear part (k0 = 1.2, levels (16,32,16)/(16,64,32)/(32,32,16)): NOT completed, no record. The full run ended in status failure at the base and v-doubled Weibel levels (1.5 h and 5.4 h of run time, no peak found; stopped before the remaining levels); a later uncommitted probe of the ordinary Weibel base level showed linear growth to U_B = 1.5e-3 by t = 113 with the adaptive step count jumping from 514 (t = 110) to 55150 (t = 113) while U_B was still rising, so the saturation peak (bounce estimate B_sat = 4.6e-2) is not reached at affordable cost. No saturation claim is made.
 
+## B11: collisional relaxation with the conservative Dougherty operator (`python studies/b11.py`)
+
+Record: [run.json](../studies/b11/run.json) (made at 81faf33, parent a4bdd72 = SPECTRAX integration with #71). Operator, analytic references and gates G1-G5 are in the script docstring, declared before the recorded run. Homogeneous and uncharged (qs = 0), so the collision operator is the whole dynamics; Dopri8, rtol = atol = 1e-12. Overall: passed.
+
+| case | reference | error | conservation | gate |
+|---|---|---|---|---|
+| A two beams (d = 0.6, v_t = 0.5), 1V, Nn = 96, nu = 1 | C_n = C_n(0) exp(-n nu t), shifted-centred basis | abs 4.3e-11 of C_0; rel 8.3e-07 (n = 4, 6, 8) | rows 0-2 2e-17 | pass |
+| B anisotropy T = (0.25, 0.16, 0.09), 3V, N = 12^3, nu = 0.5 | T_i - theta ~ exp(-2 nu t) | 4.4e-11 of theta | theta 5e-16 | pass |
+| C T_s = 1, T_r = 0.2, m_r/m_s = 4 | dT ~ exp(-2 (nu_sr m_s + nu_rs m_r) t / (m_s + m_r)) | 1.5e-13 | energy 9e-16 | pass |
+| C same, m_r/m_s = 100 | same | 1.7e-15 | energy 2e-15 | pass |
+| D drift U = (0.3, -0.075), m_r/m_s = 4 | dU ~ exp(-(nu_sr + nu_rs) t / 2) | 1.3e-13 | momentum 9e-17, energy 4e-16 | pass |
+
+- A: the non-Maxwellian part (modes n >= 3) falls from 0.191 to 2.7e-10 by t = 5. The relative mode error grows as C_n decays toward the 1e-12 absolute tolerance; G1 was restated from a whole-window relative error to absolute plus windowed relative after an uncommitted pre-run (stated in the script).
+- B and C use truncated series of Maxwellians whose width differs from the basis. Only rows n <= 2 set the moments and the operator is lower-triangular in n, so the temperature rates are exact despite the truncation.
+- D: the drift energy becomes heat; final T = (0.5591, 0.5527) from 0.5 each.
+- Cross-species coefficients: Greene's form with beta = 0, derived in #71 from momentum and energy conservation. arXiv:1903.08062 defers multispecies coefficients and the Gkeyll docs page was unreachable, so the beta convention was not checked against Francisquez et al. The conservation is what is tested.
+- Not covered: inhomogeneous collisional runs (collisional Landau damping vs a kinetic root with the Dougherty operator), dark-coupled collisional runs, and charged two-species relaxation (fields respond to the current).
+
 ## Independent dark reference: grid Vlasov-Ampere-Proca (`python studies/dark_grid_reference.py`)
 
 `studies/refs/code/slv_proca.py` extends the imported semi-Lagrangian solver with Ampere's law and the longitudinal Proca fields (E_D, A_D, phi_D at every k including k = 0, exact per-k propagator, mid-step current from the exact velocity shift). It shares no code with SPECTRAX or Dark-SPECTRAX; it shares the field convention and the D_L equation. c = 10 (beta = 0.1), eta = 0.3, Omega_D = omega_pe.
