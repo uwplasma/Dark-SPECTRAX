@@ -77,26 +77,11 @@ AMEND_STOP_TOP = os.environ.get("B09_AMEND1", "0") == "1"
 _RHS0 = _M.rhs
 
 
-def lorentz_scale(F, u_s, a_s, Nn, Nm, Np, Ns, magnetic):
-    """(Ns, 3) per-axis force scale: |E_i - <E_i>| (+ sum_j V_j |B_l - <B_l>| when magnetic)."""
-    dev = jnp.max(jnp.abs(F - jnp.mean(F, axis=(-3, -2, -1), keepdims=True)), axis=(-3, -2, -1))  # (6,)
-    dE, dB = dev[:3], dev[3:]
-    N = jnp.array([Nn, Nm, Np], dtype=float)
-    V = jnp.abs(u_s.reshape(Ns, 3)) + a_s.reshape(Ns, 3) * jnp.sqrt(2 * N)[None]
-    s = jnp.broadcast_to(dE[None], (Ns, 3))
-    if magnetic:  # (v x B)_x = v_y B_z - v_z B_y, etc.
-        s = s + jnp.stack([V[:, 1] * dB[2] + V[:, 2] * dB[1],
-                           V[:, 2] * dB[0] + V[:, 0] * dB[2],
-                           V[:, 0] * dB[1] + V[:, 1] * dB[0]], axis=1)
-    return s
-
-
 def closure_rate(F, u_s, a_s, m, c, magnetic):
-    N = jnp.array([m.Nn, m.Nm, m.Np], dtype=float)
-    a = a_s.reshape(m.Ns, 3)
-    s = lorentz_scale(F, u_s, a_s, m.Nn, m.Nm, m.Np, m.Ns, magnetic)
-    per = jnp.where((N > 3)[None], jnp.sqrt(2 * N)[None] * s / a, 0.0)
-    return c * jnp.abs(m.p["qs"] * m.p["Omega_cs"]) * jnp.max(per, axis=1)
+    """(Ns,) rate; the parent's field_scaled_closure_rate (SPECTRAX #72). Before the dd80b0f repin this script carried
+    its own copy; tests/test_studies.py checks the two agree to round-off."""
+    return spectrax._model.field_scaled_closure_rate(F, a_s, m.p["qs"], m.p["Omega_cs"], m.Nn, m.Nm, m.Np, m.Ns, c,
+                                                     u_s=u_s, magnetic=magnetic).reshape(m.Ns)
 
 
 def closure_term(t, y, m, c, magnetic):

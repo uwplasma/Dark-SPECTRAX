@@ -326,6 +326,8 @@ Relative growth error |gamma_fit - gamma_root|/gamma_root. Levels (Nx, Nn, Nm): 
 
 ### B09 nonlinear: step collapse = AW truncation instability driven by the magnetic force (`python studies/b09_closure.py probe|spectrum|sat|satan`)
 
+> **Declared criteria failed; the saturation result rests on post-hoc amendments.** Declared criterion 1 (no collapse to t = 160 with the closure, by the 10x-median step rule) FAILED for every closure, EB included, and the declared saturation gate G3a (all four refinement/strength comparisons agree through the peak) FAILED for every model. The saturation peak reported below exists only under amendment 1 (collapse redefined by a top-third Hermite energy fraction instead of the step rule) and amendment 3 (velocity doubling compared at c = 2 instead of c = 1). Both were committed before the runs they govern, but after seeing the earlier results that failed; they are post-hoc changes of the test, not the test as declared. Read the peak numbers as conditional on those amendments.
+
 Weibel, k0 = 1.2, seed B_z = 1e-6, chunks of 2 time units with checkpoints; declared criteria and three amendments (each committed before its runs) in the script docstring. Closures (order-2 hypercollision, rows of degree <= 2 untouched): E = the SPECTRAX #66 rate c |q/m| sqrt(2N) max|E - <E>|/a; EB = the same with the per-axis Lorentz force scale |E_i - <E_i>| + sum_j V_j |B_l - <B_l>|, V_j = |u_j| + a_j sqrt(2 N_j).
 
 | closure (base level, ordinary) | chunk that fails (20000-step budget) | top-third Hermite energy > 0.1 at |

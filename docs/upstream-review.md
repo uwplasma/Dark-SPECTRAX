@@ -66,6 +66,8 @@ Opened from the gap inventory of 2026-10-16. Each PR is stacked, so it gets no C
 - **#71** (on #66): conservative Dougherty collision operator, exact in the moving Hermite basis (lower-triangular
   projection; density, momentum, energy conserved to round-off for N >= 3; pair collisions with Greene beta = 0), opt-in via
   `collision_model = "dougherty"`. Merged into `integration/dark-baseline` as `a4bdd72` (212 passed, 1 xfailed). Used by B11.
+- **#72** (on #71): `field_scaled_closure_rate(..., u_s=None, magnetic=False)`; `magnetic=True` adds the non-uniform
+  v x B force scale (the B09 EB rate). Merged into `integration/dark-baseline` as `dd80b0f`. Used by B09 nonlinear.
 - **#68** (on #44): a strict-xfail regression test for the Diffrax 0.7.2 checkpoint-adjoint defect ([diffrax#788](https://github.com/patrick-kidger/diffrax/issues/788); 201 saves on the
   fixed-step grid, 2.5% off ForwardMode), a passing test of `checkpoints = max_steps`, and a docstring warning. The default is
   not changed: the step count is traced inside `simulation`, and the default `max_steps = 1e6` rules out storing a checkpoint
