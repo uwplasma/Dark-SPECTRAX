@@ -27,6 +27,12 @@ Decisive test (declared before running):
      c = 0, set by modes in the top third of the Hermite ladder (energy fraction recorded), removed by the closure.
   Verdict "AW truncation instability, closure removes it" needs 1), 2) and 3) all true for the same closure.
   If no closure passes 1): record and stop (no nonlinear saturation run).
+Amendment 1 (added after the first three probes, declared before rerunning them; B09_AMEND1=1): the 10x-median rule
+fired for every run, including EB at t = 120 where the step count (186) rises with the physical growth while the
+top-third Hermite energy fraction stays 1e-3 (c = 0 reached 0.99 at t = 110). Under the amendment a run continues
+from its checkpoint to t = 160 and stops only on a per-chunk budget failure or when the top-third energy fraction
+exceeds 0.5. Criterion 1) becomes: no budget failure and top-third fraction <= 0.1 up to t = 160 with the closure,
+while c = 0 exceeds 0.1. The original 10x-median verdict stays recorded (field t_collapse).
 
 Run: python studies/b09_closure.py probe CLOSURE C [TMAX]  -> studies/b09/closure_probe_<CLOSURE>_c<C>.json
      python studies/b09_closure.py spectrum T              -> studies/b09/closure_spectrum_t<T>.json
@@ -53,6 +59,7 @@ OUT = Path(__file__).resolve().parent / "b09"
 CKPT = Path(os.environ.get("B09_CKPT", Path(__file__).resolve().parent / "b09" / "ckpt"))
 K0, LEVEL, SEED, DT, BUDGET = 1.2, (16, 32, 16), 1e-6, 2.0, 20000
 RTOL, ATOL = 1e-10, 1e-16
+AMEND_STOP_TOP = os.environ.get("B09_AMEND1", "0") == "1"
 _RHS0 = _M.rhs
 
 
@@ -139,7 +146,10 @@ def probe(closure, c, tmax, case="weibel", OD=None, level=LEVEL, tag=""):
              "W": jnp.asarray(seg["W"][-1], complex)}
         t += DT
         np.savez(ck, t=t, chunks=json.dumps(chunks), **{k: np.asarray(v) for k, v in y.items()})
-        if med and t > 100 and row["steps"] > 10 * med:
+        if AMEND_STOP_TOP and row["top_third_energy_fraction"] > 0.5:
+            status = "truncation-dominated"
+            break
+        if not AMEND_STOP_TOP and med and t > 100 and row["steps"] > 10 * med:
             status = "collapse"
             break
     early = [r["steps"] for r in chunks if r["t1"] <= 100 and r["status"] == "success"]
@@ -149,7 +159,9 @@ def probe(closure, c, tmax, case="weibel", OD=None, level=LEVEL, tag=""):
     return {"case": case, "model": "ordinary" if OD is None else f"dark_OD{OD}", "level": list(level),
             "closure": closure, "c": c, "t_max": tmax, "DT": DT, "budget_per_chunk": BUDGET, "rtol": RTOL, "atol": ATOL,
             "seed_Bz": SEED, "k0": K0, "status": status, "t_reached": t, "median_steps_t_le_100": med,
-            "t_collapse": t_collapse, "chunks": chunks}
+            "t_collapse": t_collapse, "amendment_1": AMEND_STOP_TOP,
+            "t_top_third_gt_0.1": next((r["t1"] for r in chunks if r["top_third_energy_fraction"] > 0.1), None),
+            "t_budget_failure": next((r["t1"] for r in chunks if r["status"] != "success"), None), "chunks": chunks}
 
 
 def top_fraction(m, Ck):
