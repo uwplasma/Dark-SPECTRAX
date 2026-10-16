@@ -684,6 +684,92 @@ para = (
     "damping rate (about $5\\times10^{-5}$) is not resolved inside the Hermite-limited window and is not plotted. "
     "This is a linear, deliberately large-coupling verification.")
 
+def b04_b05_section():
+    b4 = json.loads((root / "studies/b04_b05/b04.json").read_text())
+    b5 = json.loads((root / "studies/b04_b05/b05.json").read_text())
+    s4, r4 = b4["settings"], b4["results"]
+    ok4 = [r for r in r4 if r["status"] == "success"]
+    bad4 = [r for r in r4 if r["status"] != "success"]
+    L = ["## B04: ion-acoustic damping, ordinary and dark (`python studies/b04_b05.py b04`)", "",
+         f"Electrons (v_te = {s4['v_te']}c) and mobile ions (m_i/m_e = {s4['mass_ratio']:.0f}), T_e/T_i = 1, 5, 20, "
+         f"k lambda_De = 0.1, 0.2, 0.3, density seed {s4['seed']}, hypercollision nu = {s4['nu']}, Dopri8 rtol "
+         f"{s4['rtol']}. Dark: eta = {s4['eta']}, Omega_D = omega_pe. The complex frequency is fitted on E_k with the "
+         "ion-acoustic and Langmuir pairs as guesses and compared with the kinetic Maxwell-Proca root (both species "
+         f"in the susceptibility). Record: [b04.json](../studies/b04_b05/b04.json) (made at "
+         f"{b4['repository_commit'][:7]}). Rows below are Nn = 128, Nx = 5.", "",
+         "| T_e/T_i | k lambda_De | model | kinetic root | fit | freq. rel. error | damping rel. error | gamma/omega |",
+         "|---|---|---|---|---|---|---|---|"]
+    for r in ok4:
+        if r["Nn"] == 128 and r["Nx"] == 5:
+            L.append(f"| {r['Te_over_Ti']:g} | {r['k_lambda_De']:g} | {r['model']} | {c(r['omega_root'])} | "
+                     f"{c(r['omega_fit'])} | {r['rel_error']:.1e} | {r['damping_rel_error']:+.1e} | "
+                     f"{r['gamma_over_omega_root']:.3f} |")
+    def worst(key, te, Nn):
+        return max(abs(r[key]) for r in ok4 if r["Te_over_Ti"] == te and r["Nn"] == Nn and r["Nx"] == 5)
+    nx = [(a, b) for a in ok4 if a["Nx"] == 8 for b in ok4
+          if b["Nx"] == 5 and b["Nn"] == a["Nn"] and b["case"] == a["case"] and b["model"] == a["model"]]
+    dnx = max(abs(complex(*a["omega_fit"]) - complex(*b["omega_fit"])) / abs(complex(*b["omega_fit"])) for a, b in nx)
+    sh = []
+    for te in (1.0, 5.0, 20.0):
+        for kl in (0.1, 0.3):
+            o, d = [[r for r in ok4 if r["Te_over_Ti"] == te and r["k_lambda_De"] == kl and r["model"] == m
+                     and r["Nn"] == 128 and r["Nx"] == 5][0]["omega_root"] for m in ("ordinary", "dark")]
+            sh.append((d[0] / o[0] - 1, d[1] / o[1] - 1))
+    L += ["", f"Refinement (Nn = 32/64/128, Nx = 5): worst frequency error {worst('rel_error', 1.0, 128):.1e} / "
+          f"{worst('rel_error', 5.0, 128):.1e} / {worst('rel_error', 20.0, 128):.1e} at T_e/T_i = 1/5/20 (Nn = 128); "
+          f"worst damping error {worst('damping_rel_error', 1.0, 128):.1e} / {worst('damping_rel_error', 5.0, 128):.1e} / "
+          f"{worst('damping_rel_error', 20.0, 128):.1e}. Nn = 32 -> 64 removes the electron-recurrence error at T_e/T_i = 5 "
+          f"(damping error up to {worst('damping_rel_error', 5.0, 32):.0e} at Nn = 32); 64 -> 128 changes little. "
+          f"At T_e/T_i = 20 the fitted damping stays about 8% weaker than the root at Nn = 64 and 128 (gamma/omega about "
+          "0.013, about 0.3 e-folds over the fit window): not resolved here and not claimed; the frequency agrees to 1e-3. "
+          f"Nx = 8 at Nn = 32 reproduces Nx = 5 to {dnx:.0e} where it ran (T_e/T_i = 1); the {len(bad4)} Nx = 8 runs at "
+          f"T_e/T_i = 5 and 20 hit the {max(r['steps'] for r in bad4)}-step budget without a nonfinite field (recorded as "
+          "failures). Ledger defect <= "
+          f"{max(r['max_ledger_defect'] for r in ok4):.0e} in all successful runs. Mixing shifts the roots by at most "
+          f"{100 * max(abs(a) for a, _ in sh):.2f}% in frequency and {100 * max(abs(b) for _, b in sh):.1f}% in damping "
+          "at k lambda_De = 0.1/0.3; the fitted dark-ordinary shifts follow the roots within the errors above.", ""]
+
+    s5, r5 = b5["settings"], b5["results"]
+    base = [r for r in r5 if r["Nn"] == 16 and r["Nx"] == 5]
+    ref = max(abs(r["growth_fit"] / b["growth_fit"] - 1) for r in r5 if (r["Nn"], r["Nx"]) != (16, 5)
+              for b in base if b["case"] == r["case"] and b["model"] == r["model"])
+    rc = s5["return_current_carrier"]
+    L += [f"## B05: Buneman growth, ordinary and dark (`python studies/b04_b05.py b05`)", "",
+          f"Electrons drift at u0 = {s5['u0']}c through ions at rest, v_te = {s5['v_te'] / s5['u0']:.1f} u0, T_i = T_e, "
+          "mobile ions with m_i/m_e = 100 and 1836. The k = 0 current is cancelled by an inert return-current carrier "
+          f"(charge +{rc['q']:g}, mass {rc['mass']:.0e} m_e, drifting with the electrons, uniform background "
+          f"{rc['rho_background']:g}); its susceptibility is kept in the roots, and max |E_0| stays below "
+          f"{max(r['max_abs_E0'] for r in r5):.0e} (seed {s5['seed']}). Dark: eta = {s5['eta']}, Omega_D = omega_pe. "
+          f"nu = {s5['nu']}, Dopri8 rtol {s5['rtol']}. Growth is the log-slope of |E_k| over the explicit window "
+          f"[t_end - 3/gamma, t_end], t_end the first time |E_k| > {s5['threshold']}; the spread is over three "
+          f"sub-windows. Record: [b05.json](../studies/b04_b05/b05.json) (made at {b5['repository_commit'][:7]}).", "",
+          "| m_i/m_e | k u0 | model | kinetic root | fitted growth | rel. error | window | root / fluid max |",
+          "|---|---|---|---|---|---|---|---|"]
+    for r in base:
+        L.append(f"| {r['mass_ratio']:.0f} | {r['k_u0']:g} | {r['model']} | {c(r['root'])} | {r['growth_fit']:.6f} | "
+                 f"{r['growth_rel_error']:+.1e} | [{r['window'][0]:.1f}, {r['window'][1]:.1f}] | {r['root_over_fluid']:.3f} |")
+    gs = [r for r in base]
+    def mix(mi, ku, i):
+        o, d = [[r for r in base if r["mass_ratio"] == mi and r["k_u0"] == ku and r["model"] == m][0]["root"][i]
+                for m in ("ordinary", "dark")]
+        return 100 * (d / o - 1)
+    fr = [mix(mi, ku, 0) for mi in (100.0, 1836.0) for ku in (0.9, 1.0)]
+    fl = {r["mass_ratio"]: r["fluid_gamma_max"] for r in base}
+    L += ["", f"Rows are Nn = 16, Nx = 5; Nn = 32 and Nx = 8 change the fitted rate by at most {ref:.1e} relative "
+          f"({sum(r['status'] == 'success' for r in r5)} of {len(r5)} runs succeed, ledger defect <= "
+          f"{max(r['max_ledger_defect'] for r in r5):.0e}), so the residual error is the fit window (sub-window spread "
+          f"{min(r['growth_window_spread'] for r in r5):.0e} to {max(r['growth_window_spread'] for r in r5):.1e}), not "
+          f"truncation. All errors are within {max(abs(r['growth_rel_error']) for r in r5):.1e} of the kinetic roots, "
+          "ordinary and dark. Fluid check: the cold limit gamma_max = (sqrt3/2)(m_e/2m_i)^(1/3) is "
+          f"{fl[100.0]:.3f} (m_i = 100) and {fl[1836.0]:.4f} (1836); the kinetic roots at the two sampled k are "
+          f"{100 * min(r['root_over_fluid'] for r in gs):.0f}-{100 * max(r['root_over_fluid'] for r in gs):.0f}% of it "
+          "(warm electrons and the off-optimum k lower it), consistent with, not a test of, the fluid scaling. "
+          f"Mixing changes the growth by {mix(100.0, 0.9, 1):+.1f}/{mix(100.0, 1.0, 1):+.1f}% (m_i = 100) and "
+          f"{mix(1836.0, 0.9, 1):+.1f}/{mix(1836.0, 1.0, 1):+.1f}% (m_i = 1836) at k u0 = 0.9/1.0, and lowers the real "
+          f"frequency by {-max(fr):.0f}-{-min(fr):.0f}%."]
+    return "\n".join(L)
+
+
 (root / "docs/results.md").write_text(f"""# Results
 
 Generated by `python docs/make_results.py` from records; do not edit numbers by hand.
@@ -718,6 +804,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {extra_sections()}
 
 {nonlinear_and_hhs()}
+
+{b04_b05_section()}
 
 {third_round()}
 
@@ -768,6 +856,17 @@ def readme_table():
         d = [r for r in rr if r["model"] == "dark" and r["Nn"] == top][0]
         L.append(f"| {name.split('_', 1)[1].replace('_', ' ')}, growth | {o['growth_fit']:.6f} / {o['root'][1]:.6f} | "
                  f"{d['growth_fit']:.6f} / {d['root'][1]:.6f} |")
+    b4 = json.loads((root / "studies/b04_b05/b04.json").read_text())["results"]
+    b5 = json.loads((root / "studies/b04_b05/b05.json").read_text())["results"]
+    for te in (5.0, 20.0):
+        o, d = [[r for r in b4 if r["Te_over_Ti"] == te and r["k_lambda_De"] == 0.3 and r["model"] == m
+                 and r["Nn"] == 128 and r["Nx"] == 5][0] for m in ("ordinary", "dark")]
+        L.append(f"| B04 ion-acoustic $T_e/T_i={te:g}$, $k\\lambda_{{De}}=0.3$, $\\omega$ | {c(o['omega_fit'])} / {c(o['omega_root'])} | "
+                 f"{c(d['omega_fit'])} / {c(d['omega_root'])} |")
+    o, d = [[r for r in b5 if r["mass_ratio"] == 1836.0 and r["k_u0"] == 1.0 and r["model"] == m
+             and r["Nn"] == 16 and r["Nx"] == 5][0] for m in ("ordinary", "dark")]
+    L.append(f"| B05 Buneman $m_i/m_e=1836$, $ku_0=1$, growth | {o['growth_fit']:.6f} / {o['root'][1]:.6f} | "
+             f"{d['growth_fit']:.6f} / {d['root'][1]:.6f} |")
     pf = pic[-1]
     L.append(f"| C05 Landau, same fit rule: Hermite / PIC rerun ({pf['cells']} cells, {pf['particles']} particles) | "
              f"{c(c05['spectrax']['ordinary_Nn256']['maxima_fit'])} / {c(pf['ordinary'])} | "

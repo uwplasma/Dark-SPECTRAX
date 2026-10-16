@@ -162,6 +162,50 @@ Seeds: 1e-3 density at k1 = 2 pi/40 (both species when ions move) and 1e-4 elect
 
 At matched initial effective force a finite reservoir follows the prescribed drive only while eta t is small: with eta = 0.03 it transfers essentially all of U_D(0) and the plasma field peaks at 7% of the prescribed secular value over t <= 1000; with eta = 1e-3 the beat period (about 2 pi/eta = 6300) exceeds the run.
 
+## B04: ion-acoustic damping, ordinary and dark (`python studies/b04_b05.py b04`)
+
+Electrons (v_te = 0.1c) and mobile ions (m_i/m_e = 1836), T_e/T_i = 1, 5, 20, k lambda_De = 0.1, 0.2, 0.3, density seed 1e-06, hypercollision nu = 1.0, Dopri8 rtol 1e-10. Dark: eta = 0.3, Omega_D = omega_pe. The complex frequency is fitted on E_k with the ion-acoustic and Langmuir pairs as guesses and compared with the kinetic Maxwell-Proca root (both species in the susceptibility). Record: [b04.json](../studies/b04_b05/b04.json) (made at 0d3242a). Rows below are Nn = 128, Nx = 5.
+
+| T_e/T_i | k lambda_De | model | kinetic root | fit | freq. rel. error | damping rel. error | gamma/omega |
+|---|---|---|---|---|---|---|---|
+| 1 | 0.1 | ordinary | 0.004798-0.002078i | 0.004777-0.002072i | 4.1e-03 | +3.1e-03 | -0.433 |
+| 1 | 0.1 | dark | 0.004798-0.002078i | 0.004762-0.002066i | 7.3e-03 | +6.0e-03 | -0.433 |
+| 1 | 0.2 | ordinary | 0.009536-0.004207i | 0.009495-0.004192i | 4.3e-03 | +3.6e-03 | -0.441 |
+| 1 | 0.2 | dark | 0.009542-0.004203i | 0.009486-0.004181i | 5.7e-03 | +5.3e-03 | -0.440 |
+| 1 | 0.3 | ordinary | 0.014165-0.006433i | 0.014102-0.006405i | 4.5e-03 | +4.3e-03 | -0.454 |
+| 1 | 0.3 | dark | 0.014183-0.006416i | 0.014121-0.006390i | 4.4e-03 | +4.1e-03 | -0.452 |
+| 5 | 0.1 | ordinary | 0.003144-0.000281i | 0.003144-0.000285i | 1.3e-03 | -1.5e-02 | -0.089 |
+| 5 | 0.1 | dark | 0.003144-0.000281i | 0.003144-0.000285i | 1.3e-03 | -1.5e-02 | -0.089 |
+| 5 | 0.2 | ordinary | 0.006236-0.000579i | 0.006235-0.000587i | 1.4e-03 | -1.5e-02 | -0.093 |
+| 5 | 0.2 | dark | 0.006240-0.000577i | 0.006240-0.000586i | 1.4e-03 | -1.5e-02 | -0.092 |
+| 5 | 0.3 | ordinary | 0.009231-0.000908i | 0.009230-0.000921i | 1.4e-03 | -1.5e-02 | -0.098 |
+| 5 | 0.3 | dark | 0.009247-0.000903i | 0.009246-0.000916i | 1.4e-03 | -1.5e-02 | -0.098 |
+| 20 | 0.1 | ordinary | 0.002514-0.000034i | 0.002514-0.000031i | 1.1e-03 | +7.8e-02 | -0.013 |
+| 20 | 0.1 | dark | 0.002515-0.000034i | 0.002514-0.000031i | 1.2e-03 | +8.5e-02 | -0.013 |
+| 20 | 0.2 | ordinary | 0.004969-0.000064i | 0.004968-0.000059i | 1.0e-03 | +7.9e-02 | -0.013 |
+| 20 | 0.2 | dark | 0.004974-0.000064i | 0.004973-0.000059i | 1.0e-03 | +7.9e-02 | -0.013 |
+| 20 | 0.3 | ordinary | 0.007312-0.000089i | 0.007312-0.000082i | 9.4e-04 | +7.8e-02 | -0.012 |
+| 20 | 0.3 | dark | 0.007330-0.000090i | 0.007330-0.000083i | 9.4e-04 | +7.7e-02 | -0.012 |
+
+Refinement (Nn = 32/64/128, Nx = 5): worst frequency error 7.3e-03 / 1.4e-03 / 1.2e-03 at T_e/T_i = 1/5/20 (Nn = 128); worst damping error 6.0e-03 / 1.5e-02 / 8.5e-02. Nn = 32 -> 64 removes the electron-recurrence error at T_e/T_i = 5 (damping error up to 2e-01 at Nn = 32); 64 -> 128 changes little. At T_e/T_i = 20 the fitted damping stays about 8% weaker than the root at Nn = 64 and 128 (gamma/omega about 0.013, about 0.3 e-folds over the fit window): not resolved here and not claimed; the frequency agrees to 1e-3. Nx = 8 at Nn = 32 reproduces Nx = 5 to 5e-08 where it ran (T_e/T_i = 1); the 12 Nx = 8 runs at T_e/T_i = 5 and 20 hit the 200000-step budget without a nonfinite field (recorded as failures). Ledger defect <= 7e-18 in all successful runs. Mixing shifts the roots by at most 0.25% in frequency and 0.9% in damping at k lambda_De = 0.1/0.3; the fitted dark-ordinary shifts follow the roots within the errors above.
+
+## B05: Buneman growth, ordinary and dark (`python studies/b04_b05.py b05`)
+
+Electrons drift at u0 = 0.1c through ions at rest, v_te = 0.1 u0, T_i = T_e, mobile ions with m_i/m_e = 100 and 1836. The k = 0 current is cancelled by an inert return-current carrier (charge +1, mass 1e+06 m_e, drifting with the electrons, uniform background -1); its susceptibility is kept in the roots, and max |E_0| stays below 9e-07 (seed 1e-10). Dark: eta = 0.3, Omega_D = omega_pe. nu = 0.0, Dopri8 rtol 1e-10. Growth is the log-slope of |E_k| over the explicit window [t_end - 3/gamma, t_end], t_end the first time |E_k| > 1e-06; the spread is over three sub-windows. Record: [b05.json](../studies/b04_b05/b05.json) (made at 8289666).
+
+| m_i/m_e | k u0 | model | kinetic root | fitted growth | rel. error | window | root / fluid max |
+|---|---|---|---|---|---|---|---|
+| 100 | 0.9 | ordinary | 0.056353+0.121750i | 0.121743 | -5.9e-05 | [71.9, 96.5] | 0.822 |
+| 100 | 0.9 | dark | 0.049079+0.120741i | 0.120745 | +3.3e-05 | [73.5, 98.1] | 0.815 |
+| 100 | 1 | ordinary | 0.086918+0.132942i | 0.132945 | +2.3e-05 | [64.9, 87.5] | 0.898 |
+| 100 | 1 | dark | 0.076413+0.134947i | 0.134947 | -1.6e-06 | [64.2, 86.8] | 0.911 |
+| 1836 | 0.9 | ordinary | 0.008270+0.040672i | 0.040668 | -1.0e-04 | [197.4, 271.2] | 0.725 |
+| 1836 | 0.9 | dark | 0.005572+0.037235i | 0.037233 | -7.2e-05 | [228.7, 302.5] | 0.663 |
+| 1836 | 1 | ordinary | 0.028299+0.053282i | 0.053274 | -1.5e-04 | [143.7, 200.0] | 0.949 |
+| 1836 | 1 | dark | 0.018058+0.051220i | 0.051228 | +1.5e-04 | [154.9, 211.2] | 0.912 |
+
+Rows are Nn = 16, Nx = 5; Nn = 32 and Nx = 8 change the fitted rate by at most 2.2e-07 relative (24 of 24 runs succeed, ledger defect <= 2e-12), so the residual error is the fit window (sub-window spread 2e-06 to 1.5e-05), not truncation. All errors are within 1.5e-04 of the kinetic roots, ordinary and dark. Fluid check: the cold limit gamma_max = (sqrt3/2)(m_e/2m_i)^(1/3) is 0.148 (m_i = 100) and 0.0561 (1836); the kinetic roots at the two sampled k are 66-95% of it (warm electrons and the off-optimum k lower it), consistent with, not a test of, the fluid scaling. Mixing changes the growth by -0.8/+1.5% (m_i = 100) and -8.4/-3.9% (m_i = 1836) at k u0 = 0.9/1.0, and lowers the real frequency by 12-36%.
+
 ## Independent dark reference: grid Vlasov-Ampere-Proca (`python studies/dark_grid_reference.py`)
 
 `studies/refs/code/slv_proca.py` extends the imported semi-Lagrangian solver with Ampere's law and the longitudinal Proca fields (E_D, A_D, phi_D at every k including k = 0, exact per-k propagator, mid-step current from the exact velocity shift). It shares no code with SPECTRAX or Dark-SPECTRAX; it shares the field convention and the D_L equation. c = 10 (beta = 0.1), eta = 0.3, Omega_D = omega_pe.

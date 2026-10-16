@@ -57,16 +57,16 @@ Status: **done** = passing test or record on main; **partial** = covered in part
 | ID | Item | Status |
 |---|---|---|
 | B00 | linear Landau | done ([record](_static/b00/run.json)) |
-| B01 | nonlinear Landau | done vs grid ([record](../studies/b01_b06/run.json), [dark grid](../studies/dark_grid/run.json)); rebound correction in results.md |
+| B01 | nonlinear Landau | done vs grid ([record](../studies/b01_b06/run.json), [dark grid](../studies/dark_grid/run.json)); rebound correction in results.md; O'Neil 1965 read: rebound is on the bounce scale (2 pi tau = 28 at onset), no extremum-time prediction, so stays grid-vs-Hermite |
 | B02 | two-stream | done ([record](_static/b02_b03/run.json)) |
 | B03 | bump-on-tail | done (same record) |
-| B04 | ion-acoustic | not started (needs mobile ions with T_e >> T_i; mobile-ion tooling exists from H05) |
-| B05 | Buneman | not started (two drifting populations already supported) |
-| B06 | echo | done vs grid (same B01 records) |
+| B04 | ion-acoustic | done vs kinetic roots ([record](../studies/b04_b05/b04.json)): T_e/T_i = 1, 5, 20, frequency to 1.4e-3 (7e-3 at T_e/T_i = 1), damping to 1.5e-2 at T_e/T_i <= 5; at T_e/T_i = 20 damping 8% weak, unresolved; Nx = 8 runs at T_e/T_i >= 5 hit the step budget |
+| B05 | Buneman | done vs kinetic roots ([record](../studies/b04_b05/b05.json)): m_i/m_e = 100, 1836, ordinary and dark, growth within 1.5e-4, Nn/Nx-converged to 2e-7 |
+| B06 | echo | done vs grid (same B01 records); Gould-O'Neil-Malmberg 1967 read: echo time tau k2/(k2-k1) = 30 is what B06 uses |
 | B07 | free streaming | done (ordinary, `studies/refs/B07`, test A08); no dark variant (none needed: force off) |
 | B08 | magnetized rotation, EM waves | not started (the parent has 3V magnetic terms; C00 tests zero magnetic work only) |
 | B09 | Weibel | not started (needs 1D2V/2D3V anisotropic setup; cost moderate) |
-| B10 | Langmuir modulational / Zakharov | not started; Zakharov 1972 not read |
+| B10 | Langmuir modulational / Zakharov | not started; Zakharov 1972 Secs. 1-2 read (physics.md C3): use eqs. 2.8/2.9 directly, the printed gamma_max = q w omega_p/16 does not follow from 2.8 (gives /4); no dark term at that order |
 | B11 | collisional relaxation | blocked: Dark-SPECTRAX has no physical collision operator (the parent `nu` is a numerical closure); Dougherty moments derived (algebra only), Hakim et al. not read |
 | B12 | off-resonant forcing with drag | partial: response and absorbed power derived (algebra only); no run |
 
@@ -119,9 +119,9 @@ physics.md sets the rule: only full-text sources may set a benchmark.
 | Hakim, Francisquez, Juno, Hammett, arXiv:1903.08062 (Dougherty moments, N5) | B11, H08 conservative collisions | open (arXiv) |
 | Juno, arXiv:2005.13539 (thesis, N11) | C06 continuum comparison, Weibel setups | open (arXiv) |
 | Gkeyll documentation | C06 input matching | open (web) |
-| O'Neil, Phys. Fluids 8, 2255 (1965) | B01 trapping time and bounce scaling | owner must supply |
-| Gould, O'Neil, Malmberg, PRL 19, 219 (1967) | B06 echo theory | owner must supply |
-| Zakharov, Sov. Phys. JETP 35, 908 (1972) | B10 | owner must supply |
+| O'Neil, Phys. Fluids 8, 2255 (1965) | B01 trapping time and bounce scaling | read 2026-10-15 (physics.md C1) |
+| Gould, O'Neil, Malmberg, PRL 19, 219 (1967) | B06 echo theory | read 2026-10-15 (physics.md C2) |
+| Zakharov, Sov. Phys. JETP 35, 908 (1972) | B10 | read 2026-10-15, Secs. 1-2 (physics.md C3) |
 | Dai, arXiv:2608.09827 (N15) | stable AW Galerkin (design note option C) | held locally; prototyped in studies/dai (gate 1 fails in AW form) |
 
 ## Next steps, in order
@@ -140,9 +140,9 @@ physics.md sets the rule: only full-text sources may set a benchmark.
    method (e.g. larger Nx with an adaptive or mapped v box); the Hermite window near 600 is a Hermite limit.
 3. ~~Rerun the B00/B02/B03/B06 records at the current pin~~ done 2026-10-15: bit-identical (see Code health).
 4. **Fetch and read the open-access papers** (1903.08062, 2005.13539). 2005.01515 was read 2026-10-15 (Sec. 1.1):
-   the canonical map agrees, see physics.md. Owner: supply O'Neil 1965,
-   Gould-O'Neil-Malmberg 1967 and Zakharov 1972.
-5. **Cheap B rungs: B05 Buneman, B04 ion-acoustic** (a day; the existing populations and roots machinery applies).
+   the canonical map agrees, see physics.md. O'Neil 1965, Gould-O'Neil-Malmberg 1967 and Zakharov 1972
+   were read 2026-10-15 (physics.md C1-C3).
+5. ~~Cheap B rungs: B05 Buneman, B04 ion-acoustic~~ done 2026-10-15 (results.md); open: B04 damping at T_e/T_i = 20.
    Decisive: growth/damping vs kinetic roots to 1e-4, ordinary and dark.
 6. **B08 magnetized rotation and EM waves, then B09 Weibel** (several days). These open R3 and the transverse dark
    branch, which no benchmark has tested yet.

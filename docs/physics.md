@@ -147,6 +147,9 @@ Only F sources may set a benchmark; A/M sources have not had their equations ins
 | D3 | Witte, Rosauro-Alcaraz, McDermott, Poulin, "Dark Photon Dark Matter in the Presence of Inhomogeneous Structure", arXiv:2003.13698; JHEP 06 (2020) 132 | M |
 | D5 | Brahma, Schutz, arXiv:2410.14771; related application: Brahma, Iles, Scherer, Schutz, "Resonant axion and dark photon production in magnetic white dwarfs", PRD 113, 083010 (2026), DOI 10.1103/9swg-ndgx | M |
 | D10 | Fabbrichesi, Gabrielli, Lanfranchi, "The Dark Photon", arXiv:2005.01515 | F for Sec. 1.1 (eqs. 1.1-1.10); rest A |
+| C1 | O'Neil, "Collisionless Damping of Nonlinear Plasma Oscillations", Phys. Fluids 8, 2255 (1965), DOI 10.1063/1.1761193 | F for Secs. I-II, eqs. 1-34 (Appendices skimmed) |
+| C2 | Gould, O'Neil, Malmberg, "Plasma Wave Echo", PRL 19, 219 (1967), DOI 10.1103/PhysRevLett.19.219 | F (whole letter) |
+| C3 | Zakharov, "Collapse of Langmuir Waves", Sov. Phys. JETP 35, 908 (1972) | F for Secs. 1-2, eqs. 1.1-2.11; Secs. 3-5 A |
 | N6-N9, N12, N13, N16, N17, N19-N21, N23, N24, D2, D4, D6-D13 | as in the planning reading map (identifiers verified) | M |
 
 Fabbrichesi et al. Sec. 1.1 (F, read 2026-10-15), compared with the canonical map used here. Their eq. 1.1 mixes the two
@@ -162,6 +165,41 @@ sign relative to the ordinary $eJA$ term; this is the field sign $A_D\to-A_D$, u
 in $\eta$ (A06); (ii) they quote the small-mixing form $e\varepsilon$ (eq. 1.10), which the code does not use;
 (iii) the massless "dark photon proper" choice ($\tan\theta=\varepsilon/\sqrt{1-\varepsilon^2}$, milli-charges) is a
 different model, not covered here. Verdict: the canonical map agrees.
+
+O'Neil 1965 (C1, F, read 2026-10-15; scanned PDF, equations checked on rendered pages). A wave of fixed amplitude
+$\mathcal{E}$ traps resonant electrons; linear theory fails after $\tau=(m/e\mathcal{E}k)^{1/2}$, the inverse
+deep-trapped bounce frequency (Gaussian units; in the B01 units $\tau=(kE)^{-1/2}$). The exact pendulum solution gives a
+damping rate $\gamma(t)$ that equals Landau's for $t\ll\tau$, oscillates for $t\sim\tau$ and phase-mixes to zero as
+$t/\tau\to\infty$ (eqs. 31-34). The theory assumes $\gamma_L\tau\ll1$ (constant amplitude). B01 check: physical amplitude
+$E=\varepsilon/k=0.1667$ at $k=0.3$ gives $\tau=4.47$, $2\pi\tau=28.1$, and $\gamma_L\tau=0.056$, so the regime applies
+at onset. The grid envelope minimum (31.45) and maximum (65.6) are 34.2 apart; $2\pi\tau$ evaluated with the measured
+envelope at those times is 39.7 and 33.1 (N = 1024 record). The rebound timescale is therefore the O'Neil bounce scale,
+as B01 assumed; O'Neil gives no extremum times for a decaying wave, so B01 stays a grid-vs-Hermite comparison and is
+not upgraded to a theory benchmark.
+
+Gould, O'Neil, Malmberg 1967 (C2, F). A pulse at $k_1$ at $t=0$ and one at $k_2$ at $t=\tau$ leave a second-order
+term $\propto\exp[i(k_2-k_1)x+ik_2v\tau-i(k_2-k_1)vt]$ whose velocity dependence vanishes at
+$t=\tau k_2/(k_2-k_1)$: the echo appears at $k_3=k_2-k_1$ at that time (1D, electrons, fixed ion background, impulsive
+potentials). B06 uses exactly this: `t_echo_ballistic = m2 * tau / m3` = 10 x 1.5/0.5 = 30 for $k_1=1$, $k_2=1.5$,
+$\tau=10$; the grid echo at 29.05 and the Hermite echo agree with each other to 2e-5, and the 3% early arrival is the
+finite-damping shift that the letter's ballistic estimate does not include. Formula agrees; no change.
+
+Zakharov 1972 (C3, F for Secs. 1-2; Gaussian units, $\mu=m/M$, $w=W/nT$, $r_D$ Debye radius). The fast potential is
+$\varphi_e=\frac12(\psi e^{-i\omega_pt}+\mathrm{c.c.})$. Envelope equation (1.2):
+$\Delta(i\partial_t\psi+\frac32\omega_pr_D^2\Delta\psi)=\frac{\omega_p}{2n_0}\nabla\cdot(\delta n\nabla\psi)$;
+ponderomotive potential $U=e^2|\nabla\psi|^2/(4m\omega_p^2)$; ion response (1.9):
+$(\partial_t^2-c_s^2\Delta)\delta n=\frac{1}{16\pi M}\Delta|\nabla\psi|^2$ with $c_s^2=(T_e+\frac32T_i)/M$ as printed
+(the static limit (1.7)-(1.8) uses $q=T_e/(T_e+T_i)$). In 1D with $E=-\partial_x\psi$ this is the standard Zakharov
+system $iE_t+\frac32\omega_pr_D^2E_{xx}=\frac{\omega_p}{2n_0}\delta n\,E$,
+$(\partial_t^2-c_s^2\partial_x^2)\delta n=\frac{1}{16\pi M}\partial_x^2|E|^2$; in SI the coupling
+$1/(16\pi M)$ becomes $\varepsilon_0/(4M)$ (from $e^2n_0/(4m\omega_p^2M)$, checked here). Modulational growth of a
+$k_0=0$ pump, static limit (2.8): $\gamma=\omega_p[\frac34q\kappa^2r_D^2w\cos^2\alpha-\frac94\kappa^4r_D^4]^{1/2}$;
+hydrodynamic limit (2.9)-(2.10), $\gamma_{\max}=3^{-1/2}\omega_p(\mu w)^{1/2}$ for $w\gg\mu$. Discrepancy: maximizing (2.8)
+gives $(\kappa r_D)^2=qw/6$ and $\gamma_{\max}=\frac14q\omega_pw$; the paper prints $\frac1{16}q\omega_pw$ and
+$(\kappa r_D)^2=w/6$ (algebra here; likely a misprint or $\gamma^2$). B10 must use (2.8)/(2.9) directly, not the printed
+maximum. No envelope reference existed in this repository for B10 planning, so nothing earlier is contradicted; the
+model has no dark term at this order (the dark field enters only through the Proca branch), which a dark B10 would
+have to derive first.
 
 HHS v1 facts used here (F): uniform k = 0 drive A0 cos(omega t) with no stated ramp; v_q^D/v_te = 0.03 and 1e-3 for the
 resonant runs; m_i/m_e = 1836, T_e = T_i = 1e-3 m_e c^2, L = 40 c/omega_pe, 1000 cells; relativistic Vay pusher in 1D1V;

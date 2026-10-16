@@ -98,6 +98,9 @@ At $k\to0$ the two coupled branches repel from the common frequency $\omega_{pe}
 | two stream vt0.1 k0.6, growth | 0.349094 / 0.349094 | 0.362523 / 0.362524 |
 | two stream vt0.3 k0.4, growth | 0.261616 / 0.261616 | 0.266447 / 0.266447 |
 | bump on tail k0.3, growth | 0.198098 / 0.198098 | 0.208595 / 0.208595 |
+| B04 ion-acoustic $T_e/T_i=5$, $k\lambda_{De}=0.3$, $\omega$ | 0.009230-0.000921i / 0.009231-0.000908i | 0.009246-0.000916i / 0.009247-0.000903i |
+| B04 ion-acoustic $T_e/T_i=20$, $k\lambda_{De}=0.3$, $\omega$ | 0.007312-0.000082i / 0.007312-0.000089i | 0.007330-0.000083i / 0.007330-0.000090i |
+| B05 Buneman $m_i/m_e=1836$, $ku_0=1$, growth | 0.053274 / 0.053282 | 0.051228 / 0.051220 |
 | C05 Landau, same fit rule: Hermite / PIC rerun (128 cells, 320000 particles) | 1.413540-0.154975i / 1.414365-0.153538i | 1.429621-0.147445i / 1.428970-0.146058i |
 | B06 echo amplitude (N=512) vs grid | 1.15875e-03 / 1.15873e-03 | 1.12101e-03 / 1.12099e-03 (grid Vlasov-Ampere-Proca) |
 | H00 resonant mean field, t <= 1000 (HHS-v1-inspired) | error 1e-09, W_ext 3e-11 | - |
