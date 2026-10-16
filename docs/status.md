@@ -8,7 +8,7 @@ Results and their records are in [results.md](results.md); the model and the lit
 
 - Parent pin: SPECTRAX `integration/dark-baseline` `f33dfda` (main `bf41830` plus the open PRs listed in the README).
   This is the current head of that branch. It is not a release, and none of those PRs is merged upstream.
-- Tests: 58 pass locally (CPU, float64, Python 3.13, `pytest -n 2 --cov`), coverage 99.8% of 440 statements;
+- Tests: 62 pass locally (CPU, float64, Python 3.13, `pytest -n 2 --cov`), coverage 99.8% of 460 statements;
   flake8 is clean. GitHub CI runs the same tests on Python 3.11 and 3.13.
 - Spot check: 10 README numbers were compared with their JSON records, and all match to the printed digits:
   the B00 roots and fits at k = 0.2-0.7, the two-stream and bump-on-tail growth rates, the mixing shifts
@@ -64,7 +64,7 @@ Status: **done** = passing test or record on main; **partial** = covered in part
 | B05 | Buneman | done vs kinetic roots ([record](../studies/b04_b05/b05.json)): m_i/m_e = 100, 1836, ordinary and dark, growth within 1.5e-4, Nn/Nx-converged to 2e-7 |
 | B06 | echo | done vs grid (same B01 records); Gould-O'Neil-Malmberg 1967 read: echo time tau k2/(k2-k1) = 30 is what B06 uses |
 | B07 | free streaming | done (ordinary, `studies/refs/B07`, test A08); no dark variant (none needed: force off) |
-| B08 | magnetized rotation, EM waves | not started (the parent has 3V magnetic terms; C00 tests zero magnetic work only) |
+| B08 | magnetized rotation, EM waves | done for uniform B0 ([records](../studies/b08/), results.md): rotation of U, E_0 and the full covariance vs the exact 6x6/expm reference to 2e-11 for four B0 directions and both charge signs, zero magnetic work; 40 cold R/L/whistler/Langmuir/O/X eigenmodes (ordinary and dark, eta = 0.3, Omega_D = 1.2) from the full field-current eigenproblem, fit within 1e-3 at v_t = 0.01, warm error scaling as v_t^2, Nn-converged; Proca flux incl. Omega_D^2 phi_D A_D closes pointwise to 3e-14. Failed gates (n = 1e-4 rotation: fit window, small-K0 ledger ratio, mis-specified K_perp gate) documented. Open: warm/Bernstein reference, nonuniform B0 |
 | B09 | Weibel | not started (needs 1D2V/2D3V anisotropic setup; cost moderate) |
 | B10 | Langmuir modulational / Zakharov | not started; Zakharov 1972 Secs. 1-2 read (physics.md C3): use eqs. 2.8/2.9 directly, the printed gamma_max = q w omega_p/16 does not follow from 2.8 (gives /4); no dark term at that order |
 | B11 | collisional relaxation | blocked: Dark-SPECTRAX has no physical collision operator (the parent `nu` is a numerical closure); Dougherty moments derived (algebra only), Hakim et al. not read |
@@ -106,7 +106,7 @@ Status: **done** = passing test or record on main; **partial** = covered in part
 |---|---|---|
 | R1 | finite coherence / reservoir | partial: H07 homogeneous only |
 | R2 | collisions / cosmology | blocked (no collision operator) |
-| R3 | inhomogeneous / magnetized | not started (needs B08 first) |
+| R3 | inhomogeneous / magnetized | not started (uniform-B0 B08 done 2026-10-15) |
 | R4 | observational (PSP) | not started here; the PSP chirp study lives in a separate repository |
 | R5 | charged dark plasma | not started (the companion carries only the visible charge with mixing) |
 
@@ -144,8 +144,8 @@ physics.md sets the rule: only full-text sources may set a benchmark.
    were read 2026-10-15 (physics.md C1-C3).
 5. ~~Cheap B rungs: B05 Buneman, B04 ion-acoustic~~ done 2026-10-15 (results.md); open: B04 damping at T_e/T_i = 20.
    Decisive: growth/damping vs kinetic roots to 1e-4, ordinary and dark.
-6. **B08 magnetized rotation and EM waves, then B09 Weibel** (several days). These open R3 and the transverse dark
-   branch, which no benchmark has tested yet.
+6. ~~B08 magnetized rotation and EM waves~~ done 2026-10-15 for uniform B0 (results.md; transverse dark branch now tested);
+   **then B09 Weibel** (several days). Open from B08: a warm (Bernstein) reference for the lower X branch near 2|Omega_ce|.
 7. C09 done (2026-10-15). Open: gradient of a fitted Landau damping rate, through `run_adaptive` remaps, and report the Diffrax checkpoint defect upstream. C08 CPU/GPU after the office GPUs are free.
 8. **Collisions (B11/H08/R2)**: needs a conservative Dougherty operator upstream. This waits on reading Hakim et al.
    and an owner decision on the parent API.

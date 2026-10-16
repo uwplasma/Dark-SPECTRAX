@@ -869,6 +869,116 @@ def b04_b05_section():
     return "\n".join(L)
 
 
+def b08_section():
+    d = root / "studies/b08"
+    rot, wav, flx = (json.loads((d / f"{n}.json").read_text()) for n in ("rotation", "waves", "flux"))
+    rr, gr = rot["results"], rot["gates"]
+    dense = [r for r in rr if r["n"] == 1.0]
+    tp = [r for r in rr if r["n"] < 1e-3]
+    L = ["## B08: uniform-B0 rotation and cold/warm electromagnetic waves, ordinary and dark "
+         "(`python studies/b08.py rotation|waves|flux`)", "",
+         f"Records: [rotation.json](../studies/b08/rotation.json), [waves.json](../studies/b08/waves.json), "
+         f"[flux.json](../studies/b08/flux.json) (made at {rot['repository_commit'][:7]} / {wav['repository_commit'][:7]} / "
+         f"{flx['repository_commit'][:7]}). Gates were declared in the script docstring before the runs.", "",
+         "### Rotation in a uniform B0 (Nx = 1, Hermite 4x4x4)", "",
+         f"Drifting anisotropic Maxwellian, U0 = {rot['settings']['U0']}, v_t = {rot['settings']['v_t']}, |B0| = "
+         f"{rot['settings']['B0_mag']}, B0 along z, x, (1,1,1) and (0.3,-0.5,0.8), q = -1 and +1, density 1 (the "
+         "perpendicular mean current drives the mean field E_0) and 1e-4. Reference: matrix exponential of the exact "
+         "6x6 mean-flow/mean-field system and P(t) = R P0 R^T.", "",
+         "| n | worst U error / U0 | worst E_0 error | worst covariance error / P0 | worst gyration-frequency error "
+         "| worst ledger / K0 | K_perp change |", "|---|---|---|---|---|---|---|"]
+    for lab, g in (("1", dense), ("1e-4", tp)):
+        L.append(f"| {lab} | {max(r['U_rel_error'] for r in g):.1e} | {max(r['E0_rel_error'] for r in g):.1e} | "
+                 f"{max(r['P_rel_error'] for r in g):.1e} | {max(r['omega_rel_error'] for r in g):.1e} | "
+                 f"{max(r['ledger_rel'] for r in g):.1e} | {max(r['Kperp_rel_change'] for r in g):.1e} |")
+    fails = []
+    for key, rk in (("U", "U_rel_error"), ("P", "P_rel_error"), ("omega", "omega_rel_error"), ("ledger", "ledger_rel")):
+        bad = [r for r in rr if r[rk] > gr[key]]
+        if bad:
+            fails.append(f"{key} (gate {gr[key]:g}: {len(bad)} of {len(rr)} runs, worst {max(r[rk] for r in bad):.1e}, "
+                         f"all with n = {sorted(set(r['n'] for r in bad))})")
+    kp = [r for r in tp if r["Kperp_rel_change"] > gr["Kperp_test_particle"]]
+    if kp:
+        fails.append(f"K_perp test-particle conservation (gate {gr['Kperp_test_particle']:g}: {len(kp)} of {len(tp)} runs, "
+                     f"worst {max(r['Kperp_rel_change'] for r in kp):.1e})")
+    L += ["", f"All {len(rr)} runs succeed. Mean flow, mean field and the full covariance tensor follow the exact rotation "
+          f"to {max(r['U_rel_error'] for r in rr):.0e} / {max(r['P_rel_error'] for r in rr):.0e} for every direction and both "
+          "charge signs (including the off-diagonal covariance that an oblique B0 generates from the diagonal start, up to "
+          f"{max(r['P_offdiag_max'] for r in rr):.1e} absolute against a largest P0 entry of "
+          f"{max(rot['settings']['v_t']) ** 2:.0e}). The kinetic energy changes by up to "
+          f"{100 * max(r['K_rel_change'] for r in dense):.0f}% at n = 1, entirely through the electric work: K - K0 - W_em "
+          "closes to round-off, so the magnetic work is zero. "
+          + ("Gates failed: " + "; ".join(fails) + ". Causes: at n = 1e-4 the coupled mean-field mode has "
+             "omega ~ omega_p = 0.01, less than one period in the window, so its fitted frequency is poorly determined "
+             "(the trajectories match to 1e-13); K0 is 5e-8 there, so the ledger ratio is the absolute round-off "
+             "(about 1e-17) over a small K0; and K_perp is exchanged with E_0 at order omega_p^2/Omega_c^2 = 4e-4, so the "
+             "test-particle gate was mis-specified (the exact 6x6 reference, which includes E_0, is matched)."
+             if fails else "All declared gates pass.")]
+
+    wr, gw, sw = wav["results"], wav["gates"], wav["settings"]
+    L += ["", "### Cold magnetized electromagnetic waves (k along x, Nx = 5)", "",
+          f"Electrons, omega_pe = 1, |Omega_ce| = {sw['B0']}; k parallel (B0 along x) and perpendicular (B0 along z) at "
+          f"k = 0.5 and 1.1; dark eta = {sw['eta']}, Omega_D = {sw['Omega_D']} omega_pe. Reference: eigenvalues of the full cold "
+          "field-current operator (no determinant). Every eigenfrequency also annihilates the conductivity-based field "
+          f"system M(omega) (smallest singular value / largest <= "
+          f"{max(m['sigma_residual'] for e in wav['eigen'] for m in e['modes']):.0e}). Each positive-frequency eigenvector "
+          f"seeds a Hermite run (amplitude {sw['amplitude']}), fitted with one mode on [0, min(6 periods, 200)]. "
+          "dark fraction = |E_D|^2/(|E|^2+|E_D|^2) of the eigenvector.", "",
+          "| geometry | model | k | branch | dark frac. | cold omega | fit (v_t = 0.01, Nn = 4) | rel. error | "
+          "error at v_t = 0.005 | Nn 4 -> 8 change |", "|---|---|---|---|---|---|---|---|---|---|"]
+    def get(r, vt, Nn):
+        m = [x for x in wr if x["geometry"] == r["geometry"] and x["model"] == r["model"] and x["k"] == r["k"]
+             and x["omega_cold"] == r["omega_cold"] and x["v_t"] == vt and x["Nn"] == Nn]
+        return m[0] if m else None
+    base = [r for r in wr if r["v_t"] == 0.01 and r["Nn"] == 4]
+    dn, ratios = [], []
+    for r in base:
+        h, f = get(r, 0.005, 4), get(r, 0.01, 8)
+        ch = abs(complex(*f["omega_fit"]) - complex(*r["omega_fit"])) / r["omega_cold"] if f else float("nan")
+        dn.append(ch)
+        if h:
+            ratios.append(r["rel_error"] / max(h["rel_error"], 1e-300))
+        L.append(f"| {r['geometry']} | {r['model']} | {r['k']:g} | {r['kind']} | {r['dark_fraction']:.2f} | "
+                 f"{r['omega_cold']:.6f} | {c(r['omega_fit'])} | {r['rel_error']:.1e} | "
+                 f"{h['rel_error'] if h else float('nan'):.1e} | {ch:.0e} |")
+    ok = [r for r in wr if r["status"] == "success"]
+    led_k = max(r["ledger_rel"][0] for r in ok)
+    led_f = max(max(r["ledger_rel"][1:]) for r in ok)
+    gmax = max(max(r["gauss_rel"]) for r in ok)
+    nbad = sum(r["rel_error"] > gw["rel_error_vt0.01"] for r in base)
+    mixed = [r["dark_fraction"] for r in base if r["k"] == 1.1 and r["model"] == "dark" and 0.2 < r["dark_fraction"] < 0.8]
+    lx = min((r for r in base if r["geometry"] == "perpendicular" and r["model"] == "ordinary" and r["k"] == 1.1),
+             key=lambda r: r["omega_cold"])
+    lxh = get(lx, 0.005, 4)
+    nref = sum(x > gw["Nn_refinement"] for x in dn)
+    L += ["", f"{len(ok)} of {len(wr)} runs succeed. Gates: v_t = 0.01 error <= {gw['rel_error_vt0.01']:g}: "
+          f"{len(base) - nbad} of {len(base)} pass (worst {max(r['rel_error'] for r in base):.1e}); Nn refinement <= "
+          f"{gw['Nn_refinement']:g}: {len(dn) - nref} of {len(dn)} pass (worst {max(dn):.0e}); kinetic ledger "
+          f"{led_k:.0e} U_wave (gate {gw['kinetic_ledger_rel']:g}), field ledgers {led_f:.0e} U_wave (gate "
+          f"{gw['field_ledger_rel']:g}), Gauss residuals {gmax:.0e} of |E_k| (gate {gw['gauss_rel']:g}). The remaining error "
+          "is the warm correction: halving v_t divides it by "
+          f"{np.median(ratios):.1f} (median; range {min(ratios):.1f}-{max(ratios):.1f}; v_t^2 scaling predicts 4), while "
+          "Nn = 4 -> 8 changes nothing at that level. Mixing (eta = 0.3) moves each plasma branch and opens avoided "
+          "crossings with the transverse and longitudinal Proca branches; near k = 1.1 the R and upper-X branches cross "
+          f"sqrt(k^2 + Omega_D^2) and those eigenvectors are strongly mixed (dark fraction {min(mixed):.2f}-{max(mixed):.2f}). "
+          f"The lower X branch at k = 1.1 (omega = {lx['omega_cold']:.3f}, next to 2|Omega_ce| = {2 * sw['B0']:g}) has the "
+          f"largest warm damping, Im omega = {lx['omega_fit'][1]:.1e} at v_t = 0.01 and {lxh['omega_fit'][1]:.1e} at 0.005 "
+          f"(dark: {max(abs(r['omega_fit'][1]) for r in base if r['model'] == 'dark' and r['geometry'] == 'perpendicular'):.1e} "
+          "at v_t = 0.01); the v_t^2 scaling is consistent with second-harmonic cyclotron (Bernstein) coupling, which cold "
+          "theory omits (not checked against a warm dispersion relation here)."]
+
+    fr = flx["results"]
+    L += ["", "### Proca energy flux in a packet", "",
+          f"Packets of five Proca modes (transverse, longitudinal, mixed polarization) with cold plasma, B0, eta = "
+          f"{flx['settings']['eta']}, evolved to t = 5 and checked pointwise on a {flx['settings']['fine_grid']}-point grid: "
+          "d u_D/dt + d S_D/dx + P_D = 0 with S_D = Om0^2[(E_D x B_D)_x + Omega_D^2 phi_D A_D,x]. Residual / max|du_D/dt|: "
+          + ", ".join(f"{r['packet']} {r['residual_rel']:.0e} (without phi_D A_D: {r['residual_rel_without_phiA']:.2f})"
+                      for r in fr) + f". Gate {flx['gates']['residual']:g}: "
+          + ("pass." if all(r["residual_rel"] <= flx["gates"]["residual"] for r in fr) else "FAIL.")
+          + " The phi_D A_D term is required whenever the packet has a longitudinal part."]
+    return "\n".join(L)
+
+
 (root / "docs/results.md").write_text(f"""# Results
 
 Generated by `python docs/make_results.py` from records; do not edit numbers by hand.
@@ -906,6 +1016,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 
 {b04_b05_section()}
 
+{b08_section()}
+
 {third_round()}
 
 {lanes()}
@@ -934,7 +1046,8 @@ v_t = 0.005c), A05 static Yukawa, A06 eta-sign symmetry, A07 exact mean pump (1e
 convergence of fixed-step Dopri8 and Hermite-order convergence of exact free streaming, A09 one to three populations
 on odd/even grids with ledger closure, A10 failure policy (nonfinite state, step budget, short stiff transient
 without a step floor), C00 random states satisfying both Gauss laws (exact energy-work theorems for particles,
-Maxwell and Proca, continuity, both constraints and B_D = curl A_D preserved by the RHS, zero magnetic work), C07
+Maxwell and Proca, continuity, both constraints and B_D = curl A_D preserved by the RHS, zero magnetic work), B08 oblique-B0 rotation of the mean flow, mean field and full covariance against the exact
+matrix exponential for both charge signs (nonzero perpendicular current), C07
 chunked restart equal to a single run with a continuous ledger, rfft Parseval weights for even and odd grids. Deliberate sign/source/mass-potential/weight
 mutations of the companion were each caught by at least one test. A08 uses exact solutions; a manufactured-source
 hook is not implemented.
@@ -970,6 +1083,12 @@ def readme_table():
              and r["Nn"] == 16 and r["Nx"] == 5][0] for m in ("ordinary", "dark")]
     L.append(f"| B05 Buneman $m_i/m_e=1836$, $ku_0=1$, growth | {o['growth_fit']:.6f} / {o['root'][1]:.6f} | "
              f"{d['growth_fit']:.6f} / {d['root'][1]:.6f} |")
+    w8 = json.loads((root / "studies/b08/waves.json").read_text())["results"]
+    for geom, kind in (("parallel", "R"), ("perpendicular", "X")):
+        o, d = [max((r for r in w8 if r["geometry"] == geom and r["model"] == m and r["k"] == 1.1 and r["kind"] == kind
+                     and r["v_t"] == 0.01 and r["Nn"] == 4), key=lambda r: r["omega_cold"]) for m in ("ordinary", "dark")]
+        L.append(f"| B08 cold {geom} {kind} (upper), $k=1.1$, $\\omega$ ($v_t=0.01$; dark column $\\Omega_D=1.2$) | {c(o['omega_fit'])} / {o['omega_cold']:.6f} | "
+                 f"{c(d['omega_fit'])} / {d['omega_cold']:.6f} |")
     pf = pic[-1]
     L.append(f"| C05 Landau, same fit rule: Hermite / PIC rerun ({pf['cells']} cells, {pf['particles']} particles) | "
              f"{c(c05['spectrax']['ordinary_Nn256']['maxima_fit'])} / {c(pf['ordinary'])} | "

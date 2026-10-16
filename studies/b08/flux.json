@@ -1,0 +1,69 @@
+{
+ "gates": {
+  "residual": 1e-10
+ },
+ "settings": {
+  "Nx": 32,
+  "Lx": 25.132741228718345,
+  "eta": 0.3,
+  "Omega_D": 1.2,
+  "fine_grid": 256
+ },
+ "results": [
+  {
+   "packet": "transverse",
+   "max_dudt": 1.5274478127187463e-05,
+   "max_PD": 5.211839208753346e-06,
+   "max_dSdx_phiA": 3.6121524900639994e-07,
+   "residual_rel": 1.1978092808373919e-14,
+   "residual_rel_without_phiA": 0.02364828742420329,
+   "status": "success",
+   "max_ledger_defect": 2.0615881963663213e-17,
+   "max_gauss": [
+    1.2557131316637208e-18,
+    3.8746734985483755e-19
+   ],
+   "steps": 342,
+   "compile_time": 0.8302067500189878,
+   "run_time": 0.3025898329797201
+  },
+  {
+   "packet": "longitudinal",
+   "max_dudt": 9.039911081726285e-06,
+   "max_PD": 2.6679126730208197e-06,
+   "max_dSdx_phiA": 1.0426772498128557e-05,
+   "residual_rel": 2.6821412175355387e-14,
+   "residual_rel_without_phiA": 1.1534153825036721,
+   "status": "success",
+   "max_ledger_defect": 1.6227457203497886e-17,
+   "max_gauss": [
+    8.004026619134563e-19,
+    3.0092963555112463e-18
+   ],
+   "steps": 530,
+   "compile_time": 0.700317292008549,
+   "run_time": 0.4995723750034813
+  },
+  {
+   "packet": "mixed",
+   "max_dudt": 7.931761557520666e-06,
+   "max_PD": 4.690926067396466e-06,
+   "max_dSdx_phiA": 1.0895598003446591e-05,
+   "residual_rel": 1.708640263299228e-14,
+   "residual_rel_without_phiA": 1.373666861318558,
+   "status": "success",
+   "max_ledger_defect": 7.91245239765764e-18,
+   "max_gauss": [
+    7.031659201885603e-19,
+    9.843149718986433e-19
+   ],
+   "steps": 272,
+   "compile_time": 0.8548646250274032,
+   "run_time": 0.2524472499790136
+  }
+ ],
+ "repository_commit": "2f954184f1df0b37e74b000126d740cc8dd4076c",
+ "parent_commit": "f33dfdab2a413c51722846748ee1e9dda5677d72",
+ "command": "python studies/b08.py flux",
+ "wall_time": 6.468749708990799
+}

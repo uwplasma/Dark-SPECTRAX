@@ -206,6 +206,74 @@ Electrons drift at u0 = 0.1c through ions at rest, v_te = 0.1 u0, T_i = T_e, mob
 
 Rows are Nn = 16, Nx = 5; Nn = 32 and Nx = 8 change the fitted rate by at most 2.2e-07 relative (24 of 24 runs succeed, ledger defect <= 2e-12), so the residual error is the fit window (sub-window spread 2e-06 to 1.5e-05), not truncation. All errors are within 1.5e-04 of the kinetic roots, ordinary and dark. Fluid check: the cold limit gamma_max = (sqrt3/2)(m_e/2m_i)^(1/3) is 0.148 (m_i = 100) and 0.0561 (1836); the kinetic roots at the two sampled k are 66-95% of it (warm electrons and the off-optimum k lower it), consistent with, not a test of, the fluid scaling. Mixing changes the growth by -0.8/+1.5% (m_i = 100) and -8.4/-3.9% (m_i = 1836) at k u0 = 0.9/1.0, and lowers the real frequency by 12-36%.
 
+## B08: uniform-B0 rotation and cold/warm electromagnetic waves, ordinary and dark (`python studies/b08.py rotation|waves|flux`)
+
+Records: [rotation.json](../studies/b08/rotation.json), [waves.json](../studies/b08/waves.json), [flux.json](../studies/b08/flux.json) (made at 2f95418 / 2f95418 / 2f95418). Gates were declared in the script docstring before the runs.
+
+### Rotation in a uniform B0 (Nx = 1, Hermite 4x4x4)
+
+Drifting anisotropic Maxwellian, U0 = [0.02, -0.01, 0.015], v_t = [0.01, 0.02, 0.015], |B0| = 0.5, B0 along z, x, (1,1,1) and (0.3,-0.5,0.8), q = -1 and +1, density 1 (the perpendicular mean current drives the mean field E_0) and 1e-4. Reference: matrix exponential of the exact 6x6 mean-flow/mean-field system and P(t) = R P0 R^T.
+
+| n | worst U error / U0 | worst E_0 error | worst covariance error / P0 | worst gyration-frequency error | worst ledger / K0 | K_perp change |
+|---|---|---|---|---|---|---|
+| 1 | 5.2e-12 | 4.5e-12 | 2.1e-11 | 2.2e-11 | 3.3e-12 | 4.9e-01 |
+| 1e-4 | 4.6e-13 | 3.4e-14 | 1.9e-11 | 1.2e-07 | 3.3e-10 | 8.3e-04 |
+
+All 16 runs succeed. Mean flow, mean field and the full covariance tensor follow the exact rotation to 5e-12 / 2e-11 for every direction and both charge signs (including the off-diagonal covariance that an oblique B0 generates from the diagonal start, up to 1.5e-04 absolute against a largest P0 entry of 4e-04). The kinetic energy changes by up to 49% at n = 1, entirely through the electric work: K - K0 - W_em closes to round-off, so the magnetic work is zero. Gates failed: omega (gate 1e-08: 8 of 16 runs, worst 1.2e-07, all with n = [0.0001]); ledger (gate 1e-10: 8 of 16 runs, worst 3.3e-10, all with n = [0.0001]); K_perp test-particle conservation (gate 1e-06: 8 of 8 runs, worst 8.3e-04). Causes: at n = 1e-4 the coupled mean-field mode has omega ~ omega_p = 0.01, less than one period in the window, so its fitted frequency is poorly determined (the trajectories match to 1e-13); K0 is 5e-8 there, so the ledger ratio is the absolute round-off (about 1e-17) over a small K0; and K_perp is exchanged with E_0 at order omega_p^2/Omega_c^2 = 4e-4, so the test-particle gate was mis-specified (the exact 6x6 reference, which includes E_0, is matched).
+
+### Cold magnetized electromagnetic waves (k along x, Nx = 5)
+
+Electrons, omega_pe = 1, |Omega_ce| = 0.5; k parallel (B0 along x) and perpendicular (B0 along z) at k = 0.5 and 1.1; dark eta = 0.3, Omega_D = 1.2 omega_pe. Reference: eigenvalues of the full cold field-current operator (no determinant). Every eigenfrequency also annihilates the conductivity-based field system M(omega) (smallest singular value / largest <= 3e-15). Each positive-frequency eigenvector seeds a Hermite run (amplitude 1e-05), fitted with one mode on [0, min(6 periods, 200)]. dark fraction = |E_D|^2/(|E|^2+|E_D|^2) of the eigenvector.
+
+| geometry | model | k | branch | dark frac. | cold omega | fit (v_t = 0.01, Nn = 4) | rel. error | error at v_t = 0.005 | Nn 4 -> 8 change |
+|---|---|---|---|---|---|---|---|---|---|
+| parallel | ordinary | 0.5 | R | 0.00 | 0.096968 | 0.096957-0.000000i | 1.2e-04 | 2.9e-05 | 3e-09 |
+| parallel | ordinary | 0.5 | L | 0.00 | 0.951606 | 0.951611+0.000000i | 5.0e-06 | 1.2e-06 | 6e-14 |
+| parallel | ordinary | 0.5 | longitudinal | 0.00 | 1.000000 | 1.000038-0.000000i | 3.8e-05 | 9.5e-06 | 1e-10 |
+| parallel | ordinary | 0.5 | R | 0.00 | 1.354638 | 1.354654-0.000000i | 1.2e-05 | 3.0e-06 | 5e-14 |
+| parallel | ordinary | 1.1 | R | 0.00 | 0.266258 | 0.265995+0.000000i | 9.9e-04 | 2.5e-04 | 1e-06 |
+| parallel | ordinary | 1.1 | longitudinal | 0.00 | 1.000000 | 1.000183-0.000000i | 1.8e-04 | 4.6e-05 | 1e-08 |
+| parallel | ordinary | 1.1 | L | 0.00 | 1.395046 | 1.395056+0.000000i | 6.7e-06 | 1.7e-06 | 2e-12 |
+| parallel | ordinary | 1.1 | R | 0.00 | 1.628789 | 1.628827+0.000001i | 2.3e-05 | 5.9e-06 | 3e-12 |
+| parallel | dark | 0.5 | R | 0.00 | 0.096029 | 0.096018-0.000000i | 1.2e-04 | 2.9e-05 | 3e-09 |
+| parallel | dark | 0.5 | L | 0.05 | 0.925593 | 0.925597+0.000000i | 4.4e-06 | 1.1e-06 | 7e-14 |
+| parallel | dark | 0.5 | longitudinal | 0.06 | 0.959888 | 0.959920-0.000000i | 3.4e-05 | 8.4e-06 | 1e-10 |
+| parallel | dark | 0.5 | R | 0.57 | 1.179266 | 1.179273+0.000000i | 6.0e-06 | 1.5e-06 | 5e-15 |
+| parallel | dark | 0.5 | L | 0.94 | 1.346487 | 1.346487-0.000000i | 4.7e-07 | 1.2e-07 | 2e-16 |
+| parallel | dark | 0.5 | longitudinal | 0.89 | 1.363310 | 1.363316-0.000000i | 3.8e-06 | 9.5e-07 | 6e-13 |
+| parallel | dark | 0.5 | R | 0.54 | 1.496784 | 1.496793+0.000001i | 6.4e-06 | 1.6e-06 | 1e-15 |
+| parallel | dark | 1.1 | R | 0.02 | 0.261660 | 0.261406-0.000000i | 9.7e-04 | 2.4e-04 | 1e-06 |
+| parallel | dark | 1.1 | longitudinal | 0.00 | 1.005451 | 1.005624-0.000000i | 1.7e-04 | 4.3e-05 | 1e-08 |
+| parallel | dark | 1.1 | L | 0.07 | 1.372897 | 1.372905+0.000000i | 5.5e-06 | 1.4e-06 | 2e-12 |
+| parallel | dark | 1.1 | R | 0.45 | 1.514560 | 1.514572+0.000000i | 8.4e-06 | 2.1e-06 | 5e-12 |
+| parallel | dark | 1.1 | longitudinal | 0.97 | 1.651989 | 1.651995+0.000000i | 3.1e-06 | 7.7e-07 | 6e-12 |
+| parallel | dark | 1.1 | L | 0.92 | 1.668944 | 1.668946+0.000000i | 1.3e-06 | 3.2e-07 | 3e-14 |
+| parallel | dark | 1.1 | R | 0.60 | 1.765622 | 1.765650-0.000003i | 1.6e-05 | 4.0e-06 | 2e-13 |
+| perpendicular | ordinary | 0.5 | X | 0.00 | 0.866025 | 0.866041+0.000000i | 1.8e-05 | 4.5e-06 | 7e-13 |
+| perpendicular | ordinary | 0.5 | O | 0.00 | 1.118034 | 1.118045+0.000000i | 1.0e-05 | 2.5e-06 | 8e-16 |
+| perpendicular | ordinary | 0.5 | X | 0.00 | 1.322876 | 1.322928-0.000001i | 4.0e-05 | 1.0e-05 | 1e-11 |
+| perpendicular | ordinary | 1.1 | X | 0.00 | 1.018278 | 1.018460-0.000544i | 5.6e-04 | 1.4e-04 | 8e-10 |
+| perpendicular | ordinary | 1.1 | O | 0.00 | 1.486607 | 1.486628-0.000000i | 1.4e-05 | 3.6e-06 | 3e-14 |
+| perpendicular | ordinary | 1.1 | X | 0.00 | 1.556634 | 1.556730-0.000005i | 6.2e-05 | 1.5e-05 | 6e-10 |
+| perpendicular | dark | 0.5 | X | 0.02 | 0.847145 | 0.847160-0.000000i | 1.7e-05 | 4.4e-06 | 3e-13 |
+| perpendicular | dark | 0.5 | O | 0.17 | 1.055802 | 1.055811+0.000000i | 8.2e-06 | 2.0e-06 | 6e-16 |
+| perpendicular | dark | 0.5 | X | 0.51 | 1.166993 | 1.167038-0.000003i | 3.9e-05 | 9.7e-06 | 5e-12 |
+| perpendicular | dark | 0.5 | X | 0.95 | 1.340370 | 1.340372-0.000002i | 1.8e-06 | 4.6e-07 | 3e-13 |
+| perpendicular | dark | 0.5 | O | 0.83 | 1.383937 | 1.383939+0.000000i | 1.8e-06 | 4.6e-07 | 1e-16 |
+| perpendicular | dark | 0.5 | X | 0.58 | 1.477795 | 1.477820+0.000001i | 1.6e-05 | 4.1e-06 | 7e-12 |
+| perpendicular | dark | 1.1 | X | 0.00 | 1.022007 | 1.022200-0.000514i | 5.4e-04 | 1.3e-04 | 7e-10 |
+| perpendicular | dark | 1.1 | O | 0.17 | 1.440388 | 1.440402+0.000000i | 9.5e-06 | 2.4e-06 | 3e-14 |
+| perpendicular | dark | 1.1 | X | 0.29 | 1.481010 | 1.481056-0.000013i | 3.2e-05 | 8.1e-06 | 5e-10 |
+| perpendicular | dark | 1.1 | X | 0.98 | 1.648855 | 1.648861-0.000003i | 3.8e-06 | 9.6e-07 | 1e-11 |
+| perpendicular | dark | 1.1 | O | 0.83 | 1.695665 | 1.695674-0.000001i | 4.8e-06 | 1.2e-06 | 3e-15 |
+| perpendicular | dark | 1.1 | X | 0.72 | 1.727249 | 1.727290-0.000008i | 2.4e-05 | 6.1e-06 | 9e-11 |
+
+120 of 120 runs succeed. Gates: v_t = 0.01 error <= 0.002: 40 of 40 pass (worst 9.9e-04); Nn refinement <= 0.0001: 40 of 40 pass (worst 1e-06); kinetic ledger 4e-10 U_wave (gate 1e-06), field ledgers 4e-07 U_wave (gate 1e-05), Gauss residuals 1e-13 of |E_k| (gate 1e-10). The remaining error is the warm correction: halving v_t divides it by 4.0 (median; range 4.0-4.0; v_t^2 scaling predicts 4), while Nn = 4 -> 8 changes nothing at that level. Mixing (eta = 0.3) moves each plasma branch and opens avoided crossings with the transverse and longitudinal Proca branches; near k = 1.1 the R and upper-X branches cross sqrt(k^2 + Omega_D^2) and those eigenvectors are strongly mixed (dark fraction 0.29-0.72). The lower X branch at k = 1.1 (omega = 1.018, next to 2|Omega_ce| = 1) has the largest warm damping, Im omega = -5.4e-04 at v_t = 0.01 and -1.4e-04 at 0.005 (dark: 5.1e-04 at v_t = 0.01); the v_t^2 scaling is consistent with second-harmonic cyclotron (Bernstein) coupling, which cold theory omits (not checked against a warm dispersion relation here).
+
+### Proca energy flux in a packet
+
+Packets of five Proca modes (transverse, longitudinal, mixed polarization) with cold plasma, B0, eta = 0.3, evolved to t = 5 and checked pointwise on a 256-point grid: d u_D/dt + d S_D/dx + P_D = 0 with S_D = Om0^2[(E_D x B_D)_x + Omega_D^2 phi_D A_D,x]. Residual / max|du_D/dt|: transverse 1e-14 (without phi_D A_D: 0.02), longitudinal 3e-14 (without phi_D A_D: 1.15), mixed 2e-14 (without phi_D A_D: 1.37). Gate 1e-10: pass. The phi_D A_D term is required whenever the packet has a longitudinal part.
+
 ## Independent dark reference: grid Vlasov-Ampere-Proca (`python studies/dark_grid_reference.py`)
 
 `studies/refs/code/slv_proca.py` extends the imported semi-Lagrangian solver with Ampere's law and the longitudinal Proca fields (E_D, A_D, phi_D at every k including k = 0, exact per-k propagator, mid-step current from the exact velocity shift). It shares no code with SPECTRAX or Dark-SPECTRAX; it shares the field convention and the D_L equation. c = 10 (beta = 0.1), eta = 0.3, Omega_D = omega_pe.
@@ -678,7 +746,8 @@ v_t = 0.005c), A05 static Yukawa, A06 eta-sign symmetry, A07 exact mean pump (1e
 convergence of fixed-step Dopri8 and Hermite-order convergence of exact free streaming, A09 one to three populations
 on odd/even grids with ledger closure, A10 failure policy (nonfinite state, step budget, short stiff transient
 without a step floor), C00 random states satisfying both Gauss laws (exact energy-work theorems for particles,
-Maxwell and Proca, continuity, both constraints and B_D = curl A_D preserved by the RHS, zero magnetic work), C07
+Maxwell and Proca, continuity, both constraints and B_D = curl A_D preserved by the RHS, zero magnetic work), B08 oblique-B0 rotation of the mean flow, mean field and full covariance against the exact
+matrix exponential for both charge signs (nonzero perpendicular current), C07
 chunked restart equal to a single run with a continuous ledger, rfft Parseval weights for even and odd grids. Deliberate sign/source/mass-potential/weight
 mutations of the companion were each caught by at least one test. A08 uses exact solutions; a manufactured-source
 hook is not implemented.
