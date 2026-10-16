@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import platform
 import subprocess
@@ -19,7 +20,8 @@ import numpy as np
 from ._diagnostics import charge_density, energies, gauss_residuals, moments
 from ._model import PARENT_COMMIT, Model, rhs
 
-__all__ = ["maxwellian", "consistent_fields", "proca_mode", "run", "save_record", "adapt_basis", "run_adaptive"]
+__all__ = ["maxwellian", "consistent_fields", "proca_mode", "run", "save_record", "adapt_basis", "run_adaptive",
+           "with_params", "solve"]
 
 
 def maxwellian(model: Model, densities, perturbations=()):
@@ -204,6 +206,51 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
                             (out["U_D"] - out["U_D"][0]) + W[:, 1])
     out["ledger_defect"] = np.array(out["ledger_defect"])
     return out
+
+
+_TRACEABLE = ("eta", "Omega_D", "alpha_s", "u_s")
+
+
+def with_params(model: Model, **params):
+    """Shallow copy of ``model`` with traced values for ``eta``, ``Omega_D``, ``alpha_s`` or ``u_s``.
+
+    Validation in ``Model.__post_init__`` needs concrete values, so the copy bypasses it; the grids
+    are shared. ``alpha_s``/``u_s`` replace the Hermite basis used by ``rhs`` (fixed frame).
+    """
+    bad = set(params) - set(_TRACEABLE)
+    if bad:
+        raise ValueError(f"not traceable: {sorted(bad)}; use one of {_TRACEABLE}")
+    m = copy.copy(model)
+    p = dict(model.p)
+    for k, v in params.items():
+        object.__setattr__(m, k, v)
+        if k in ("alpha_s", "u_s"):
+            p[k] = jnp.asarray(v, float)
+    object.__setattr__(m, "_p", p)
+    return m
+
+
+def solve(model: Model, y0, t_max, n_save=2, params=None, rtol=1e-10, atol=1e-12, dt0=1e-3, solver=None,
+          max_steps=200_000, fixed_dt=None, adjoint=None):
+    """Differentiable solve: the saved states ``ys`` (a pytree with a leading save axis) on
+    ``linspace(0, t_max, n_save)``.
+
+    Unlike ``run`` it returns JAX arrays only, so it composes with ``jax.jit``, ``jax.grad`` and
+    ``jax.jvp``. ``params`` (dict) are passed to ``with_params``; ``adjoint`` is passed to Diffrax
+    (default ``RecursiveCheckpointAdjoint()``; use ``diffrax.ForwardMode()`` for ``jax.jvp``/``jacfwd``).
+    With ``fixed_dt`` and many saves on step boundaries, Diffrax 0.7.2 ``RecursiveCheckpointAdjoint`` gradients
+    were measured wrong by a few percent (studies/c09, docs/results.md C09); use ``DirectAdjoint()`` or
+    ``ForwardMode()`` there. Objectives of the final state only (``n_save=2``) were exact.
+    """
+    m = with_params(model, **(params or {}))
+    term = diffrax.ODETerm(lambda t, y, args: rhs(t, y, m))
+    controller = (diffrax.ConstantStepSize() if fixed_dt is not None
+                  else diffrax.PIDController(rtol=rtol, atol=atol))
+    sol = diffrax.diffeqsolve(
+        term, diffrax.Dopri8() if solver is None else solver, 0.0, t_max, dt0 if fixed_dt is None else fixed_dt,
+        y0, saveat=diffrax.SaveAt(ts=jnp.linspace(0.0, t_max, n_save)), stepsize_controller=controller,
+        max_steps=max_steps, adjoint=diffrax.RecursiveCheckpointAdjoint() if adjoint is None else adjoint)
+    return sol.ys
 
 
 def adapt_basis(model: Model, y, t=None, schedule_basis=None, **trigger):
