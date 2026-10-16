@@ -4,3 +4,4 @@ __pycache__/
 .coverage
 artifacts/
 .pytest_cache/
+studies/b09/ckpt/
