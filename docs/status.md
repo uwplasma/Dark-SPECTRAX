@@ -7,8 +7,8 @@ Results and their records are in [results.md](results.md); the model and the lit
 ## Code health
 
 - Parent pin: SPECTRAX `integration/dark-baseline` `d6cedcb` (main `bf41830` plus the open PRs listed in the README).
-  Records made before 2026-10-16 name `f33dfda`; the repin to `d6cedcb` only adds #68-#70 and changes no record: a seeded
-  and an unseeded `noise_floor` pump-frame run are bitwise equal before and after.
+  Records made before 2026-10-16 name `f33dfda`; the repin to `d6cedcb` only adds #68-#70 and changes no record: a seeded pump-frame run
+  with plain PID and with `noise_floor = 1e-14` is bitwise equal before and after.
   This is the current head of that branch. It is not a release, and none of those PRs is merged upstream.
 - Tests: 62 pass locally (CPU, float64, Python 3.13, `pytest -n 2 --cov`), coverage 99.8% of 460 statements;
   flake8 is clean. GitHub CI runs the same tests on Python 3.11 and 3.13.
