@@ -992,6 +992,131 @@ def b11_section():
     return "\n".join(L)
 
 
+def b11_landau_section():
+    r = json.loads((root / "studies/b11/landau.json").read_text())
+    f = json.loads((root / "studies/b11/landau_followup.json").read_text())
+    g, gf = r["gates"], f["gates"]
+    g0p, g3p = gf["G0'"], gf["G3b'"]
+    ok = lambda x: "pass" if x else "FAIL"
+    L = ["### B11 extension: collisional Landau damping, ordinary and dark (`python studies/b11_landau.py`)", "",
+         f"Record: [landau.json](../studies/b11/landau.json) (made at {r['repository_commit'][:7]}, parent {r['parent_commit'][:7]}); "
+         f"follow-up [landau_followup.json](../studies/b11/landau_followup.json) ({f['repository_commit'][:7]}). B00 setup (v_te = 0.1 c, "
+         "eta = 0.3, Omega_D = 1, Nx = 8, B00 fit windows) plus Dougherty self collisions nu (omega_pe units). Two independent "
+         "references for the linear Dougherty susceptibility, derived in the script docstring: R1 the Hermite tridiagonal with "
+         "collision diagonal nu n (n >= 3; the restoring terms cancel rows 1 and 2) solved at N = 4000 and 8000, and R2 a "
+         "continuum form (Fourier transform in v, Lenard-Bernstein kernel along s in [0, k/nu], momentum and temperature "
+         "restoring terms closed by a 3x3 system). Both are inserted in the B00 dispersion D_L = (Q - Omega_D^2)(1 + chi) + "
+         "eta^2 Q chi.", "",
+         "| k lambda_De | model | nu | R2 root | fitted omega (Nn = 256) | rel. error | Nn 128 vs 256 | R1 vs R2 root | max ledger defect |",
+         "|---|---|---|---|---|---|---|---|---|"]
+    refs = {(x["k_lambda_De"], x["model"], x["nu"]): x for x in r["references"]}
+    for x in r["results"]:
+        if x["Nn"] != 256:
+            continue
+        rf = refs[(x["k_lambda_De"], x["model"], x["nu"])]
+        L.append(f"| {x['k_lambda_De']} | {x['model']} | {x['nu']:g} | {c(x['omega_ref'])} | {c(x['omega_fit'])} | "
+                 f"{x['rel_error']:.1e} | {x['Nn_refinement']:.0e} | {rf['R1_vs_R2']:.0e} | {x['max_ledger_defect']:.0e} |")
+    worst = max(x["rel_error"] for x in r["results"] if x["Nn"] == 256)
+    rows = max(x["rows_0_2_over_global_max"] for x in f["G3b_prime"])
+    L += ["", f"Declared gates: G1 fit within 1e-3 {ok(g['G1'])} (worst {worst:.1e}); G2 Nn refinement {ok(g['G2'])}; "
+          f"G4 status {ok(g['G4'])}; G0 {ok(g['G0'])}; G3 {ok(g['G3'])}. **G0 and G3 failed as declared, both mis-specified:** "
+          "G0 compared R2 at nu = 1e-6 with the collisionless chi to 1e-6, but the physical change of chi is O(nu) (5.7e-7, "
+          "1.9e-6); G3's per-state row ratio is 1 by construction at t = 0 (the Dougherty rate of the seeded Maxwellian is "
+          "round-off in every row). The ledger part of G3 passed (<= 1e-17). Follow-up gates declared in a new committed "
+          f"script before running: G0' (d(nu) = abs(chi_R2 - chi_wofz) linear in nu) {ok(g0p)}, ratios "
+          + ", ".join(f"{q:.4f}" for x in f["G0_prime"] for q in x["ratios"]) +
+          f"; G3b' (rows 0-2 <= 1e-12 of the run's max Dougherty rate) {ok(g3p)}: worst {rows:.1e}, i.e. "
+          "round-off of the O(350) C_0 row, not a conservation defect; the ledger closes to <= 1e-17.",
+          "- Effect of collisions on the root: at k lambda_De = 0.5 the damping falls with nu (ordinary 0.1534 at nu = 0 to "
+          "0.0823 at nu = 0.2; dark 0.1391 to 0.0762): the restoring terms keep rows n <= 2 collisionless and the damping of "
+          "the n >= 3 tail weakens the Landau phase mixing. At 0.3 the change is non-monotonic and within 7% (0.01262 to "
+          "0.01287, 0.01350, 0.01275). R1 and R2 agree to <= 4e-12 in the root; the fits are Nn-converged to <= 6e-7.",
+          "- The largest fit errors (5-6e-4, ordinary nu = 0.2) are not from the reference (R1 = R2 to 1e-12); the short B00 "
+          "fit windows are the likely cause, not tested here."]
+    return "\n".join(L)
+
+
+def h08_section():
+    p = root / "studies/h08/summary.json"
+    if not p.exists():
+        return ""
+    s = json.loads(p.read_text())
+    g = s["gates"]
+    ok = lambda x: "pass" if x else "FAIL"
+    L = ["## H08 pilot: resonant drive with Dougherty e-e and e-i collisions (`python studies/h08.py`)", "",
+         f"Summary: [summary.json](../studies/h08/summary.json) (analysis at {s['repository_commit'][:7]}, parent "
+         f"{s['parent_commit'][:7]}); runs in `studies/h08/runs`. H05 nxconv setup (mobile ions 1836, pump frame + remap, "
+         "#66/#72 field-scaled closure c = 4, noise floor 1e-14, Nn 64) plus nu_dougherty = [[nu_ei, nu_ei], [0, nu_ei "
+         "sqrt(m_e/m_i)]]; the parent sets nu_ie = nu_ei m_e/m_i. Convention and limitations (velocity-independent nu, so "
+         "absorption is a model value; nu_ee = nu_ei and nu_ii as Z = 1 order-of-magnitude choices; cross-species beta "
+         "(Greene, beta = 0) not checked against Francisquez et al.) are in the script docstring. HHS-v1-inspired, not a "
+         "reproduction.", "",
+         f"Gates: G0 homogeneous controls vs the exact driven two-fluid oscillator with drag {ok(g.get('G0'))}; "
+         f"G1 nu = 0 reproduces the nxconv record {ok(g.get('G1'))}; G2 collisions do no net work and the ledger closes "
+         f"{ok(g.get('G2'))}; G3 mean-field identity with the collisional current term {ok(g.get('G3'))}.", "",
+         "| homogeneous control | Ebar error | W_ext error | exact W_ext(1000) |", "|---|---|---|---|"]
+    for k, v in s["controls"].items():
+        L.append(f"| {k} | {v['Ebar_err']:.1e} | {v['Wext_err']:.1e} | {v['Wext_exact_end']:.3e} |")
+    if "G1_reproduction" in s:
+        d = s["G1_reproduction"]["max_rel_dev"]
+        L += ["", f"G1: nu = 0, v_q 0.03, Nx 32 vs the nxconv record: max deviation dK_e {d['dKe']:.0e}, W_ext {d['Wx']:.0e}."]
+    L += ["", "| run | t reached | status | identity R / (w_L^2 E0) | without collisional term | max abs(P_e + P_i)/max abs(P_e) | ledger / W_ext |",
+          "|---|---|---|---|---|---|---|"]
+    for k, v in s["runs"].items():
+        L.append(f"| {k} | {v['t_end']:g} | {v['status']} | {v['max_R_over_wL2E0']:.0e} | {v['max_R_nocoll_over_wL2E0']:.0e} | "
+                 f"{v.get('max_Psum_over_Pe', float('nan')):.0e} | {v['max_ledger_over_Wext']:.0e} |")
+    L += ["", "Refinement pairs (nxconv rule: last t with 10% agreement; window = min over observables and the collisionless "
+          "certified window):", "", "| pair | dK_e | W_ext | T_e/T_i - 1 | Q_e | claim window |", "|---|---|---|---|---|---|"]
+    for k, v in s["pairs"].items():
+        L.append(f"| {k} | {v['dKe']:g} | {v['Wx']:g} | {v['TeTi']:g} | {v.get('Qe', '-')} | {v['window']:g} |")
+    L += ["", "Cycle averages (Nx 32, Nn 64) at the times inside the claim windows; energies per unit box, n = 1:", "",
+          "| run | t | W_ext | dK_e / W_ext | dK_i / W_ext | T_e/T_e(0) | T_i/T_i(0) | Q_e (collisional, e) | Q_i |",
+          "|---|---|---|---|---|---|---|---|---|"]
+    for k, v in s["runs"].items():
+        if "_Nx32_Nn64" not in k:
+            continue
+        vq, nu = k.split("_")[0][2:], k.split("_")[1][2:]
+        win = min([pv["window"] for pk, pv in s["pairs"].items() if pk.startswith(f"vq{vq}_nu{nu}_")] or [0.0])
+        for t, a in v["cycle_avg"].items():
+            if float(t) > win:
+                continue
+            Te0, Ti0 = v["cycle_avg"][t]["Te"], v["cycle_avg"][t]["Ti"]
+            L.append(f"| {k} | {t} | {a['W_ext']:.3e} | {a['dK_e'] / a['W_ext']:.3f} | {a['dK_i'] / a['W_ext']:.1e} | "
+                     f"{Te0 / 1e-3:.3f} | {Ti0 / 1e-3:.4f} | {a['Q_e']:.2e} | {a['Q_i']:.2e} |")
+    L += ["", "Collisional / collisionless (same Nx 32, Nn 64), cycle averages:", "", "| case | t | W_ext ratio | dK_e ratio |",
+          "|---|---|---|---|"]
+    for k, v in s["compare_collisionless"].items():
+        for t, a in v.items():
+            L.append(f"| {k} | {t} | {a['W_ext_ratio']:.3f} | {a['dK_e_ratio']:.3f} |")
+    R = s["runs"]
+    hot = R["vq0.03_nu0.01_Nx32_Nn64"]["cycle_avg"]["950"]
+    ctl = s["controls"]["vq0.03_nu0.01"]["Wext_cycle_avg_950"]
+    rc = [v["max_R_nocoll_over_wL2E0"] for k, v in R.items() if "_nu0_" not in k]
+    L += ["", "Findings (inside the claim windows only):",
+          "- G1 FAILED as declared: the nu = 0 rerun deviates from the nxconv record by "
+          f"{s['G1_reproduction']['max_rel_dev']['dKe']:.0e} of the running max in dK_e (gate 1e-6; W_ext "
+          f"{s['G1_reproduction']['max_rel_dev']['Wx']:.0e}). The record was made at parent 16400f8, this run at dd80b0f; the "
+          "cause was not investigated. It is far below the 10% resolution rule, so the collisionless baseline used below is "
+          "this rerun, not the old record.",
+          "- Every Nx 32/64 and Nn 64/128 pair agrees to t = 1000 in dK_e, W_ext, T_e/T_i and Q_e; claims stop at 950 for "
+          "v_q 0.03 (the collisionless certified window).",
+          "- The W_ext ratio collisional/collisionless is the same at v_q 0.01 and 0.03 to 3 digits, and the seeded W_ext "
+          f"follows the homogeneous control (v_q 0.03, nu 1e-2, cycle averages at t = 950: {hot['W_ext']:.4f} vs {ctl:.4f}, "
+          f"{hot['W_ext'] / ctl - 1:+.1%}): the absorption is set by the uniform driven oscillator with drag; the seeded finite-k dynamics adds little "
+          "at these amplitudes.",
+          "- With nu_ei = 1e-2 the electron share dK_e/W_ext rises from 0.48 to 0.85 (the rest stays in the field), and "
+          "collisions turn quiver energy into heat: T_e/T_e(0) reaches "
+          f"{hot['Te'] / 1e-3:.0f} at v_q 0.03 (v_t ~ {np.sqrt(hot['Te']):.2f} c), outside the regime where the "
+          "nonrelativistic model is physical, although numerically resolved. Ion heating stays small (T_i/T_i(0) "
+          f"{hot['Ti'] / 1e-3:.2f}); the e-to-i collisional exchange Q_i is {hot['Q_i'] / hot['W_ext']:.1e} of W_ext.",
+          f"- The collisional current-moment term is O(1) of the drive term in the mean-field identity (up to {max(rc):.1f} "
+          "omega_L^2 E0 without it); with it the identity closes to <= 3e-13. Collisions do no net work (|P_e + P_i| <= "
+          "2e-11 of |P_e|).",
+          "- Not checked: the cross-species beta convention, a velocity-dependent (Coulomb) collision frequency, relativistic "
+          "electrons at the hottest point; the seeds are the deterministic H05 gate seeds (one realization)."]
+    return "\n".join(L)
+
+
 def b08_section():
     d = root / "studies/b08"
     rot, wav, flx = (json.loads((d / f"{n}.json").read_text()) for n in ("rotation", "waves", "flux"))
@@ -1144,6 +1269,10 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {b09_section()}
 
 {b11_section()}
+
+{b11_landau_section()}
+
+{h08_section()}
 
 {third_round()}
 

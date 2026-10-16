@@ -1,0 +1,34 @@
+{
+ "case": "vq0.03_nu0_Nx32_Nn64",
+ "vq_over_vte": 0.03,
+ "nu_ei": 0.0,
+ "nu_matrix": [
+  [
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0
+  ]
+ ],
+ "Nx": 32,
+ "Nn": 64,
+ "control": false,
+ "closure_c": 4.0,
+ "noise_floor": 1e-14,
+ "part": 1,
+ "t_start": 200.0,
+ "t_end": 400.0,
+ "status": "success",
+ "failure_reason": null,
+ "events": 0,
+ "steps": 2380,
+ "rejected": 893,
+ "compile_time": 0.7888386650010943,
+ "run_time": 4.151409583952045,
+ "wall_time": 14.739772125001764,
+ "repository_commit": "db30b0a4fb5dfeb02a14e185609a4c549ca77e15",
+ "parent_commit": "dd80b0fdffa08378d0dc71fc2b0603a5a8ff090b",
+ "command": "python studies/h08.py run --vq 0.03 --nu 0 --Nx 32"
+}

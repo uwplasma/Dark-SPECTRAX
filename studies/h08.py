@@ -235,7 +235,8 @@ def analyze():
                 continue
             Eb, W = exact_control(vq, nu, h["t"])
             r = {"t_end": float(h["t"][-1]), "Ebar_err": float(np.abs(h["Ebar"] - Eb).max() / np.abs(Eb).max()),
-                 "Wext_err": float(np.abs(h["Wx"] - W).max() / np.abs(W).max()), "Wext_exact_end": float(W[-1])}
+                 "Wext_err": float(np.abs(h["Wx"] - W).max() / np.abs(W).max()), "Wext_exact_end": float(W[-1]),
+                 "Wext_cycle_avg_950": at(h, "Wx", 950.0)}
             out["controls"][f"vq{vq:g}_nu{nu:g}"] = r
             g0.append(r["Ebar_err"] <= 1e-6 and r["Wext_err"] <= 1e-6 and r["t_end"] >= 1000 - 1e-9)
     out["gates"]["G0"] = bool(g0) and all(g0)
