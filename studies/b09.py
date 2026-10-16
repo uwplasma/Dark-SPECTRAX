@@ -35,6 +35,12 @@ Gates (declared before running):
       refinement: |gamma(base) - gamma(refined)| / gamma_root <= 1e-4 for both refinements.
   G2  ledger: every row of |ledger_defect| <= 1e-6 of the final perturbation field energy
       (U_gamma + U_D at t_e); Gauss residuals (ordinary, dark) <= 1e-10 of the final max |F_k|.
+Part 1b (`python studies/b09.py ladder`, added after Part 1 showed Nn = 64 unconverged at k >= 1.6, declared before
+running it): at small xi = gamma/(k a_x) the resonant response has width gamma/k << a_x and Hermite convergence is slow.
+k in (1.6, 2.0, 2.4), (Nx, Nm) = (5, 4), Nn in (128, 256, 512), same window, guesses and fit; the reported growth is the
+fitted mode nearest i gamma_root (Part 1 took the largest Im w, which picked a spurious fitted mode in one run).
+Gate: |gamma_fit - gamma_root|/gamma_root <= 1e-3 at the finest Nn and |gamma(Nn) - gamma(Nn/2)|/gamma_root <= 1e-4
+between the two finest levels; ledger and Gauss as G2. The Nn at which 1e-3 is first met is recorded.
 Part 2 (`python studies/b09.py nonlinear`): k0 = 1.2 (near the fastest-growing k for both cases), Lx = 2 pi/k0,
 seed B_z(k0) = 1e-6, run to t = 260 (weibel) / 180 (filament), 521 / 361 saves. Levels (Nx, Nn, Nm, Np):
 base (16, 32, 16, 1), velocity-doubled (16, 64, 32, 1), space-doubled (32, 32, 16, 1).
@@ -52,7 +58,7 @@ Gates:
   G2  as above, ledger <= 1e-6 of max field perturbation energy, Gauss <= 1e-8 of max |F_k| (rho at 2 k0 is
       generated nonlinearly by the v_y B_z force).
 
-Run: python studies/b09.py linear|nonlinear [quick]  -> studies/b09/{linear,nonlinear}.json
+Run: python studies/b09.py linear|ladder|nonlinear [quick]  -> studies/b09/{linear,ladder,nonlinear}.json
 """
 
 import json
@@ -150,9 +156,11 @@ def common(out):
             "compile_time": float(out["compile_time"]), "run_time": float(out["run_time"])}
 
 
-def linear(quick):
+def linear(quick, ladder=False):
     ks = (1.2,) if quick else (0.4, 0.8, 1.2, 1.6, 2.0, 2.4)
     levels = ((5, 32, 4),) if quick else ((5, 32, 4), (5, 64, 8), (9, 32, 4))
+    if ladder:
+        ks, levels = ((2.4,), ((5, 128, 4),)) if quick else ((1.6, 2.0, 2.4), ((5, 128, 4), (5, 256, 4), (5, 512, 4)))
     ref, rows = {}, []
     for case, sp in CASES.items():
         for mname, OD in MODELS.items():
@@ -172,7 +180,7 @@ def linear(quick):
                     z = out["Fk"][:, 5, 0, 1, 0] + (eta * out["Dk"][:, 5, 0, 1, 0] if OD is not None else 0)
                     win = t >= te / 2
                     wf, res = ds.fit_modes(t[win], z[win], guesses)
-                    w0 = complex(wf[int(np.argmax(wf.imag))])
+                    w0 = complex(wf[int(np.argmin(np.abs(wf - 1j * g)))] if ladder else wf[int(np.argmax(wf.imag))])
                     UB, UBD = field_energy_series(model, out)
                     Uw = out["U_gamma"][-1] + out["U_D"][-1]
                     Fmax = float(max(np.abs(out["Fk"][-1]).max(), np.abs(out["Dk"][-1]).max()))
@@ -190,14 +198,26 @@ def linear(quick):
                           f"{q['run_time']:.0f}s", flush=True)
     gates = {"rel_error": 1e-3, "re_over_gamma": 1e-3, "refinement": 1e-4, "ledger_rel": 1e-6, "gauss_rel": 1e-10}
     for r in rows:
-        base = [b for b in rows if b["case"] == r["case"] and b["model"] == r["model"] and b["k"] == r["k"]
-                and (b["Nx"], b["Nn"], b["Nm"]) == levels[0]][0]
+        same = [b for b in rows if b["case"] == r["case"] and b["model"] == r["model"] and b["k"] == r["k"]]
+        base = [b for b in same if (b["Nx"], b["Nn"], b["Nm"]) == levels[0]][0]
+        if ladder:  # change from the next-coarser Nn
+            base = ([b for b in same if b["Nn"] == r["Nn"] // 2] or [r])[0]
         r["refinement_change"] = abs(r["omega_fit"][1] - base["omega_fit"][1]) / r["gamma_root"]
         r["passed"] = bool(r["status"] == "success" and r["rel_error"] <= gates["rel_error"]
                            and r["re_over_gamma"] <= gates["re_over_gamma"]
                            and r["refinement_change"] <= gates["refinement"]
                            and max(r["ledger_rel"]) <= gates["ledger_rel"] and max(r["gauss_rel"]) <= gates["gauss_rel"])
-    return {"gates": gates, "passed": all(r["passed"] for r in rows),
+    if ladder:
+        for r in rows:
+            r["passed"] = None
+        top = max(lv[1] for lv in levels)
+        for r in rows:
+            if r["Nn"] == top:
+                r["passed"] = bool(r["status"] == "success" and r["rel_error"] <= gates["rel_error"]
+                                   and r["refinement_change"] <= gates["refinement"]
+                                   and max(r["ledger_rel"]) <= gates["ledger_rel"]
+                                   and max(r["gauss_rel"]) <= gates["gauss_rel"])
+    return {"gates": gates, "passed": all(r["passed"] for r in rows if r["passed"] is not None),
             "settings": {"eta": eta, "cases": {c: [[n, list(a), u] for n, a, u in sp] for c, sp in CASES.items()},
                          "Omega_D": {m: od for m, od in MODELS.items()}, "seed_Bz": 1e-10, "rtol": 1e-11,
                          "atol": 1e-20, "levels_Nx_Nn_Nm": [list(x) for x in levels], "Np": 1, "n_save": 801},
@@ -289,7 +309,7 @@ if __name__ == "__main__":
     part = sys.argv[1]
     quick = "quick" in sys.argv[2:]
     tic = time.perf_counter()
-    rec = {"linear": linear, "nonlinear": nonlinear}[part](quick)
+    rec = {"linear": linear, "nonlinear": nonlinear, "ladder": lambda q: linear(q, ladder=True)}[part](quick)
     rec.update({"repository_commit": ds._simulation._git_sha(), "parent_commit": ds.PARENT_COMMIT,
                 "command": " ".join(["python", "studies/b09.py"] + sys.argv[1:]),
                 "wall_time": time.perf_counter() - tic})
