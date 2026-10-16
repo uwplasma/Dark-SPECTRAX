@@ -65,7 +65,7 @@ Status: **done** = passing test or record on main; **partial** = covered in part
 | B06 | echo | done vs grid (same B01 records); Gould-O'Neil-Malmberg 1967 read: echo time tau k2/(k2-k1) = 30 is what B06 uses |
 | B07 | free streaming | done (ordinary, `studies/refs/B07`, test A08); no dark variant (none needed: force off) |
 | B08 | magnetized rotation, EM waves | done for uniform B0 ([records](../studies/b08/), results.md): rotation of U, E_0 and the full covariance vs the exact 6x6/expm reference to 2e-11 for four B0 directions and both charge signs, zero magnetic work; 40 cold R/L/whistler/Langmuir/O/X eigenmodes (ordinary and dark, eta = 0.3, Omega_D = 1.2) from the full field-current eigenproblem, fit within 1e-3 at v_t = 0.01, warm error scaling as v_t^2, Nn-converged; Proca flux incl. Omega_D^2 phi_D A_D closes pointwise to 3e-14. Failed gates (n = 1e-4 rotation: fit window, small-K0 ledger ratio, mis-specified K_perp gate) documented. Open: warm/Bernstein reference, nonuniform B0 |
-| B09 | Weibel | not started (needs 1D2V/2D3V anisotropic setup; cost moderate) |
+| B09 | Weibel, filamentation | linear done in 1D3V ([records](../studies/b09/), results.md): bi-Maxwellian Weibel and counter-streaming filamentation, ordinary and dark (eta = 0.3, Omega_D = 0.3 near the transverse Proca branch and 1.2), growth vs an independent kinetic transverse dispersion relation with Proca coupling, k = 0.4-2.4; within 1e-3 at every k (Nn = 512 needed at k >= 1.6), ledger <= 1.1e-7. Failed gates: Weibel k = 2.4 Nn 256->512 step > 1e-4 (all models), one spurious fit-mode pick (dark Omega_D = 0.3, k = 0.4, Nx = 9). Open: nonlinear saturation not reached (adaptive step collapse at t ~ 110-113 just before the peak; no claim) |
 | B10 | Langmuir modulational / Zakharov | not started; Zakharov 1972 Secs. 1-2 read (physics.md C3): use eqs. 2.8/2.9 directly, the printed gamma_max = q w omega_p/16 does not follow from 2.8 (gives /4); no dark term at that order |
 | B11 | collisional relaxation | blocked: Dark-SPECTRAX has no physical collision operator (the parent `nu` is a numerical closure); Dougherty moments derived (algebra only), Hakim et al. not read |
 | B12 | off-resonant forcing with drag | partial: response and absorbed power derived (algebra only); no run |
@@ -145,7 +145,7 @@ physics.md sets the rule: only full-text sources may set a benchmark.
 5. ~~Cheap B rungs: B05 Buneman, B04 ion-acoustic~~ done 2026-10-15 (results.md); open: B04 damping at T_e/T_i = 20.
    Decisive: growth/damping vs kinetic roots to 1e-4, ordinary and dark.
 6. ~~B08 magnetized rotation and EM waves~~ done 2026-10-15 for uniform B0 (results.md; transverse dark branch now tested);
-   **then B09 Weibel** (several days). Open from B08: a warm (Bernstein) reference for the lower X branch near 2|Omega_ce|.
+   ~~B09 Weibel~~ linear done 2026-10-16; nonlinear saturation open (step collapse before the peak: needs a cheaper/implicit stepper or filtering). Open from B08: a warm (Bernstein) reference for the lower X branch near 2|Omega_ce|.
 7. C09 done (2026-10-15). Open: gradient of a fitted Landau damping rate, through `run_adaptive` remaps, and report the Diffrax checkpoint defect upstream. C08 CPU/GPU after the office GPUs are free.
 8. **Collisions (B11/H08/R2)**: needs a conservative Dougherty operator upstream. This waits on reading Hakim et al.
    and an owner decision on the parent API.

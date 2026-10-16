@@ -274,6 +274,56 @@ Electrons, omega_pe = 1, |Omega_ce| = 0.5; k parallel (B0 along x) and perpendic
 
 Packets of five Proca modes (transverse, longitudinal, mixed polarization) with cold plasma, B0, eta = 0.3, evolved to t = 5 and checked pointwise on a 256-point grid: d u_D/dt + d S_D/dx + P_D = 0 with S_D = Om0^2[(E_D x B_D)_x + Omega_D^2 phi_D A_D,x]. Residual / max|du_D/dt|: transverse 1e-14 (without phi_D A_D: 0.02), longitudinal 3e-14 (without phi_D A_D: 1.15), mixed 2e-14 (without phi_D A_D: 1.37). Gate 1e-10: pass. The phi_D A_D term is required whenever the packet has a longitudinal part.
 
+## B09: Weibel and current filamentation in 1D3V, ordinary and dark (`python studies/b09.py linear|ladder`)
+
+Records: [linear.json](../studies/b09/linear.json), [ladder.json](../studies/b09/ladder.json) (made at d6fa93a / d6fa93a). Gates and the independent kinetic transverse dispersion relation (with the Proca coupling, eta = 0.3) are in the script docstring, declared before running. Part 1 overall: FAILED; Part 1b ladder: FAILED.
+
+Relative growth error |gamma_fit - gamma_root|/gamma_root. Levels (Nx, Nn, Nm): base (5,32,4), v-refined (5,64,8), x-refined (9,32,4); ladder (5, Nn, 4).
+
+| case | model | k | gamma_root | base | v-refined | x-refined | Nn=128 | Nn=256 | Nn=512 | ladder step 256->512 | gate |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| weibel | ordinary | 0.4 | 0.065020 | 2.4e-07 | 2.4e-07 | 3.2e-07 |  |  |  |  | pass |
+| weibel | ordinary | 0.8 | 0.100729 | 6.9e-08 | 7.3e-08 | 9.7e-08 |  |  |  |  | pass |
+| weibel | ordinary | 1.2 | 0.107751 | 1.1e-05 | 5.0e-08 | 1.1e-05 |  |  |  |  | pass |
+| weibel | ordinary | 1.6 | 0.095873 | 6.0e-04 | 1.0e-05 | 6.0e-04 | 6.8e-08 | 6.8e-08 | 6.8e-08 | 3.0e-11 | pass |
+| weibel | ordinary | 2.0 | 0.072070 | 1.4e-02 | 1.3e-03 | 1.4e-02 | 4.6e-05 | 1.3e-07 | 1.3e-07 | 1.4e-12 | pass |
+| weibel | ordinary | 2.4 | 0.040307 | 1.5e-01 | 5.5e-02 | 1.5e-01 | 1.3e-02 | 1.5e-03 | 6.2e-05 | 1.4e-03 | FAIL |
+| weibel | dark_OD0.3 | 0.4 | 0.065369 | 2.3e-07 | 2.3e-07 | 6.4e-01 |  |  |  |  | FAIL |
+| weibel | dark_OD0.3 | 0.8 | 0.103020 | 6.2e-08 | 6.4e-08 | 8.9e-08 |  |  |  |  | pass |
+| weibel | dark_OD0.3 | 1.2 | 0.112570 | 5.5e-06 | 4.6e-08 | 5.5e-06 |  |  |  |  | pass |
+| weibel | dark_OD0.3 | 1.6 | 0.102973 | 3.3e-04 | 2.8e-06 | 3.3e-04 | 5.4e-08 | 5.4e-08 | 5.4e-08 | 4.7e-11 | pass |
+| weibel | dark_OD0.3 | 2.0 | 0.081085 | 7.6e-03 | 5.4e-04 | 7.6e-03 | 1.1e-05 | 1.0e-07 | 1.0e-07 | 3.2e-11 | pass |
+| weibel | dark_OD0.3 | 2.4 | 0.050948 | 8.7e-02 | 2.4e-02 | 8.7e-02 | 3.6e-03 | 2.2e-04 | 1.5e-06 | 2.2e-04 | FAIL |
+| weibel | dark_OD1.2 | 0.4 | 0.065078 | 2.0e-07 | 2.0e-07 | 2.8e-07 |  |  |  |  | pass |
+| weibel | dark_OD1.2 | 0.8 | 0.101570 | 6.7e-08 | 6.9e-08 | 9.3e-08 |  |  |  |  | pass |
+| weibel | dark_OD1.2 | 1.2 | 0.110380 | 7.5e-06 | 4.4e-08 | 7.5e-06 |  |  |  |  | pass |
+| weibel | dark_OD1.2 | 1.6 | 0.100652 | 4.0e-04 | 4.4e-06 | 4.0e-04 | 5.3e-08 | 5.3e-08 | 5.3e-08 | 1.9e-13 | pass |
+| weibel | dark_OD1.2 | 2.0 | 0.078918 | 8.7e-03 | 6.8e-04 | 8.7e-03 | 1.6e-05 | 5.9e-08 | 5.9e-08 | 6.1e-11 | pass |
+| weibel | dark_OD1.2 | 2.4 | 0.049015 | 9.6e-02 | 2.8e-02 | 9.6e-02 | 4.5e-03 | 3.1e-04 | 4.4e-06 | 3.1e-04 | FAIL |
+| filament | ordinary | 0.4 | 0.098485 | 7.3e-08 | 7.3e-08 | 5.4e-08 |  |  |  |  | pass |
+| filament | ordinary | 0.8 | 0.153453 | 1.9e-08 | 1.9e-08 | 1.6e-08 |  |  |  |  | pass |
+| filament | ordinary | 1.2 | 0.166855 | 2.5e-06 | 1.1e-08 | 2.5e-06 |  |  |  |  | pass |
+| filament | ordinary | 1.6 | 0.152986 | 2.2e-04 | 8.2e-07 | 2.2e-04 | 1.1e-08 | 1.1e-08 | 1.1e-08 | 7.3e-13 | pass |
+| filament | ordinary | 2.0 | 0.121821 | 5.4e-03 | 3.3e-04 | 5.4e-03 | 3.8e-06 | 1.8e-08 | 1.8e-08 | 1.2e-12 | pass |
+| filament | ordinary | 2.4 | 0.079066 | 6.8e-02 | 1.6e-02 | 6.8e-02 | 2.0e-03 | 9.0e-05 | 5.9e-08 | 9.0e-05 | pass |
+| filament | dark_OD0.3 | 0.4 | 0.099017 | 5.5e-08 | 5.5e-08 | 3.7e-08 |  |  |  |  | pass |
+| filament | dark_OD0.3 | 0.8 | 0.156828 | 2.7e-08 | 2.7e-08 | 2.4e-08 |  |  |  |  | pass |
+| filament | dark_OD0.3 | 1.2 | 0.173876 | 1.1e-06 | 1.2e-08 | 1.1e-06 |  |  |  |  | pass |
+| filament | dark_OD0.3 | 1.6 | 0.163304 | 1.2e-04 | 8.0e-08 | 1.2e-04 | 2.5e-08 | 2.5e-08 | 2.5e-08 | 4.2e-11 | pass |
+| filament | dark_OD0.3 | 2.0 | 0.134922 | 3.0e-03 | 1.3e-04 | 3.0e-03 | 1.0e-07 | 1.9e-08 | 1.9e-08 | 3.7e-11 | pass |
+| filament | dark_OD0.3 | 2.4 | 0.094536 | 3.8e-02 | 6.7e-03 | 3.8e-02 | 5.1e-04 | 1.1e-05 | 3.8e-08 | 1.1e-05 | pass |
+| filament | dark_OD1.2 | 0.4 | 0.098575 | 7.0e-08 | 7.0e-08 | 5.2e-08 |  |  |  |  | pass |
+| filament | dark_OD1.2 | 0.8 | 0.154705 | 1.5e-08 | 1.5e-08 | 1.2e-08 |  |  |  |  | pass |
+| filament | dark_OD1.2 | 1.2 | 0.170703 | 1.6e-06 | 1.1e-08 | 1.6e-06 |  |  |  |  | pass |
+| filament | dark_OD1.2 | 1.6 | 0.159944 | 1.4e-04 | 1.9e-07 | 1.4e-04 | 1.0e-08 | 1.0e-08 | 1.0e-08 | 6.5e-12 | pass |
+| filament | dark_OD1.2 | 2.0 | 0.131780 | 3.4e-03 | 1.6e-04 | 3.4e-03 | 3.3e-07 | 1.5e-08 | 1.5e-08 | 2.5e-12 | pass |
+| filament | dark_OD1.2 | 2.4 | 0.091728 | 4.3e-02 | 7.9e-03 | 4.3e-02 | 6.6e-04 | 1.7e-05 | 2.1e-07 | 1.7e-05 | pass |
+
+- Ledger: max relative defect over all 162 linear runs 1.1e-07 (gate 1e-6); Gauss residuals at or below 1e-15 of max |F_k| everywhere (gate 1e-10).
+- k <= 1.2: all levels pass. k >= 1.6: Nn = 32/64 are unconverged (small xi = gamma/(k a_x), resonant width gamma/k << a_x); the ladder reaches the 1e-3 accuracy at Nn = 512 for every case, and the 1e-4 Nn/2 -> Nn step everywhere except Weibel at k = 2.4 (all three models), which fails the step gate.
+- One Part-1 failure is a fit-selection artifact: Weibel dark Omega_D = 0.3, k = 0.4, x-refined level, where the largest-Im fitted mode was spurious (Re w / gamma = 8.5); the ladder uses the mode nearest i gamma_root instead.
+- Nonlinear part (k0 = 1.2, levels (16,32,16)/(16,64,32)/(32,32,16)): NOT completed, no record. The full run ended in status failure at the base and v-doubled Weibel levels (1.5 h and 5.4 h of run time, no peak found; stopped before the remaining levels); a later uncommitted probe of the ordinary Weibel base level showed linear growth to U_B = 1.5e-3 by t = 113 with the adaptive step count jumping from 514 (t = 110) to 55150 (t = 113) while U_B was still rising, so the saturation peak (bounce estimate B_sat = 4.6e-2) is not reached at affordable cost. No saturation claim is made.
+
 ## Independent dark reference: grid Vlasov-Ampere-Proca (`python studies/dark_grid_reference.py`)
 
 `studies/refs/code/slv_proca.py` extends the imported semi-Lagrangian solver with Ampere's law and the longitudinal Proca fields (E_D, A_D, phi_D at every k including k = 0, exact per-k propagator, mid-step current from the exact velocity shift). It shares no code with SPECTRAX or Dark-SPECTRAX; it shares the field convention and the D_L equation. c = 10 (beta = 0.1), eta = 0.3, Omega_D = omega_pe.

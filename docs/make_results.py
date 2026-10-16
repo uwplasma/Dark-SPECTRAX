@@ -869,6 +869,44 @@ def b04_b05_section():
     return "\n".join(L)
 
 
+def b09_section():
+    d = root / "studies/b09"
+    lin, lad = (json.loads((d / f"{n}.json").read_text()) for n in ("linear", "ladder"))
+    L = ["## B09: Weibel and current filamentation in 1D3V, ordinary and dark (`python studies/b09.py linear|ladder`)", "",
+         f"Records: [linear.json](../studies/b09/linear.json), [ladder.json](../studies/b09/ladder.json) (made at "
+         f"{lin['repository_commit'][:7]} / {lad['repository_commit'][:7]}). Gates and the independent kinetic transverse "
+         "dispersion relation (with the Proca coupling, eta = 0.3) are in the script docstring, declared before running. "
+         f"Part 1 overall: {'passed' if lin['passed'] else 'FAILED'}; Part 1b ladder: {'passed' if lad['passed'] else 'FAILED'}.", "",
+         "Relative growth error |gamma_fit - gamma_root|/gamma_root. Levels (Nx, Nn, Nm): base (5,32,4), v-refined (5,64,8), "
+         "x-refined (9,32,4); ladder (5, Nn, 4).", "",
+         "| case | model | k | gamma_root | base | v-refined | x-refined | Nn=128 | Nn=256 | Nn=512 | ladder step 256->512 | gate |",
+         "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for r0 in [r for r in lin["results"] if (r["Nx"], r["Nn"], r["Nm"]) == (5, 32, 4)]:
+        key = lambda r: r["case"] == r0["case"] and r["model"] == r0["model"] and r["k"] == r0["k"]
+        lv = {(r["Nx"], r["Nn"]): r for r in lin["results"] if key(r)}
+        ld = {r["Nn"]: r for r in lad["results"] if key(r)}
+        e = lambda r: f"{r['rel_error']:.1e}" if r else ""
+        if ld:
+            ok, step = ld[512]["passed"], f"{ld[512]['refinement_change']:.1e}"
+        else:
+            ok, step = all(r["passed"] for r in lv.values()), ""
+        L.append(f"| {r0['case']} | {r0['model']} | {r0['k']} | {r0['gamma_root']:.6f} | {e(lv[(5, 32)])} | {e(lv[(5, 64)])} | "
+                 f"{e(lv[(9, 32)])} | {e(ld.get(128))} | {e(ld.get(256))} | {e(ld.get(512))} | {step} | {'pass' if ok else 'FAIL'} |")
+    led = max(max(r["ledger_rel"]) for r in lin["results"] + lad["results"])
+    L += ["", f"- Ledger: max relative defect over all {len(lin['results']) + len(lad['results'])} linear runs {led:.1e} (gate 1e-6); "
+          "Gauss residuals at or below 1e-15 of max |F_k| everywhere (gate 1e-10).",
+          "- k <= 1.2: all levels pass. k >= 1.6: Nn = 32/64 are unconverged (small xi = gamma/(k a_x), resonant width gamma/k << a_x); "
+          "the ladder reaches the 1e-3 accuracy at Nn = 512 for every case, and the 1e-4 Nn/2 -> Nn step everywhere except Weibel at "
+          "k = 2.4 (all three models), which fails the step gate.",
+          "- One Part-1 failure is a fit-selection artifact: Weibel dark Omega_D = 0.3, k = 0.4, x-refined level, where the largest-Im fitted "
+          "mode was spurious (Re w / gamma = 8.5); the ladder uses the mode nearest i gamma_root instead.",
+          "- Nonlinear part (k0 = 1.2, levels (16,32,16)/(16,64,32)/(32,32,16)): NOT completed, no record. The full run ended in status failure at the base and v-doubled Weibel levels "
+          "(1.5 h and 5.4 h of run time, no peak found; stopped before the remaining levels); a later uncommitted probe of the ordinary Weibel base level showed linear growth "
+          "to U_B = 1.5e-3 by t = 113 with the adaptive step count jumping from 514 (t = 110) to 55150 (t = 113) while U_B was still rising, "
+          "so the saturation peak (bounce estimate B_sat = 4.6e-2) is not reached at affordable cost. No saturation claim is made."]
+    return "\n".join(L)
+
+
 def b08_section():
     d = root / "studies/b08"
     rot, wav, flx = (json.loads((d / f"{n}.json").read_text()) for n in ("rotation", "waves", "flux"))
@@ -1018,6 +1056,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 
 {b08_section()}
 
+{b09_section()}
+
 {third_round()}
 
 {lanes()}
@@ -1056,6 +1096,7 @@ Timing (CPU, from the records): compile {tmin('compile_time'):.2f}-{tmax('compil
 integration {tmin('run_time'):.2f}-{tmax('run_time'):.2f} s for the B00/B02/B03 runs above.
 """)
 
+
 def readme_table():
     refmax = max([abs(v["dw_grid"]) for v in refs["B00"].values()] + [abs(v["dg_grid"]) for v in refs["B00"].values()]
                  + [abs(v["dg_grid"]) for v in refs["B02"].values()])
@@ -1089,6 +1130,12 @@ def readme_table():
                      and r["v_t"] == 0.01 and r["Nn"] == 4), key=lambda r: r["omega_cold"]) for m in ("ordinary", "dark")]
         L.append(f"| B08 cold {geom} {kind} (upper), $k=1.1$, $\\omega$ ($v_t=0.01$; dark column $\\Omega_D=1.2$) | {c(o['omega_fit'])} / {o['omega_cold']:.6f} | "
                  f"{c(d['omega_fit'])} / {d['omega_cold']:.6f} |")
+    b9 = json.loads((root / "studies/b09/linear.json").read_text())["results"]
+    for case in ("weibel", "filament"):
+        o, d = [[r for r in b9 if r["case"] == case and r["model"] == m and r["k"] == 1.2 and (r["Nx"], r["Nn"]) == (5, 64)][0]
+                for m in ("ordinary", "dark_OD0.3")]
+        L.append(f"| B09 {case} $k=1.2$, growth (dark column $\\Omega_D=0.3$) | {o['omega_fit'][1]:.6f} / {o['gamma_root']:.6f} | "
+                 f"{d['omega_fit'][1]:.6f} / {d['gamma_root']:.6f} |")
     pf = pic[-1]
     L.append(f"| C05 Landau, same fit rule: Hermite / PIC rerun ({pf['cells']} cells, {pf['particles']} particles) | "
              f"{c(c05['spectrax']['ordinary_Nn256']['maxima_fit'])} / {c(pf['ordinary'])} | "
