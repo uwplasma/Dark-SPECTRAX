@@ -24,6 +24,7 @@ import numpy as np
 # ---------------------------------------------------------------------------
 from spectrax import Hermite_Fourier_system as _parent_kinetic
 from spectrax import cross_product as _cross
+from spectrax import dougherty_collisions as _parent_dougherty
 from spectrax import initialize_simulation_parameters as _parent_init
 from spectrax import plasma_current as _parent_current
 from spectrax import rfft_weights as _parent_rfft_weights
@@ -32,12 +33,13 @@ from spectrax import uniform_acceleration as _parent_uniform_acceleration
 
 jax.config.update("jax_enable_x64", True)
 
-PARENT_COMMIT = "d6cedcbea9fa4ba99eb283596098998e8b5839bd"  # SPECTRAX integration/dark-baseline, not a release
+PARENT_COMMIT = "a4bdd72d28df87ea73f0c2719569301e372722d9"  # SPECTRAX integration/dark-baseline, not a release
 MODES = ("ordinary", "prescribed_drive", "self_consistent")
 FRAMES = ("fixed", "pump")
+COLLISION_MODELS = ("none", "dougherty")
 _FFT_AXES = (-1, -3, -2)  # parent convention: rfft along x, stored on axis -2
 
-__all__ = ["Model", "MODES", "FRAMES", "PARENT_COMMIT", "rhs", "inner", "hermite_index", "basis_of"]
+__all__ = ["Model", "MODES", "FRAMES", "COLLISION_MODELS", "PARENT_COMMIT", "rhs", "inner", "hermite_index", "basis_of"]
 
 
 def hermite_index(n, m, p, Nn, Nm):
@@ -51,6 +53,11 @@ class Model:
 
     Grid sizes are the full transform lengths ``(Nx, Ny, Nz)``; arrays are
     stored as ``(..., Ny, Nx//2+1, Nz)`` exactly as in the parent.
+
+    ``nu`` is the parent's numerical hypercollision closure. ``collision_model = "dougherty"`` adds the
+    physical, conservative Dougherty operator (parent #71) with ``nu_dougherty``: a scalar (self collisions
+    of every species) or an ``Ns x Ns`` matrix (diagonal ``nu_ss``; upper triangle ``nu_sr``; ``nu_rs``
+    follows from momentum conservation). It needs ``N >= 3`` on each velocity axis it acts on.
     """
 
     Nx: int = 1
@@ -76,6 +83,8 @@ class Model:
     phase_drive: float = 0.0
     sweep_drive: float = 0.0
     frame: str = "fixed"
+    collision_model: str = "none"
+    nu_dougherty: object = 0.0
     _p: dict = field(default=None, repr=False)
 
     def __post_init__(self):
@@ -83,6 +92,10 @@ class Model:
             raise ValueError(f"mode must be one of {MODES}, got {self.mode!r}")
         if self.frame not in FRAMES:
             raise ValueError(f"frame must be one of {FRAMES}, got {self.frame!r}")
+        if self.collision_model not in COLLISION_MODELS:
+            raise ValueError(f"collision_model must be one of {COLLISION_MODELS}, got {self.collision_model!r}")
+        if np.ndim(self.nu_dougherty) not in (0, 2):
+            raise ValueError("nu_dougherty is a scalar or an Ns x Ns matrix")
         Ns = len(self.qs)
         if len(self.Omega_cs) != Ns or len(self.alpha_s) != 3 * Ns or len(self.u_s) != 3 * Ns:
             raise ValueError("qs, Omega_cs, alpha_s (3*Ns) and u_s (3*Ns) are inconsistent")
@@ -185,6 +198,11 @@ def rhs(t, y, model: Model):
         p["sqrt_n_plus"], p["sqrt_n_minus"], p["sqrt_m_plus"], p["sqrt_m_minus"],
         p["sqrt_p_plus"], p["sqrt_p_minus"], p["Lx"], p["Ly"], p["Lz"], p["nu"], p["D"],
         a_s, u_s, p["qs"], p["Omega_cs"], Nn, Nm, Np, Ns, mask23=mask, F0=F0)
+    if m.collision_model == "dougherty":  # parent #71: conservative Dougherty, exact in the moving basis
+        nu_D = np.asarray(m.nu_dougherty, float)
+        nu_D = np.eye(Ns) * nu_D if nu_D.ndim == 0 else nu_D
+        dCk = dCk + _parent_dougherty(C.reshape(Ns, Np, Nm, Nn, Ny, Nx, Nz), nu_D, a_s, u_s, p["Omega_cs"],
+                                      Nn, Nm, Np, Ns, mask)
     J = _parent_current(p["qs"], a_s, u_s, Ck, Nn, Nm, Np, Ns)
 
     dE = 1j * _cross(nabla, Fk[3:]) - J / om0

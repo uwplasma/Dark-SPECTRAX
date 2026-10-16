@@ -1,0 +1,116 @@
+{
+  "case_id": "B11",
+  "command": "python studies/b11.py ",
+  "repository_commit": "ef0173360402fb1029a5d5b099993eb54ae1b096",
+  "parent_commit": "a4bdd72d28df87ea73f0c2719569301e372722d9",
+  "units": "parent normalization; homogeneous, uncharged (qs = 0)",
+  "settings": {
+    "solver": "Dopri8",
+    "rtol": 1e-12,
+    "atol": 1e-12
+  },
+  "versions": {
+    "jax": "0.11.2",
+    "diffrax": "0.7.2",
+    "spectrax": "0.2.1.post140"
+  },
+  "wall_time": 24.431290864944458,
+  "passed": false,
+  "results": [
+    {
+      "case": "A two-beam",
+      "nu": 1.0,
+      "d": 0.6,
+      "vt": 0.5,
+      "Nn": 96,
+      "status": "success",
+      "mode_rel_errors": {
+        "4": 1.1728099491570276e-08,
+        "6": 1.4044775475952065e-07,
+        "8": 8.304390111124604e-07
+      },
+      "rows_0_2_change": 1.9892781903348782e-17,
+      "nonmaxwellian_norm": [
+        0.19083909348151523,
+        2.6533960499279695e-10
+      ],
+      "num_steps": 118,
+      "run_time": 0.0679696659790352,
+      "passed": false
+    },
+    {
+      "case": "B anisotropy 3V",
+      "nu": 0.5,
+      "T0": [
+        0.25,
+        0.16,
+        0.09
+      ],
+      "N": [
+        12,
+        12,
+        12
+      ],
+      "status": "success",
+      "rel_error": 4.431202540317036e-11,
+      "theta_change": 4.996003610813204e-16,
+      "T_final": [
+        0.16819296990739369,
+        0.1665445624074085,
+        0.16526246768519776
+      ],
+      "num_steps": 29,
+      "run_time": 0.11280662499484606,
+      "passed": true
+    },
+    {
+      "case": "C T-equilibration m_r/m_s=4",
+      "mass_ratio": 4.0,
+      "nu_sr": 1.0,
+      "lambda": 0.8,
+      "status": "success",
+      "rel_error": 1.4543921622589558e-13,
+      "energy_change": 9.25185853854297e-16,
+      "T_final": [
+        0.6362871813157656,
+        0.5637128186842356
+      ],
+      "num_steps": 65,
+      "run_time": 0.055986834020586684,
+      "passed": true
+    },
+    {
+      "case": "C T-equilibration m_r/m_s=100",
+      "mass_ratio": 100.0,
+      "nu_sr": 1.0,
+      "lambda": 0.039603960396039604,
+      "status": "success",
+      "rel_error": 1.6653345369377354e-15,
+      "energy_change": 2.0354088784794535e-15,
+      "T_final": [
+        0.7219176400525708,
+        0.4780823599474317
+      ],
+      "num_steps": 690,
+      "run_time": 0.3739843330113217,
+      "passed": true
+    },
+    {
+      "case": "D drift relaxation m_r/m_s=4",
+      "mass_ratio": 4.0,
+      "nu_sr": 1.0,
+      "lambda": 0.625,
+      "status": "success",
+      "rel_error": 1.2552921665095104e-13,
+      "momentum_change": 9.251858538542972e-17,
+      "energy_change": 3.991813122247753e-16,
+      "T_final": [
+        0.5590607645731094,
+        0.5526812163894942
+      ],
+      "num_steps": 89,
+      "run_time": 0.06572049998794682,
+      "passed": true
+    }
+  ]
+}
