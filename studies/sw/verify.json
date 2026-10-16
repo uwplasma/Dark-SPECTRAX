@@ -1,0 +1,32 @@
+{
+ "orthonormality": 1.5898393712632242e-13,
+ "X": 8.713030297258229e-13,
+ "D_fd": 8.95287666224931e-09,
+ "moments": 6.166514967746791e-12,
+ "shift": [
+  {
+   "delta_over_sigma": 0.01,
+   "rel_err": 1.5877935619382944e-16
+  },
+  {
+   "delta_over_sigma": 0.1,
+   "rel_err": 1.5990933917594615e-16
+  },
+  {
+   "delta_over_sigma": 0.5,
+   "rel_err": 1.9839494228199607e-16
+  },
+  {
+   "delta_over_sigma": 1.0,
+   "rel_err": 4.2487449977183235e-16
+  },
+  {
+   "delta_over_sigma": 2.0,
+   "rel_err": 1.2019668619740184e-15
+  }
+ ],
+ "rhs_k0": 1.5649979421915416e-13,
+ "rhs_stream": 1.563766161657135e-13,
+ "uniform_force_cancels": true,
+ "pass": true
+}
