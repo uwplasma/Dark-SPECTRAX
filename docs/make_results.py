@@ -400,7 +400,7 @@ def c09_section():
         L.append(f"| {d['case']} | {d['dt']} | {d.get('n_save', 601)} | {d.get('max_steps', int(60 / d['dt']) + 20)} | "
                  f"{d['recursive_checkpoint']:.10g} | {d['direct']:.10g} | {d['recursive_rel_err_vs_direct']:.0e} |")
     L += ["", "The wrong value depends on `max_steps` (same solve, 6020 vs 20000), which points at the checkpoint "
-          "bookkeeping; the cause was not isolated. Final-state objectives (2 saves) and a short 11-save case were exact. "
+          "bookkeeping; the cause was not isolated. Reported upstream as [diffrax#788](https://github.com/patrick-kidger/diffrax/issues/788). Final-state objectives (2 saves) and a short 11-save case were exact. "
           "So (a), which fits 601 saves, uses `DirectAdjoint`; (b) and (c) use only the final state. This affects the parent's "
           "checkpointed reverse mode (#44) whenever a loss uses many saved times with a constant step.",
           "", "Not covered: gradients through the pump-frame remap and `run_adaptive`, through a fitted damping rate of a "

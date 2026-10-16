@@ -148,6 +148,6 @@ physics.md sets the rule: only full-text sources may set a benchmark.
    Decisive: growth/damping vs kinetic roots to 1e-4, ordinary and dark.
 6. ~~B08 magnetized rotation and EM waves~~ done 2026-10-15 for uniform B0 (results.md; transverse dark branch now tested);
    ~~B09 Weibel~~ linear done 2026-10-16; nonlinear saturation open (step collapse before the peak: needs a cheaper/implicit stepper or filtering). Open from B08: a warm (Bernstein) reference for the lower X branch near 2|Omega_ce|.
-7. C09 done (2026-10-15). Open: gradient of a fitted Landau damping rate, through `run_adaptive` remaps, and report the Diffrax checkpoint defect upstream. C08 CPU/GPU after the office GPUs are free.
+7. C09 done (2026-10-15). Open: gradient of a fitted Landau damping rate, through `run_adaptive` remaps, Diffrax checkpoint defect reported upstream as [diffrax#788](https://github.com/patrick-kidger/diffrax/issues/788). C08 CPU/GPU after the office GPUs are free.
 8. **Collisions (B11/H08/R2)**: needs a conservative Dougherty operator upstream. This waits on reading Hakim et al.
    and an owner decision on the parent API.
