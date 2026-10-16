@@ -37,6 +37,10 @@ window the closure makes clean, claiming only within the resolved time.
   the four other runs (both refinements and both strengths); peak before T_res and B_peak agreeing within 2e-2;
   G3b: B_peak / B_sat in [1/3, 3] with B_sat = gamma^2/(k0 v_perp), v_perp = a_y/sqrt2; G2: ledger <= 1e-6 of max
   field perturbation energy, Gauss <= 1e-8 of max |F_k|, every run success).
+Amendment 3 (after amendment 2: the velocity-doubled run at c = 1 fails at t = 112-118, before the U_B peak at
+t = 115.5-120.5, so G3a failed for every model; declared before running): the velocity-doubled level is rerun at
+c = 2 and compared with the base at c = 2 (same closure strength). satan reports this pair as "pair_c2":
+T_res2 = first t where the two U_B differ by > 2e-2 of max U_B(base c = 2), peak before T_res2 and B_peak within 2e-2.
 Amendment 1 (added after the first three probes, declared before rerunning them; B09_AMEND1=1): the 10x-median rule
 fired for every run, including EB at t = 120 where the step count (186) rises with the physical growth while the
 top-third Hermite energy fraction stays 1e-3 (c = 0 reached 0.99 at t = 110). Under the amendment a run continues
@@ -297,6 +301,25 @@ def satan():
         grp["passed_estimate"] = bool(grp["ratio_to_estimate"] is not None and 1 / 3 <= grp["ratio_to_estimate"] <= 3)
         grp["passed_ledger_gauss"] = bool(all(v["row"]["ledger_rel"] <= 1e-6 and v["row"]["gauss_rel"] <= 1e-8
                                               for v in info.values()))
+        p2 = OUT / "sat" / f"{mod}_16_64_32_c2.json"
+        if p2.exists() and "16_32_16_c2" in info:
+            t2, U2, _, B2 = _series(json.loads(p2.read_text()))
+            ok = np.isfinite(U2)
+            t2, U2, B2 = t2[ok], U2[ok], B2[ok]
+            bb = info["16_32_16_c2"]
+            n = min(len(bb["t"]), len(t2))
+            d = np.abs(bb["UB"][:n] - U2[:n]) / bb["UB"].max()
+            bad = np.where(d > 2e-2)[0]
+            T2 = float(bb["t"][bad[0]]) if len(bad) else float(bb["t"][n - 1])
+            i2 = next((i for i in range(1, len(t2) - 1) if U2[i] >= U2[i - 1] and U2[i] > U2[i + 1]
+                       and U2[i] > 1e3 * U2[0]), None)
+            pb = bb["row"]["B_peak"]
+            pv = None if i2 is None else float(2 * B2[i2])
+            grp["pair_c2"] = {"T_res": T2, "t_end_refined": float(t2[-1]), "t_peak_base": bb["row"]["t_peak"],
+                              "t_peak_refined": None if i2 is None else float(t2[i2]), "B_peak_refined": pv,
+                              "peak_agreement": None if not (pb and pv) else abs(pv - pb) / pb}
+            grp["pair_c2"]["passed"] = bool(pv is not None and bb["row"]["t_peak"] < T2
+                                            and grp["pair_c2"]["peak_agreement"] <= 2e-2)
         groups.append(grp)
     o = [g for g in groups if g["model"] == "ordinary"]
     for g in groups:
