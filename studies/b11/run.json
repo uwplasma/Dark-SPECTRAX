@@ -1,7 +1,7 @@
 {
   "case_id": "B11",
   "command": "python studies/b11.py ",
-  "repository_commit": "81faf332cdb1ca6cad768f1c5001d771bbda606b",
+  "repository_commit": "193f5b935b954edd6bae8b89f82322c3f34bccc6",
   "parent_commit": "a4bdd72d28df87ea73f0c2719569301e372722d9",
   "units": "parent normalization; homogeneous, uncharged (qs = 0)",
   "settings": {
@@ -14,7 +14,7 @@
     "diffrax": "0.7.2",
     "spectrax": "0.2.1.post140"
   },
-  "wall_time": 33.0721800327301,
+  "wall_time": 18.316835165023804,
   "passed": true,
   "results": [
     {
@@ -40,7 +40,7 @@
         2.6533960499279695e-10
       ],
       "num_steps": 118,
-      "run_time": 0.0835095829970669,
+      "run_time": 0.0693672500201501,
       "passed": true
     },
     {
@@ -65,7 +65,7 @@
         0.16526246768519776
       ],
       "num_steps": 29,
-      "run_time": 0.104355832998408,
+      "run_time": 0.10321791699971072,
       "passed": true
     },
     {
@@ -81,7 +81,7 @@
         0.5637128186842356
       ],
       "num_steps": 65,
-      "run_time": 0.04242412498570047,
+      "run_time": 0.04700945797958411,
       "passed": true
     },
     {
@@ -97,7 +97,7 @@
         0.4780823599474317
       ],
       "num_steps": 690,
-      "run_time": 0.3300875409913715,
+      "run_time": 0.3281434160016943,
       "passed": true
     },
     {
@@ -114,7 +114,7 @@
         0.5526812163894942
       ],
       "num_steps": 89,
-      "run_time": 0.059475457994267344,
+      "run_time": 0.05701650000992231,
       "passed": true
     }
   ]

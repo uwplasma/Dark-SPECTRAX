@@ -326,7 +326,7 @@ Relative growth error |gamma_fit - gamma_root|/gamma_root. Levels (Nx, Nn, Nm): 
 
 ## B11: collisional relaxation with the conservative Dougherty operator (`python studies/b11.py`)
 
-Record: [run.json](../studies/b11/run.json) (made at 81faf33, parent a4bdd72 = SPECTRAX integration with #71). Operator, analytic references and gates G1-G5 are in the script docstring, declared before the recorded run. Homogeneous and uncharged (qs = 0), so the collision operator is the whole dynamics; Dopri8, rtol = atol = 1e-12. Overall: passed.
+Record: [run.json](../studies/b11/run.json) (made at 193f5b9, parent a4bdd72 = SPECTRAX integration with #71). Operator, analytic references and gates G1-G5 are in the script docstring, declared before the recorded run. Homogeneous and uncharged (qs = 0), so the collision operator is the whole dynamics; Dopri8, rtol = atol = 1e-12. Overall: passed.
 
 | case | reference | error | conservation | gate |
 |---|---|---|---|---|
