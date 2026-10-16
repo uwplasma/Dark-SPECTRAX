@@ -27,6 +27,16 @@ Decisive test (declared before running):
      c = 0, set by modes in the top third of the Hermite ladder (energy fraction recorded), removed by the closure.
   Verdict "AW truncation instability, closure removes it" needs 1), 2) and 3) all true for the same closure.
   If no closure passes 1): record and stop (no nonlinear saturation run).
+Amendment 2 (after amendment-1 probes: c = 0 fails at t = 110-112, E at 112-114, EB at 146-148 with the first U_B
+maximum at t ~ 121 inside its clean window; declared before running): the saturation part is run with EB, inside the
+window the closure makes clean, claiming only within the resolved time.
+  `python studies/b09_closure.py sat MODEL Nx Nn Nm C` -> chunked run to t = 140 (resumable), MODEL in ordinary,
+  OD0.3, OD1.2; levels base (16, 32, 16), velocity-doubled (16, 64, 32), space-doubled (32, 32, 16) at c = 1, and the
+  base at c = 0.5 and 2. `python studies/b09_closure.py satan` -> studies/b09/closure_saturation.json with, per model,
+  the gates of studies/b09.py Part 2 (G3a: T_res = first t where |U_B(base) - U_B(other)| > 2e-2 max U_B(base) over
+  the four other runs (both refinements and both strengths); peak before T_res and B_peak agreeing within 2e-2;
+  G3b: B_peak / B_sat in [1/3, 3] with B_sat = gamma^2/(k0 v_perp), v_perp = a_y/sqrt2; G2: ledger <= 1e-6 of max
+  field perturbation energy, Gauss <= 1e-8 of max |F_k|, every run success).
 Amendment 1 (added after the first three probes, declared before rerunning them; B09_AMEND1=1): the 10x-median rule
 fired for every run, including EB at t = 120 where the step count (186) rises with the physical growth while the
 top-third Hermite energy fraction stays 1e-3 (c = 0 reached 0.99 at t = 110). Under the amendment a run continues
@@ -133,7 +143,12 @@ def probe(closure, c, tmax, case="weibel", OD=None, level=LEVEL, tag=""):
                "status": seg["status"], "failure_reason": seg["failure_reason"], "run_time": seg["run_time"],
                "t": seg["t"].tolist(), "UB": UB.tolist(), "UBD": UBD.tolist(), "K": seg["K"].tolist(),
                "U_gamma": seg["U_gamma"].tolist(), "W": seg["W"].tolist(),
-               "top_third_energy_fraction": top_fraction(m, seg["Ck"][-1])}
+               "top_third_energy_fraction": top_fraction(m, seg["Ck"][-1]),
+               "Bforce_z_k0_abs": np.abs(seg["Fk"][:, 5, 0, 1, 0] + (m.eta * seg["Dk"][:, 5, 0, 1, 0] if OD is not None
+                                                                   else 0)).tolist(),
+               "ledger_abs_max": float(np.abs(seg["ledger_defect"]).max()),
+               "gauss_max": [float(v) for v in seg["gauss"].max(axis=0)],
+               "Fmax": float(max(np.abs(seg["Fk"]).max(), np.abs(seg["Dk"]).max()))}
         chunks.append(row)
         early = [r["steps"] for r in chunks if r["t1"] <= 100 and r["status"] == "success"]
         med = float(np.median(early)) if early else None
@@ -220,6 +235,78 @@ def spectrum(T):
             "c0_checkpoint_chunks": len(chunks), "results": rows}
 
 
+def _series(rec):
+    t, UB, UBD, Bz = [], [], [], []
+    for i, r in enumerate(rec["chunks"]):
+        j = 0 if i == 0 else 1
+        t += r["t"][j:]; UB += r["UB"][j:]; UBD += r["UBD"][j:]; Bz += r["Bforce_z_k0_abs"][j:]
+    return np.array(t), np.array(UB), np.array(UBD), np.array(Bz)
+
+
+def satan():
+    groups = []
+    for mod, OD in (("ordinary", None), ("OD0.3", 0.3), ("OD1.2", 1.2)):
+        sp = b09.CASES["weibel"]
+        g = b09.roots((K0,), sp, OD)[0]["omega"][1]
+        vperp = sp[0][1][1] / np.sqrt(2)
+        Bsat = g * g / (K0 * vperp)
+        runs = {}
+        for key in ("16_32_16_c1", "16_64_32_c1", "32_32_16_c1", "16_32_16_c0.5", "16_32_16_c2"):
+            f = OUT / "sat" / f"{mod}_{key}.json"
+            if f.exists():
+                runs[key] = json.loads(f.read_text())
+        if "16_32_16_c1" not in runs:
+            continue
+        info = {}
+        for key, r in runs.items():
+            t, UB, UBD, Bz = _series(r)
+            ok = np.isfinite(UB)
+            t, UB, UBD, Bz = t[ok], UB[ok], UBD[ok], Bz[ok]
+            ipk = next((i for i in range(1, len(t) - 1) if UB[i] >= UB[i - 1] and UB[i] > UB[i + 1]
+                        and UB[i] > 1e3 * UB[0]), None)
+            good = [c for c in r["chunks"] if c["status"] == "success"]
+            Fmax = max(c["Fmax"] for c in good)
+            dUmax = max(abs(u - (good[0]["U_gamma"][0])) for c in good for u in c["U_gamma"])
+            info[key] = {"t": t, "UB": UB, "row": {
+                "status": r["status"], "t_reached": r["t_reached"], "t_budget_failure": r["t_budget_failure"],
+                "t_peak": None if ipk is None else float(t[ipk]), "UB_peak": None if ipk is None else float(UB[ipk]),
+                "UBD_at_peak": None if ipk is None else float(UBD[ipk]),
+                "B_peak": None if ipk is None else float(2 * Bz[ipk]),
+                "ledger_rel": max(c["ledger_abs_max"] for c in good) / dUmax,
+                "gauss_rel": max(max(c["gauss_max"]) for c in good) / Fmax,
+                "max_top_third_fraction": max(c["top_third_energy_fraction"] for c in good),
+                "steps": sum(c["steps"] for c in r["chunks"]), "run_time": sum(c["run_time"] for c in r["chunks"])}}
+        b = info["16_32_16_c1"]
+        T_res, agree = float(b["t"][-1]), {}
+        for key, o in info.items():
+            if key == "16_32_16_c1":
+                continue
+            n = min(len(b["t"]), len(o["t"]))
+            d = np.abs(b["UB"][:n] - o["UB"][:n]) / b["UB"].max()
+            bad = np.where(d > 2e-2)[0]
+            T_res = min(T_res, float(b["t"][bad[0]]) if len(bad) else float(b["t"][n - 1]))
+            bp, op = b["row"]["B_peak"], o["row"]["B_peak"]
+            agree[key] = None if not (bp and op) else abs(op - bp) / bp
+        br = b["row"]
+        grp = {"model": mod, "Omega_D": OD, "gamma_root": g, "v_perp": vperp, "B_sat_estimate": Bsat,
+               "runs_present": sorted(info), "T_res": T_res, "t_peak": br["t_peak"], "B_peak": br["B_peak"],
+               "ratio_to_estimate": None if br["B_peak"] is None else br["B_peak"] / Bsat,
+               "peak_agreement": agree, "runs": {k: v["row"] for k, v in info.items()}}
+        grp["passed_resolution"] = bool(len(info) == 5 and br["t_peak"] is not None and br["t_peak"] < T_res
+                                        and all(a is not None and a <= 2e-2 for a in agree.values()))
+        grp["passed_estimate"] = bool(grp["ratio_to_estimate"] is not None and 1 / 3 <= grp["ratio_to_estimate"] <= 3)
+        grp["passed_ledger_gauss"] = bool(all(v["row"]["ledger_rel"] <= 1e-6 and v["row"]["gauss_rel"] <= 1e-8
+                                              for v in info.values()))
+        groups.append(grp)
+    o = [g for g in groups if g["model"] == "ordinary"]
+    for g in groups:
+        if o and g["B_peak"] and o[0]["B_peak"]:
+            g["dark_over_ordinary_B_peak"] = g["B_peak"] / o[0]["B_peak"]
+            g["dark_over_ordinary_estimate"] = g["B_sat_estimate"] / o[0]["B_sat_estimate"]
+    return {"gates": {"resolution_rel": 2e-2, "estimate_ratio": [1 / 3, 3], "ledger_rel": 1e-6, "gauss_rel": 1e-8},
+            "closure": "EB", "t_max": 140.0, "groups": groups}
+
+
 if __name__ == "__main__":
     part = sys.argv[1]
     tic = time.perf_counter()
@@ -227,6 +314,14 @@ if __name__ == "__main__":
         closure, c = sys.argv[2], float(sys.argv[3])
         tmax = float(sys.argv[4]) if len(sys.argv) > 4 else 160.0
         rec, fname = probe(closure, c, tmax), f"closure_probe_{closure}_c{c:g}.json"
+    elif part == "sat":
+        mod, lv, c = sys.argv[2], tuple(int(x) for x in sys.argv[3:6]), float(sys.argv[6])
+        OD = None if mod == "ordinary" else float(mod[2:])
+        rec = probe("EB", c, 140.0, OD=OD, level=lv, tag="_sat")
+        fname = f"sat/{mod}_{lv[0]}_{lv[1]}_{lv[2]}_c{c:g}.json"
+        (OUT / "sat").mkdir(parents=True, exist_ok=True)
+    elif part == "satan":
+        rec, fname = satan(), "closure_saturation.json"
     else:
         T = float(sys.argv[2])
         rec, fname = spectrum(T), f"closure_spectrum_t{T:g}.json"
