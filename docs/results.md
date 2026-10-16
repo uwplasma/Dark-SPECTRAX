@@ -578,6 +578,73 @@ Run end (last saved time): Nx16 Nn128: t = 703.5 (non-finite), Nx16 Nn64: t = 63
 
 Verdict: REJECTED as declared. G3 pairs agree only to t = 634 (< 650: rejection rule); G4 max ledger/W for 50 < t <= 600: Nx16 Nn128 4.1e-04, Nx16 Nn64 1.2e-03, Nx32 Nn128 7.9e-06, Nx32 Nn256 7.9e-06, Nx32 Nn64 1.9e-05. Option A (#66 closure) stays in production.
 
+## C09: derivatives of converged dark observables, AD vs finite differences (`studies/c09_ad.py`)
+
+- Record: `studies/c09/run.json`, repository `c0db27b`, parent `f33dfda`, JAX 0.11.2, Diffrax 0.7.2, CPU float64; wall 672 s.
+- Method: `ds.solve` (new, returns JAX arrays) with traced `eta`, `Omega_D`, `alpha_s` via `ds.with_params`. Reverse mode `jax.grad` (Diffrax `RecursiveCheckpointAdjoint`, or `DirectAdjoint` for (a)), forward mode `jax.jvp` (Diffrax `ForwardMode`), centred FD over h = |p| 1e-1 ... 1e-7, analytic derivative where one exists. Fixed-step Dopri8 unless stated, so AD is the exact derivative of the discrete solve.
+- (a) cold homogeneous oscillator (eta 0.25, Omega_D 1.2, n0 1, k = 0, T = 60, dt 0.01): both frequencies fitted from E(t) by variable projection (Gauss-Newton unrolled in JAX); analytic: roots of (w^2 - n0)(w^2 - Omega_D^2) - eta^2 n0 w^2 = 0.
+  Forward: fitted roots equal the analytic roots to 1e-16 (fit residual 2e-15) at dt 0.02, 0.01, 0.005.
+- (b) same oscillator, W_D(T = 60), parameters eta, Omega_D, n0, seed E0 = 0.01; reference: 4x4 matrix exponential, W_D = -U_D(T). Forward: W_D = -4.5017349352e-07; solve error dt0.02 8e-14, dt0.01 2e-13, dt0.005 2e-13, adaptive_rtol1e-12 5e-10.
+- (c) dark Landau, k lambda_De = 0.5, v_te = 0.1c, eta 0.3, Omega_D 1, seed 5e-5, Nn 64, dt 0.02: P = abs(E_k(t = 10))^2; parameters eta, Omega_D, n0, T (alpha = sqrt(2T) isotropic), seed amplitude. Forward: P = 8.0747582563e-14; relative change vs Nn 128, dt 0.01: Nn32_dt0.02 8e-10, Nn32_dt0.01 8e-10, Nn64_dt0.02 3e-14, Nn64_dt0.01 0e+00, Nn128_dt0.02 3e-14, Nn128_dt0.01 0e+00, Nn64_adaptive_rtol1e-12 3e-13; start equals `consistent_fields` to 0e+00. The reverse gradient at Nn 32/dt 0.02, Nn 64/dt 0.01, Nn 128/dt 0.02 agrees to 8e-10 relative.
+- Seed checks: the cold oscillator is linear, so W_D is exactly quadratic in E0 and FD of it is exact at every h (whole ladder on the plateau). P is quadratic in the seed only to the weak nonlinearity: 2P/amp = 3.2299033025e-09 vs AD 3.2299037920e-09 (2e-07 relative).
+
+| Objective | Parameter | Reverse AD | forward vs reverse | best FD (rel.) | plateau h/abs(p) | AD vs analytic |
+|---|---|---|---|---|---|---|
+| omega_1 | eta | -3.3397956070e-01 | 9e-15 | 1e-11 | 1e-05-1e-05 | 8e-15 |
+| omega_1 | Omega_D | 1.8445510362e-01 | 3e-14 | 1e-10 | 1e-07-1e-05 | 3e-14 |
+| omega_1 | n0 | 3.6282763050e-01 | 1e-14 | 2e-11 | 1e-06-1e-05 | 1e-14 |
+| omega_2 | eta | 4.4688924874e-01 | 1e-14 | 6e-11 | 1e-06-1e-05 | 1e-14 |
+| omega_2 | Omega_D | 8.0915015117e-01 | 5e-16 | 2e-10 | 1e-07-1e-05 | 1e-15 |
+| omega_2 | n0 | 1.4808870790e-01 | 1e-14 | 4e-11 | 1e-06-1e-05 | 1e-14 |
+| W_D(60), fixed dt | eta | -1.6419597256e-04 | 4e-14 | 1e-10 | 1e-06-1e-05 | 3e-14 |
+| W_D(60), fixed dt | Omega_D | -1.1174811013e-04 | 2e-13 | 2e-10 | 1e-07-1e-06 | 2e-13 |
+| W_D(60), fixed dt | n0 | 5.3598352962e-05 | 2e-13 | 3e-10 | 1e-06-1e-06 | 2e-13 |
+| W_D(60), fixed dt | E0 | -9.0034698703e-05 | 2e-13 | 2e-13 | 1e-01-1e-01 | 1e-13 |
+| W_D(60), adaptive | eta | -1.6419597256e-04 | 6e-15 | 6e-09 | 1e-06-1e-04 | 2e-11 |
+| W_D(60), adaptive | Omega_D | -1.1174811013e-04 | 2e-14 | 1e-09 | 1e-06-1e-06 | 2e-11 |
+| W_D(60), adaptive | n0 | 5.3598352963e-05 | 2e-14 | 4e-09 | 1e-06-1e-05 | 2e-11 |
+| W_D(60), adaptive | E0 | -9.0034698657e-05 | 4e-14 | 9e-11 | 1e-03-1e-01 | 5e-10 |
+| abs(E_k(10))^2 | eta | -2.2474370871e-12 | 4e-15 | 2e-10 | 1e-07-1e-05 | - |
+| abs(E_k(10))^2 | Omega_D | 2.8267536052e-14 | 3e-15 | 4e-10 | 1e-05-1e-04 | - |
+| abs(E_k(10))^2 | n0 | -4.2471287648e-12 | 6e-15 | 3e-10 | 1e-07-1e-06 | - |
+| abs(E_k(10))^2 | T | -3.2365027801e-10 | 1e-15 | 3e-12 | 1e-07-1e-07 | - |
+| abs(E_k(10))^2 | amp | 3.2299037920e-09 | 2e-14 | 7e-12 | 1e-04-1e-02 | - |
+
+FD error vs AD over the h ladder (h/abs(p) = 1e-1 ... 1e-7) for (c), showing truncation (h^2) then round-off:
+
+- eta: 3e-02, 3e-04, 3e-06, 3e-08, 3e-10, 2e-10, 1e-09
+- Omega_D: 2e-04, 2e-06, 2e-08, 4e-10, 3e-09, 3e-08, 4e-07
+- n0: 5e-01, 5e-03, 5e-05, 5e-07, 5e-09, 3e-10, 2e-09
+- T: 4e-01, 4e-03, 4e-05, 4e-07, 4e-09, 5e-11, 3e-12
+- amp: 3e-09, 3e-11, 7e-12, 6e-11, 2e-10, 5e-10, 3e-08
+
+Cost (best of 3 after compile; memory = XLA temp buffer of the compiled call; laptop shared, load about 20):
+
+| Objective | forward s | reverse s (ratio) | one jvp s | forward temp | reverse temp |
+|---|---|---|---|---|---|
+| (a) omega_1 | 2.098 | 8.154 (3.9x) | 2.985 | 1021 kB | 4193 kB |
+| (b) W_D fixed dt | 1.280 | 5.947 (4.6x) | 2.615 | 897 kB | 653 kB |
+| (b) W_D adaptive | 0.069 | 0.354 (5.1x) | 0.168 | 897 kB | 652 kB |
+| (c) P | 0.146 | 0.898 (6.2x) | 0.342 | 113 kB | 552 kB |
+
+(c) checkpoint count (500 steps): None: reverse 0.93 s, 552 kB, 32: reverse 0.82 s, 560 kB, 8: reverse 1.42 s, 372 kB.
+
+Diffrax defect found: with `ConstantStepSize` and many `SaveAt(ts)` points, `RecursiveCheckpointAdjoint` returned wrong gradients in some long runs; `DirectAdjoint`, `ForwardMode` and FD agree with each other:
+
+| Case | dt | saves | max_steps | recursive | direct | rel. error |
+|---|---|---|---|---|---|---|
+| dark oscillator, 601 saves, d/d eta | 0.01 | 601 | 6020 | 1.390474174 | 1.211191935 | 1e-01 |
+| dark oscillator, 601 saves, d/d eta | 0.0099 | 601 | 6080 | 1.211191935 | 1.211191935 | 1e-13 |
+| y'' = -a y, sum_i y(t_i) cos t_i, d/da | 0.01 | 601 | 6020 | 847.2123822 | 884.6097373 | 4e-02 |
+| y'' = -a y, sum_i y(t_i) cos t_i, d/da | 0.01 | 601 | 20000 | 906.5009286 | 884.6097373 | 2e-02 |
+| y'' = -a y, sum_i y(t_i) cos t_i, d/da | 0.0099 | 601 | 6080 | 884.6097373 | 884.6097373 | 6e-14 |
+| y'' = -a y, sum_i y(t_i) cos t_i, d/da | 0.01 | 2 | 6020 | -2.24823979 | -2.24823979 | 7e-13 |
+| y'' = -a y, sum_i y(t_i) cos t_i, d/da | 0.1 | 11 | 1000 | -1.240131748 | -1.240131748 | 1e-15 |
+
+The wrong value depends on `max_steps` (same solve, 6020 vs 20000), which points at the checkpoint bookkeeping; the cause was not isolated. Final-state objectives (2 saves) and a short 11-save case were exact. So (a), which fits 601 saves, uses `DirectAdjoint`; (b) and (c) use only the final state. This affects the parent's checkpointed reverse mode (#44) whenever a loss uses many saved times with a constant step.
+
+Not covered: gradients through the pump-frame remap and `run_adaptive`, through a fitted damping rate of a Landau mode, nonlinear-regime objectives, and GPU.
+
 ## Phase-space movies: resolution of the reconstructed f (`python studies/figures.py phase --Nx 64 --field-nu 1`)
 
 Question: how long do fixed-basis Hermite runs resolve f(x, v) itself (not only the field) once trapping starts?

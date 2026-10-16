@@ -83,7 +83,7 @@ Status: **done** = passing test or record on main; **partial** = covered in part
 | C06 | Gkeyll / grid | partial: own NumPy semi-Lagrangian VP and VAP grids (done); Gkeyll only via imported p = 2 records; Gkeyll docs not read |
 | C07 | restart | done |
 | C08 | CPU / GPU | not started (README states GPU untested) |
-| C09 | AD vs FD | not started here; parent #44 has an FD plateau test, the companion does not use it |
+| C09 | AD vs FD | done ([record](../studies/c09/run.json), results.md C09): 19 derivatives of cold-oscillator frequencies, W_D(60) and a dark Landau abs(E_k(10))^2 w.r.t. eta, Omega_D, n0, T, seed; reverse = forward to 2e-13, FD plateau 6e-9 or better, analytic 5e-10 or better; Diffrax RecursiveCheckpointAdjoint wrong (2-15%) for many constant-step saves (DirectAdjoint used) |
 
 ### H: HHS-v1-inspired ladder (nonrelativistic; not a reproduction)
 
@@ -146,6 +146,6 @@ physics.md sets the rule: only full-text sources may set a benchmark.
    Decisive: growth/damping vs kinetic roots to 1e-4, ordinary and dark.
 6. **B08 magnetized rotation and EM waves, then B09 Weibel** (several days). These open R3 and the transverse dark
    branch, which no benchmark has tested yet.
-7. **C09 AD vs FD on one B00 rate** (half a day, using parent #44). C08 CPU/GPU after the office GPUs are free.
+7. C09 done (2026-10-15). Open: gradient of a fitted Landau damping rate, through `run_adaptive` remaps, and report the Diffrax checkpoint defect upstream. C08 CPU/GPU after the office GPUs are free.
 8. **Collisions (B11/H08/R2)**: needs a conservative Dougherty operator upstream. This waits on reading Hakim et al.
    and an owner decision on the parent API.

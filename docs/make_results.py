@@ -331,6 +331,83 @@ def sw_section():
     return "\n".join(L)
 
 
+def c09_records():
+    return json.loads((root / "studies/c09/run.json").read_text())
+
+
+def c09_rows(r):
+    """(objective, parameter, derivative dict) for every compared derivative."""
+    objs = [("omega_1", r["a_omega"]["omega_1"]), ("omega_2", r["a_omega"]["omega_2"]),
+            ("W_D(60), fixed dt", r["b_dark_work"]["W_D"]), ("W_D(60), adaptive", r["b_dark_work"]["W_D_adaptive"]),
+            ("abs(E_k(10))^2", r["c_landau"]["P"])]
+    return [(n, p, d) for n, o in objs for p, d in o["derivatives"].items()]
+
+
+def c09_section():
+    r = c09_records()
+    a, b, c = r["a_omega"], r["b_dark_work"], r["c_landau"]
+    fc = c["forward_convergence"]
+    L = ["## C09: derivatives of converged dark observables, AD vs finite differences (`studies/c09_ad.py`)", "",
+         f"- Record: `studies/c09/run.json`, repository `{r['repository_commit'][:7]}`, parent `{r['parent_commit'][:7]}`, "
+         f"JAX {r['versions']['jax']}, Diffrax {r['versions']['diffrax']}, CPU float64; wall {r['wall_s']:.0f} s.",
+         "- Method: `ds.solve` (new, returns JAX arrays) with traced `eta`, `Omega_D`, `alpha_s` via `ds.with_params`. "
+         "Reverse mode `jax.grad` (Diffrax `RecursiveCheckpointAdjoint`, or `DirectAdjoint` for (a)), forward mode `jax.jvp` "
+         "(Diffrax `ForwardMode`), centred FD over h = |p| 1e-1 ... 1e-7, analytic derivative where one exists. "
+         "Fixed-step Dopri8 unless stated, so AD is the exact derivative of the discrete solve.",
+         "- (a) cold homogeneous oscillator (eta 0.25, Omega_D 1.2, n0 1, k = 0, T = 60, dt 0.01): both frequencies "
+         "fitted from E(t) by variable projection (Gauss-Newton unrolled in JAX); analytic: roots of "
+         "(w^2 - n0)(w^2 - Omega_D^2) - eta^2 n0 w^2 = 0.",
+         f"  Forward: fitted roots equal the analytic roots to {a['forward_convergence']['dt0.01']['omega_rel_err_vs_root']:.0e} "
+         f"(fit residual {a['forward_convergence']['dt0.01']['fit_residual']:.0e}) at dt 0.02, 0.01, 0.005.",
+         f"- (b) same oscillator, W_D(T = 60), parameters eta, Omega_D, n0, seed E0 = 0.01; reference: 4x4 matrix exponential, "
+         f"W_D = -U_D(T). Forward: W_D = {b['expm_value']:.10e}; solve error "
+         + ", ".join(f"{k} {v['W_D_rel_err_vs_expm']:.0e}" for k, v in b["forward_convergence"].items()) + ".",
+         f"- (c) dark Landau, k lambda_De = 0.5, v_te = 0.1c, eta 0.3, Omega_D 1, seed 5e-5, Nn {c['Nn']}, dt {c['dt']}: "
+         "P = abs(E_k(t = 10))^2; parameters eta, Omega_D, n0, T (alpha = sqrt(2T) isotropic), seed amplitude. "
+         f"Forward: P = {c['P']['value']:.10e}; relative change vs Nn 128, dt 0.01: "
+         + ", ".join(f"{k} {v:.0e}" for k, v in fc["rel_diff_vs_Nn128_dt0.01"].items())
+         + f"; start equals `consistent_fields` to {fc['init_vs_consistent_fields']:.0e}. "
+         "The reverse gradient at Nn 32/dt 0.02, Nn 64/dt 0.01, Nn 128/dt 0.02 agrees to "
+         f"{max(abs(x / y - 1) for k in c['gradient_refinement'] for x, y in zip(c['gradient_refinement'][k], [c['P']['derivatives'][n]['reverse'] for n in c['P']['derivatives']])):.0e} relative.",
+         f"- Seed checks: the cold oscillator is linear, so W_D is exactly quadratic in E0 and FD of it is exact at every h "
+         f"(whole ladder on the plateau). P is quadratic in the seed only to the weak nonlinearity: 2P/amp = "
+         f"{2 * c['P']['value'] / c['P']['params']['amp']:.10e} vs AD {c['P']['derivatives']['amp']['reverse']:.10e} "
+         f"({abs(2 * c['P']['value'] / c['P']['params']['amp'] / c['P']['derivatives']['amp']['reverse'] - 1):.0e} relative).",
+         "", "| Objective | Parameter | Reverse AD | forward vs reverse | best FD (rel.) | plateau h/abs(p) | AD vs analytic |",
+         "|---|---|---|---|---|---|---|"]
+    for n, p, d in c09_rows(r):
+        an = f"{d['ad_rel_err_vs_analytic']:.0e}" if "analytic" in d else "-"
+        pl = f"{min(d['plateau_h_rel']):.0e}-{max(d['plateau_h_rel']):.0e}"
+        L.append(f"| {n} | {p} | {d['reverse']:.10e} | {d['fwd_rev_rel']:.0e} | {d['best_fd_rel_err']:.0e} | {pl} | {an} |")
+    L += ["", "FD error vs AD over the h ladder (h/abs(p) = 1e-1 ... 1e-7) for (c), showing truncation (h^2) then round-off:", ""]
+    L += [f"- {p}: " + ", ".join(f"{x['rel_err_vs_ad']:.0e}" for x in d["ladder"]) for n, p, d in c09_rows(r)
+          if n.startswith("abs")]
+    cst = [("(a) omega_1", a["omega_1"]["cost"]), ("(b) W_D fixed dt", b["W_D"]["cost"]),
+           ("(b) W_D adaptive", b["W_D_adaptive"]["cost"]), ("(c) P", c["P"]["cost"])]
+    L += ["", "Cost (best of 3 after compile; memory = XLA temp buffer of the compiled call; laptop shared, load about 20):", "",
+          "| Objective | forward s | reverse s (ratio) | one jvp s | forward temp | reverse temp |", "|---|---|---|---|---|---|"]
+    for n, k in cst:
+        f, g = k["forward"], k["reverse"]
+        L.append(f"| {n} | {f['time_s']:.3f} | {g['time_s']:.3f} ({g['time_s'] / f['time_s']:.1f}x) | "
+                 f"{k['forward_jvp_time_s']:.3f} | {f['temp_bytes'] / 1e3:.0f} kB | {g['temp_bytes'] / 1e3:.0f} kB |")
+    L += ["", "(c) checkpoint count (500 steps): " + ", ".join(
+        f"{k.split('_')[1]}: reverse {v['reverse']['time_s']:.2f} s, {v['reverse']['temp_bytes'] / 1e3:.0f} kB"
+        for k, v in c["checkpoint_cost"].items()) + ".", "",
+          "Diffrax defect found: with `ConstantStepSize` and many `SaveAt(ts)` points, `RecursiveCheckpointAdjoint` "
+          "returned wrong gradients in some long runs; `DirectAdjoint`, `ForwardMode` and FD agree with each other:", "",
+          "| Case | dt | saves | max_steps | recursive | direct | rel. error |", "|---|---|---|---|---|---|---|"]
+    for d in r["saveat_defect"]:
+        L.append(f"| {d['case']} | {d['dt']} | {d.get('n_save', 601)} | {d.get('max_steps', int(60 / d['dt']) + 20)} | "
+                 f"{d['recursive_checkpoint']:.10g} | {d['direct']:.10g} | {d['recursive_rel_err_vs_direct']:.0e} |")
+    L += ["", "The wrong value depends on `max_steps` (same solve, 6020 vs 20000), which points at the checkpoint "
+          "bookkeeping; the cause was not isolated. Final-state objectives (2 saves) and a short 11-save case were exact. "
+          "So (a), which fits 601 saves, uses `DirectAdjoint`; (b) and (c) use only the final state. This affects the parent's "
+          "checkpointed reverse mode (#44) whenever a loss uses many saved times with a constant step.",
+          "", "Not covered: gradients through the pump-frame remap and `run_adaptive`, through a fitted damping rate of a "
+          "Landau mode, nonlinear-regime objectives, and GPU."]
+    return "\n".join(L)
+
+
 def dai_section():
     """Dai (arXiv 2608.09827) stable AW Galerkin, linear prototype (studies/dai/)."""
     fr = json.loads((root / "studies/dai/spectra_frozen.json").read_text())["results"]
@@ -843,6 +920,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 
 {sw_section()}
 
+{c09_section()}
+
 {phase_space()}
 
 ## Test suite (local, CPU, float64)
@@ -905,6 +984,10 @@ def readme_table():
              f"{d['amp']:.5e} / {g6:.5e} (grid Vlasov-Ampere-Proca) |")
     h = hhs["H00"]["weak_omega_e"]
     L.append(f"| H00 resonant mean field, t <= 1000 (HHS-v1-inspired) | error {h['max_abs_Ebar_err_over_max']:.0e}, W_ext {h['W_ext_rel_err']:.0e} | - |")
+    w = max(d["best_fd_rel_err"] for _, _, d in c09_rows(c09_records()))
+    wa = max(d["ad_rel_err_vs_analytic"] for _, _, d in c09_rows(c09_records()) if "analytic" in d)
+    L.append(f"| C09 gradients (eigenfrequencies, W_D, Landau abs(E_k)^2): AD vs FD plateau / analytic | - | "
+             f"worst {w:.0e} / {wa:.0e} over {len(c09_rows(c09_records()))} derivatives |")
     return "\n".join(L)
 
 

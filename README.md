@@ -8,7 +8,7 @@ Hermite-Fourier Vlasov-Maxwell solver. The kinetic operator, current and Fourier
 this small companion adds the Proca fields, the combined force, work ledgers, constraint-consistent
 initialization and diagnostics. Its particle-in-cell sibling is
 [Dark-JAX-in-Cell](https://github.com/uwplasma/Dark-JAX-in-Cell); the two codes are compared on the same inputs
-below. Tested on CPU in float64; GPU and differentiation are not yet tested here.
+below. Tested on CPU in float64; GPU is not yet tested. Gradients of converged dark observables (C09) agree with finite differences and analytic derivatives ([results](docs/results.md#c09-derivatives-of-converged-dark-observables-ad-vs-finite-differences-studiesc09_adpy)).
 
 <img src="docs/_static/phase_space/two_stream.webp" width="860" alt="Two-stream phase space reconstructed from Hermite coefficients, ordinary and dark side by side, with the field history">
 
@@ -104,6 +104,7 @@ At $k\to0$ the two coupled branches repel from the common frequency $\omega_{pe}
 | C05 Landau, same fit rule: Hermite / PIC rerun (128 cells, 320000 particles) | 1.413540-0.154975i / 1.414365-0.153538i | 1.429621-0.147445i / 1.428970-0.146058i |
 | B06 echo amplitude (N=512) vs grid | 1.15875e-03 / 1.15873e-03 | 1.12101e-03 / 1.12099e-03 (grid Vlasov-Ampere-Proca) |
 | H00 resonant mean field, t <= 1000 (HHS-v1-inspired) | error 1e-09, W_ext 3e-11 | - |
+| C09 gradients (eigenfrequencies, W_D, Landau abs(E_k)^2): AD vs FD plateau / analytic | - | worst 6e-09 / 5e-10 over 19 derivatives |
 <!-- /tests-table -->
 
 Growth references are independent kinetic roots; each population has its own drifting Hermite basis, and the fit
@@ -258,11 +259,13 @@ against the parent RHS and trajectory, vacuum Proca modes, the coupled homogeneo
 field, eta-sign symmetry, the exact mean-pump identity, multi-population ledgers on odd and even grids,
 finite-k cold transverse and longitudinal branches, eighth-order time and Hermite-order convergence on exact
 solutions, and the failure policy (a run is `success` only if the solver succeeded and every saved array is finite).
+`tests/test_adjoint.py` checks the differentiable `ds.solve` (reverse, forward and adaptive gradients against finite
+differences) and `ds.with_params`.
 
 ## Scope not yet supported
 
 Physical collisions, relativistic kinetics, magnetized cases, saturation of the strong drive, x-converged strong-drive
-runs, GPU and gradient studies are planned and not yet validated. Open SPECTRAX pull requests that this package
+runs, GPU, and gradients through the pump-frame remap or nonlinear-regime objectives are planned and not yet validated. Open SPECTRAX pull requests that this package
 needs: [docs/upstream-review.md](docs/upstream-review.md).
 
 ## Credit, citation and license
