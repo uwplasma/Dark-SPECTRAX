@@ -1277,6 +1277,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 
 {h08_section()}
 
+{r1_section()}
+
 {third_round()}
 
 {lanes()}
@@ -1376,6 +1378,58 @@ def readme_table():
     return "\n".join(L)
 
 
+
+
+def r1_section():
+    """R1: finite reservoir (mobile ions) and finite temporal coherence, from studies/r1/*_summary.json."""
+    pa, pb = root / "studies/r1/reservoir_summary.json", root / "studies/r1/coherence_summary.json"
+    if not (pa.exists() and pb.exists()):
+        return ""
+    A, B = json.loads(pa.read_text()), json.loads(pb.read_text())
+    ga, gb = A["gates"], B["gates"]
+    f = lambda x, fmt="{:g}": "-" if x is None else fmt.format(x)  # noqa: E731
+    L = ["## R1: finite dark reservoir and finite temporal coherence (`python studies/r1_reservoir.py`, `python studies/r1_coherence.py`)", "",
+         "Gates were declared in `studies/r1_common.py` (commit 4f3e1f0) before any run; records in `studies/r1`. H05 seeded setup "
+         "(Nx = 8, pump frame + remap, mobile ions, parent 3de6b2b), omega = omega_L, v_q/v_te is the effective initial force. "
+         "Claim windows are min(refinement pairs Nn 32/64 and, where run, Nx 8/16, certified window 1000 / 940, positivity, t reached).", "",
+         "### (a) Self-consistent finite reservoir vs matched prescribed drive", "",
+         "Free k = 0 Proca mode, Omega_D = omega_L, eta E_D(0) = E0; U_D0/(n T_e V) = u. Linear coupled-oscillator prediction "
+         "(Ebar, J, E_D, A_D) with the 4x4 matrix exponential (checked against solve_ivp: "
+         f"{ga['G6_max']:.1e}, gate 1e-8).", "",
+         "| v_q/v_te | u = U_D0/(n T_e V) | eta | claim window | min U_D/U_D0 kin (t) | min U_D/U_D0 lin (t) | pi/eta | max abs(U_D kin - lin)/U_D0 | "
+         "first > 0.1 | W_D/U_D0 kin / lin at window | W_D/(n T_e) | W_ext prescribed/(n T_e) (at t) | t_split kin / lin |",
+         "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for k, v in A["cases"].items():
+        if not k.startswith("sc_"):
+            continue
+        L.append(f"| {v['vq']:g} | {v['u']:g} | {v['eta']:.2e} | {v['claim_window']:.0f} | {v['U_D_min_over_U_D0_kin_in_window']:.3f} ({v['t_min_kin']:.0f}) | "
+                 f"{v['U_D_min_over_U_D0_lin_in_window']:.3f} ({v['t_min_lin']:.0f}) | {v['t_first_min_U_D_pred_pi_over_eta']:.0f} | "
+                 f"{v['max_dev_U_D_over_U_D0_in_window']:.3f} | {f(v['t_dev_10pct'], '{:.0f}')} | "
+                 f"{v['W_D_final_over_U_D0']:.3f} / {v['W_D_lin_at_window_over_U_D0']:.3f} | {v['W_D_over_nTe_at_window_vs_prescribed']:.3g} | "
+                 f"{v['W_ext_prescribed_over_nTe_at_window']:.3g} (t = {v['window_vs_prescribed']:.0f}) | {f(v['t_split_kin_10pct'], '{:.0f}')} / {f(v['t_split_lin_10pct'], '{:.0f}')} |")
+    L += ["", f"Gates: G1 ledger max {ga['G1_ledger_max']:.1e} ({'pass' if ga['G1_pass'] else 'FAIL'}, tolerance 1e-4); "
+          f"G4 mean-field identity max {ga['G4_identity_max']:.1e} ({'pass' if ga['G4_pass'] else 'FAIL'}, 1e-6); "
+          f"G5 linear reservoir prediction within 0.1 U_D0 in the window: pass {', '.join(ga['G5_pass_cases']) or 'none'}; "
+          f"FAIL {', '.join(ga['G5_fail_cases']) or 'none'}; G7 t_split vs linear within a factor 1.5: FAIL {', '.join(ga['G7_fail_cases']) or 'none'}; "
+          f"G2 first non-positive times: {ga['G2_first_nonpositive_per_run'] or 'none'}.", "",
+          "### (b) Finite temporal coherence of a prescribed drive (v_q/v_te = 0.01)", "",
+          "Drive E0 cos(omega_L t + Phi(t)); Phi' = piecewise-linear interpolation (knot spacing 5) of iid Gaussian frequency samples with variance "
+          "1/(tau_c 5), Phi(0) = 0, so <exp(i dPhi)> = exp(-abs(dt)/tau_c): Lorentzian line, half width 1/tau_c; the drive is C^1 (no phase "
+          "resets) and the injected work is the ledger W_ext. 6 kinetic realizations per finite tau_c (seeds 0-5); 400 linear mean-field realizations; "
+          "derived expectation in `studies/r1_common.py::expected_work` (docstring). Late slope = least-squares dW/dt over [0.8, 1] of the claim window.", "",
+          "| tau_c omega_pe | claim window | kinetic realizations | late slope kin | late slope lin (same realizations) | late slope derived expectation | "
+          "asymptote E0^2 tau_c wL^2/4 | <W_kin>/<W_lin> late (se) | first 10% departure of any realization | G9 max z |",
+          "|---|---|---|---|---|---|---|---|---|---|"]
+    for nm, v in B["tau"].items():
+        L.append(f"| {nm.replace('tau', '')} | {v['claim_window']:.0f} | {v['n_realizations_kinetic']} | {v['late_slope_kin']:.3e} | "
+                 f"{v['late_slope_lin_same_real']:.3e} | {v['late_slope_expected']:.3e} | {f(v['late_slope_asymptote_E0sq_tau_wL2_over_4'], '{:.3e}')} | "
+                 f"{v['ratio_late_mean']:.4f} ({f(v['ratio_late_se'], '{:.1e}')}) | "
+                 f"{', '.join(f(p['t_dev_10pct'], '{:.0f}') for p in v['per_realization'])} | {f(v.get('G9_max_z'), '{:.2f}')} |")
+    L += ["", f"Gates: G1 ledger max {gb['G1_ledger_max']:.1e} ({'pass' if gb['G1_pass'] else 'FAIL'}); G4 identity max {gb['G4_identity_max']:.1e} "
+          f"({'pass' if gb['G4_pass'] else 'FAIL'}); G8 quadrature check {gb['G8_quadrature_rel_err']:.1e} ({'pass' if gb['G8_pass'] else 'FAIL'}); "
+          f"G9 Monte Carlo vs derived expectation ({'pass' if gb['G9_pass'] else 'FAIL'}); G10 no 10% kinetic-vs-linear departure: "
+          + ", ".join(f"{k.replace('tau', '')} {'pass' if v['G10_pass'] else 'FAIL'}" for k, v in B["tau"].items()) + ".", ""]
+    return "\n".join(L)
 
 
 def _between(text, tag, body):

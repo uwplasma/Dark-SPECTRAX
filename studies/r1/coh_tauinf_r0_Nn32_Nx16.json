@@ -1,0 +1,18 @@
+{
+ "key": "tauinf_r0_Nn32_Nx16",
+ "tau_c": Infinity,
+ "realization": 0,
+ "Nn": 32,
+ "Nx": 16,
+ "E0": 0.00031622776601683794,
+ "status": "success",
+ "failure_reason": null,
+ "t_reached": 1000.0,
+ "events": 9,
+ "ledger_over_Wscale": 5.588076579886722e-11,
+ "first_nonpositive": null,
+ "wall_time": 22.92755841696635,
+ "parent_commit": "3de6b2b8cdc8e79af68ea7175c318e135708c7b2",
+ "repository_commit": "4f3e1f0de9a2aea576027bfdf28264e5c9db0041",
+ "command": "python studies/r1_coherence.py run tauinf_r0_Nn32_Nx16"
+}

@@ -13,6 +13,10 @@ import numpy as np
 import darkspectrax as ds
 import r1_common as c
 
+V2 = "v2" in sys.argv[1:2]  # python studies/r1_coherence.py v2 CMD ...: v2 definition (c.V2_NOTE), files coh2_*
+if V2:
+    sys.argv.pop(1)
+FAC, PFX = (2.0, "coh2_") if V2 else (1.0, "coh_")
 OUT = Path(__file__).resolve().parent / "r1"
 TAUS, NREAL, NMC, VQ = (30.0, 100.0, 300.0), 6, 400, 0.01
 E0 = VQ * c.vte
@@ -27,10 +31,10 @@ def cases():
 
 
 def run_case(cs):
-    z = c.noise_knots(cs["tau"], cs["r"])
+    z = c.noise_knots(cs["tau"], cs["r"], fac=FAC)
     m = c.mobile_model(cs["Nx"], cs["Nn"], mode="prescribed_drive", E0=E0, cls=c.PhasedModel, z=tuple(z))
     out = c.go(m, c.initial(m), c.T_END)
-    rec = {"key": cs["key"], "tau_c": cs["tau"], "realization": cs["r"], "Nn": cs["Nn"], "Nx": cs["Nx"], "E0": E0,
+    rec = {"key": cs["key"], "tau_c": cs["tau"], "realization": cs["r"], "Nn": cs["Nn"], "Nx": cs["Nx"], "E0": E0, "definition": "v2" if V2 else "v1", "phase_var_factor": FAC,
            "status": out["status"], "failure_reason": out["failure_reason"], "t_reached": float(out["t"][-1]),
            "events": len(out["events"]), "ledger_over_Wscale": c.ledger_ok(out), "first_nonpositive": c.first_nonpositive(out),
            "wall_time": out["wall"], "parent_commit": ds.PARENT_COMMIT,
@@ -39,8 +43,8 @@ def run_case(cs):
         ti, R, S = c.identity_residual(m, out)
         rec["identity_max_rel"] = float(np.abs(R).max() / (c.w_L ** 2 * S.max()))
     OUT.mkdir(exist_ok=True)
-    np.savez_compressed(OUT / f"coh_{cs['key']}.npz", t=out["t"], K_species=out["K_species"], W=out["W"], Tx=out["Tx"])
-    (OUT / f"coh_{cs['key']}.json").write_text(json.dumps(rec, indent=1, default=float) + "\n")
+    np.savez_compressed(OUT / f"{PFX}{cs['key']}.npz", t=out["t"], K_species=out["K_species"], W=out["W"], Tx=out["Tx"])
+    (OUT / f"{PFX}{cs['key']}.json").write_text(json.dumps(rec, indent=1, default=float) + "\n")
     print(rec, flush=True)
 
 
@@ -51,15 +55,15 @@ def mc():
     for tau in (np.inf,) + TAUS:
         nm = f"tau{'inf' if not np.isfinite(tau) else int(tau)}"
         n = 1 if not np.isfinite(tau) else NMC
-        D[f"{nm}_W"] = np.array([c.linear_work_realization(tg, c.noise_knots(tau, s), E0) for s in range(n)])
-        te, We, P = c.expected_work(tau, E0, out_every=20)  # dt 0.1 -> every 2
+        D[f"{nm}_W"] = np.array([c.linear_work_realization(tg, c.noise_knots(tau, s, fac=FAC), E0) for s in range(n)])
+        te, We, P = c.expected_work(tau, E0, out_every=20, fac=FAC)  # dt 0.1 -> every 2
         D[f"{nm}_expected_W"], D[f"{nm}_expected_P"] = We, P[::20]
         print(nm, "done", flush=True)
-    np.savez_compressed(OUT / "coh_linear.npz", **D)
+    np.savez_compressed(OUT / f"{PFX}linear.npz", **D)
 
 
 def load(key):
-    return json.loads((OUT / f"coh_{key}.json").read_text()), np.load(OUT / f"coh_{key}.npz")
+    return json.loads((OUT / f"{PFX}{key}.json").read_text()), np.load(OUT / f"{PFX}{key}.npz")
 
 
 def late_slope(t, W, lo):
@@ -68,9 +72,9 @@ def late_slope(t, W, lo):
 
 
 def summary():
-    L = np.load(OUT / "coh_linear.npz")
+    L = np.load(OUT / f"{PFX}linear.npz")
     tl = L["t"]
-    S = {"E0": E0, "gates": {}, "tau": {}}
+    S = {"E0": E0, "definition": "v2" if V2 else "v1", "gates": {}, "tau": {}}
     ledg, pos, ident = [], [], []
     nx_caps = []
     for key in ("tau100_r0", "tauinf_r0"):
@@ -129,6 +133,11 @@ def summary():
             e["G9_max_z"], e["G9_pass"] = float(z.max()), bool(z.max() <= 4)
             g9.append(e["G9_pass"])
             e["MC_mean_W_final"], e["MC_se_final"] = float(mean[-1]), float(se[-1])
+            e["realized_phase_var_rate_x_tau_c"] = c.phase_variance_rate(tau, FAC) * tau
+            if Wk.shape[0] > 1:
+                at = int(np.argmin(np.abs(tl - window)))
+                kse = Wk[:, at].std(ddof=1) / np.sqrt(Wk.shape[0])
+                e["G12_z_kin_mean_vs_expected"] = float((Wk[:, at].mean() - L[f"{nm}_expected_W"][at]) / kse)
         ledg += e["ledger"]
         pos += [r["first_nonpositive"] for r, _ in recs] + [rn["first_nonpositive"]]
         ident.append(e["identity_max_rel"])
@@ -137,7 +146,10 @@ def summary():
     S["gates"].update({"G1_ledger_max": max(ledg), "G1_pass": bool(max(ledg) <= c.LEDGER_TOL),
                        "G2_first_nonpositive": [x for x in pos if x is not None],
                        "G4_identity_max": max(ident), "G4_pass": bool(max(ident) <= c.ID_TOL), "G9_pass": all(g9)})
-    (OUT / "coherence_summary.json").write_text(json.dumps(S, indent=1, default=float) + "\n")
+    if V2:
+        S["gates"]["G11_rate_x_tau_c"] = {nm: v["realized_phase_var_rate_x_tau_c"] for nm, v in S["tau"].items() if "realized_phase_var_rate_x_tau_c" in v}
+        S["gates"]["G11_pass"] = all(abs(x - 2.0) <= 0.04 for x in S["gates"]["G11_rate_x_tau_c"].values())
+    (OUT / ("coherence2_summary.json" if V2 else "coherence_summary.json")).write_text(json.dumps(S, indent=1, default=float) + "\n")
 
 
 if __name__ == "__main__":
@@ -148,7 +160,7 @@ if __name__ == "__main__":
         run_case(next(cs for cs in cases() if cs["key"] == sys.argv[2]))
     elif cmd == "all":
         for cs in cases():
-            if not (OUT / f"coh_{cs['key']}.json").exists():
+            if not (OUT / f"{PFX}{cs['key']}.json").exists():
                 run_case(cs)
     elif cmd == "mc":
         OUT.mkdir(exist_ok=True)

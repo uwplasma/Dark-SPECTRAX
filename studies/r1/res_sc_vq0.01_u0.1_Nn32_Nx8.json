@@ -1,0 +1,30 @@
+{
+ "key": "sc_vq0.01_u0.1_Nn32_Nx8",
+ "kind": "sc",
+ "vq": 0.01,
+ "u": 0.1,
+ "Nn": 32,
+ "Nx": 8,
+ "eta": 0.022360679774997897,
+ "E0": 0.00031622776601683794,
+ "U_D0": 0.00010000000113714858,
+ "status": "success",
+ "failure_reason": null,
+ "t_reached": 1000.0,
+ "events": 0,
+ "ledger_over_Wscale": 4.851772849174624e-09,
+ "first_nonpositive": null,
+ "min_K_species": [
+  0.0015,
+  0.0014999999999999998
+ ],
+ "min_Tx_species": [
+  0.001,
+  5.446623090860271e-07
+ ],
+ "wall_time": 15.77863666700432,
+ "parent_commit": "3de6b2b8cdc8e79af68ea7175c318e135708c7b2",
+ "repository_commit": "4f3e1f0de9a2aea576027bfdf28264e5c9db0041",
+ "command": "python studies/r1_reservoir.py run sc_vq0.01_u0.1_Nn32_Nx8",
+ "identity_max_rel": 2.5053007359646e-16
+}

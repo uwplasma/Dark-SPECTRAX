@@ -1,0 +1,19 @@
+{
+ "key": "tau30_r2_Nn32_Nx8",
+ "tau_c": 30.0,
+ "realization": 2,
+ "Nn": 32,
+ "Nx": 8,
+ "E0": 0.00031622776601683794,
+ "status": "success",
+ "failure_reason": null,
+ "t_reached": 1000.0,
+ "events": 8,
+ "ledger_over_Wscale": 1.1704403356373903e-10,
+ "first_nonpositive": null,
+ "wall_time": 21.276095332985278,
+ "parent_commit": "3de6b2b8cdc8e79af68ea7175c318e135708c7b2",
+ "repository_commit": "4f3e1f0de9a2aea576027bfdf28264e5c9db0041",
+ "command": "python studies/r1_coherence.py run tau30_r2_Nn32_Nx8",
+ "identity_max_rel": 1.2452775424702624e-16
+}

@@ -1,0 +1,29 @@
+{
+ "key": "pre_vq0.03_Nn32_Nx8",
+ "kind": "pre",
+ "vq": 0.03,
+ "Nn": 32,
+ "Nx": 8,
+ "eta": 0.0,
+ "E0": 0.0009486832980505137,
+ "U_D0": 0.0,
+ "status": "failure",
+ "failure_reason": "segment 44: positivity lost at t = 886",
+ "t_reached": 900.0,
+ "events": 21,
+ "ledger_over_Wscale": 2.1787310185321418e-10,
+ "first_nonpositive": 886.0,
+ "min_K_species": [
+  0.0015,
+  0.0014999999999999998
+ ],
+ "min_Tx_species": [
+  -0.0025691593730310935,
+  5.446623093681917e-07
+ ],
+ "wall_time": 16.76905608398374,
+ "parent_commit": "3de6b2b8cdc8e79af68ea7175c318e135708c7b2",
+ "repository_commit": "4f3e1f0de9a2aea576027bfdf28264e5c9db0041",
+ "command": "python studies/r1_reservoir.py run pre_vq0.03_Nn32_Nx8",
+ "identity_max_rel": 2.693325648315069e-16
+}

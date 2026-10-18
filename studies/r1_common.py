@@ -90,12 +90,14 @@ class PhasedModel(ds.Model):
         return jnp.asarray(self.E_drive) * jnp.cos(self.omega_drive * t + Phi)
 
 
-def noise_knots(tau_c, seed, T=T_END, h=H_KNOT):
-    """Frequency-noise samples for realization `seed` (all zeros for tau_c = inf)."""
+def noise_knots(tau_c, seed, T=T_END, h=H_KNOT, fac=1.0):
+    """Frequency-noise samples for realization `seed` (all zeros for tau_c = inf); variance fac/(tau_c h).
+    fac = 1 reproduces the v1 records (realized Var dPhi = dt/tau_c, field coherence time 2 tau_c, see the v2 note
+    in the module docstring); fac = 2 is the v2 definition (Var dPhi = 2 dt/tau_c, coherence time tau_c)."""
     n = int(np.ceil(T / h)) + 3
     if not np.isfinite(tau_c):
         return np.zeros(n)
-    return np.random.default_rng(seed).normal(0.0, 1.0 / np.sqrt(tau_c * h), n)
+    return np.random.default_rng(seed).normal(0.0, np.sqrt(fac / (tau_c * h)), n)
 
 
 def phase_np(t, z, h=H_KNOT):
@@ -228,6 +230,18 @@ def prescribed_linear(t, E0, w0=w_L):
 
 
 # ---------------------------------------------------------------- part (b) linear theory
+def phase_variance_rate(tau_c, fac, t=500.0, h=H_KNOT):
+    """Exact Var[Phi(t)]/t of the interpolated frequency-noise phase (v2 gate G11: must be 2/tau_c within 2%)."""
+    nk = int(np.ceil(T_END / h)) + 3
+    tk = np.arange(nk) * h
+
+    def A(u):
+        u = np.clip(u, -h, h)
+        return np.where(u < 0, (u + h) ** 2 / (2 * h), h / 2 + u - u ** 2 / (2 * h))
+    G = A(t - tk) - A(-tk)
+    return float(fac / (tau_c * h) * (G ** 2).sum() / t)
+
+
 def linear_work_realization(t, z, E0, w0=w_L):
     """W_ext(t) of the linear mean-field ODE driven by E0 cos(w0 t + Phi(t)), integrated with solve_ivp."""
     from scipy.integrate import solve_ivp
@@ -240,7 +254,7 @@ def linear_work_realization(t, z, E0, w0=w_L):
     return s.y[2]
 
 
-def expected_work(tau_c, E0, T=T_END, dt=0.1, w0=w_L, out_every=100):
+def expected_work(tau_c, E0, T=T_END, dt=0.1, w0=w_L, out_every=100, fac=1.0):
     """Derived linear expectation E[W_ext](t) for the interpolated frequency-noise drive (see module docstring).
     Returns (t_out, E[W](t_out), grid P(t)=dE[W]/dt on the full grid)."""
     t = np.arange(0.0, T + dt / 2, dt)
@@ -255,7 +269,7 @@ def expected_work(tau_c, E0, T=T_END, dt=0.1, w0=w_L, out_every=100):
             u = np.clip(u, -h, h)
             return np.where(u < 0, (u + h) ** 2 / (2 * h), h / 2 + u - u ** 2 / (2 * h))
         G = A(t[:, None] - tk[None, :]) - A(-tk)[None, :]
-        s2 = 1.0 / (tau_c * h)
+        s2 = fac / (tau_c * h)
         var = s2 * (G ** 2).sum(axis=1)                 # Var Phi(t)
     P = np.zeros(N)
     blk = 400
@@ -276,3 +290,19 @@ def expected_work(tau_c, E0, T=T_END, dt=0.1, w0=w_L, out_every=100):
         P[ii] = w_L ** 2 * dt * (K * wts).sum(axis=1)
     W = np.concatenate([[0.0], np.cumsum(0.5 * dt * (P[1:] + P[:-1]))])
     return t[::out_every], W[::out_every], P
+
+
+# ---------------------------------------------------------------- v2 declaration (2026-10-18, after the v1 coherence runs)
+V2_NOTE = """
+v2 of part (b), declared after the v1 records were made and before any v2 run.
+DEFECT FOUND IN THE v1 DECLARATION (recorded, v1 records kept): the module docstring says Var[Phi(t) - Phi(s)] -> 2|t-s|/tau_c, but
+the frequency noise of variance 1/(tau_c h) with knot spacing h has integrated autocorrelation sigma^2 h = 1/tau_c, so the realized
+phase variance is |t-s|/tau_c and the field coherence function is exp(-|t-s|/(2 tau_c)): the v1 coherence times are 2 tau_c
+(60, 200, 600), not 30, 100, 300. The derived expectation and the Monte Carlo (G8-G9) use the exact covariance of the realized
+process and are therefore consistent with the v1 runs; only the label was wrong.
+v2 (studies/r1_coherence.py with the argument `v2`): variance 2/(tau_c h) (fac = 2). Same E0, seeds, knots, T, gates G1-G10, plus
+  G11 realized phase-variance rate Var[Phi(500)]/500 equals 2/tau_c within 2% (exact, from the interpolation covariance);
+  G12 (reported, not a pass/fail gate) z-score of the 6-realization kinetic mean of W_ext(T) against the derived expectation, using the
+      sample standard error of the six kinetic realizations.
+Records: studies/r1/coh2_*.json|npz, coh2_linear.npz, coherence2_summary.json.
+"""

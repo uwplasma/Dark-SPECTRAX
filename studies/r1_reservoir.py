@@ -107,7 +107,8 @@ def summary():
             t_dev = first_below(t, -dev, -0.1) if (dev > 0.1).any() else None
             WDlin = U0 - UDlin
             # matched prescribed drive
-            ts = np.array([x for x in tp if x <= window])
+            wp = min(window, rp32["t_reached"], rp64["t_reached"], *[x for x in (rp32["first_nonpositive"], rp64["first_nonpositive"]) if x is not None])
+            ts = np.array([x for x in tp if x <= wp])
             Wp = dp32["W"][: ts.size, 2]
             WDk = np.interp(ts, t, d["W"][:, 1])
             bad = (np.abs(WDk - Wp) > 0.1 * np.abs(Wp)) & (ts > 50)
@@ -117,12 +118,12 @@ def summary():
             badl = (np.abs(WDlin_i - Wlin_p) > 0.1 * np.abs(Wlin_p)) & (ts > 50)
             t_split_lin = float(ts[np.argmax(badl)]) if badl.any() else None
             # beat: first minimum of U_D in window
-            iw = np.flatnonzero(sel)
+            iw = np.flatnonzero(t <= min(window, 1.5 * np.pi / eta))  # first beat only (deeper later minima are round-off)
             imin = iw[np.argmin(d["U_D"][iw])]
             ilin = np.argmin(UDlin[iw])
             t_pred_min = float(np.pi / eta)
             S["cases"][key] = {
-                "vq": vq, "u": u, "eta": eta, "U_D0_over_nTe": U0 / c.vte ** 2, "claim_window": window,
+                "vq": vq, "u": u, "eta": eta, "U_D0_over_nTe": U0 / c.vte ** 2, "claim_window": window, "window_vs_prescribed": wp,
                 "caps": {"certified": c.CERTIFIED[vq], "pairs": pairs, "t_reached": ends,
                          "first_nonpositive": [r["first_nonpositive"], r64["first_nonpositive"]]},
                 "beat_period_2pi_over_eta": 2 * np.pi / eta, "t_first_min_U_D_pred_pi_over_eta": t_pred_min,
@@ -132,7 +133,8 @@ def summary():
                 "W_D_final_over_U_D0": float(np.interp(window, t, d["W"][:, 1]) / U0),
                 "W_D_lin_at_window_over_U_D0": float(np.interp(window, t, WDlin) / U0),
                 "W_D_over_nTe_at_window": float(np.interp(window, t, d["W"][:, 1]) / c.vte ** 2),
-                "W_ext_prescribed_over_nTe_at_window": float(np.interp(window, tp, dp32["W"][:, 2]) / c.vte ** 2),
+                "W_ext_prescribed_over_nTe_at_window": float(np.interp(wp, tp, dp32["W"][:, 2]) / c.vte ** 2),
+                "W_D_over_nTe_at_window_vs_prescribed": float(np.interp(wp, t, d["W"][:, 1]) / c.vte ** 2),
                 "t_split_kin_10pct": t_split, "t_split_lin_10pct": t_split_lin,
                 "G7_pass": (t_split is None and t_split_lin is None) or (t_split is not None and t_split_lin is not None and 1 / 1.5 <= t_split / t_split_lin <= 1.5),
                 "G6_matrix_vs_ivp": g6, "identity_max_rel": r["identity_max_rel"],

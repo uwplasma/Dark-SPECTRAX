@@ -1,0 +1,30 @@
+{
+ "key": "sc_vq0.03_u10.0_Nn32_Nx8",
+ "kind": "sc",
+ "vq": 0.03,
+ "u": 10.0,
+ "Nn": 32,
+ "Nx": 8,
+ "eta": 0.006708203932499369,
+ "E0": 0.0009486832980505137,
+ "U_D0": 0.010000000000102344,
+ "status": "failure",
+ "failure_reason": "segment 48: positivity lost at t = 968",
+ "t_reached": 980.0,
+ "events": 21,
+ "ledger_over_Wscale": 4.2937980237541824e-09,
+ "first_nonpositive": 968.0,
+ "min_K_species": [
+  -0.0008259843879454258,
+  0.0014999999999999998
+ ],
+ "min_Tx_species": [
+  -0.004136275179094579,
+  5.446623093681917e-07
+ ],
+ "wall_time": 18.799151459010318,
+ "parent_commit": "3de6b2b8cdc8e79af68ea7175c318e135708c7b2",
+ "repository_commit": "4f3e1f0de9a2aea576027bfdf28264e5c9db0041",
+ "command": "python studies/r1_reservoir.py run sc_vq0.03_u10.0_Nn32_Nx8",
+ "identity_max_rel": 1.9851532441704522e-16
+}

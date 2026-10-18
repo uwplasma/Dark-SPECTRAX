@@ -1,0 +1,237 @@
+{
+ "E0": 0.00031622776601683794,
+ "definition": "v1",
+ "gates": {
+  "G8_quadrature_rel_err": 3.323696034345759e-06,
+  "G8_pass": true,
+  "G1_ledger_max": 2.460776496494392e-10,
+  "G1_pass": true,
+  "G2_first_nonpositive": [],
+  "G4_identity_max": 3.5328046954985487e-16,
+  "G4_pass": true,
+  "G9_pass": true
+ },
+ "tau": {
+  "tauinf": {
+   "claim_window": 1000.0,
+   "pairs_Nn32_vs_Nn64": {
+    "dK_e": null,
+    "W_ext": null
+   },
+   "n_realizations_kinetic": 1,
+   "mean_W_kin_final": 0.012385181511047524,
+   "mean_W_lin_same_real_final": 0.012514385714122722,
+   "expected_W_lin_final": 0.012514360406054742,
+   "late_slope_kin": 2.2135318839339754e-05,
+   "late_slope_lin_same_real": 2.2514011740932948e-05,
+   "late_slope_expected": 2.2514005884871442e-05,
+   "late_slope_MC400": null,
+   "late_slope_asymptote_E0sq_tau_wL2_over_4": null,
+   "per_realization": [
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9896755457257971
+    }
+   ],
+   "ratio_late_mean": 0.9896755457257971,
+   "ratio_late_se": null,
+   "G10_pass": true,
+   "ledger": [
+    1.1262799123763299e-10,
+    9.365227914364562e-11
+   ],
+   "identity_max_rel": 1.8867114968958065e-16
+  },
+  "tau30": {
+   "claim_window": 1000.0,
+   "pairs_Nn32_vs_Nn64": {
+    "dK_e": null,
+    "W_ext": null
+   },
+   "n_realizations_kinetic": 6,
+   "mean_W_kin_final": 0.0020495678544838218,
+   "mean_W_lin_same_real_final": 0.0020571246505368657,
+   "expected_W_lin_final": 0.0014649852276157943,
+   "late_slope_kin": 2.1663363803449243e-06,
+   "late_slope_lin_same_real": 2.1818436559056536e-06,
+   "late_slope_expected": 1.5585895019433951e-06,
+   "late_slope_MC400": 2.1818436559056536e-06,
+   "late_slope_asymptote_E0sq_tau_wL2_over_4": 7.504084967320262e-07,
+   "per_realization": [
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 1.0091568055600857
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 1.0189508292920573
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9909835604033161
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9928464742860095
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 1.0180238736470184
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9820604192643606
+    }
+   ],
+   "ratio_late_mean": 1.0020036604088078,
+   "ratio_late_se": 0.0063194165871925945,
+   "G10_pass": true,
+   "ledger": [
+    1.6217332555322663e-10,
+    2.460776496494392e-10,
+    1.1704403356373903e-10,
+    1.2880436892782282e-10,
+    1.1385429413308709e-10,
+    2.1660362940121607e-10,
+    1.0458171807693767e-10
+   ],
+   "identity_max_rel": 2.380309207906556e-16,
+   "G9_max_z": 1.066642589204187,
+   "G9_pass": true,
+   "MC_mean_W_final": 0.0013993233026093255,
+   "MC_se_final": 6.292989211515468e-05,
+   "realized_phase_var_rate_x_tau_c": 0.9950000000000001,
+   "G12_z_kin_mean_vs_expected": 0.6408722240479688
+  },
+  "tau100": {
+   "claim_window": 1000.0,
+   "pairs_Nn32_vs_Nn64": {
+    "dK_e": null,
+    "W_ext": null
+   },
+   "n_realizations_kinetic": 6,
+   "mean_W_kin_final": 0.0045121587264541916,
+   "mean_W_lin_same_real_final": 0.004514716985102402,
+   "expected_W_lin_final": 0.004055459892004422,
+   "late_slope_kin": 4.617411326961707e-06,
+   "late_slope_lin_same_real": 4.579636103261171e-06,
+   "late_slope_expected": 5.003237325363717e-06,
+   "late_slope_MC400": 4.579636103261171e-06,
+   "late_slope_asymptote_E0sq_tau_wL2_over_4": 2.5013616557734205e-06,
+   "per_realization": [
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9969274222610973
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 1.0278502992389769
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9903592117630614
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9950510498087594
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 1.01666293745092
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 1.0082272703531778
+    }
+   ],
+   "ratio_late_mean": 1.0058463651459988,
+   "ratio_late_se": 0.00589570000628278,
+   "G10_pass": true,
+   "ledger": [
+    5.7331611292476075e-11,
+    1.0334910207715726e-10,
+    9.028626659768545e-11,
+    6.709506537553381e-11,
+    1.2588312916831885e-10,
+    2.3797645741954415e-10,
+    6.148265015295151e-11
+   ],
+   "identity_max_rel": 3.5328046954985487e-16,
+   "G9_max_z": 1.123653677870319,
+   "G9_pass": true,
+   "MC_mean_W_final": 0.0039053411676102075,
+   "MC_se_final": 0.00013359874786218553,
+   "realized_phase_var_rate_x_tau_c": 0.9950000000000001,
+   "G12_z_kin_mean_vs_expected": 0.3641623850650637
+  },
+  "tau300": {
+   "claim_window": 1000.0,
+   "pairs_Nn32_vs_Nn64": {
+    "dK_e": null,
+    "W_ext": null
+   },
+   "n_realizations_kinetic": 6,
+   "mean_W_kin_final": 0.008536965117372028,
+   "mean_W_lin_same_real_final": 0.008600400489109788,
+   "expected_W_lin_final": 0.007734217984923879,
+   "late_slope_kin": 1.3449842703633963e-05,
+   "late_slope_lin_same_real": 1.3616084704106654e-05,
+   "late_slope_expected": 1.1695222252809783e-05,
+   "late_slope_MC400": 1.3616084704106654e-05,
+   "late_slope_asymptote_E0sq_tau_wL2_over_4": 7.5040849673202615e-06,
+   "per_realization": [
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9920530300512487
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9966521185356616
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9900501468699473
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9911474664742578
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9934606997836454
+    },
+    {
+     "t_dev_10pct": null,
+     "ratio_late": 0.9944024867208611
+    }
+   ],
+   "ratio_late_mean": 0.992960991405937,
+   "ratio_late_se": 0.000975334457261023,
+   "G10_pass": true,
+   "ledger": [
+    7.529248265399629e-11,
+    5.763105261565815e-11,
+    1.0722896266591554e-10,
+    6.139072888199356e-11,
+    8.35335256632319e-11,
+    9.415552580178769e-11,
+    5.10996504026912e-11
+   ],
+   "identity_max_rel": 2.646764220080869e-16,
+   "G9_max_z": 1.0857488748529138,
+   "G9_pass": true,
+   "MC_mean_W_final": 0.0076175426576227225,
+   "MC_se_final": 0.0001354199294312725,
+   "realized_phase_var_rate_x_tau_c": 0.995,
+   "G12_z_kin_mean_vs_expected": 1.0891407808939892
+  }
+ },
+ "Nx8_vs_Nx16_tau100_r0": {
+  "dK_e": null,
+  "W_ext": null
+ },
+ "Nx8_vs_Nx16_tauinf_r0": {
+  "dK_e": null,
+  "W_ext": null
+ }
+}
