@@ -494,8 +494,18 @@ Collisional / collisionless (same Nx 32, Nn 64), cycle averages:
 | vq0.03_nu0.01 | 750 | 0.586 | 0.960 |
 | vq0.03_nu0.01 | 950 | 0.523 | 0.922 |
 
+G1 cause (follow-up study `studies/h08_g1_cause.py`, declared after the G1 failure; G1 itself is not amended): the same nu = 0 case rerun at parent dd80b0f with only the restart chunk length changed, compared with the nxconv record as in G1:
+
+| restart chunk | dK_e deviation | W_ext deviation |
+|---|---|---|
+| 240 | 0.0e+00 | 0.0e+00 |
+| 200 | 5.8e-06 | 1.8e-07 |
+| 120 | 3.0e-06 | 2.7e-07 |
+
+Declared criteria: chunk 240 matches the record to 1e-12 pass; chunks 200 and 120 deviate by >= 1e-8 pass. nxconv restarted the adaptive integrator every 240 time units and H08 every 200 (the restart resets the PID controller and first step); with the chunk matched the new parent reproduces the record exactly, so the parent change 16400f8..dd80b0f is not the cause. The deviation is the adaptive-step trajectory difference from a different restart placement; it is a few 1e-6 although each step is controlled at rtol 1e-10, because the pump-frame resonant dynamics amplify step-level differences. It is far below the 10% resolution rule. The G1 gate (1e-6) was mis-specified relative to this restart sensitivity: it presumed a bitwise or tolerance-level match without matching the chunking; the failure is recorded as is.
+
 Findings (inside the claim windows only):
-- G1 FAILED as declared: the nu = 0 rerun deviates from the nxconv record by 6e-06 of the running max in dK_e (gate 1e-6; W_ext 2e-07). The record was made at parent 16400f8, this run at dd80b0f; the cause was not investigated. It is far below the 10% resolution rule, so the collisionless baseline used below is this rerun, not the old record.
+- G1 FAILED as declared: the nu = 0 rerun deviates from the nxconv record by 6e-06 of the running max in dK_e (gate 1e-6; W_ext 2e-07). The record was made at parent 16400f8, this run at dd80b0f; the cause is attributed below (restart chunk length, not the parent). It is far below the 10% resolution rule, so the collisionless baseline used below is this rerun, not the old record.
 - Every Nx 32/64 and Nn 64/128 pair agrees to t = 1000 in dK_e, W_ext, T_e/T_i and Q_e; claims stop at 950 for v_q 0.03 (the collisionless certified window).
 - The W_ext ratio collisional/collisionless is the same at v_q 0.01 and 0.03 to 3 digits, and the seeded W_ext follows the homogeneous control (v_q 0.03, nu 1e-2, cycle averages at t = 950: 0.0526 vs 0.0529, -0.5%): the absorption is set by the uniform driven oscillator with drag; the seeded finite-k dynamics adds little at these amplitudes.
 - With nu_ei = 1e-2 the electron share dK_e/W_ext rises from 0.48 to 0.85 (the rest stays in the field), and collisions turn quiver energy into heat: T_e/T_e(0) reaches 77 at v_q 0.03 (v_t ~ 0.28 c), outside the regime where the nonrelativistic model is physical, although numerically resolved. Ion heating stays small (T_i/T_i(0) 1.30); the e-to-i collisional exchange Q_i is 2.4e-03 of W_ext.

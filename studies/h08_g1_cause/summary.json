@@ -1,0 +1,28 @@
+{
+ "parent_commit": "dd80b0fdffa08378d0dc71fc2b0603a5a8ff090b",
+ "repository_commit": "5d4132f65aa7168842b6ce579abb648833b58649",
+ "dev_vs_record": {
+  "240": {
+   "parts": 5,
+   "t_end": 1000.0,
+   "dKe": 0.0,
+   "Wext": 0.0
+  },
+  "200": {
+   "parts": 5,
+   "t_end": 1000.0,
+   "dKe": 5.804440289303965e-06,
+   "Wext": 1.7794726528692395e-07
+  },
+  "120": {
+   "parts": 9,
+   "t_end": 1000.0,
+   "dKe": 2.950787483350415e-06,
+   "Wext": 2.737123439368049e-07
+  }
+ },
+ "criteria": {
+  "chunk240_matches_1e-12": true,
+  "chunk200_and_120_ge_1e-8": true
+ }
+}

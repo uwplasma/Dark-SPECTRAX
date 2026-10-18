@@ -1,0 +1,34 @@
+{
+ "case": "vq0.03_nu0_Nx32_Nn64",
+ "vq_over_vte": 0.03,
+ "nu_ei": 0.0,
+ "nu_matrix": [
+  [
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0
+  ]
+ ],
+ "Nx": 32,
+ "Nn": 64,
+ "control": false,
+ "closure_c": 4.0,
+ "noise_floor": 1e-14,
+ "part": 4,
+ "t_start": 480.0,
+ "t_end": 600.0,
+ "status": "success",
+ "failure_reason": null,
+ "events": 4,
+ "steps": 2237,
+ "rejected": 780,
+ "compile_time": 0.9673643759451807,
+ "run_time": 4.627916166034993,
+ "wall_time": 12.75353983300738,
+ "repository_commit": "5d4132f65aa7168842b6ce579abb648833b58649",
+ "parent_commit": "dd80b0fdffa08378d0dc71fc2b0603a5a8ff090b",
+ "command": "python studies/h08.py /Users/rogeriojorge/local/spectrax-wt/pinmm-dark/studies/h08_g1_cause/runs_chunk120 120"
+}
