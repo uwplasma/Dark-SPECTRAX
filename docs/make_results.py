@@ -984,9 +984,11 @@ def b11_section():
          "- B and C use truncated series of Maxwellians whose width differs from the basis. Only rows n <= 2 set the "
          "moments and the operator is lower-triangular in n, so the temperature rates are exact despite the truncation.",
          f"- D: the drift energy becomes heat; final T = ({D['T_final'][0]:.4f}, {D['T_final'][1]:.4f}) from 0.5 each.",
-         "- Cross-species coefficients: Greene's form with beta = 0, derived in #71 from momentum and energy conservation. "
-         "arXiv:1903.08062 defers multispecies coefficients and the Gkeyll docs page was unreachable, so the beta convention "
-         "was not checked against Francisquez et al. The conservation is what is tested.",
+         "- Cross-species coefficients: the parent's #71 form is the LBO-EM of Francisquez et al. (JPP 88, 905880303, "
+         "arXiv:2109.10381, eqs 2.18-2.20; checked 2026-10-18), not Greene's beta = 0 form. With their nu_sr = alpha_E "
+         "(m_s + m_r)/(m_s n_s) it matches the Morse momentum rate and gives twice the Morse temperature-difference rate "
+         "(any mass ratio); their LBO-G with beta = 0 (parent #73, collision_model = 'dougherty_g') matches both. The "
+         "conservation and the stated model rates are what B11 tests; no B11 gate compares to the Morse rate.",
          "- Not covered: inhomogeneous collisional runs (collisional Landau damping vs a kinetic root with the Dougherty "
          "operator), dark-coupled collisional runs, and charged two-species relaxation (fields respond to the current)."]
     return "\n".join(L)
@@ -1048,8 +1050,9 @@ def h08_section():
          f"{s['parent_commit'][:7]}); runs in `studies/h08/runs`. H05 nxconv setup (mobile ions 1836, pump frame + remap, "
          "#66/#72 field-scaled closure c = 4, noise floor 1e-14, Nn 64) plus nu_dougherty = [[nu_ei, nu_ei], [0, nu_ei "
          "sqrt(m_e/m_i)]]; the parent sets nu_ie = nu_ei m_e/m_i. Convention and limitations (velocity-independent nu, so "
-         "absorption is a model value; nu_ee = nu_ei and nu_ii as Z = 1 order-of-magnitude choices; cross-species beta "
-         "(Greene, beta = 0) not checked against Francisquez et al.) are in the script docstring. HHS-v1-inspired, not a "
+         "absorption is a model value; nu_ee = nu_ei and nu_ii as Z = 1 order-of-magnitude choices; cross-species moments "
+         "are Francisquez's LBO-EM (momentum friction at the Morse rate, e-i temperature exchange 2x Morse, negligible at "
+         "m_e/m_i) are in the script docstring. HHS-v1-inspired, not a "
          "reproduction.", "",
          f"Gates: G0 homogeneous controls vs the exact driven two-fluid oscillator with drag {ok(g.get('G0'))}; "
          f"G1 nu = 0 reproduces the nxconv record {ok(g.get('G1'))}; G2 collisions do no net work and the ledger closes "

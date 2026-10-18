@@ -6,7 +6,7 @@ Results and their records are in [results.md](results.md); the model and the lit
 
 ## Code health
 
-- Parent pin: SPECTRAX `integration/dark-baseline` `dd80b0f` (main `bf41830` plus the open PRs listed in the README).
+- Parent pin: SPECTRAX `integration/dark-baseline` `3de6b2b` (main `bf41830` plus the open PRs listed in the README).
   The repin from `a4bdd72` (2026-10-16) only adds #72 (magnetic option of `field_scaled_closure_rate`, default off and unchanged); `studies/b09_closure.py` now calls it instead of its own copy (equal to round-off, test in `tests/test_studies.py`).
   The repin from `d6cedcb` (2026-10-16) only adds #71 (Dougherty collisions, default off, RHS unchanged when off).
   Records made before 2026-10-16 name `f33dfda`; the repin to `d6cedcb` only adds #68-#70 and changes no record: a seeded pump-frame run
@@ -121,6 +121,7 @@ physics.md sets the rule: only full-text sources may set a benchmark.
 | Source | Needed for | Access |
 |---|---|---|
 | Hakim, Francisquez, Juno, Hammett, arXiv:1903.08062 (Dougherty moments, N5) | B11, H08 conservative collisions | read 2026-10-16, Sec. 2 (operator, moments, d_v convention); multispecies coefficients deferred there |
+| Francisquez, Juno, Hakim, Hammett, Ernst, arXiv:2109.10381 (multispecies Dougherty, LBO-G/EM/ET) | B11, H08 cross-species coefficients | read 2026-10-18; parent #71 = LBO-EM; LBO-G beta=0 added as parent #73 (opt-in); default and records unchanged |
 | Juno, arXiv:2005.13539 (thesis, N11) | C06 continuum comparison, Weibel setups | open (arXiv) |
 | Gkeyll documentation | C06 input matching | open (web) |
 | O'Neil, Phys. Fluids 8, 2255 (1965) | B01 trapping time and bounce scaling | read 2026-10-15 (physics.md C1) |

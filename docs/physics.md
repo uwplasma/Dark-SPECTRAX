@@ -107,6 +107,7 @@ Re-derived by hand and, where marked, checked numerically by the tests:
 | Mean-pump identity and $\bar E=-E_0\omega t\sin(\omega t)/2$ | correct; exact in the discrete system only if the closure leaves orders 0-2 untouched (A07) |
 | B12 drag response and absorbed power | correct (algebra only) |
 | Dougherty moments $R_{sr}$, $Q_{sr}$ with $\theta=\mathrm{tr}P/(3mn)$ | correct (algebra only) |
+| Cross-species $u_{sr}=(U_s+U_r)/2$, common $T_{sr}$, $m_sn_s\nu_{sr}=m_rn_r\nu_{rs}$ (parent #71) | equals Francisquez et al. LBO-EM (arXiv:2109.10381 eqs 2.18-2.20), not Greene $\beta=0$; momentum rate = Morse, temperature-difference rate = 2x Morse; LBO-G $\beta=0$ (parent #73) matches both |
 | Midpoint phase error $-\omega^3\Delta t^2t/12$ | correct |
 | Free-streaming front $\lvert g_n\rvert^2\propto[(kv_tt)^2]^n e^{-(kv_tt)^2}/n!$ | correct only for a basis-matched Maxwellian, $a=\sqrt2v_t$; other widths change the prefactors |
 | "n_s = alpha_x alpha_y alpha_z C000", "Ampere source -J/Omega_cs[0]", "energy prefactor Omega_cs[0]^2" | correct, but the energy theorem additionally needs $m_s\Omega_{cs}=\Omega_0$ (above) |
