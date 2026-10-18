@@ -1091,6 +1091,22 @@ def h08_section():
     for k, v in s["compare_collisionless"].items():
         for t, a in v.items():
             L.append(f"| {k} | {t} | {a['W_ext_ratio']:.3f} | {a['dK_e_ratio']:.3f} |")
+    g1c = root / "studies/h08_g1_cause/summary.json"
+    if g1c.exists():
+        c = json.loads(g1c.read_text())
+        d = c["dev_vs_record"]
+        L += ["", "G1 cause (follow-up study `studies/h08_g1_cause.py`, declared after the G1 failure; G1 itself is not amended): "
+              f"the same nu = 0 case rerun at parent {c['parent_commit'][:7]} with only the restart chunk length changed, "
+              "compared with the nxconv record as in G1:", "", "| restart chunk | dK_e deviation | W_ext deviation |", "|---|---|---|"]
+        L += [f"| {k} | {v['dKe']:.1e} | {v['Wext']:.1e} |" for k, v in d.items()]
+        L += ["", f"Declared criteria: chunk 240 matches the record to 1e-12 {ok(c['criteria']['chunk240_matches_1e-12'])}; chunks 200 and 120 "
+              f"deviate by >= 1e-8 {ok(c['criteria']['chunk200_and_120_ge_1e-8'])}. nxconv restarted the adaptive integrator every 240 time "
+              "units and H08 every 200 (the restart resets the PID controller and first step); with the chunk matched the new parent "
+              "reproduces the record exactly, so the parent change 16400f8..dd80b0f is not the cause. The deviation is the "
+              "adaptive-step trajectory difference from a different restart placement; it is a few 1e-6 although each step is "
+              "controlled at rtol 1e-10, because the pump-frame resonant dynamics amplify step-level differences. It is far below "
+              "the 10% resolution rule. The G1 gate (1e-6) was mis-specified relative to this restart sensitivity: it presumed a "
+              "bitwise or tolerance-level match without matching the chunking; the failure is recorded as is."]
     R = s["runs"]
     hot = R["vq0.03_nu0.01_Nx32_Nn64"]["cycle_avg"]["950"]
     ctl = s["controls"]["vq0.03_nu0.01"]["Wext_cycle_avg_950"]
@@ -1099,7 +1115,7 @@ def h08_section():
           "- G1 FAILED as declared: the nu = 0 rerun deviates from the nxconv record by "
           f"{s['G1_reproduction']['max_rel_dev']['dKe']:.0e} of the running max in dK_e (gate 1e-6; W_ext "
           f"{s['G1_reproduction']['max_rel_dev']['Wx']:.0e}). The record was made at parent 16400f8, this run at dd80b0f; the "
-          "cause was not investigated. It is far below the 10% resolution rule, so the collisionless baseline used below is "
+          "cause is attributed below (restart chunk length, not the parent). It is far below the 10% resolution rule, so the collisionless baseline used below is "
           "this rerun, not the old record.",
           "- Every Nx 32/64 and Nn 64/128 pair agrees to t = 1000 in dK_e, W_ext, T_e/T_i and Q_e; claims stop at 950 for "
           "v_q 0.03 (the collisionless certified window).",

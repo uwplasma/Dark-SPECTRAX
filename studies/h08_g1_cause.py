@@ -12,8 +12,8 @@ chunk-200 and chunk-120 deviations are >= 1e-8 (then restart placement alone pro
 
 Run: python studies/h08_g1_cause.py   (about 3 min; writes studies/h08_g1_cause/summary.json)
 """
-import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -51,11 +51,12 @@ def main():
     tr, dk_r, w_r = series(parts(REC))
     for chunk in (240, 200, 120):
         h08.RUNS = D / f"runs_chunk{chunk}"
-        for _ in range(12):
-            if h08.run(argparse.Namespace(vq=0.03, nu=0.0, Nx=32, Nn=64, T=1000.0, chunk=float(chunk), control=False)):
-                break
-            if parts(h08.RUNS / "vq0.03_nu0_Nx32_Nn64") and json.loads(
-                    Path(str(parts(h08.RUNS / "vq0.03_nu0_Nx32_Nn64")[-1])[:-4] + ".json").read_text())["t_end"] >= 1000 - 1e-9:
+        for _ in range(12):  # one process per chunk: h08.run patches _sim.run and must not be called twice in a process
+            subprocess.run([sys.executable, "-c", "import sys, h08; from pathlib import Path; h08.RUNS = Path(sys.argv[1]); "
+                            "h08.main(['run', '--vq', '0.03', '--nu', '0', '--Nx', '32', '--chunk', sys.argv[2]])",
+                            str(h08.RUNS), str(chunk)], cwd=Path(__file__).resolve().parent, check=True)
+            last = json.loads(Path(str(parts(h08.RUNS / "vq0.03_nu0_Nx32_Nn64")[-1])[:-4] + ".json").read_text())
+            if last["t_end"] >= 1000 - 1e-9:
                 break
         t, dk, w = series(parts(h08.RUNS / "vq0.03_nu0_Nx32_Nn64"))
         n = min(t.size, tr.size)
