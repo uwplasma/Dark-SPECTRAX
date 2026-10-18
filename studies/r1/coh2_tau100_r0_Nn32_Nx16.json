@@ -1,0 +1,20 @@
+{
+ "key": "tau100_r0_Nn32_Nx16",
+ "tau_c": 100.0,
+ "realization": 0,
+ "Nn": 32,
+ "Nx": 16,
+ "E0": 0.00031622776601683794,
+ "definition": "v2",
+ "phase_var_factor": 2.0,
+ "status": "success",
+ "failure_reason": null,
+ "t_reached": 1000.0,
+ "events": 0,
+ "ledger_over_Wscale": 1.1156650876293653e-10,
+ "first_nonpositive": null,
+ "wall_time": 21.995018458983395,
+ "parent_commit": "3de6b2b8cdc8e79af68ea7175c318e135708c7b2",
+ "repository_commit": "d858d2161637ba5d5aa48fb8426c283280292dc7",
+ "command": "python studies/r1_coherence.py run tau100_r0_Nn32_Nx16"
+}

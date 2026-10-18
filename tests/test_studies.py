@@ -42,3 +42,22 @@ def test_b09_closure_rate_is_parent(seed, Nn, Nm, Np, magnetic):
     got = np.asarray(b09c.closure_rate(F, u_s, a_s, m, 1.3, magnetic))
     assert got.shape == (Ns,)
     np.testing.assert_allclose(got, ref, rtol=1e-14, atol=0)
+
+
+def test_r1_phased_drive_and_linear_theory():
+    """R1 helpers: the jax drive equals the numpy phase formula; the derived expectation is the exact tau_c = inf work and,
+    for a finite line, below it; the 4x4 reservoir matrix equals an independent ODE solve."""
+    r1 = pytest.importorskip("r1_common")
+    z = r1.noise_knots(30.0, 3, T=60.0, fac=2.0)
+    m = r1.mobile_model(Nx=1, Nn=3, E0=1e-3, cls=r1.PhasedModel, z=tuple(z))
+    t = np.linspace(0.0, 60.0, 37)
+    got = np.array([float(m.drive(tt)[0]) for tt in t])
+    assert np.allclose(got, 1e-3 * np.cos(r1.w_L * t + r1.phase_np(t, z)), atol=1e-15)
+    assert abs(r1.phase_variance_rate(30.0, 2.0) * 30.0 - 2.0) < 0.04
+    te, We, _ = r1.expected_work(np.inf, 1e-3, T=60.0, out_every=10)
+    assert np.allclose(We[1:], r1.prescribed_linear(te, 1e-3)[1:], rtol=1e-3)
+    _, Wf, _ = r1.expected_work(30.0, 1e-3, T=60.0, out_every=10, fac=2.0)
+    assert 0 < Wf[-1] < We[-1]
+    tt = np.linspace(0, 100, 11)
+    X, _ = r1.coupled_solution(tt, 0.02, 1.0)
+    assert np.allclose(X, r1.coupled_solution_ivp(tt, 0.02, 1.0), atol=1e-8)

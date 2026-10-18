@@ -12,7 +12,7 @@ Results and their records are in [results.md](results.md); the model and the lit
   Records made before 2026-10-16 name `f33dfda`; the repin to `d6cedcb` only adds #68-#70 and changes no record: a seeded pump-frame run
   with plain PID and with `noise_floor = 1e-14` is bitwise equal before and after.
   This is the current head of that branch. It is not a release, and none of those PRs is merged upstream.
-- Tests: 65 pass locally (CPU, float64, Python 3.13, `pytest -n 2 --cov`), coverage 99.8% of 460 statements;
+- Tests: 72 pass locally (CPU, float64, Python 3.13, `pytest -n 2 --cov`), coverage 99.8% of 460 statements;
   flake8 is clean. GitHub CI runs the same tests on Python 3.11 and 3.13.
 - Spot check: 10 README numbers were compared with their JSON records, and all match to the printed digits:
   the B00 roots and fits at k = 0.2-0.7, the two-stream and bump-on-tail growth rates, the mixing shifts
@@ -108,7 +108,7 @@ Status: **done** = passing test or record on main; **partial** = covered in part
 
 | ID | Item | Status |
 |---|---|---|
-| R1 | finite coherence / reservoir | partial: H07 homogeneous only |
+| R1 | finite coherence / reservoir | first step done 2026-10-18 ([results](results.md), gates declared in `studies/r1_common.py` before running): (a) mobile-ion self-consistent reservoir at the H05 seeded setup, v_q/v_te 0.01 and 0.03, U_D0/(n T_e V) = 0.1, 1, 10: kinetic U_D(t), W_D(t) follow the linear coupled-oscillator (Ebar, J, E_D, A_D) prediction to within 0.04 U_D0 over the whole claim windows (1000 and 940), beat times equal pi/eta, W_D follows the matched prescribed drive until t_split (52-500, equal to the linear t_split); no nonlinear detuning resolved. (b) finite coherence at v_q/v_te 0.01 (Lorentzian by phase diffusion, no phase resets, 6 kinetic realizations per tau_c, 400 linear): kinetic W_ext equals the linear same-drive W_ext within about 1% (no 10% departure) to t = 1000; the late rate saturates at about E0^2 tau_c omega_L^2/4 instead of growing. **Declaration defect:** the v1 coherence runs realized coherence time 2 tau_c (variance dt/tau_c, not 2 dt/tau_c); recorded, v2 declared and run with the corrected definition. Not done: Gaussian line, v_q/v_te >= 0.03 in (b), a regime where nonlinear detuning acts (needs stronger drive, beyond the certified windows), inhomogeneous dark fields |
 | R2 | collisions / cosmology | unblocked: conservative Dougherty operator available (B11); not started |
 | R3 | inhomogeneous / magnetized | not started (uniform-B0 B08 done 2026-10-15) |
 | R4 | observational (PSP) | not started here; the PSP chirp study lives in a separate repository |

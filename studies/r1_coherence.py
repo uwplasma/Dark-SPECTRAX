@@ -117,7 +117,7 @@ def summary():
              "expected_W_lin_final": float(np.interp(window, tl, L[f"{nm}_expected_W"])),
              "late_slope_kin": late_slope(tl[sel], Wk.mean(0)[sel], lo), "late_slope_lin_same_real": late_slope(tl[sel], Wl[:Wk.shape[0]].mean(0)[sel], lo),
              "late_slope_expected": late_slope(tl[sel], L[f"{nm}_expected_W"][sel], lo),
-             "late_slope_MC400": late_slope(tl[sel], Wl.mean(0)[sel], lo) if tau is not None else None,
+             "late_slope_MC400": late_slope(tl[sel], L[f"{nm}_W"].mean(0)[sel], lo) if tau is not None else None,
              "late_slope_asymptote_E0sq_tau_wL2_over_4": None if tau is None else float(E0 ** 2 * tau * c.w_L ** 2 / 4),
              "per_realization": per,
              "ratio_late_mean": float(np.mean([p["ratio_late"] for p in per])),

@@ -1,0 +1,21 @@
+{
+ "key": "tau300_r5_Nn32_Nx8",
+ "tau_c": 300.0,
+ "realization": 5,
+ "Nn": 32,
+ "Nx": 8,
+ "E0": 0.00031622776601683794,
+ "definition": "v2",
+ "phase_var_factor": 2.0,
+ "status": "success",
+ "failure_reason": null,
+ "t_reached": 1000.0,
+ "events": 0,
+ "ledger_over_Wscale": 1.2676366123001553e-10,
+ "first_nonpositive": null,
+ "wall_time": 18.30020241602324,
+ "parent_commit": "3de6b2b8cdc8e79af68ea7175c318e135708c7b2",
+ "repository_commit": "d858d2161637ba5d5aa48fb8426c283280292dc7",
+ "command": "python studies/r1_coherence.py run tau300_r5_Nn32_Nx8",
+ "identity_max_rel": 1.6740112989563115e-16
+}

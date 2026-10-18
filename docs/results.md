@@ -512,6 +512,54 @@ Findings (inside the claim windows only):
 - The collisional current-moment term is O(1) of the drive term in the mean-field identity (up to 0.9 omega_L^2 E0 without it); with it the identity closes to <= 3e-13. Collisions do no net work (|P_e + P_i| <= 2e-11 of |P_e|).
 - Not checked: the cross-species beta convention, a velocity-dependent (Coulomb) collision frequency, relativistic electrons at the hottest point; the seeds are the deterministic H05 gate seeds (one realization).
 
+## R1: finite dark reservoir and finite temporal coherence (`python studies/r1_reservoir.py`, `python studies/r1_coherence.py`)
+
+Gates were declared in `studies/r1_common.py` (commit 4f3e1f0) before any run; records in `studies/r1`. H05 seeded setup (Nx = 8, pump frame + remap, mobile ions, parent 3de6b2b), omega = omega_L, v_q/v_te is the effective initial force. Claim windows are min(refinement pairs Nn 32/64 and, where run, Nx 8/16, certified window 1000 / 940, positivity, t reached).
+
+### (a) Self-consistent finite reservoir vs matched prescribed drive
+
+Free k = 0 Proca mode, Omega_D = omega_L, eta E_D(0) = E0; U_D0/(n T_e V) = u. Linear coupled-oscillator prediction (Ebar, J, E_D, A_D) with the 4x4 matrix exponential (checked against solve_ivp: 6.6e-11, gate 1e-8).
+
+| v_q/v_te | u = U_D0/(n T_e V) | eta | claim window | min U_D/U_D0 kin (t) | min U_D/U_D0 lin (t) | pi/eta | max abs(U_D kin - lin)/U_D0 | first > 0.1 | W_D/U_D0 kin / lin at window | W_D/(n T_e) | W_ext prescribed/(n T_e) (at t) | t_split kin / lin |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0.01 | 0.1 | 2.24e-02 | 1000 | 0.000 (140) | 0.000 (140) | 140 | 0.007 | - | 0.961 / 0.964 | 0.0961 | 12.4 (t = 1000) | 52 / 52 |
+| 0.01 | 1 | 7.07e-03 | 1000 | 0.001 (444) | 0.000 (444) | 444 | 0.039 | - | 0.187 / 0.149 | 0.187 | 12.4 (t = 1000) | 158 / 158 |
+| 0.01 | 10 | 2.24e-03 | 1000 | 0.196 (1000) | 0.191 (1000) | 1405 | 0.005 | - | 0.804 / 0.809 | 8.04 | 12.4 (t = 1000) | 500 / 500 |
+| 0.03 | 0.1 | 6.71e-02 | 940 | 0.003 (46) | 0.002 (46) | 47 | 0.001 | - | 0.017 / 0.017 | 0.0141 | 81.4 (t = 854) | 52 / 52 |
+| 0.03 | 1 | 2.12e-02 | 940 | 0.000 (148) | 0.000 (148) | 148 | 0.008 | - | 0.284 / 0.276 | 0.129 | 81.4 (t = 854) | 54 / 54 |
+| 0.03 | 10 | 6.71e-03 | 940 | 0.001 (468) | 0.000 (468) | 468 | 0.033 | - | 0.034 / 0.000 | 1.01 | 81.4 (t = 854) | 168 / 168 |
+
+Gates: G1 ledger max 8.4e-09 (pass, tolerance 1e-4); G4 mean-field identity max 3.2e-16 (pass, 1e-6); G5 linear reservoir prediction within 0.1 U_D0 in the window: pass sc_vq0.01_u0.1, sc_vq0.01_u1.0, sc_vq0.01_u10.0, sc_vq0.03_u0.1, sc_vq0.03_u1.0, sc_vq0.03_u10.0; FAIL none; G7 t_split vs linear within a factor 1.5: FAIL none; G2 first non-positive times [968.0, 958.0, 886.0, 854.0]: the two prescribed v_q/v_te = 0.03 runs lose positivity at 886 / 854 (so the comparison with the prescribed drive is cut at 854), the self-consistent u = 10 runs at 968 / 958 (beyond the 940 window).
+
+### (b) Finite temporal coherence of a prescribed drive (v_q/v_te = 0.01)
+
+Drive E0 cos(omega_L t + Phi(t)); Phi' = piecewise-linear interpolation (knot spacing 5) of iid Gaussian frequency samples, Phi(0) = 0; the drive is C^1 (no phase resets) and the injected work is the ledger W_ext. 6 kinetic realizations per finite tau_c (seeds 0-5); 400 linear mean-field realizations; derived expectation in `studies/r1_common.py::expected_work`. Late slope = least-squares dW/dt over the last 20% of the claim window, in code units (energy per volume, n = 1, omega_pe = 1; divide by v_te^2 = 1e-3 for n T_e V per omega_pe^-1).
+
+**Declaration defect (v1).** The v1 text declared a phase variance of 2 dt/tau_c; the realized variance is dt/tau_c, so the v1 field coherence function is exp(-dt/(2 tau_c)): the v1 coherence times are 2 tau_c = 60, 200, 600 omega_pe^-1. The derived expectation and Monte Carlo use the exact realized covariance, so v1 is internally consistent; only its label was wrong. v1 records are kept and tabulated with the realized coherence time; v2 (declared in `studies/r1_common.py::V2_NOTE` before it was run) uses variance 2/(tau_c h) so that tau_c is the field coherence time, <exp(i dPhi)> = exp(-abs(dt)/tau_c) (Lorentzian, half width 1/tau_c).
+
+#### v1 (realized coherence time = 2 x nominal)
+
+| coherence time tau omega_pe | claim window | kinetic realizations | late slope kin | late slope lin (same realizations) | late slope derived expectation | late slope MC (400) | asymptote E0^2 tau wL^2/4 | <W_kin>/<W_lin> late (se) | first 10% departure | G9 max z | G12 z |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| inf | 1000 | 1 | 2.214e-05 | 2.251e-05 | 2.251e-05 | - | - | 0.9897 (-) | - | - | - |
+| 60 | 1000 | 6 | 2.166e-06 | 2.182e-06 | 1.559e-06 | 1.535e-06 | 1.501e-06 | 1.0020 (6.3e-03) | -, -, -, -, -, - | 1.07 | 0.64 |
+| 200 | 1000 | 6 | 4.617e-06 | 4.580e-06 | 5.003e-06 | 4.764e-06 | 5.003e-06 | 1.0058 (5.9e-03) | -, -, -, -, -, - | 1.12 | 0.36 |
+| 600 | 1000 | 6 | 1.345e-05 | 1.362e-05 | 1.170e-05 | 1.159e-05 | 1.501e-05 | 0.9930 (9.8e-04) | -, -, -, -, -, - | 1.09 | 1.09 |
+
+Gates: G1 ledger max 2.5e-10 (pass); G4 identity max 3.5e-16 (pass); G8 quadrature check 3.3e-06 (pass); G9 Monte Carlo vs derived expectation (pass); G10 no 10% kinetic-vs-linear departure: inf pass, 30 pass, 100 pass, 300 pass.
+
+#### v2 (coherence time = nominal)
+
+| coherence time tau omega_pe | claim window | kinetic realizations | late slope kin | late slope lin (same realizations) | late slope derived expectation | late slope MC (400) | asymptote E0^2 tau wL^2/4 | <W_kin>/<W_lin> late (se) | first 10% departure | G9 max z | G12 z |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| inf | 1000 | 1 | 2.214e-05 | 2.251e-05 | 2.251e-05 | - | - | 0.9897 (-) | - | - | - |
+| 30 | 1000 | 6 | 6.574e-07 | 6.755e-07 | 8.076e-07 | 6.553e-07 | 7.504e-07 | 1.0000 (7.1e-03) | -, -, -, -, -, - | 1.36 | 1.03 |
+| 100 | 1000 | 6 | 1.591e-06 | 1.533e-06 | 2.559e-06 | 2.373e-06 | 2.501e-06 | 1.0885 (6.4e-02) | -, -, -, -, -, - | 1.38 | 0.22 |
+| 300 | 1000 | 6 | 7.937e-06 | 7.969e-06 | 7.182e-06 | 6.968e-06 | 7.504e-06 | 0.9982 (2.8e-03) | -, -, -, -, -, - | 1.06 | 0.63 |
+
+Gates: G1 ledger max 4.5e-10 (pass); G4 identity max 3.9e-16 (pass); G8 quadrature check 3.3e-06 (pass); G9 Monte Carlo vs derived expectation (pass); G10 no 10% kinetic-vs-linear departure: inf pass, 30 pass, 100 pass, 300 pass; G11 realized phase variance rate x tau: {'tau30': 1.9900000000000002, 'tau100': 1.9900000000000002, 'tau300': 1.99} (pass).
+
+
 ## Independent dark reference: grid Vlasov-Ampere-Proca (`python studies/dark_grid_reference.py`)
 
 `studies/refs/code/slv_proca.py` extends the imported semi-Lagrangian solver with Ampere's law and the longitudinal Proca fields (E_D, A_D, phi_D at every k including k = 0, exact per-k propagator, mid-step current from the exact velocity shift). It shares no code with SPECTRAX or Dark-SPECTRAX; it shares the field convention and the D_L equation. c = 10 (beta = 0.1), eta = 0.3, Omega_D = omega_pe.

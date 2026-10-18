@@ -55,7 +55,7 @@
    "late_slope_kin": 2.1663363803449243e-06,
    "late_slope_lin_same_real": 2.1818436559056536e-06,
    "late_slope_expected": 1.5585895019433951e-06,
-   "late_slope_MC400": 2.1818436559056536e-06,
+   "late_slope_MC400": 1.534519990803894e-06,
    "late_slope_asymptote_E0sq_tau_wL2_over_4": 7.504084967320262e-07,
    "per_realization": [
     {
@@ -116,7 +116,7 @@
    "late_slope_kin": 4.617411326961707e-06,
    "late_slope_lin_same_real": 4.579636103261171e-06,
    "late_slope_expected": 5.003237325363717e-06,
-   "late_slope_MC400": 4.579636103261171e-06,
+   "late_slope_MC400": 4.764126031352901e-06,
    "late_slope_asymptote_E0sq_tau_wL2_over_4": 2.5013616557734205e-06,
    "per_realization": [
     {
@@ -177,7 +177,7 @@
    "late_slope_kin": 1.3449842703633963e-05,
    "late_slope_lin_same_real": 1.3616084704106654e-05,
    "late_slope_expected": 1.1695222252809783e-05,
-   "late_slope_MC400": 1.3616084704106654e-05,
+   "late_slope_MC400": 1.1585686595971746e-05,
    "late_slope_asymptote_E0sq_tau_wL2_over_4": 7.5040849673202615e-06,
    "per_realization": [
     {
