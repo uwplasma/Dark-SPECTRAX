@@ -12,7 +12,7 @@ Results and their records are in [results.md](results.md); the model and the lit
   Records made before 2026-10-16 name `f33dfda`; the repin to `d6cedcb` only adds #68-#70 and changes no record: a seeded pump-frame run
   with plain PID and with `noise_floor = 1e-14` is bitwise equal before and after.
   This is the current head of that branch. It is not a release, and none of those PRs is merged upstream.
-- Tests: 72 pass locally (CPU, float64, Python 3.13, `pytest -n 2 --cov`), coverage 99.8% of 460 statements;
+- Tests: 72 pass locally (CPU, float64, Python 3.13, `pytest -n 2 --cov`), coverage 99.8% of 468 statements;
   flake8 is clean. GitHub CI runs the same tests on Python 3.11 and 3.13.
 - Spot check: 10 README numbers were compared with their JSON records, and all match to the printed digits:
   the B00 roots and fits at k = 0.2-0.7, the two-stream and bump-on-tail growth rates, the mixing shifts
