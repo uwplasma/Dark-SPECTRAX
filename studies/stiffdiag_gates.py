@@ -78,6 +78,16 @@ and not by looking at near-failure numbers:
       is only piecewise smooth.
 Everything else (checkpoints, hypotheses, thresholds, decomposition, verdict rules) is unchanged.
 
+ADDENDUM v3 (declared after the production runs finished and their step counts per 20-unit segment were read, before any
+spectrum or tolerance-test result of the production checkpoints existed).  The c = 4 run collapsed inside one segment (1870 steps
+in 540-560, then 200000 steps by t = 578; end of run 578, not 595 as in the gpures record of the same setup), the c = 64 run ended by
+the positivity check at 760 without a step collapse (6.5k-7.7k steps per segment).  A 20-unit segment cannot resolve the
+collapse, so from the last checkpoint before the end (c = 4: 560; c = 64: 740) the run is continued with ds.run in 2-unit pieces
+(same settings; steps, accepted, rejected per piece = fine step history dt_acc(t)), and extra checkpoints are taken at the piece ends
+c = 4: 566, 572, 576; c = 64: 744, 750, 756 (Arnoldi + tolerance test; dense spectra stay at 300, the checkpoint before the end and the
+last).  Near-failure checkpoints (t >= t_f - 40) now include these; HA/HC/S1 are evaluated over all of them exactly as declared.
+t_f is the end of the production run (c = 4: 578, c = 64: 760).
+
 Runs: studies/stiffdiag_batch.sh CASE (production to failure, checkpoints), then
   python studies/stiffdiag_gates.py measure CASE  -> studies/stiffdiag/<case>.json   (CASE in c4, c64)
   python studies/stiffdiag_gates.py analyze       -> studies/stiffdiag/summary.json
@@ -93,8 +103,8 @@ D = Path(__file__).resolve().parent
 sys.path.insert(0, str(D))
 RUNS = D / "nxconv" / "runs"
 OUT = D / "stiffdiag"
-CASES = {"c4": ("vq0.1_Nx64_Nn128_c4_nf1e-14_sd", 4.0, (100, 300, 500, 540, 560, 580), (300, 560)),
-         "c64": ("vq0.1_Nx64_Nn128_c64_nf1e-14_sd", 64.0, (100, 300, 500, 700, 720, 740), (300, 720))}
+CASES = {"c4": ("vq0.1_Nx64_Nn128_c4_nf1e-14_sd", 4.0, (100, 300, 500, 540, 560), (300, 560), (566, 572, 576)),
+         "c64": ("vq0.1_Nx64_Nn128_c64_nf1e-14_sd", 64.0, (100, 300, 500, 700, 720, 740), (300, 740), (744, 750, 756))}
 SEG = 20.0
 RTOLS = (1e-10, 1e-8, 1e-6, 1e-4)
 
@@ -341,7 +351,7 @@ def measure(key):
     from darkspectrax import _simulation as _sim
     from lane_c_run import model
     from nxconv_run import install_closure
-    case, c, want, dense_at = CASES[key]
+    case, c, want, dense_at, fine_at = CASES[key]
     OUT.mkdir(exist_ok=True)
     pr = parts_of(case)
     assert pr, f"no parts for {case}"
@@ -355,17 +365,45 @@ def measure(key):
     _, th, crit = dopri8_stability()
     res = {"case": case, "c": c, "t_f": t_f, "dopri8_imag_limit": float(np.interp(np.pi / 2, th, crit)),
            "dopri8_real_limit": float(np.interp(np.pi, th, crit)), "checkpoints": []}
-    for ip, info, npz in sel:
+    # fine step history: 2-unit pieces from the last checkpoint before the end to the end of the run (v3)
+    fine, cache = {}, {}
+    ibeg = len(pr) - 2
+    zb = np.load(pr[ibeg][1])
+    yb = {k: jnp.asarray(zb["y_" + k]) for k in ("Ck", "Fk", "Dk", "W", "B")}
+    tb, hist = pr[ibeg][0]["t_end"], []
+    while tb < t_f - 1e-9:
+        o = ds.run(m, yb, 2.0, n_save=2, rtol=1e-10, atol=1e-14, noise_floor=1e-14, t0=tb, max_steps=200000, cache=cache)
+        acc = o["num_accepted"]
+        tb += 2.0
+        hist.append({"t": tb, "steps": o["num_steps"], "accepted": acc, "rejected": o["num_rejected"], "status": o["status"],
+                     "dt_acc": 2.0 / max(acc, 1)})
+        if o["status"] != "success" or not np.isfinite(o["Ck"][-1]).all():
+            break
+        yb = {"Ck": jnp.asarray(o["Ck"][-1]), "Fk": jnp.asarray(o["Fk"][-1]), "Dk": jnp.asarray(o["Dk"][-1]),
+              "W": jnp.asarray(o["W"][-1], complex), "B": jnp.asarray(o["B"][-1], complex)}
+        if any(abs(tb - f) < 1e-6 for f in fine_at):
+            fine[tb] = (yb, hist[-1])
+    res["fine_history"] = hist
+    work = [{"t": info["t_end"], "src": "production", "info": info, "npz": npz, "dense": any(abs(info["t_end"] - d) < 1e-6 for d in dense_at) or ip == len(pr) - 1}
+            for ip, info, npz in sel]
+    work += [{"t": t, "src": "fine", "y": v[0], "step": v[1], "dense": False} for t, v in fine.items()]
+    work.sort(key=lambda w_: w_["t"])
+    for wk in work:
         tic = time.perf_counter()
-        t_c, z = info["t_end"], np.load(npz)
-        y = {k: jnp.asarray(z["y_" + k]) for k in ("Ck", "Fk", "Dk", "W", "B")}
+        t_c = wk["t"]
+        if wk["src"] == "production":
+            z = np.load(wk["npz"])
+            y = {k: jnp.asarray(z["y_" + k]) for k in ("Ck", "Fk", "Dk", "W", "B")}
+            stp = segment_steps(wk["info"], wk["npz"], t_c)
+        else:
+            y, stp = wk["y"], {k: wk["step"][k] for k in ("dt_acc", "accepted", "rejected")} | {"length": 2.0}
         S = System(m, y, t_c)
         base, bg = S.y, S.background()
         nu_star = live.nu_of(base, m)
         frozen = closure_rhs(m, c, rhs0, nu_fixed=nu_star)
-        rec = {"t": t_c, "n": S.n, "dense": any(abs(t_c - d) < 1e-6 for d in dense_at) or ip == len(pr) - 1,
+        rec = {"t": t_c, "n": S.n, "src": wk["src"], "dense": wk["dense"],
                "nu_star": [float(x) for x in nu_star], "E_max": float(np.abs(np.fft.irfft(np.asarray(y["Fk"][0, 0, :, 0]), n=m.Nx) * m.Nx).max()),
-               **segment_steps(info, npz, t_c)}
+               **stp}
         f = S.func(base, live)
         v0 = S.pack(base)
         rec["live_vs_production_rhs"] = float(np.abs(np.asarray(f(v0)) - np.asarray(S.pack(_sim.rhs(t_c, base, m)))).max())
