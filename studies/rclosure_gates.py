@@ -6,7 +6,7 @@ Stage M (frozen field, this script `measure`, `fit`): the truncated AW Fourier-H
 df/dt = -v df/dx + (q/m) E(x) df/dv (electrons, q/m = -1, u = 0), kept modes |k| <= K (k = j k1, k1 = 2 pi/40), Hermite order
 Nn, width a, with the PR #66 hypercollision shape s(n) = n(n-1)(n-2)/((N-1)(N-2)(N-3)) damping the diagonal at rate
 nu s(n).  Measured: (i) gamma_AW = max Re lambda at nu = 0; (ii) nu_req = the smallest nu (bisection in log nu on
-[1e-3, 1e2] x base, 8 steps) for which max Re lambda <= 1e-8 omega_pe, base = sqrt(2 Nn) peak / a.  Expressed as the
+[5e-2, 1e3] x base, 7 steps) for which max Re lambda <= 1e-8 omega_pe, base = sqrt(2 Nn) peak / a.  Expressed as the
 dimensionless required strength c_req = nu_req / (|q/m| base).
  Grid (training): (K, Nn) in {2,5,10} x {32,64,128,256} U {21} x {32,64,128} U {42} x {32,64}; peak = max|E - <E>| in
  {1e-3, 4e-3, 1e-2, 3e-2}; a = sqrt(2e-3); field shapes: "single" cos(k1 x); "flat" sum_{j<=K} cos(j k1 x + phi_j);
@@ -121,11 +121,11 @@ def point(args):
     base = np.sqrt(2 * Nn) * peak / a
     g0 = maxre(L, 0.0, Nn, nk)
     g4 = maxre(L, 4.0 * base, Nn, nk)
-    lo, hi = np.log(1e-3), np.log(1e2)
+    lo, hi = np.log(5e-2), np.log(1e3)
     if g0 <= TOL:
         creq = 0.0
     else:
-        for _ in range(8):
+        for _ in range(7):
             mid = 0.5 * (lo + hi)
             if maxre(L, np.exp(mid) * base, Nn, nk) <= TOL:
                 hi = mid
