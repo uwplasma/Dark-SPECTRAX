@@ -1,0 +1,9 @@
+exact max Re lambda 0.44762083256742324 stream rho 2.3537126943095203 force norm 0.969781832943553
+force nilpotent: 0.0
+exact gamma 0.44762083256742324
+h=0.01 RK4 0.448 Lawson4 0.448 midpoint 0.448 BE 0.428 Strang(exact streaming,exact force) 0.448
+h=0.05 RK4 0.448 Lawson4 0.448 midpoint 0.446 BE 0.344 Strang(exact streaming,exact force) 0.448
+h=0.20 RK4 0.447 Lawson4 0.448 midpoint 0.43 BE 0.0847 Strang(exact streaming,exact force) 0.447
+h=1.00 RK4 0.388 Lawson4 0.447 midpoint 0.217 BE 0.0446 Strang(exact streaming,exact force) 0.441
+h=3.00 RK4 1.4 Lawson4 0.421 midpoint 0.0748 BE 0.0147 Strang(exact streaming,exact force) 0.384
+RK4 imaginary-axis limit h*rho: 2.8 -> h_max ~ 1.1896099327540914
