@@ -1205,6 +1205,48 @@ def h08_section():
     return "\n".join(L)
 
 
+def h08_lbog_section():
+    p = root / "studies/h08_lbog/summary.json"
+    if not p.exists():
+        return ""
+    s = json.loads(p.read_text())
+    g = s["gates"]
+    ok = lambda x: "pass" if x else "FAIL"
+    L = ["### H08 with the Francisquez LBO-G cross-species form (`python studies/h08_lbog.py`)", "",
+         f"Summary: [summary.json](../studies/h08_lbog/summary.json) (analysis at {s['repository_commit'][:7]}, parent "
+         f"{s['parent_commit'][:7]}). Same setup as H08 (collision_model = \"dougherty_g\", beta = 0, parent #73, which matches both "
+         "Morse rates; the H08 records above use LBO-EM, with 2x Morse electron-ion temperature exchange), Nx 32, Nn 64, "
+         "restart chunk 240, T = 1000, v_q/v_te 0.01 and 0.03, nu_ei 1e-3 and 1e-2. Gates declared in the script before "
+         f"running: G0 homogeneous controls {ok(g['G0'])}; G2 no net collisional work and ledger {ok(g['G2'])}; G3 mean-field "
+         f"identity with the collisional current term {ok(g['G3'])}; G4 (declared small effect: |relative change| <= 2e-2 in "
+         f"W_ext, dK_e, T_e, T_i vs the LBO-EM records at the cycle-averaged times) {ok(g['G4'])}.", "",
+         "| run | identity R / (w_L^2 E0) | max abs(P_e + P_i)/max abs(P_e) | ledger / W_ext |", "|---|---|---|---|"]
+    for k, v in s["runs"].items():
+        L.append(f"| {k} | {v['max_R_over_wL2E0']:.0e} | {v['max_Psum_over_Pe']:.0e} | {v['max_ledger_over_Wext']:.0e} |")
+    L += ["", "Relative change LBO-G (beta = 0) vs LBO-EM, cycle averages (the claim window of H08 is 1000 at v_q 0.01 and 950 at 0.03):",
+          "", "| case | t | W_ext | dK_e | dK_e/W_ext | T_e | T_i | Q_e = -Q_i (exchange) | dK_i |", "|---|---|---|---|---|---|---|---|---|"]
+    for k, v in s["vs_em"].items():
+        for t, a in v.items():
+            r = a["rel_change"]
+            L.append(f"| {k.replace('_Nx32_Nn64', '')} | {t} | {r['Wx']:+.1e} | {r['dKe']:+.1e} | {r['dKe_over_Wext']:+.1e} | "
+                     f"{r['Te']:+.1e} | {r['Ti']:+.1e} | {r['Qe']:+.4f} | {r['dKi']:+.3f} |")
+    bad = [(k.replace("_Nx32_Nn64", ""), t, a["rel_change"]["Ti"]) for k, v in s["vs_em"].items() for t, a in v.items()
+           if abs(a["rel_change"]["Ti"]) > 2e-2]
+    L += ["", "Findings:",
+          "- The electron-ion collisional exchange is halved (Q_e = -Q_i changes by -0.4999 to -0.4987 of the EM value in every "
+          "case), as expected for a 2x-Morse temperature exchange replaced by the Morse one.",
+          "- W_ext is unchanged to <= 9e-8 at all times (the absorption is set by the momentum friction, identical in the two forms); "
+          "dK_e and T_e change by <= 1.8e-3 over the window, the electron share dK_e/W_ext by the same.",
+          "- G4 FAILED as declared, only through T_i: " + ", ".join(f"{c} at t = {t} ({x:+.1%})" for c, t, x in bad) + ". "
+          "The gate treated T_i like the electron observables, but T_i is fed by the e-i exchange itself (ion heating, dK_i changes by "
+          "-42% at nu_ei = 1e-2), so the halved exchange shows up there at order one in the relative sense, where T_i barely "
+          "moves from its initial value. The gate was wrong about T_i and is not amended; the other three observables pass at all "
+          "times, and the T_i change is the measured effect of the prediction (halved exchange).",
+          "- Not checked: other beta values, no refinement pairs for LBO-G (the H08 EM pairs apply to the same grid), "
+          "the restart chunk differs from the EM records (240 vs 200), which alone gives about 1e-5 (G1 cause study)."]
+    return "\n".join(L)
+
+
 def b08_section():
     d = root / "studies/b08"
     rot, wav, flx = (json.loads((d / f"{n}.json").read_text()) for n in ("rotation", "waves", "flux"))
@@ -1361,6 +1403,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {b11_landau_section()}
 
 {h08_section()}
+
+{h08_lbog_section()}
 
 {r1_section()}
 

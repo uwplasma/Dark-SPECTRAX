@@ -1,0 +1,34 @@
+{
+ "case": "vq0.01_nu0.01_Nx32_Nn64",
+ "vq_over_vte": 0.01,
+ "nu_ei": 0.01,
+ "nu_matrix": [
+  [
+   0.01,
+   0.01
+  ],
+  [
+   0.0,
+   0.00023338001400466832
+  ]
+ ],
+ "Nx": 32,
+ "Nn": 64,
+ "control": false,
+ "closure_c": 4.0,
+ "noise_floor": 1e-14,
+ "part": 0,
+ "t_start": 0.0,
+ "t_end": 240.0,
+ "status": "success",
+ "failure_reason": null,
+ "events": 2,
+ "steps": 1084,
+ "rejected": 343,
+ "compile_time": 1.0632369181257673,
+ "run_time": 3.2175796268275008,
+ "wall_time": 17.476163666986395,
+ "repository_commit": "5b022afeb02cc7f45e7a034e9ca782586a3769aa",
+ "parent_commit": "3de6b2b8cdc8e79af68ea7175c318e135708c7b2",
+ "command": "python studies/h08_lbog.py (h08.run, dougherty_g) run --vq 0.01 --nu 0.01 --Nx 32 --Nn 64 --T 1000 --chunk 240"
+}

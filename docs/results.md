@@ -512,6 +512,46 @@ Findings (inside the claim windows only):
 - The collisional current-moment term is O(1) of the drive term in the mean-field identity (up to 0.9 omega_L^2 E0 without it); with it the identity closes to <= 3e-13. Collisions do no net work (|P_e + P_i| <= 2e-11 of |P_e|).
 - Not checked: the cross-species beta convention, a velocity-dependent (Coulomb) collision frequency, relativistic electrons at the hottest point; the seeds are the deterministic H05 gate seeds (one realization).
 
+### H08 with the Francisquez LBO-G cross-species form (`python studies/h08_lbog.py`)
+
+Summary: [summary.json](../studies/h08_lbog/summary.json) (analysis at 5b022af, parent 3de6b2b). Same setup as H08 (collision_model = "dougherty_g", beta = 0, parent #73, which matches both Morse rates; the H08 records above use LBO-EM, with 2x Morse electron-ion temperature exchange), Nx 32, Nn 64, restart chunk 240, T = 1000, v_q/v_te 0.01 and 0.03, nu_ei 1e-3 and 1e-2. Gates declared in the script before running: G0 homogeneous controls pass; G2 no net collisional work and ledger pass; G3 mean-field identity with the collisional current term pass; G4 (declared small effect: |relative change| <= 2e-2 in W_ext, dK_e, T_e, T_i vs the LBO-EM records at the cycle-averaged times) FAIL.
+
+| run | identity R / (w_L^2 E0) | max abs(P_e + P_i)/max abs(P_e) | ledger / W_ext |
+|---|---|---|---|
+| vq0.01_nu0.001_Nx32_Nn64 | 3e-13 | 2e-11 | 1e-09 |
+| vq0.01_nu0.01_Nx32_Nn64 | 7e-14 | 1e-12 | 4e-09 |
+| vq0.03_nu0.001_Nx32_Nn64 | 2e-13 | 4e-11 | 7e-10 |
+| vq0.03_nu0.01_Nx32_Nn64 | 6e-14 | 9e-13 | 2e-09 |
+
+Relative change LBO-G (beta = 0) vs LBO-EM, cycle averages (the claim window of H08 is 1000 at v_q 0.01 and 950 at 0.03):
+
+| case | t | W_ext | dK_e | dK_e/W_ext | T_e | T_i | Q_e = -Q_i (exchange) | dK_i |
+|---|---|---|---|---|---|---|---|---|
+| vq0.01_nu0.001 | 250 | -3.5e-11 | +2.8e-06 | +2.8e-06 | +2.0e-06 | -2.1e-06 | -0.5000 | -0.005 |
+| vq0.01_nu0.001 | 500 | -2.4e-11 | +1.0e-05 | +1.0e-05 | +2.2e-05 | -3.3e-05 | -0.4999 | -0.018 |
+| vq0.01_nu0.001 | 750 | -2.5e-10 | +2.2e-05 | +2.2e-05 | +6.1e-05 | -1.6e-04 | -0.4999 | -0.037 |
+| vq0.01_nu0.001 | 950 | -2.3e-09 | +3.5e-05 | +3.5e-05 | +9.5e-05 | -4.0e-04 | -0.4999 | -0.056 |
+| vq0.01_nu0.001 | 1000 | -3.7e-09 | +4.0e-05 | +4.0e-05 | +1.0e-04 | -4.8e-04 | -0.4999 | -0.063 |
+| vq0.01_nu0.01 | 250 | +8.1e-12 | +1.9e-04 | +1.9e-04 | +1.1e-04 | -1.5e-04 | -0.4997 | -0.202 |
+| vq0.01_nu0.01 | 500 | +2.0e-11 | +5.5e-04 | +5.5e-04 | +5.5e-04 | -1.8e-03 | -0.4994 | -0.334 |
+| vq0.01_nu0.01 | 750 | +3.8e-10 | +1.0e-03 | +1.0e-03 | +1.1e-03 | -6.7e-03 | -0.4991 | -0.393 |
+| vq0.01_nu0.01 | 950 | +1.9e-09 | +1.4e-03 | +1.4e-03 | +1.5e-03 | -1.4e-02 | -0.4988 | -0.419 |
+| vq0.01_nu0.01 | 1000 | +2.9e-09 | +1.5e-03 | +1.5e-03 | +1.6e-03 | -1.6e-02 | -0.4987 | -0.424 |
+| vq0.03_nu0.001 | 250 | -3.1e-12 | +2.8e-06 | +2.8e-06 | +1.2e-05 | -1.9e-05 | -0.5000 | -0.005 |
+| vq0.03_nu0.001 | 500 | -2.6e-11 | +1.0e-05 | +1.0e-05 | +5.4e-05 | -2.9e-04 | -0.4999 | -0.018 |
+| vq0.03_nu0.001 | 750 | -5.4e-09 | +2.2e-05 | +2.2e-05 | +9.3e-05 | -1.4e-03 | -0.4999 | -0.037 |
+| vq0.03_nu0.001 | 950 | -8.5e-08 | +3.5e-05 | +3.5e-05 | +1.2e-04 | -3.5e-03 | -0.4999 | -0.055 |
+| vq0.03_nu0.01 | 250 | +1.1e-11 | +1.9e-04 | +1.9e-04 | +2.9e-04 | -1.4e-03 | -0.4997 | -0.202 |
+| vq0.03_nu0.01 | 500 | +3.4e-10 | +5.5e-04 | +5.5e-04 | +7.6e-04 | -1.6e-02 | -0.4994 | -0.334 |
+| vq0.03_nu0.01 | 750 | +8.3e-09 | +1.0e-03 | +1.0e-03 | +1.2e-03 | -5.3e-02 | -0.4990 | -0.393 |
+| vq0.03_nu0.01 | 950 | +6.9e-08 | +1.4e-03 | +1.4e-03 | +1.7e-03 | -9.8e-02 | -0.4988 | -0.418 |
+
+Findings:
+- The electron-ion collisional exchange is halved (Q_e = -Q_i changes by -0.4999 to -0.4987 of the EM value in every case), as expected for a 2x-Morse temperature exchange replaced by the Morse one.
+- W_ext is unchanged to <= 9e-8 at all times (the absorption is set by the momentum friction, identical in the two forms); dK_e and T_e change by <= 1.8e-3 over the window, the electron share dK_e/W_ext by the same.
+- G4 FAILED as declared, only through T_i: vq0.03_nu0.01 at t = 750 (-5.3%), vq0.03_nu0.01 at t = 950 (-9.8%). The gate treated T_i like the electron observables, but T_i is fed by the e-i exchange itself (ion heating, dK_i changes by -42% at nu_ei = 1e-2), so the halved exchange shows up there at order one in the relative sense, where T_i barely moves from its initial value. The gate was wrong about T_i and is not amended; the other three observables pass at all times, and the T_i change is the measured effect of the prediction (halved exchange).
+- Not checked: other beta values, no refinement pairs for LBO-G (the H08 EM pairs apply to the same grid), the restart chunk differs from the EM records (240 vs 200), which alone gives about 1e-5 (G1 cause study).
+
 ## R1: finite dark reservoir and finite temporal coherence (`python studies/r1_reservoir.py`, `python studies/r1_coherence.py`)
 
 Gates were declared in `studies/r1_common.py` (commit 4f3e1f0) before any run; records in `studies/r1`. H05 seeded setup (Nx = 8, pump frame + remap, mobile ions, parent 3de6b2b), omega = omega_L, v_q/v_te is the effective initial force. Claim windows are min(refinement pairs Nn 32/64 and, where run, Nx 8/16, certified window 1000 / 940, positivity, t reached).
