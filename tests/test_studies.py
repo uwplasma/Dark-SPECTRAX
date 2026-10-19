@@ -79,3 +79,29 @@ def test_h08_run_restores_patches_and_continues_time_axis(tmp_path):
     t = [np.load(tmp_path / f"vq0.03_nu0_Nx8_Nn8.part{i}.npz")["t"] for i in (0, 1)]
     assert t[0][0] == 0.0 and np.isclose(t[1][0], t[0][-1]) and np.isclose(t[1][-1], 40.0)
     assert json.loads((tmp_path / "vq0.03_nu0_Nx8_Nn8.part1.json").read_text())["t_start"] == pytest.approx(t[0][-1])
+
+
+def test_b10_reference_limits():
+    """B10 reference: eq 2.9 hydrodynamic asymptote, eq 2.8 static maximum (w/4 with the exact algebra), the dark
+    generalization collapsing to the ordinary one at eta -> 0, and the R0/R1 tiers agreeing for a small-k0 ordinary pump."""
+    ref = pytest.importorskip("b10_ref")
+    pl = ref.Plasma(vte=0.1, mi=1836.0, tau=10.0)
+    mu = 1 / 1836.0
+    w = 50 * mu
+    E0 = 0.1 * np.sqrt(2 * w)
+    g = ref.growth(pl, 1e-3, 5.0, E0, tier="R0", cs2=0.0)[0]
+    assert abs(g / np.sqrt(mu * w / 3) - 1) < 0.01
+    w = 1e-6
+    Kc, gm = ref.closed_form_static(pl, w)
+    assert abs(gm - w / 4 * pl.Te / (pl.Te + pl.Ti)) < 1e-15  # the exact maximum of eq 2.8, not the printed w/16
+    E0 = 0.1 * np.sqrt(2 * w)
+    g = max(ref.growth(pl, 1e-3, Kc * f, E0, tier="R1")[0] for f in np.linspace(0.6, 1.6, 11))
+    assert abs(g / gm - 1) < 0.05
+    E0 = 0.1 * np.sqrt(2 * 0.04)
+    w0 = pl.omega(0.05)
+    r0 = ref.growth(pl, 0.05, 0.2, E0, w0, "R0")[0]
+    r1 = ref.growth(pl, 0.05, 0.2, E0, w0, "R1")[0]
+    assert r1 > 0 and abs(r1 / r0 - 1) < 0.02
+    pd = ref.Plasma(vte=0.1, mi=1836.0, tau=10.0, eta=1e-8, OmegaD=1.0)
+    rd = ref.growth(pd, 0.05, 0.2, E0, pd.omega(0.05), "R1")[0]
+    assert abs(rd / r1 - 1) < 1e-4

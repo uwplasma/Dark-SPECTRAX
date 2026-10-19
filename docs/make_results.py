@@ -945,6 +945,85 @@ def b09_section():
     return "\n".join(L)
 
 
+def b10_section():
+    d = root / "studies/b10"
+    th = json.loads((d / "theory.json").read_text())
+    S = json.loads((d / "summary.json").read_text())
+    fl = {p.stem[len("floquet_"):]: json.loads(p.read_text()) for p in d.glob("floquet_*.json")}
+    rows = S["cases"]
+    commit = next(iter(json.loads(p.read_text())["repository_commit"] for p in d.glob("M_*.json")))[:7]
+    f = lambda x, n=2: "-" if x is None else f"{x * 1e3:.{n}f}"
+    pc = lambda x: "-" if x is None else f"{100 * x:+.1f}%"
+    gs = S["gate_summary"]
+    L = ["## B10: Langmuir sideband (modulational) instability of a finite-amplitude pump, ordinary and dark "
+         "(`python studies/b10.py`, reference `studies/b10_ref.py`)", "",
+         f"Records: [studies/b10/](../studies/b10/) (made at {commit}); gates, the three declared revisions (v2, v3, "
+         "follow-ups F1 and S2) and the setup are in the `studies/b10.py` docstring and were committed before the runs they "
+         "govern. Units: parent (c = omega_pe = 1), v_te = 0.1 c, T_e/T_i = 10, w = E0^2/(2 n T_e) = 0.04 for the pump "
+         "E0 cos(k0 x - w0 t) (E0 the peak Poisson field; this w equals Zakharov's |E|^2/(8 pi n T_e)), k0 = 0.05 (k0 r_D = "
+         "0.005), pump at Fourier index n = 2, hypercollision nu = 100, Nn = 32, Nx per run (= 2 ceil(1.5 (max kept index + 1))). "
+         "The pump is one eigenvector of the linearized model itself (a pure right-moving wave; for the dark model one of the "
+         "two Langmuir-Proca mixed normal modes, 1.17 (upper) or 0.87 (lower) omega_pe at Omega_D = omega_pe, eta = 0.3); "
+         "the sidebands are seeded (3e-4 A_p, random phase) with the eigenvectors of the same branch. One sideband pair per run: "
+         "the nonlinear terms keep only the Fourier indices {0, j, n, n + j, |n - j|} (pump, sidebands, ion density, mean), "
+         "which is the truncation the references assume.", "",
+         "**References** (`studies/b10_ref.py`): R0 = Zakharov 1972 system (eqs 1.2, 1.9) with the exact quadratic "
+         "Delta_pm = +-v_g K + (3/2) r_D^2 K^2, v_g = 3 k0 r_D^2, and c_s^2 = (T_e + 3 T_i)/M (the paper's printed 3/2 T_i is not "
+         "used); its K-dependent limits are eq 2.8 (static: maximum gamma = (w/4) T_e/(T_e + T_i), NOT the printed w/16) and eq 2.9 "
+         "(hydrodynamic: gamma -> (mu w/3)^(1/2), mu = m_e/m_i). R1 = semi-kinetic: exact Langmuir roots of the kinetic "
+         "dispersion function, Delta_pm = omega(k0 +- K) - omega(k0), kinetic ion response varsigma = 1 + xi Z(xi) with Boltzmann "
+         "electrons, and for the dark model the derived coupling: electrons feel the force field E_f = g E with g = 1 + eta^2 Q/(Q - "
+         "Omega_D^2), Q = omega^2 - k^2, so the sideband operator is eps_g'(Omega - Delta), the quiver and the ponderomotive "
+         "potential scale with g0 and g0^2, and 1 = G (g0/eps_g') E0^2 [1/(Omega - Delta_+) - 1/(Omega + Delta_-)], "
+         "G = -varsigma g0^2/(4 w0^2 (T_i + varsigma T_e)). Dark change at this order: the Langmuir wave becomes a mixed mode with "
+         f"group velocity of order the Proca one (v_g = {th['cases']['M_mi1836_dk_up_j5']['v_g']:.3f} c for the upper mode against "
+         f"{th['cases']['M_mi1836_ord_j5']['v_g']:.4f} c ordinary at k0 = 0.05), a dispersion ~1/(2 omega) instead of 3 r_D^2/2, and "
+         "g0 = 1.37 (upper) / 0.76 (lower); the model is stable for K below k0 and the instability moves to K of order 0.1-0.2. "
+         "Declared theory checks: "
+         f"G0a (R1 static maximum vs eq 2.8: {100 * th['G0a']['rel']:+.2f}%, gate 5%) {'pass' if th['G0a']['pass'] else 'FAIL'}; "
+         f"G0b (R0 hydrodynamic limit vs eq 2.9: {th['G0b']['rel']:+.1e}) {'pass' if th['G0b']['pass'] else 'FAIL'}; "
+         f"G0c (dark R1 at eta -> 1e-8 equals ordinary R1: {th['G0c']['max_rel']:.1e}) {'pass' if th['G0c']['pass'] else 'FAIL'}.", ""]
+    L += [f"**Declared gates (passes / points):** " + ", ".join(f"{g}: {v['pass']}/{v['of']}" for g, v in gs.items()) +
+          ". G1 = growth within 15% of R1 at the gated points (window: first S >= 6e-3 A_p to first S >= 6e-2 A_p, "
+          "S = rss of the two sideband amplitudes; nothing after the window end is claimed), G1b = within 30% of R0 (ordinary), "
+          "G2 = refinement change <= 3%, G3 = ledger <= 1e-6 and Gauss <= 1e-8, G4 = pump amplitude change <= 5% at the window end.", ""]
+    L += ["| case | m_i/m_e | model | K r_D | gamma R0 (1e-3) | gamma R1 (1e-3) | gamma sim (1e-3) | sim/R1 - 1 | Floquet (1e-3) | "
+          "pump change | gates |", "|---|---|---|---|---|---|---|---|---|---|---|"]
+    order = lambda r: (r["tag"], -r["mi"], r["model"], r["j"])
+    for r in sorted((r for r in rows.values() if r["tag"].startswith("M_")), key=order):
+        gt = " ".join(f"{g} {'ok' if r[g] else 'FAIL'}" for g in ("G1", "G1b", "G3", "G4") if g in r)
+        if not r["gated"]:
+            gt = "ungated; " + gt
+        fq = fl.get(r["name"])
+        L.append(f"| {r['name']} | {r['mi']:g} | {r['model']} | {r['K_rD']:.4f} | {f(r.get('gamma_R0'))} | {f(r['gamma_R1'])} | "
+                 f"{f(r['gamma_fit'])} | {pc(r['rel_R1'])} | {f(fq['gamma_floquet']) if fq else '-'} | "
+                 f"{pc(r['pump_drift'])} | {gt}{'' if r['status'] == 'success' else ' [run ended: ' + r['status'] + ']'} |")
+    L += ["", "Refinement and follow-ups (change of the fitted growth against the stated base):", "",
+          "| case | gamma sim (1e-3) | against | change | G2 | G3 | note |", "|---|---|---|---|---|---|---|"]
+    for r in sorted((r for r in rows.values() if r["tag"].startswith(("R_", "S2"))), key=order):
+        base = f"M_mi1836_{r['model']}_j{r['j']}" if r["tag"] != "S2_Nn64nu300" else f"R_nu300_{r['model']}_j{r['j']}"
+        L.append(f"| {r['name']} | {f(r['gamma_fit'])} | {base} | {pc(r.get('G2_rel_to_base'))} | "
+                 f"{'ok' if r.get('G2') else ('FAIL' if 'G2' in r else '-')} | {'ok' if r['G3'] else 'FAIL'} | "
+                 f"{'ledger/Gauss ' + format(r['ledger_over_U0'], '.0e') + ' / ' + format(r['gauss_over_Ap'], '.0e')} |")
+    L += ["", "Outside the Zakharov regime (no pass/fail gate; kinetic corrections are the departures from R0 and R1; "
+          "O1: T_e/T_i = 1, O2: w = 0.15, O3: k0 = 0.4 (k0 r_D = 0.04)):", "",
+          "| case | model | K r_D | gamma R1 (1e-3) | gamma sim (1e-3) | sim/R1 - 1 | sim/R0 - 1 | G3 |", "|---|---|---|---|---|---|---|---|"]
+    for r in sorted((r for r in rows.values() if r["tag"].startswith("O")), key=order):
+        L.append(f"| {r['name']} | {r['model']} | {r['K_rD']:.4f} | {f(r['gamma_R1'])} | {f(r['gamma_fit'])} | {pc(r['rel_R1'])} | "
+                 f"{pc(r.get('rel_R0'))} | {'ok' if r['G3'] else 'FAIL'} |")
+    # dark change at common K
+    L += ["", "Dark-coupling change at common K (upper mixed mode against ordinary, same K, same w): measured and R1 ratio of "
+          "the growth rates:", "", "| m_i/m_e | j | K r_D | gamma_dark/gamma_ord measured | R1 |", "|---|---|---|---|---|"]
+    for mi in (1836.0, 100.0):
+        for j in sorted({r["j"] for r in rows.values() if r["tag"].startswith("M_") and r["mi"] == mi and r["model"] == "dk_up"}):
+            o = rows.get(f"M_mi{int(mi)}_ord_j{j}")
+            dk = rows.get(f"M_mi{int(mi)}_dk_up_j{j}")
+            if o and dk and o["gamma_fit"] and dk["gamma_fit"]:
+                L.append(f"| {mi:g} | {j} | {o['K_rD']:.4f} | {dk['gamma_fit'] / o['gamma_fit']:.2f} | {dk['gamma_R1'] / o['gamma_R1']:.2f} |")
+    L += [S.get("notes_md", "")]
+    return "\n".join(L)
+
+
 def b09_closure_lines():
     d = root / "studies/b09"
     pr = {n: json.loads((d / f"closure_probe_{n}_amend1.json").read_text()) for n in ("none_c0", "E_c1", "EB_c1")}
@@ -1436,6 +1515,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {b08_section()}
 
 {b09_section()}
+
+{b10_section()}
 
 {b11_section()}
 
