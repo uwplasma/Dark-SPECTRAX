@@ -908,6 +908,36 @@ Records made with parent integration/dark-baseline 16400f8 (pump frame, remap, #
 
 Findings. (1) Widening the box from 32 to 64 v_te moves the first edge contact only from t ~ 700 to ~755: the tail is accelerated past 64 v_te within ~50 time units, so no affordable box reaches t = 1000. (2) The first negativity (t = 645.5 at Nx 64, 498 at Nx 32) does not depend on vmax, Nv or (to t = 200) dt; it is set by the x resolution. The earlier attribution of the t ~ 650 limit to the box edge was wrong: at vmax 32 the edge is still below 1e-6 at t = 700. (3) The wide-box grids agree with each other in dK_e to t ~ 790-800 and in W_ext to 1000; Hermite c = 4 agrees with every grid in dK_e and W_ext to the end of the Hermite run (760) and in the field spectrum to 555 (k4), as at vmax 32. **Certified windows at v_q/v_te = 0.1:** grid reference dK_e and W_ext to t ~ 750 (edge contact and energy-defect onset; the later agreement is not certified), field spectrum to ~640 (Nx 32 vs 64 at k4); Hermite c = 4 matches it in dK_e and W_ext to t >= 760 and in the field spectrum to 555. Past ~750 this grid cannot certify v_q 0.1; the Hermite-pair limit near 600 is a Hermite truncation effect, since the grid is converged there.
 
+## H05 resolution extension on GPU: Nn {128, 256} x Nx {64, 128} at v_q/v_te 0.1 and 0.05 (`studies/gpures_*.py`)
+
+RTX A4000, float64, jax 0.11.2 CUDA, parent 3de6b2b; same drivers as `studies/nxconv_run.py` (pump frame, remap, #66 closure c = 4, noise_floor 1e-14, rtol 1e-10, atol 1e-14, T = 1000, 100-unit checkpointed chunks). Gates were committed in `studies/gpures_gates.py` before any run (G1 pairs within 10% on dK_e and W_ext to T = 1000; G2 K_s and k=0 T_x positive; G3 ledger defect <= 1e-6 of max |W_ext|; G4 solver success to T).
+
+**C08 (GPU vs CPU, same venv, v_q 0.1, Nx 32, Nn 64, c = 4, T = 100):** max relative difference 9.7e-09 (dK_e 9.2e-09, W_ext 5.5e-10, T_x 4.6e-11, |E_k|^2 k <= 8 9.7e-09); declared gate 1e-6 passed. Adaptive step counts differ (476 CPU, 478 GPU), so this is agreement of two adaptive trajectories, not bitwise identity. Integration time 3.9 s CPU (4 threads) vs 1.0 s GPU.
+
+| run | t reached | status | first K_s or T_x <= 0 | G3 ledger defect / max W_ext | steps (rejected) | GPU integration s | wall s incl. diagnostics |
+|---|---|---|---|---|---|---|---|
+| vq0.1_Nx64_Nn128 | 595 | ended by the step budget | 581.0 | 1.7e-08 | 216937 (8747) | 417 | 758 |
+| vq0.1_Nx64_Nn256 | 382.5 | ended by the step budget | never | 1.9e-09 | 249526 (203812) | 581 | 804 |
+| vq0.1_Nx128_Nn128 | 453 | ended by the step budget | never | 1.1e-09 | 206224 (11089) | 488 | 755 |
+| vq0.1_Nx128_Nn256 | 328 | ended by the step budget | never | 3.8e-09 | 203984 (7170) | 636 | 857 |
+| vq0.05_Nx64_Nn128 | 751.5 | ended by the step budget | 741.0 | 1.6e-07 | 223261 (13749) | 427 | 855 |
+| vq0.05_Nx64_Nn256 | 555 | ended by the step budget | never | 1.7e-09 | 388747 (83519) | 906 | 1232 |
+| vq0.05_Nx128_Nn128 | 671 | ended by the step budget | 662.5 | 8.2e-10 | 232026 (13830) | 537 | 939 |
+| vq0.05_Nx128_Nn256 | 440 | ended by the step budget | never | 3.0e-09 | 204818 (34906) | 639 | 919 |
+
+| pair | dK_e | W_ext | G1 (to 1000) |
+|---|---|---|---|
+| vq0.1 Nx64 Nn128 vs 256 | >=382.5 | >=382.5 | FAIL |
+| vq0.1 Nx128 Nn128 vs 256 | >=328 | >=328 | FAIL |
+| vq0.1 Nn128 Nx64 vs 128 | >=453 | >=453 | FAIL |
+| vq0.1 Nn256 Nx64 vs 128 | >=328 | >=328 | FAIL |
+| vq0.05 Nx64 Nn128 vs 256 | >=555 | >=555 | FAIL |
+| vq0.05 Nx128 Nn128 vs 256 | >=440 | >=440 | FAIL |
+| vq0.05 Nn128 Nx64 vs 128 | 667.0 | >=671 | FAIL |
+| vq0.05 Nn256 Nx64 vs 128 | >=440 | >=440 | FAIL |
+
+**Verdict: both v_q values FAIL G1 and G4; no new certified window.** v_q 0.1: every pair agrees within 10% to the end of its shorter run, certified window 328; v_q 0.05: every pair agrees within 10% to the end of its shorter run, certified window 440. Every run ends at the adaptive step budget (200000 steps per 100-unit chunk) inside the AW truncation instability, and raising Nn or Nx makes it end sooner (v_q 0.1: t = 595, 383, 453, 328 for Nx/Nn 64/128, 64/256, 128/128, 128/256; v_q 0.05: 752, 555, 671, 440). The 10% pairs never separate before the shorter run stops, so this is a failure of the resolution route, not a disagreement: the existing windows (0.03 to ~960-1000; 0.1 to ~600) stand, and v_q 0.05 is certified only to ~440-555 (Nn 256 pairs) or ~667 (Nx 64 vs 128 at Nn 128, which separate there). G2 fails for three runs (first non-positive K_s or k=0 T_x at 581 for v_q 0.1 Nx 64 Nn 128, 741 and 662.5 for v_q 0.05 Nx 64 and 128 at Nn 128); G3 holds in every run (<= 1.7e-7). Cost: one GPU run is 7-15 min of integration (up to 20 min wall including diagnostics), the 8 runs 1.3 h of GPU integration (one chunk was interrupted by a SIGTERM and resumed from its checkpoint), mostly spent in the unstable tail; the GPU is ~4x faster than 4 CPU threads on the C08 case. Going further needs a different basis (the stable-Galerkin route of `docs/design/l2-stable-basis.md`, option B), not more Hermite orders or Fourier modes.
+
 ## The physical high-k instability is the oscillating two-stream instability (`studies/instab_otsi.py`)
 
 Linear pump-frame Hermite model under a constant dipole pump E0 cos(w0 t); Floquet rate from the one-period monodromy, compared with the exact kinetic Silin matrix dispersion relation (Bessel orders |l| <= 4).

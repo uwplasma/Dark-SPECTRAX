@@ -1,0 +1,228 @@
+{
+ "runs": {
+  "vq0.1_Nx64_Nn128_c4_nf1e-14_gpu": {
+   "t_reached": 595.0,
+   "status": "failure",
+   "failure": "segment 4: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "parts": 6,
+   "steps": 216937,
+   "rejected": 8747,
+   "compile_s": 24.0,
+   "run_s": 416.7,
+   "wall_s": 757.8,
+   "commits": [
+    "8a84db9"
+   ],
+   "parent": "3de6b2b",
+   "t_pos": 581.0,
+   "ledger_rel": 1.687874340769177e-08,
+   "G2": false,
+   "G3": true,
+   "G4": false
+  },
+  "vq0.1_Nx64_Nn256_c4_nf1e-14_gpu": {
+   "t_reached": 382.5,
+   "status": "failure",
+   "failure": "segment 4: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "parts": 4,
+   "steps": 249526,
+   "rejected": 203812,
+   "compile_s": 15.9,
+   "run_s": 581.3,
+   "wall_s": 803.8,
+   "commits": [
+    "8a84db9"
+   ],
+   "parent": "3de6b2b",
+   "t_pos": null,
+   "ledger_rel": 1.8516438693850724e-09,
+   "G2": true,
+   "G3": true,
+   "G4": false
+  },
+  "vq0.1_Nx128_Nn128_c4_nf1e-14_gpu": {
+   "t_reached": 453.0,
+   "status": "failure",
+   "failure": "segment 2: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "parts": 5,
+   "steps": 206224,
+   "rejected": 11089,
+   "compile_s": 21.1,
+   "run_s": 488.1,
+   "wall_s": 755.4,
+   "commits": [
+    "8a84db9"
+   ],
+   "parent": "3de6b2b",
+   "t_pos": null,
+   "ledger_rel": 1.065984466190661e-09,
+   "G2": true,
+   "G3": true,
+   "G4": false
+  },
+  "vq0.1_Nx128_Nn256_c4_nf1e-14_gpu": {
+   "t_reached": 328.0,
+   "status": "failure",
+   "failure": "segment 1: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "parts": 4,
+   "steps": 203984,
+   "rejected": 7170,
+   "compile_s": 20.9,
+   "run_s": 636.1,
+   "wall_s": 856.7,
+   "commits": [
+    "8a84db9"
+   ],
+   "parent": "3de6b2b",
+   "t_pos": null,
+   "ledger_rel": 3.789521158493722e-09,
+   "G2": true,
+   "G3": true,
+   "G4": false
+  },
+  "vq0.05_Nx64_Nn128_c4_nf1e-14_gpu": {
+   "t_reached": 751.5,
+   "status": "failure",
+   "failure": "segment 2: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "parts": 8,
+   "steps": 223261,
+   "rejected": 13749,
+   "compile_s": 33.9,
+   "run_s": 426.6,
+   "wall_s": 855.2,
+   "commits": [
+    "8a84db9"
+   ],
+   "parent": "3de6b2b",
+   "t_pos": 741.0,
+   "ledger_rel": 1.6423970581114128e-07,
+   "G2": false,
+   "G3": true,
+   "G4": false
+  },
+  "vq0.05_Nx64_Nn256_c4_nf1e-14_gpu": {
+   "t_reached": 555.0,
+   "status": "failure",
+   "failure": "segment 2: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "parts": 6,
+   "steps": 388747,
+   "rejected": 83519,
+   "compile_s": 24.9,
+   "run_s": 906.4,
+   "wall_s": 1231.5,
+   "commits": [
+    "8a84db9"
+   ],
+   "parent": "3de6b2b",
+   "t_pos": null,
+   "ledger_rel": 1.73407534680068e-09,
+   "G2": true,
+   "G3": true,
+   "G4": false
+  },
+  "vq0.05_Nx128_Nn128_c4_nf1e-14_gpu": {
+   "t_reached": 671.0,
+   "status": "failure",
+   "failure": "segment 3: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "parts": 7,
+   "steps": 232026,
+   "rejected": 13830,
+   "compile_s": 31.0,
+   "run_s": 537.3,
+   "wall_s": 939.1,
+   "commits": [
+    "8a84db9"
+   ],
+   "parent": "3de6b2b",
+   "t_pos": 662.5,
+   "ledger_rel": 8.23211740611783e-10,
+   "G2": false,
+   "G3": true,
+   "G4": false
+  },
+  "vq0.05_Nx128_Nn256_c4_nf1e-14_gpu": {
+   "t_reached": 440.0,
+   "status": "failure",
+   "failure": "segment 2: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+   "parts": 5,
+   "steps": 204818,
+   "rejected": 34906,
+   "compile_s": 21.3,
+   "run_s": 638.6,
+   "wall_s": 919.2,
+   "commits": [
+    "8a84db9"
+   ],
+   "parent": "3de6b2b",
+   "t_pos": null,
+   "ledger_rel": 3.0091852886445996e-09,
+   "G2": true,
+   "G3": true,
+   "G4": false
+  }
+ },
+ "pairs": {
+  "vq0.1 Nx64 Nn128 vs 256": {
+   "dK_e": ">=382.5",
+   "W_ext": ">=382.5",
+   "window": 382.5,
+   "G1": false
+  },
+  "vq0.1 Nx128 Nn128 vs 256": {
+   "dK_e": ">=328",
+   "W_ext": ">=328",
+   "window": 328.0,
+   "G1": false
+  },
+  "vq0.1 Nn128 Nx64 vs 128": {
+   "dK_e": ">=453",
+   "W_ext": ">=453",
+   "window": 453.0,
+   "G1": false
+  },
+  "vq0.1 Nn256 Nx64 vs 128": {
+   "dK_e": ">=328",
+   "W_ext": ">=328",
+   "window": 328.0,
+   "G1": false
+  },
+  "vq0.05 Nx64 Nn128 vs 256": {
+   "dK_e": ">=555",
+   "W_ext": ">=555",
+   "window": 555.0,
+   "G1": false
+  },
+  "vq0.05 Nx128 Nn128 vs 256": {
+   "dK_e": ">=440",
+   "W_ext": ">=440",
+   "window": 440.0,
+   "G1": false
+  },
+  "vq0.05 Nn128 Nx64 vs 128": {
+   "dK_e": 667.0,
+   "W_ext": ">=671",
+   "window": 667.0,
+   "G1": false
+  },
+  "vq0.05 Nn256 Nx64 vs 128": {
+   "dK_e": ">=440",
+   "W_ext": ">=440",
+   "window": 440.0,
+   "G1": false
+  }
+ },
+ "verdict": {
+  "vq0.1": {
+   "n_pairs": 4,
+   "n_runs": 4,
+   "certified_window": 328.0,
+   "PASS": false
+  },
+  "vq0.05": {
+   "n_pairs": 4,
+   "n_runs": 4,
+   "certified_window": 440.0,
+   "PASS": false
+  }
+ }
+}

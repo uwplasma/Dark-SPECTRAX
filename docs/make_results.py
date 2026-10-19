@@ -239,6 +239,45 @@ def nxconv_section():
     return "\n".join(L + gridref_lines(d))
 
 
+def gpures_section():
+    g = json.loads((root / "studies/gpures/summary.json").read_text())
+    c8 = json.loads((root / "studies/gpures/c08.json").read_text())
+    L = ["## H05 resolution extension on GPU: Nn {128, 256} x Nx {64, 128} at v_q/v_te 0.1 and 0.05 (`studies/gpures_*.py`)", "",
+         "RTX A4000, float64, jax 0.11.2 CUDA, parent 3de6b2b; same drivers as `studies/nxconv_run.py` (pump frame, remap, "
+         "#66 closure c = 4, noise_floor 1e-14, rtol 1e-10, atol 1e-14, T = 1000, 100-unit checkpointed chunks). Gates were "
+         "committed in `studies/gpures_gates.py` before any run (G1 pairs within 10% on dK_e and W_ext to T = 1000; G2 K_s "
+         "and k=0 T_x positive; G3 ledger defect <= 1e-6 of max |W_ext|; G4 solver success to T).", "",
+         f"**C08 (GPU vs CPU, same venv, v_q 0.1, Nx 32, Nn 64, c = 4, T = 100):** max relative difference "
+         f"{c8['max_rel']:.1e} (dK_e {c8['dK_e']:.1e}, W_ext {c8['W_ext']:.1e}, T_x {c8['Tx']:.1e}, |E_k|^2 k <= 8 "
+         f"{c8['Ek2_k<=8']:.1e}); declared gate 1e-6 {'passed' if c8['gate_1e-6'] else 'FAILED'}. Adaptive step counts "
+         f"differ ({c8['steps'][0]} CPU, {c8['steps'][1]} GPU), so this is agreement of two adaptive trajectories, not "
+         f"bitwise identity. Integration time {c8['run_s'][0]:.1f} s CPU (4 threads) vs {c8['run_s'][1]:.1f} s GPU.", "",
+         "| run | t reached | status | first K_s or T_x <= 0 | G3 ledger defect / max W_ext | steps (rejected) | GPU integration s | wall s incl. diagnostics |",
+         "|---|---|---|---|---|---|---|---|"]
+    for k, v in g["runs"].items():
+        L.append(f"| {k.replace('_c4_nf1e-14_gpu', '')} | {v['t_reached']:g} | {'ended by the step budget' if v['status'] == 'failure' else v['status']} | "
+                 f"{v['t_pos'] if v['t_pos'] is not None else 'never'} | {v['ledger_rel']:.1e} | {v['steps']} ({v['rejected']}) | "
+                 f"{v['run_s']:.0f} | {v['wall_s']:.0f} |")
+    L += ["", "| pair | dK_e | W_ext | G1 (to 1000) |", "|---|---|---|---|"]
+    for k, v in g["pairs"].items():
+        L.append(f"| {k} | {v['dK_e']} | {v['W_ext']} | {'pass' if v['G1'] else 'FAIL'} |")
+    L += ["", "**Verdict: both v_q values FAIL G1 and G4; no new certified window.** "
+          + "; ".join(f"v_q {k[2:]}: every pair agrees within 10% to the end of its shorter run, certified window {v['certified_window']:g}"
+                      for k, v in g["verdict"].items())
+          + ". Every run ends at the adaptive step budget (200000 steps per 100-unit chunk) inside the AW truncation "
+          "instability, and raising Nn or Nx makes it end sooner (v_q 0.1: t = 595, 383, 453, 328 for Nx/Nn 64/128, 64/256, "
+          "128/128, 128/256; v_q 0.05: 752, 555, 671, 440). The 10% pairs never separate before the shorter run stops, so "
+          "this is a failure of the resolution route, not a disagreement: the existing windows (0.03 to ~960-1000; 0.1 to "
+          "~600) stand, and v_q 0.05 is certified only to ~440-555 (Nn 256 pairs) or ~667 (Nx 64 vs 128 at Nn 128, "
+          "which separate there). G2 fails for three runs (first non-positive K_s or "
+          "k=0 T_x at 581 for v_q 0.1 Nx 64 Nn 128, 741 and 662.5 for v_q 0.05 Nx 64 and 128 at Nn 128); G3 holds in every run (<= 1.7e-7)."
+          " Cost: one GPU run is 7-15 min of integration (up to 20 min wall including diagnostics), the 8 runs 1.3 h of GPU integration "
+          "(one chunk was interrupted by a SIGTERM and resumed from its checkpoint), mostly spent in the unstable tail; the GPU is ~4x faster than 4 CPU threads on the C08 case. Going "
+          "further needs a different basis (the stable-Galerkin route of `docs/design/l2-stable-basis.md`, option B), not "
+          "more Hermite orders or Fourier modes."]
+    return "\n".join(L)
+
+
 def first_above(x, t, th):
     i = np.nonzero(np.abs(x) > th)[0]
     return f"{t[i[0]]:g}" if i.size else "none"
@@ -1415,6 +1454,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {highk_section()}
 
 {nxconv_section()}
+
+{gpures_section()}
 
 {otsi_section()}
 
