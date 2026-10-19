@@ -88,6 +88,16 @@ c = 4: 566, 572, 576; c = 64: 744, 750, 756 (Arnoldi + tolerance test; dense spe
 last).  Near-failure checkpoints (t >= t_f - 40) now include these; HA/HC/S1 are evaluated over all of them exactly as declared.
 t_f is the end of the production run (c = 4: 578, c = 64: 760).
 
+ADDENDUM v5 (declared after the spectra and tolerance tests of all production checkpoints except the blown-up c = 4 state at 578 were
+read: the closure damping -nu s(n) with nu proportional to max|E| is the stiff eigenvalue (rho(J) = nu_e to 1-6%), c = 64 is
+tolerance-insensitive and at the explicit bound, c = 4 is mixed).  Counterfactual `counterfactual KEY`: from the near-failure
+checkpoints (c = 4: 540, 560, 566, 572, 576; c = 64: 500, 740, 756, 760) integrate 1 time unit with rtol 1e-10 / atol 1e-14 / noise floor
+1e-14 (a) with the live closure (the record) and (b) with the closure removed from the RHS (nu = 0); the number of steps S_live and
+S_cf.  S_live/S_cf is an upper bound of the speed-up of any exact (exponential/implicit) treatment of the closure damping, because
+removing the damping also changes the dynamics of the top rows; it is NOT a gate.  A 1-unit run that hits the 300000-step budget is
+reported as a lower bound.  The 578 state of c = 4 (max|Ck| 2e70, |E| 320, K_e = -3.5e5) is past the blow-up; its Jacobian measurement
+was given a 1 h budget and is reported as not measured if it did not finish.
+
 Runs: studies/stiffdiag_batch.sh CASE (production to failure, checkpoints), then
   python studies/stiffdiag_gates.py measure CASE  -> studies/stiffdiag/<case>.json   (CASE in c4, c64)
   python studies/stiffdiag_gates.py analyze       -> studies/stiffdiag/summary.json
@@ -540,6 +550,58 @@ def fdcheck():
     (OUT / "fdcheck.json").write_text(json.dumps(out, indent=1) + "\n")
 
 
+def counterfactual():
+    import jax.numpy as jnp
+
+    import darkspectrax as ds
+    from darkspectrax import _simulation as _sim
+    from lane_c_run import model
+    from nxconv_run import install_closure
+    rhs0 = _sim.rhs
+    todo = {"c4": (4.0, (540, 560, 566, 572, 576)), "c64": (64.0, (500, 740, 756, 760))}
+    out = json.loads((OUT / "counterfactual.json").read_text()) if (OUT / "counterfactual.json").exists() else {}
+    for key, (c, ts) in todo.items():
+        case = CASES[key][0]
+        pr = parts_of(case)
+        res = json.loads((OUT / f"{key}.json").read_text())
+        fine_y = {}
+        fine_ts = [t for t in ts if not any(abs(info["t_end"] - t) < 1e-6 for info, _ in pr)]
+        # states of the fine checkpoints are not stored: re-integrate 2-unit pieces from the last production checkpoint before the end
+        ibeg = len(pr) - 2
+        zb = np.load(pr[ibeg][1])
+        y = {k: jnp.asarray(zb["y_" + k]) for k in ("Ck", "Fk", "Dk", "W", "B")}
+        tb, cache = pr[ibeg][0]["t_end"], {}
+        m_live = model(0.1, 128, 64)
+        _sim.rhs = rhs0
+        install_closure(m_live, c)
+        while tb < max(fine_ts, default=0) - 1e-9:
+            o = ds.run(m_live, y, 2.0, n_save=2, rtol=1e-10, atol=1e-14, noise_floor=1e-14, t0=tb, max_steps=200000, cache=cache)
+            tb += 2.0
+            y = {"Ck": jnp.asarray(o["Ck"][-1]), "Fk": jnp.asarray(o["Fk"][-1]), "Dk": jnp.asarray(o["Dk"][-1]),
+                 "W": jnp.asarray(o["W"][-1], complex), "B": jnp.asarray(o["B"][-1], complex)}
+            if any(abs(tb - f) < 1e-6 for f in fine_ts):
+                fine_y[tb] = y
+        for t in ts:
+            hit = [(info, npz) for info, npz in pr if abs(info["t_end"] - t) < 1e-6]
+            if hit:
+                z = np.load(hit[0][1])
+                yy = {k: jnp.asarray(z["y_" + k]) for k in ("Ck", "Fk", "Dk", "W", "B")}
+            else:
+                yy = fine_y[float(t)]
+            r = {}
+            for lab, closure in (("live", True), ("no_closure", False)):
+                m = model(0.1, 128, 64)  # fresh model: fresh compilation with the right RHS
+                _sim.rhs = rhs0
+                if closure:
+                    install_closure(m, c)
+                o = ds.run(m, yy, 1.0, n_save=2, rtol=1e-10, atol=1e-14, noise_floor=1e-14, t0=float(t), max_steps=300000)
+                r[lab] = {"steps": o["num_steps"], "accepted": o["num_accepted"], "rejected": o["num_rejected"], "status": o["status"]}
+            r["speedup_bound"] = r["live"]["steps"] / max(r["no_closure"]["steps"], 1)
+            out[f"{key}_t{t}"] = r
+            print(key, t, r, flush=True)
+            (OUT / "counterfactual.json").write_text(json.dumps(out, indent=1) + "\n")
+
+
 def analyze():
     out = {}
     for key in CASES:
@@ -589,4 +651,6 @@ if __name__ == "__main__":
         sys.exit(measure(sys.argv[2]))
     if sys.argv[1] == "fdcheck":
         sys.exit(fdcheck())
+    if sys.argv[1] == "counterfactual":
+        sys.exit(counterfactual())
     analyze()
