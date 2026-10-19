@@ -459,7 +459,7 @@ def measure(key):
             J = S.dense(base, live)
             Jfz = S.dense(base, frozen)
             JL = S.dense(bg, frozen)
-            lamJ = eigvals(J, check_finite=False)
+            lamJ = scaled_eigvals(J, S, v0)
             lamL, per_k, leak = block_spectra(JL, S)
             rec["dense_J"] = spec_summary(lamJ)
             rec["J_L"] = {**spec_summary(lamL), "leakage": leak, "worst_k_abscissa": max(per_k, key=lambda d: d["abscissa"]),
