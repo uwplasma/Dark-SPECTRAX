@@ -68,6 +68,29 @@ Stage B (B10, ordinary mi/me = 1836, j = 8 point, Nn in {64, 128, 256}, scaled c
  any Nn, B2 gamma(Nn = 64, 256) within 3% of gamma(Nn = 128), B3 gamma at a closure strength x3 within 3% of baseline (the
  closure sensitivity: the fixed-nu 100 -> 300 move was 5.3%).  Reported whatever the outcome.
 
+RESULT OF STAGE M (v3, studies/rclosure/measure.json, 82 points; recorded here by the commit that declares stage F, before F runs).
+c_req is null (no ladder c up to 1024 reaches gamma <= 1e-3) at 39/39 points with peak 4e-3 and 23/39 with peak 1e-3 (62/78 =
+79% overall, below the 90% bar of consequence (b) when pooled; 100% at 4e-3, the amplitude of the k1 field at t ~ 200-450 of the
+v_q 0.1 runs).  Neither (a) nor (b) is met pooled; the declared reading for the gap: Q1 FAILS (not non-null everywhere), so stage D
+as specified, which presupposes a closure that keeps gamma <= 0 at every refinement, is NOT run, and no SPECTRAX option is added
+(a closure whose premise fails would be a number without a derivation).  Fits (log-linear, 66-77 points, rms residual 0.4-0.5 in
+ln gamma, so factors of ~1.6, not tight): gamma(c = 0) ~ 32 Nn^0.57 peak^1.2 (K exponent 0.00: the AW growth in a frozen field
+does not rise with the Fourier cut-off, contrary to the single-mode eigenvalue table of highk; it rises as ~sqrt(Nn) and
+~linearly in the field), gamma(c = 4) ~ 2.4 Nn^0.78 peak^1.1, floor gamma(c = 1024) ~ 11 K^0.15 Nn^0.30 peak^1.26.  At
+peak 4e-3 the c = 4 growth is 0.04-0.46 and the c = 1024 floor 0.02-0.14, i.e. e^{20-100} over T = 1000 from the 1e-14 noise.
+The closure-strength route therefore cannot be made resolution-consistent; held-out points (7,96) and (15,48) at peak 2e-3
+(c = 1024 gamma 0.018-0.038 and 0.003-0.023) sit within the scatter of the floor fit (not a pass/fail gate).
+
+STAGE F (declared before running; follow-up to the Q1 failure): does a much stronger fixed c still extend the real H05 window,
+and at what cost to resolved physics?  v_q/v_te = 0.1, Nx 64, Nn 128, pump frame + remap, noise_floor 1e-14, rtol 1e-10,
+atol 1e-14, T = 1000, chunked, c in {16, 64, 256} (nxconv_run.py --field-nu c --tag _rcf, GPU allowed); reference c = 4 record:
+studies/gpures/records (t_end 595, K_s <= 0 at 581).  Window(c) = min(t_pos, t_reached).
+ F1 (extension) window(c = 256) >= 744 (1.25 x 595); reported for every c.
+ F2 (fidelity) for t <= 500, dK_e and W_ext of each run agree with the c = 4 record within 1e-3 of the running max.
+ F3 (ledger/status) ledger <= 1e-6 of max|W_ext| and solver status success through the window.
+ Verdict: the strong-closure route is "useful" only if F1 and F2 and F3 hold at one c; otherwise recorded as failed (an extension
+ with broken fidelity is not a result).  No B10 rerun (it needed the scaled closure).
+
 Run: python studies/rclosure_gates.py measure|fit  -> studies/rclosure/measure.json, fit.json
 """
 import itertools
