@@ -1,0 +1,17 @@
+{
+ "case": "vq0.1_Nx64_Nn128_c4_nf1e-14_sd",
+ "part": 4,
+ "t_start": 400.0,
+ "t_end": 500.0,
+ "status": "success",
+ "failure_reason": null,
+ "events": 4,
+ "steps": 5427,
+ "rejected": 1623,
+ "compile_time": 5.9600862972438335,
+ "run_time": 16.052781281992793,
+ "wall_time": 82.95904034399427,
+ "repository_commit": "cf3047119d02de7361c9163746c71cb7249f0ba0",
+ "parent_commit": "3de6b2b8cdc8e79af68ea7175c318e135708c7b2",
+ "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --noise-floor 1e-14 --T 1000 --chunk 100 --tag _sd"
+}

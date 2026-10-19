@@ -524,7 +524,6 @@ def fdcheck():
 
     from darkspectrax import _simulation as _sim
     from lane_c_run import model
-    from nxconv_run import install_closure
     out = {}
     for key, (case, c, *_rest) in CASES.items():
         pr = parts_of(case)
@@ -563,7 +562,6 @@ def counterfactual():
     for key, (c, ts) in todo.items():
         case = CASES[key][0]
         pr = parts_of(case)
-        res = json.loads((OUT / f"{key}.json").read_text())
         fine_y = {}
         fine_ts = [t for t in ts if not any(abs(info["t_end"] - t) < 1e-6 for info, _ in pr)]
         # states of the fine checkpoints are not stored: re-integrate 2-unit pieces from the last production checkpoint before the end
@@ -604,6 +602,8 @@ def counterfactual():
 
 def analyze():
     out = {}
+    cf = json.loads((OUT / "counterfactual.json").read_text()) if (OUT / "counterfactual.json").exists() else {}
+    fdc = json.loads((OUT / "fdcheck.json").read_text()) if (OUT / "fdcheck.json").exists() else {}
     for key in CASES:
         p = OUT / f"{key}.json"
         if not p.exists():
@@ -614,36 +614,59 @@ def analyze():
         ref = next((c for c in cps if abs(c["t"] - 300) < 1e-6), None)
         last = cps[-1]
 
+        def hmin(c):
+            return c.get("h_stab_min_J", c["h_stab_min_J_arpack_LM"])
+
         def ratio(c):
-            return c["dt_acc"] / c["h_stab_min_J"] if "h_stab_min_J" in c else c["dt_acc"] / c["h_stab_min_J_arpack_LM"]
+            return c["dt_acc"] / hmin(c)
 
         def sratio(c):
-            s = {x["rtol"]: x["steps"] for x in c["tol_test"]}
-            return s[1e-10] / s[1e-4]
-        rows = [{"t": c["t"], "dt_acc": c["dt_acc"], "dt_over_hstab": ratio(c), "steps_ratio_1e-10_over_1e-4": sratio(c),
-                 "abscissa_arpack": c["arpack_J_LR"].get("abscissa"), "abscissa_dense": c.get("dense_J", {}).get("abscissa"),
-                 "rho_dense": c.get("dense_J", {}).get("rho")} for c in cps]
-        HA = all(ratio(c) >= 0.3 and sratio(c) <= 1.5 for c in near)
-        HC = all(ratio(c) <= 0.05 and sratio(c) >= 3 for c in near)
+            st = {x["rtol"]: x["steps"] for x in c["tol_test"]}
+            return st[1e-10] / st[1e-4]
+        rows = []
+        for c in cps:
+            cc = cf.get(f"{key}_t{c['t']:g}")
+            rows.append({"t": c["t"], "src": c["src"], "dt_acc": c["dt_acc"], "nu_e": c["nu_star"][0], "E_max": c["E_max"],
+                         "rho_J": c.get("dense_J", {}).get("rho", c["arpack_J_LM"].get("rho")),
+                         "abscissa_J": c.get("dense_J", {}).get("abscissa", c["arpack_J_LR"].get("abscissa")),
+                         "h_stab_min": hmin(c), "dt_over_hstab": ratio(c), "steps_ratio_1e-10_over_1e-4": sratio(c),
+                         "top3_rate_measured": c["top3_amp_rate_measured"], "top3_rate_tangent": c.get("tangent", {}).get("top3_amp_rate"),
+                         "J_L": ({k: c["J_L"][k] for k in ("rho", "abscissa", "min_re", "max_abs_im")} if "J_L" in c else None),
+                         "h_stab_min_J_L": c.get("h_stab_min_J_L"),
+                         "steps_live_1unit": cc["live"]["steps"] if cc else None,
+                         "steps_no_closure_1unit": cc["no_closure"]["steps"] if cc else None})
+        HA_each = {c["t"]: bool(ratio(c) >= 0.3 and sratio(c) <= 1.5) for c in near}
+        HC_each = {c["t"]: bool(ratio(c) <= 0.05 and sratio(c) >= 3) for c in near}
+        HA, HC = all(HA_each.values()), all(HC_each.values())
         ab = last.get("dense_J", {}).get("abscissa", last["arpack_J_LR"].get("abscissa"))
         growth = [(c["t"], c["top3_amp_rate_measured"], c["tangent"]["top3_amp_rate"]) for c in cps if "tangent" in c]
-        HB = bool(ab is not None and ab >= 0.01 and all(m is not None and 0.5 <= m / g <= 2 for _, m, g in growth if g > 0))
+        HB = bool(ab is not None and ab >= 0.01 and all(m is not None and g > 0 and 0.5 <= m / g <= 2 for _, m, g in growth if g > 0))
         verdict = "STIFFNESS-LIMITED" if HA else ("INSTABILITY/ACCURACY-LIMITED" if (HC and ab is not None and ab >= 0.01) else "MIXED")
-        d = {"t_f": t_f, "rows": rows, "HA": HA, "HB": HB, "HC": HC, "verdict": verdict, "growth_measured_vs_tangent": growth}
-        if ref is not None and "h_stab_min_J" in ref and "h_stab_min_J" in last:
+        d = {"t_f": t_f, "last_measured_t": last["t"], "rows": rows, "HA": HA, "HA_each": HA_each, "HB": HB, "HC": HC, "HC_each": HC_each,
+             "verdict": verdict, "growth_measured_vs_tangent": growth, "fine_history": r.get("fine_history")}
+        if ref is not None and last is not ref:
             C = ref["dt_acc"] / last["dt_acc"]
             d["collapse_C"] = C
-            d["f_stab"] = float(np.clip(np.log(ref["h_stab_min_J"] / last["h_stab_min_J"]) / np.log(C), 0, 1)) if C > 1 else None
-        s = sratio(last)
-        d["f_tol"] = float(1 - np.clip(np.log(s) / (0.75 * np.log(10)), 0, 1))
-        d["S0"] = {"fd_rel_err_max": max(c["fd_rel_err"] for c in cps),
+            d["f_stab"] = float(np.clip(np.log(hmin(ref) / hmin(last)) / np.log(C), 0, 1)) if C > 1 else None
+            d["dt_over_hstab_ref_last"] = (ratio(ref), ratio(last))
+        d["steps_ratio_last"] = sratio(last)
+        d["f_tol"] = float(1 - np.clip(np.log(sratio(last)) / (0.75 * np.log(10)), 0, 1))
+        cl = cf.get(f"{key}_t{last['t']:g}")
+        if cl:
+            d["curable_step_share_last"] = float(1 - cl["no_closure"]["steps"] / cl["live"]["steps"])
+        dva = []
+        for c in cps:
+            if "dense_J" in c:
+                dr, da = c["dense_J"]["rho"], c["dense_J"]["abscissa"]
+                ar, aa = c["arpack_J_LM"].get("rho"), c["arpack_J_LR"].get("abscissa")
+                dva.append({"t": c["t"], "rho": [dr, ar], "abscissa": [da, aa],
+                            "pass": bool(abs(dr - ar) <= 1e-3 * dr and abs(da - aa) <= 1e-3 + 1e-3 * abs(da))})
+        d["S0"] = {"dense_vs_arpack": dva, "fd_rel_err_max_as_declared": max(c["fd_rel_err"] for c in cps),
                    "leak_max": max((c["J_L"]["leakage"] for c in cps if "J_L" in c), default=None),
-                   "dense_vs_arpack": [{"t": c["t"], "rho": (c["dense_J"]["rho"], c["arpack_J_LM"].get("rho")),
-                                        "abscissa": (c["dense_J"]["abscissa"], c["arpack_J_LR"].get("abscissa"))}
-                                       for c in cps if "dense_J" in c]}
+                   "fdcheck_S0b": {k: v["best"] for k, v in fdc.items() if k.startswith(key)}}
         out[key] = d
     (OUT / "summary.json").write_text(json.dumps(out, indent=1, default=float) + "\n")
-    print(json.dumps(out, indent=1, default=float))
+    print(json.dumps({k: {kk: vv for kk, vv in v.items() if kk not in ("rows", "fine_history")} for k, v in out.items()}, indent=1, default=float))
 
 
 if __name__ == "__main__":

@@ -281,6 +281,61 @@ def rclosure_section():
     return "\n".join(L)
 
 
+def stiffdiag_section():
+    sm = json.loads((root / "studies/stiffdiag/summary.json").read_text())
+    cf = json.loads((root / "studies/stiffdiag/counterfactual.json").read_text())
+    L = ["## What limits the step at the H05 v_q/v_te = 0.1 failure: stiffness or instability? (`studies/stiffdiag_gates.py`)", "",
+         "Hypotheses, gates and four dated revisions/addenda (stability threshold, frozen-closure split, fine step history, "
+         "similarity-scaled eigensolve and time-domain tangent growth, closure-removal counterfactual) are committed in the docstring "
+         "of `studies/stiffdiag_gates.py` before the measurements they govern. Nx 64, Nn 128, v_q/v_te 0.1, pump frame, noise floor 1e-14, "
+         "rtol 1e-10, atol 1e-14, GPU, closure c = 4 (run ends t = 578 here, 595 in the gpures record: the blow-up is segment-sensitive) "
+         "and c = 64 (ends 760 by positivity). Per checkpoint: the exact Jacobian J of the RHS (jax.linearize, 11272 real unknowns: dealiased "
+         "Ck, Fk and the pump-frame velocities), its dense spectrum at t = 300 / the checkpoint before the end / the last one and ARPACK "
+         "(LM, LR) everywhere, J_L = the same RHS linearized about the homogeneous part of the state with the closure rate frozen "
+         "(streaming + closure + Maxwell, exactly block diagonal in k: leakage 2e-16), the Dopri8 stability bound "
+         "h_stab = largest h with |R(h lambda)| <= 1 + 1e-6 over the spectrum (real axis 5.17, imaginary axis 3.70), and a tolerance test "
+         "(1 time unit at rtol 1e-10 ... 1e-4). A step set by accuracy scales as rtol^(-1/8) (steps 1e-10 / 1e-4 = 5.6); a step set by the "
+         "explicit stability bound does not respond to the tolerance (1).", ""]
+    for key, name in (("c4", "c = 4"), ("c64", "c = 64")):
+        d = sm[key]
+        L += [f"**{name}** (t_f = {d['t_f']:g}; last measured {d['last_measured_t']:g}): HA (stiffness-limited at every near-failure checkpoint) "
+              f"{'holds' if d['HA'] else 'fails'}, HC (accuracy-limited) {'holds' if d['HC'] else 'fails'}, HB (growth realized as predicted) "
+              f"{'holds' if d['HB'] else 'fails'}; declared verdict **{d['verdict']}**.", "",
+              "| t | dt_acc | nu_e (closure) | rho(J) | max Re lambda(J) | h_stab | dt/h_stab | steps 1e-10/1e-4 | top-3rd rate: run / tangent | steps/unit live / closure removed |",
+              "|---|---|---|---|---|---|---|---|---|---|"]
+        for r in d["rows"]:
+            tg = "-" if r["top3_rate_tangent"] is None else f"{r['top3_rate_tangent']:.2f}"
+            c_ = "-" if r["steps_live_1unit"] is None else f"{r['steps_live_1unit']} / {r['steps_no_closure_1unit']}"
+            L.append(f"| {r['t']:g} | {r['dt_acc']:.2g} | {r['nu_e']:.3g} | {r['rho_J']:.3g} | {r['abscissa_J']:.2f} | {r['h_stab_min']:.2g} | "
+                     f"{r['dt_over_hstab']:.2f} | {r['steps_ratio_1e-10_over_1e-4']:.2f} | {r['top3_rate_measured']:.2f} / {tg} | {c_} |")
+        L += ["", f"Step collapse t = 300 to {d['last_measured_t']:g}: C = {d['collapse_C']:.3g}; f_stab = {d['f_stab']:.2f} "
+              f"(dt/h_stab {d['dt_over_hstab_ref_last'][0]:.2f} -> {d['dt_over_hstab_ref_last'][1]:.2f}); f_tol at the last checkpoint = {d['f_tol']:.2f}; "
+              f"share of the last unit's steps removable by removing the closure damping = {d['curable_step_share_last']:.2f}.", ""]
+    L += ["**Reading.** (1) The stiff eigenvalue is the closure itself: rho(J) equals the closure rate nu_e = c sqrt(2 Nn) max|E|/a to 0.2-7% "
+          "for t >= 500 at c = 4 (20% at t <= 300, where the light wave and mode coupling still matter) and to 0.0% at c = 64, real and negative, and rho(J_L) = rho(J) at c = 64 (835.628 and 2318.37), so the explicit step is bounded by "
+          "5.17/nu_e and the stiff part lives entirely in the linear block (diagonal, so an integrating factor or exponential treatment is exact). "
+          "(2) c = 64 is stiffness-limited throughout (dt/h_stab 0.7-1.9, steps independent of the tolerance 1.02-1.12 at five of six "
+          "near-failure checkpoints; at t = 720 the tolerance ratio is 2.3, so the strict HA rule fails there and the declared verdict is MIXED); "
+          "removing the closure from the RHS cuts the steps per unit by 6-9 times (548 to 88 at t = 760). The run ends by positivity loss at 760 "
+          "without a step collapse (dt 3.7e-3). (3) c = 4 is mixed: dt/h_stab 0.16-0.49 and tolerance ratios 2.5-5.3 (partly accuracy-limited) "
+          "until t = 576, where the closure rate has risen to 2500 with |E|max = 4 and the closure-removed counterfactual needs 7 times fewer "
+          "steps; the final collapse (dt 1e-3 at 576, 3.6e-5 at 578, max|Ck| 2e70, |E| 320, K_e < 0) is the blow-up itself and its Jacobian "
+          "was not measured (the dense and ARPACK measurement of that state did not finish and was stopped). (4) A true instability is present in "
+          "both runs: the tangent growth rate of the top-third Hermite amplitude, 2.2 at c = 4 (t = 560) and 1.8-2.7 at c = 64 (t = 740, 760), "
+          "equals max Re lambda(J) (2.1, 1.6, 2.7), and it comes from the field-nonlinear part (max Re lambda(J_L) is 0.16-0.43 only). "
+          "The nonlinear run does not realize it as a steady exponential at c = 64 (top-third rate -0.2 to +0.2) so HB, which needs the measured "
+          "and tangent rates within a factor 2, fails at both; at c = 4 the measured rate climbs 0.42, 1.15, 4.28 at t = 566, 572, 576 against "
+          "max Re lambda 2.4, 3.6, 6.0. (5) Consequence: the part of the step collapse that is stiffness (f_stab = 1.0 for both, since the "
+          "stability bound shrinks faster than dt; 84-86% of the steps of the last unit are removable by exponential/implicit treatment of the "
+          "closure) is curable; the window is not: the AW instability with max Re lambda 2-3 ends both runs (positivity lost at 760 and about 578-581), "
+          "an integrator that took 6-9 times fewer steps would reach the same loss of positivity. Caveats: eigenvalues of this operator are "
+          "round-off sensitive (dense and ARPACK abscissa differ by 1.8% at c = 64, t = 740 and by 0.036 at t = 300, which fail the S0 agreement gate; "
+          "rho agrees to 1e-14), so the time-domain tangent growth and the tolerance test are the primary evidence; the S0 finite-difference "
+          "check as declared failed (0.005-1.0, perturbation scaled by |v| dominated by the 1e4-1e20 Hermite coefficients), the component-wise "
+          "follow-up S0b passes (<= 3e-7 on finite states; the blown-up c = 4 state is non-finite).", ""]
+    return "\n".join(L)
+
+
 def gpures_section():
     g = json.loads((root / "studies/gpures/summary.json").read_text())
     c8 = json.loads((root / "studies/gpures/c08.json").read_text())
@@ -1654,6 +1709,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {gpures_section()}
 
 {rclosure_section()}
+
+{stiffdiag_section()}
 
 {otsi_section()}
 

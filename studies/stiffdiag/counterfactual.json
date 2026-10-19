@@ -1,0 +1,137 @@
+{
+ "c4_t540": {
+  "live": {
+   "steps": 74,
+   "accepted": 65,
+   "rejected": 9,
+   "status": "success"
+  },
+  "no_closure": {
+   "steps": 98,
+   "accepted": 98,
+   "rejected": 0,
+   "status": "success"
+  },
+  "speedup_bound": 0.7551020408163265
+ },
+ "c4_t560": {
+  "live": {
+   "steps": 142,
+   "accepted": 89,
+   "rejected": 53,
+   "status": "success"
+  },
+  "no_closure": {
+   "steps": 61,
+   "accepted": 55,
+   "rejected": 6,
+   "status": "success"
+  },
+  "speedup_bound": 2.3278688524590163
+ },
+ "c4_t566": {
+  "live": {
+   "steps": 139,
+   "accepted": 100,
+   "rejected": 39,
+   "status": "success"
+  },
+  "no_closure": {
+   "steps": 87,
+   "accepted": 86,
+   "rejected": 1,
+   "status": "success"
+  },
+  "speedup_bound": 1.5977011494252873
+ },
+ "c4_t572": {
+  "live": {
+   "steps": 731,
+   "accepted": 652,
+   "rejected": 79,
+   "status": "success"
+  },
+  "no_closure": {
+   "steps": 268,
+   "accepted": 268,
+   "rejected": 0,
+   "status": "success"
+  },
+  "speedup_bound": 2.7276119402985075
+ },
+ "c4_t576": {
+  "live": {
+   "steps": 4845,
+   "accepted": 4657,
+   "rejected": 188,
+   "status": "success"
+  },
+  "no_closure": {
+   "steps": 665,
+   "accepted": 654,
+   "rejected": 11,
+   "status": "success"
+  },
+  "speedup_bound": 7.285714285714286
+ },
+ "c64_t500": {
+  "live": {
+   "steps": 147,
+   "accepted": 108,
+   "rejected": 39,
+   "status": "success"
+  },
+  "no_closure": {
+   "steps": 17,
+   "accepted": 17,
+   "rejected": 0,
+   "status": "success"
+  },
+  "speedup_bound": 8.647058823529411
+ },
+ "c64_t740": {
+  "live": {
+   "steps": 383,
+   "accepted": 286,
+   "rejected": 97,
+   "status": "success"
+  },
+  "no_closure": {
+   "steps": 45,
+   "accepted": 40,
+   "rejected": 5,
+   "status": "success"
+  },
+  "speedup_bound": 8.511111111111111
+ },
+ "c64_t756": {
+  "live": {
+   "steps": 556,
+   "accepted": 391,
+   "rejected": 165,
+   "status": "success"
+  },
+  "no_closure": {
+   "steps": 73,
+   "accepted": 66,
+   "rejected": 7,
+   "status": "success"
+  },
+  "speedup_bound": 7.616438356164384
+ },
+ "c64_t760": {
+  "live": {
+   "steps": 548,
+   "accepted": 400,
+   "rejected": 148,
+   "status": "success"
+  },
+  "no_closure": {
+   "steps": 88,
+   "accepted": 87,
+   "rejected": 1,
+   "status": "success"
+  },
+  "speedup_bound": 6.2272727272727275
+ }
+}

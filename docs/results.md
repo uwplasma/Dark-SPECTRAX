@@ -1028,6 +1028,45 @@ Gates, revisions and consequences are committed in the docstring of `studies/rcl
 
 F2 (fidelity 1e-3 up to t = 500) holds for all three and the ledger is below 1e-9, but the window saturates near 710-760 (c = 16: 731.5, c = 64: 757, c = 256: 713) and F1 (c = 256 reaching 744) fails; every run ends by loss of positivity. A stronger closure therefore buys about 120-160 time units at no cost in resolved physics, then stops. Because 750 is also the limit of the grid reference, the saturation cannot be assigned to the AW floor alone: the physical OTSI stage and the AW floor both act there. Nx/Nn refinement pairs with a scaled closure were not run (no derivation to scale); the route to t = 1000 at v_q/v_te = 0.1 still needs a stable basis (design option B).
 
+## What limits the step at the H05 v_q/v_te = 0.1 failure: stiffness or instability? (`studies/stiffdiag_gates.py`)
+
+Hypotheses, gates and four dated revisions/addenda (stability threshold, frozen-closure split, fine step history, similarity-scaled eigensolve and time-domain tangent growth, closure-removal counterfactual) are committed in the docstring of `studies/stiffdiag_gates.py` before the measurements they govern. Nx 64, Nn 128, v_q/v_te 0.1, pump frame, noise floor 1e-14, rtol 1e-10, atol 1e-14, GPU, closure c = 4 (run ends t = 578 here, 595 in the gpures record: the blow-up is segment-sensitive) and c = 64 (ends 760 by positivity). Per checkpoint: the exact Jacobian J of the RHS (jax.linearize, 11272 real unknowns: dealiased Ck, Fk and the pump-frame velocities), its dense spectrum at t = 300 / the checkpoint before the end / the last one and ARPACK (LM, LR) everywhere, J_L = the same RHS linearized about the homogeneous part of the state with the closure rate frozen (streaming + closure + Maxwell, exactly block diagonal in k: leakage 2e-16), the Dopri8 stability bound h_stab = largest h with |R(h lambda)| <= 1 + 1e-6 over the spectrum (real axis 5.17, imaginary axis 3.70), and a tolerance test (1 time unit at rtol 1e-10 ... 1e-4). A step set by accuracy scales as rtol^(-1/8) (steps 1e-10 / 1e-4 = 5.6); a step set by the explicit stability bound does not respond to the tolerance (1).
+
+**c = 4** (t_f = 578; last measured 576): HA (stiffness-limited at every near-failure checkpoint) fails, HC (accuracy-limited) fails, HB (growth realized as predicted) fails; declared verdict **MIXED**.
+
+| t | dt_acc | nu_e (closure) | rho(J) | max Re lambda(J) | h_stab | dt/h_stab | steps 1e-10/1e-4 | top-3rd rate: run / tangent | steps/unit live / closure removed |
+|---|---|---|---|---|---|---|---|---|---|
+| 100 | 0.27 | 5.31 | 6.35 | 0.24 | 0.82 | 0.33 | 1.17 | -0.21 / - | - |
+| 300 | 0.092 | 3.9 | 4.75 | 0.05 | 1.1 | 0.08 | 1.40 | 0.49 / -0.28 | - |
+| 500 | 0.02 | 60.6 | 64.5 | 2.23 | 0.08 | 0.25 | 5.00 | 0.15 / - | - |
+| 540 | 0.01 | 91.2 | 95.5 | 2.70 | 0.054 | 0.19 | 2.74 | 0.44 / - | 74 / 98 |
+| 560 | 0.014 | 53.9 | 57.7 | 2.11 | 0.09 | 0.16 | 5.26 | 0.66 / 2.21 | 142 / 61 |
+| 566 | 0.011 | 98.3 | 102 | 2.42 | 0.051 | 0.21 | 4.48 | 0.42 / - | 139 / 87 |
+| 572 | 0.0024 | 520 | 523 | 3.60 | 0.0099 | 0.24 | 3.95 | 1.15 / - | 731 / 268 |
+| 576 | 0.001 | 2.51e+03 | 2.51e+03 | 6.03 | 0.0021 | 0.49 | 2.49 | 4.28 / - | 4845 / 665 |
+
+Step collapse t = 300 to 576: C = 92.2; f_stab = 1.00 (dt/h_stab 0.08 -> 0.49); f_tol at the last checkpoint = 0.47; share of the last unit's steps removable by removing the closure damping = 0.86.
+
+**c = 64** (t_f = 760; last measured 760): HA (stiffness-limited at every near-failure checkpoint) fails, HC (accuracy-limited) fails, HB (growth realized as predicted) fails; declared verdict **MIXED**.
+
+| t | dt_acc | nu_e (closure) | rho(J) | max Re lambda(J) | h_stab | dt/h_stab | steps 1e-10/1e-4 | top-3rd rate: run / tangent | steps/unit live / closure removed |
+|---|---|---|---|---|---|---|---|---|---|
+| 100 | 0.093 | 85 | 85 | 0.16 | 0.061 | 1.52 | 1.00 | -0.09 / - | - |
+| 300 | 0.011 | 62.4 | 62.4 | 0.04 | 0.083 | 0.13 | 0.97 | -0.19 / -0.14 | - |
+| 500 | 0.0065 | 972 | 972 | 1.26 | 0.0053 | 1.22 | 1.27 | -0.11 / - | 147 / 17 |
+| 700 | 0.0053 | 1.41e+03 | 1.41e+03 | 2.23 | 0.0037 | 1.46 | 1.01 | 0.12 / - | - |
+| 720 | 0.0047 | 1.06e+03 | 1.06e+03 | 1.89 | 0.0049 | 0.96 | 2.33 | -0.14 / - | - |
+| 740 | 0.0044 | 836 | 836 | 1.61 | 0.0062 | 0.72 | 1.02 | -0.21 / 1.79 | 383 / 45 |
+| 744 | 0.0051 | 1.89e+03 | 1.89e+03 | 2.57 | 0.0027 | 1.86 | 1.07 | 0.22 / - | - |
+| 750 | 0.005 | 1.75e+03 | 1.75e+03 | 2.48 | 0.003 | 1.68 | 1.06 | 0.07 / - | - |
+| 756 | 0.0044 | 1.42e+03 | 1.42e+03 | 2.26 | 0.0036 | 1.20 | 1.12 | 0.12 / - | 556 / 73 |
+| 760 | 0.0037 | 2.32e+03 | 2.32e+03 | 2.68 | 0.0022 | 1.64 | 1.07 | -0.13 / 2.73 | 548 / 88 |
+
+Step collapse t = 300 to 760: C = 2.97; f_stab = 1.00 (dt/h_stab 0.13 -> 1.64); f_tol at the last checkpoint = 0.96; share of the last unit's steps removable by removing the closure damping = 0.84.
+
+**Reading.** (1) The stiff eigenvalue is the closure itself: rho(J) equals the closure rate nu_e = c sqrt(2 Nn) max|E|/a to 0.2-7% for t >= 500 at c = 4 (20% at t <= 300, where the light wave and mode coupling still matter) and to 0.0% at c = 64, real and negative, and rho(J_L) = rho(J) at c = 64 (835.628 and 2318.37), so the explicit step is bounded by 5.17/nu_e and the stiff part lives entirely in the linear block (diagonal, so an integrating factor or exponential treatment is exact). (2) c = 64 is stiffness-limited throughout (dt/h_stab 0.7-1.9, steps independent of the tolerance 1.02-1.12 at five of six near-failure checkpoints; at t = 720 the tolerance ratio is 2.3, so the strict HA rule fails there and the declared verdict is MIXED); removing the closure from the RHS cuts the steps per unit by 6-9 times (548 to 88 at t = 760). The run ends by positivity loss at 760 without a step collapse (dt 3.7e-3). (3) c = 4 is mixed: dt/h_stab 0.16-0.49 and tolerance ratios 2.5-5.3 (partly accuracy-limited) until t = 576, where the closure rate has risen to 2500 with |E|max = 4 and the closure-removed counterfactual needs 7 times fewer steps; the final collapse (dt 1e-3 at 576, 3.6e-5 at 578, max|Ck| 2e70, |E| 320, K_e < 0) is the blow-up itself and its Jacobian was not measured (the dense and ARPACK measurement of that state did not finish and was stopped). (4) A true instability is present in both runs: the tangent growth rate of the top-third Hermite amplitude, 2.2 at c = 4 (t = 560) and 1.8-2.7 at c = 64 (t = 740, 760), equals max Re lambda(J) (2.1, 1.6, 2.7), and it comes from the field-nonlinear part (max Re lambda(J_L) is 0.16-0.43 only). The nonlinear run does not realize it as a steady exponential at c = 64 (top-third rate -0.2 to +0.2) so HB, which needs the measured and tangent rates within a factor 2, fails at both; at c = 4 the measured rate climbs 0.42, 1.15, 4.28 at t = 566, 572, 576 against max Re lambda 2.4, 3.6, 6.0. (5) Consequence: the part of the step collapse that is stiffness (f_stab = 1.0 for both, since the stability bound shrinks faster than dt; 84-86% of the steps of the last unit are removable by exponential/implicit treatment of the closure) is curable; the window is not: the AW instability with max Re lambda 2-3 ends both runs (positivity lost at 760 and about 578-581), an integrator that took 6-9 times fewer steps would reach the same loss of positivity. Caveats: eigenvalues of this operator are round-off sensitive (dense and ARPACK abscissa differ by 1.8% at c = 64, t = 740 and by 0.036 at t = 300, which fail the S0 agreement gate; rho agrees to 1e-14), so the time-domain tangent growth and the tolerance test are the primary evidence; the S0 finite-difference check as declared failed (0.005-1.0, perturbation scaled by |v| dominated by the 1e4-1e20 Hermite coefficients), the component-wise follow-up S0b passes (<= 3e-7 on finite states; the blown-up c = 4 state is non-finite).
+
+
 ## The physical high-k instability is the oscillating two-stream instability (`studies/instab_otsi.py`)
 
 Linear pump-frame Hermite model under a constant dipole pump E0 cos(w0 t); Floquet rate from the one-period monodromy, compared with the exact kinetic Silin matrix dispersion relation (Bessel orders |l| <= 4).
