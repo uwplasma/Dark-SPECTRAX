@@ -456,6 +456,42 @@ def measure(key):
     return 0
 
 
+def fdcheck():
+    """S0b (follow-up declared after the S0 check as written failed: it scaled the perturbation by |v|, dominated by the O(1e4)
+    Hermite coefficients, so tiny components such as E_k were perturbed by far more than their own size and the remainder is
+    nonlinear).  Component-wise relative perturbation  dv_i = eps r_i (|v_i| + 1e-6 rms|v|),  r_i = +-1,  eps in {1e-3, 1e-4, 1e-5}:
+    gate  best relative JVP-vs-central-difference error <= 1e-4 on the checkpoints t = 100, 300 and the last of each case, live closure.
+    Writes studies/stiffdiag/fdcheck.json."""
+    import jax.numpy as jnp
+
+    from darkspectrax import _simulation as _sim
+    from lane_c_run import model
+    from nxconv_run import install_closure
+    out = {}
+    for key, (case, c, *_rest) in CASES.items():
+        pr = parts_of(case)
+        m = model(0.1, 128, 64)
+        rhs0 = _sim.rhs
+        _sim.rhs = rhs0
+        live = closure_rhs(m, c, rhs0)
+        for i in (0, 2, len(pr) - 1):
+            info, npz = pr[i]
+            z = np.load(npz)
+            y = {k: jnp.asarray(z["y_" + k]) for k in ("Ck", "Fk", "Dk", "W", "B")}
+            S = System(m, y, info["t_end"])
+            f, mv = S.func(S.y, live), S.operator(S.y, live)
+            v0 = np.asarray(S.pack(S.y))
+            r = np.random.default_rng(3).choice([-1.0, 1.0], S.n)
+            errs = {}
+            for eps in (1e-3, 1e-4, 1e-5):
+                dv = eps * r * (np.abs(v0) + 1e-6 * np.sqrt((v0 ** 2).mean()))
+                fd = (np.asarray(f(v0 + dv)) - np.asarray(f(v0 - dv))) / 2
+                errs[str(eps)] = float(np.linalg.norm(mv(dv) - fd) / max(np.linalg.norm(fd), 1e-300))
+            out[f"{key}_t{info['t_end']:g}"] = {"errs": errs, "best": min(errs.values()), "pass_1e-4": min(errs.values()) <= 1e-4}
+            print(key, info["t_end"], out[f"{key}_t{info['t_end']:g}"], flush=True)
+    (OUT / "fdcheck.json").write_text(json.dumps(out, indent=1) + "\n")
+
+
 def analyze():
     out = {}
     for key in CASES:
@@ -503,4 +539,6 @@ def analyze():
 if __name__ == "__main__":
     if sys.argv[1] == "measure":
         sys.exit(measure(sys.argv[2]))
+    if sys.argv[1] == "fdcheck":
+        sys.exit(fdcheck())
     analyze()
