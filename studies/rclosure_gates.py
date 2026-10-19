@@ -2,11 +2,39 @@
 
 DECLARED BEFORE RUNNING (never amended after results; a wrong gate is recorded as a failure and a follow-up is declared).
 
+REVISION v2 (declared before any measurement result existed; the v1 measure run was killed with no output). A pre-run probe
+(E_k1 = 1e-2, K = 5, Nn = 64, single mode, nu = 0) gave max Re lambda = 0.756 (dense LAPACK), 0.846 (ARPACK) and an asymptotic
+time-domain growth rate of 0.702 (exp(L t) applied to a random vector, t = 200): at these amplitudes the operator is so
+non-normal that eigenvalues are round-off sensitive, and the simulation sees the time-domain growth.  v2 therefore defines
+gamma as the asymptotic growth rate of ||exp((L - nu diag s) t) v0||, v0 a fixed random vector (rng 1), integrated in
+chunks of 5 omega_pe^-1 to T_int = 240 and averaged over the last 40 (log-norm slope); "stable" means gamma <= 1e-3 (gamma_tol).
+Everything else (grid, shapes, gates Q1-Q3 with gamma_tol in place of 1e-8) is unchanged; the fixed-c = 4 baseline (Q3) uses
+the same gamma.
+
+REVISION v3 (declared after a pre-run probe on K = 5, Nn = 64, single mode, T_int = 100, no measurement-grid result yet).  The probe
+gave, for peak E = 1e-3 / 4e-3 / 1e-2 and c = 0, 1, 4, 16, 64, 256 (nu = c |q/m| sqrt(2 Nn) peak / a): gamma = 0.134 0.063 0.033
+0.029 0.032 0.028 / 0.468 0.309 0.190 0.108 0.058 0.041 / 0.635 0.383 0.225 0.164 0.136 0.112.  Raising c does NOT bring
+gamma to <= 0: it leaves a floor.  The v2 bisection for c_req (bracket up to 1e3) is therefore replaced: v3 measures gamma
+on the fixed ladder c in {0, 4, 16, 64, 256, 1024} and defines c_req = the smallest ladder value with gamma <= gamma_tol
+(null if none).  Declared hypothesis H*: for the order-2 hypercollision shape s(n), NO ladder c reaches gamma <= gamma_tol at
+peak >= 1e-3 at any (K, Nn) of the grid, i.e. the premise "a closure strength c(K, Nn) keeps gamma_AW <= 0" is false for this
+closure family, and the AW floor gamma_floor = gamma(c = 1024) is the quantity to fit.  Declared consequences, fixed now:
+ (a) if c_req is non-null at every training point, the original Q1-Q3 and stage D apply unchanged;
+ (b) if H* holds (c_req null at > 90% of the points with peak >= 1e-3), stage D is NOT run as specified; the result is recorded as
+     a rejection of the closure-strength route, with the fitted floor law gamma_floor(K, Nn, peak) (log-linear, exponents
+     reported) and the check whether gamma_floor(c) falls below the growth the H05 run can tolerate (1/(T=1000) times
+     ln(1e-14 noise floor -> 1e-3 field) ~ 0.02 for peak 1e-3.. ) is NOT made a gate; a follow-up study is then declared in a new
+     commit before anything else is run.
+Grid v3 (replaces the v1/v2 grid): (K, Nn) in {2, 5, 10, 21} x {32, 64, 128} U {(5, 256), (10, 256)}; peak in {1e-3, 4e-3};
+shapes "single" and "inv" (the "flat" shape only at K <= 10); a = sqrt(2e-3); T_int = 150, mean of the last 30; gamma_tol 1e-3.
+Held-out: the (K, Nn) = (7, 96), (15, 48) points at peak 2e-3, shapes single and inv, ladder c = 0, 4, 1024 (used only to check
+the fitted floor law within 30%).  The K = 42 and peak >= 1e-2 points of v1/v2 are dropped for cost; stated, not hidden.
+
 Stage M (frozen field, this script `measure`, `fit`): the truncated AW Fourier-Hermite operator of studies/highk_eig.py,
 df/dt = -v df/dx + (q/m) E(x) df/dv (electrons, q/m = -1, u = 0), kept modes |k| <= K (k = j k1, k1 = 2 pi/40), Hermite order
 Nn, width a, with the PR #66 hypercollision shape s(n) = n(n-1)(n-2)/((N-1)(N-2)(N-3)) damping the diagonal at rate
 nu s(n).  Measured: (i) gamma_AW = max Re lambda at nu = 0; (ii) nu_req = the smallest nu (bisection in log nu on
-[5e-2, 1e3] x base, 7 steps) for which max Re lambda <= 1e-8 omega_pe, base = sqrt(2 Nn) peak / a.  Expressed as the
+[5e-2, 1e3] x base, 7 steps) for which gamma <= gamma_tol = 1e-3 omega_pe, base = sqrt(2 Nn) peak / a.  Expressed as the
 dimensionless required strength c_req = nu_req / (|q/m| base).
  Grid (training): (K, Nn) in {2,5,10} x {32,64,128,256} U {21} x {32,64,128} U {42} x {32,64}; peak = max|E - <E>| in
  {1e-3, 4e-3, 1e-2, 3e-2}; a = sqrt(2e-3); field shapes: "single" cos(k1 x); "flat" sum_{j<=K} cos(j k1 x + phi_j);
@@ -17,11 +45,11 @@ dimensionless required strength c_req = nu_req / (|q/m| base).
  peak)), and the formula.
 Gates for the closure formula c(K, Nn) (declared form: nu = c(K, Nn) |q/m| sqrt(2 N) peak / a, c(K, Nn) = c0 (K/5)^p (Nn/64)^q
  with p, q, c0 from the fit of the upper envelope, c0 raised so that Q1 holds with the safety factor below):
- Q1 (sufficiency)  formula nu >= 1.25 nu_req at every training AND held-out point, all shapes (so max Re <= 1e-8 with margin);
+ Q1 (sufficiency)  formula nu >= 1.25 nu_req at every training AND held-out point, all shapes (so gamma <= gamma_tol with margin);
  Q2 (not wasteful) formula nu <= 8 nu_req at every training point of shape "single" and "inv" (a closure 8x above the
      requirement everywhere is rejected as non-informative);
- Q3 (baseline, informational) the fixed c = 4 closure of #66: fraction of training points with max Re > 1e-8, reported.
- A direct re-evaluation of max Re with the formula nu at all points (not only the bisected nu_req) is the Q1 record.
+ Q3 (baseline, informational) the fixed c = 4 closure of #66: fraction of training points with gamma > gamma_tol, reported.
+ A direct re-evaluation of gamma with the formula nu at all points (not only the bisected nu_req) is the Q1 record.
 
 Stage D (decisive, `studies/nxconv_run.py --closure-kmax`, GPU allowed), v_q/v_te = 0.1 H05 (pump frame + remap, noise_floor
  1e-14, rtol 1e-10, atol 1e-14, T = 1000, chunked) with the scaled closure, runs (Nx, Nn) in {(32,64), (64,64), (64,128),
@@ -56,12 +84,13 @@ import scipy.sparse as sp  # noqa: E402
 D = Path(__file__).resolve().parent / "rclosure"
 k1 = 2 * np.pi / 40.0
 A0 = np.sqrt(2e-3)
-TOL = 1e-8
-GRID = [(K, N) for K in (2, 5, 10) for N in (32, 64, 128, 256)] + [(21, N) for N in (32, 64, 128)] + [(42, 32), (42, 64)]
-PEAKS = (1e-3, 4e-3, 1e-2, 3e-2)
+TOL = 1e-3
+TINT, DT = 150.0, 5.0
+GRID = [(K, N) for K in (2, 5, 10, 21) for N in (32, 64, 128)] + [(5, 256), (10, 256)]
+PEAKS = (1e-3, 4e-3)
 SHAPES = ("single", "flat", "inv")
-HELD = [(K, N, p, s, A0) for (K, N) in ((7, 96), (15, 48), (30, 48)) for p in (2e-3, 6e-3) for s in SHAPES] \
-    + [(5, 64, 4e-3, "single", a) for a in (0.02, 0.1)]
+LADDER = (0.0, 4.0, 16.0, 64.0, 256.0, 1024.0)
+HELD = [(K, N, 2e-3, sh, A0) for (K, N) in ((7, 96), (15, 48)) for sh in ("single", "inv")]
 
 
 def field(K, peak, shape):
@@ -107,37 +136,36 @@ def operator(K, Nn, amp, a):
 
 
 def maxre(L, nu, Nn, nk):
-    M = L.toarray()
+    """Asymptotic growth rate (v2 definition) of exp((L - nu diag s) t); name kept from v1."""
+    import scipy.sparse.linalg as sla
+    M = L.tocsc()
     if nu:
-        M = M - np.diag(np.tile(nu * shape_s(Nn), nk))
-    return float(np.linalg.eigvals(M).real.max())
+        M = M - sp.diags(np.tile(nu * shape_s(Nn), nk))
+    v = np.random.default_rng(1).standard_normal(M.shape[0]) + 0j
+    v /= np.linalg.norm(v)
+    logs = []
+    for _ in range(int(round(TINT / DT))):
+        v = sla.expm_multiply(M * DT, v)
+        nrm = np.linalg.norm(v)
+        logs.append(np.log(nrm))
+        v /= nrm
+    return float(np.mean(logs[-6:]) / DT)
 
 
 def point(args):
     K, Nn, peak, shape, a = args
-    amp = field(K, peak, shape)
-    L = operator(K, Nn, amp, a)
-    nk = 2 * K + 1
+    L = operator(K, Nn, field(K, peak, shape), a)
     base = np.sqrt(2 * Nn) * peak / a
-    g0 = maxre(L, 0.0, Nn, nk)
-    g4 = maxre(L, 4.0 * base, Nn, nk)
-    lo, hi = np.log(5e-2), np.log(1e3)
-    if g0 <= TOL:
-        creq = 0.0
-    else:
-        for _ in range(7):
-            mid = 0.5 * (lo + hi)
-            if maxre(L, np.exp(mid) * base, Nn, nk) <= TOL:
-                hi = mid
-            else:
-                lo = mid
-        creq = float(np.exp(hi))
-    return {"K": K, "Nn": Nn, "peak": peak, "shape": shape, "a": a, "gamma_AW": g0, "maxre_c4": g4, "c_req": creq}
+    ladder = (0.0, 4.0, 1024.0) if (K, Nn) in ((7, 96), (15, 48)) else LADDER
+    g = {c: maxre(L, c * base, Nn, 2 * K + 1) for c in ladder}
+    ok = [c for c in ladder if g[c] <= TOL]
+    return {"K": K, "Nn": Nn, "peak": peak, "shape": shape, "a": float(a), "gamma": {str(c): v for c, v in g.items()},
+            "c_req": ok[0] if ok else None}
 
 
 def measure(workers=4):
     import multiprocessing as mp
-    pts = [(K, N, p, s, A0) for (K, N) in GRID for p in PEAKS for s in SHAPES] + HELD
+    pts = [(K, N, p, s, A0) for (K, N) in GRID for p in PEAKS for s in SHAPES if s != "flat" or K <= 10] + HELD
     pts.sort(key=lambda t: -t[0] * t[1])
     D.mkdir(exist_ok=True)
     out = []
