@@ -1009,6 +1009,25 @@ RTX A4000, float64, jax 0.11.2 CUDA, parent 3de6b2b; same drivers as `studies/nx
 
 **Verdict: both v_q values FAIL G1 and G4; no new certified window.** v_q 0.1: every pair agrees within 10% to the end of its shorter run, certified window 328; v_q 0.05: every pair agrees within 10% to the end of its shorter run, certified window 440. Every run ends at the adaptive step budget (200000 steps per 100-unit chunk) inside the AW truncation instability, and raising Nn or Nx makes it end sooner (v_q 0.1: t = 595, 383, 453, 328 for Nx/Nn 64/128, 64/256, 128/128, 128/256; v_q 0.05: 752, 555, 671, 440). The 10% pairs never separate before the shorter run stops, so this is a failure of the resolution route, not a disagreement: the existing windows (0.03 to ~960-1000; 0.1 to ~600) stand, and v_q 0.05 is certified only to ~440-555 (Nn 256 pairs) or ~667 (Nx 64 vs 128 at Nn 128, which separate there). G2 fails for three runs (first non-positive K_s or k=0 T_x at 581 for v_q 0.1 Nx 64 Nn 128, 741 and 662.5 for v_q 0.05 Nx 64 and 128 at Nn 128); G3 holds in every run (<= 1.7e-7). Cost: one GPU run is 7-15 min of integration (up to 20 min wall including diagnostics), the 8 runs 1.3 h of GPU integration (one chunk was interrupted by a SIGTERM and resumed from its checkpoint), mostly spent in the unstable tail; the GPU is ~4x faster than 4 CPU threads on the C08 case. Going further needs a different basis (the stable-Galerkin route of `docs/design/l2-stable-basis.md`, option B), not more Hermite orders or Fourier modes.
 
+## Can a resolution-consistent closure strength remove the AW truncation instability? (`studies/rclosure_gates.py`)
+
+Gates, revisions and consequences are committed in the docstring of `studies/rclosure_gates.py` before each run (v1 dense eigenvalues; v2 time-domain growth because the AW operator is so non-normal that eigenvalues are round-off sensitive: E = 1e-2, K = 5, Nn = 64 gave 0.756 dense, 0.846 ARPACK, 0.702 time-domain; v3 ladder of closure strengths).
+
+**Stage M (frozen field).** The truncated AW operator -v d/dx + (q/m) E(x) d/dv, kept |k| <= K k1, Hermite order Nn, a = sqrt(2e-3), with the #66 hypercollision shape nu s(n), nu = c |q/m| sqrt(2 Nn) max|E - <E>| / a; gamma is the asymptotic growth rate of exp(L t) applied to a fixed random vector. Ladder c = 0, 4, 16, 64, 256, 1024; field shapes single cosine, flat and 1/j multi-mode spectra; (K, Nn) in {2, 5, 10, 21} x {32, 64, 128} plus (5, 256), (10, 256); peak field 1e-3 and 4e-3.
+
+- No ladder c reaches gamma <= 1e-3 at 39/39 points with peak 4e-3 (the k1 field at t ~ 200-450 of the v_q 0.1 runs) and at 23/39 points with peak 1e-3. Raising c leaves a floor. Declared gate Q1 (a c(K, Nn) keeping gamma_AW <= 0 at every refinement) therefore FAILS: the premise is false for this closure family, so the decisive stage D (scaled closure at Nx 32/64/128 x Nn 64/128/256 to t = 1000, B10 rerun) was not run and no SPECTRAX option was added.
+- Fits (log-linear, rms residual 0.4-0.5 in ln gamma, factor ~1.6): gamma(c = 0) ~ 32 Nn^0.57 peak^1.2 with no dependence on K (exponent 0.00; the K dependence of the single-mode eigenvalue table above comes from a different operator, not from a rising frozen-field rate); gamma(c = 4) ~ 2.4 Nn^0.78 peak^1.1 (more Nn makes c = 4 worse); floor gamma(c = 1024) ~ 11 K^0.15 Nn^0.30 peak^1.26. At peak 4e-3 the c = 4 growth is 0.04-0.46 and the c = 1024 floor 0.02-0.14, i.e. e^20 to e^100 over t = 1000 from a 1e-14 seed.
+
+**Stage F (strong fixed closure on the real run).** v_q/v_te = 0.1, Nx 64, Nn 128, GPU, c in {16, 64, 256} against the c = 4 record (ends at 595):
+
+| c | t reached | first K_s or T_x <= 0 | ledger / max W_ext | max dK_e diff to c = 4, t <= 500 | max W_ext diff to c = 4, t <= 500 |
+|---|---|---|---|---|---|
+| 16 | 740 | 731.5 | 3.2e-10 | 1.0e-06 | 8.5e-08 |
+| 64 | 760 | 757 | 2.2e-10 | 4.2e-06 | 1.0e-07 |
+| 256 | 720 | 713 | 7.9e-11 | 1.2e-05 | 3.0e-07 |
+
+F2 (fidelity 1e-3 up to t = 500) holds for all three and the ledger is below 1e-9, but the window saturates near 710-760 (c = 16: 731.5, c = 64: 757, c = 256: 713) and F1 (c = 256 reaching 744) fails; every run ends by loss of positivity. A stronger closure therefore buys about 120-160 time units at no cost in resolved physics, then stops. Because 750 is also the limit of the grid reference, the saturation cannot be assigned to the AW floor alone: the physical OTSI stage and the AW floor both act there. Nx/Nn refinement pairs with a scaled closure were not run (no derivation to scale); the route to t = 1000 at v_q/v_te = 0.1 still needs a stable basis (design option B).
+
 ## The physical high-k instability is the oscillating two-stream instability (`studies/instab_otsi.py`)
 
 Linear pump-frame Hermite model under a constant dipole pump E0 cos(w0 t); Floquet rate from the one-period monodromy, compared with the exact kinetic Silin matrix dispersion relation (Bessel orders |l| <= 4).

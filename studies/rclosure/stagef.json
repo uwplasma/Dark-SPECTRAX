@@ -1,0 +1,54 @@
+{
+ "c4_reference": {
+  "t_end": 595.0
+ },
+ "runs": {
+  "c16": {
+   "t_reached": 740.0,
+   "t_pos": 731.5,
+   "window": 731.5,
+   "status": "failure",
+   "ledger_rel": 3.234324253577659e-10,
+   "fidelity_t500": {
+    "dK_e": 9.999705627195794e-07,
+    "W_ext": 8.497638136012254e-08,
+    "t_compared": 500.0
+   }
+  },
+  "c64": {
+   "t_reached": 760.0,
+   "t_pos": 757.0,
+   "window": 757.0,
+   "status": "failure",
+   "ledger_rel": 2.1748684321572398e-10,
+   "fidelity_t500": {
+    "dK_e": 4.249474474358776e-06,
+    "W_ext": 1.0116967176983048e-07,
+    "t_compared": 500.0
+   }
+  },
+  "c256": {
+   "t_reached": 720.0,
+   "t_pos": 713.0,
+   "window": 713.0,
+   "status": "failure",
+   "ledger_rel": 7.88066792767168e-11,
+   "fidelity_t500": {
+    "dK_e": 1.1934200558552961e-05,
+    "W_ext": 2.9708748844661614e-07,
+    "t_compared": 500.0
+   }
+  }
+ },
+ "F1": false,
+ "F2": {
+  "c16": true,
+  "c64": true,
+  "c256": true
+ },
+ "F3": {
+  "c16": false,
+  "c64": false,
+  "c256": false
+ }
+}
