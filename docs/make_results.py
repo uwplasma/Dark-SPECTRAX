@@ -196,8 +196,12 @@ def highk_section():
                  + " / ".join(f"{r[f'herm{n}_E2_end_over_0']:.3e}" for n in (32, 64, 128)) + f" | {r['herm64_t_10pct']:g} |")
     L += ["", "This instability, not the closure, ends x-converged agreement: at Nx = 32 the Hermite run loses positivity "
           f"at t = {hk['vq0.1_Nx32']['t_pos']:g} (0.1) and {hk['vq0.03_Nx32']['t_pos']:g} (0.03), and the grid at Nx = 32 "
-          "blows up at the same time. Reaching t = 1000 at these drives needs k lambda_D up to 0.1-0.2 (Nx >= 64-128) and "
-          "describes a high-k turbulent stage.", "",
+          "blows up at the same time. Correction (2026-10-19): this section originally read the v_q/v_te = 0.1 limit "
+          "(~600-750) as the resolution of the OTSI high-k cascade, not the basis. The GPU resolution study (gpures section) "
+          "refutes that: with c = 4 more Nx or Nn ends the run sooner (0.1: t = 595, 383, 453, 328), so the limit is the "
+          "asymmetric-Hermite truncation instability, whose frozen-field rate rises with the Fourier cut-off and Nn, outgrowing "
+          "the closure. The physical OTSI amplification is real but has not been resolved to t = 1000 with this basis; the "
+          "grid-reference caveat (certified only to ~750) stands.", "",
           "### Certified collisionless windows (Hermite, all criteria)", "",
           f"- v_q/v_te = 0.1: t of about {hk['vq0.1_Nx32']['t_pos']:g} (Nx 32 positivity; grid agreement to "
           f"{hk['grid_vq0.1_Nx16_vs_Nx32']['t_res_dKe']}-{hk['vq0.1_Nx16']['grid']['t_res_dKe']}). Previously 606.5 (lane C).",
