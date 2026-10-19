@@ -20,6 +20,18 @@ each 2.3 e-folds, so the run time is below the stiff-closure budget), (iv) repla
 The omission of index 2n changes the physics at order w (no second harmonic, no Bragg backscatter): it is a modelling choice,
 stated in the results. The v2 tolerances are those of v1.
 
+REVISION v3 (declared before any v3 run). The first v2 production run (M_mi100_ord, all eight K in one box, record kept as
+studies/b10_v2/M_mi100_ord_multiK.json, ledger 3e-12, Gauss 7e-15) completed but is NOT usable for the gates: the pump lost
+up to 64% of its amplitude by the window ends of the slow K, the S(t) traces jumped by factors 2-3 at sideband amplitudes
+1e-3 to 1e-2 and every K saturated near 0.2-0.7 A_p by t ~ 3500. Mode competition and sideband-sideband coupling in the
+common box, not the sideband instability alone, set the late behaviour. v3 runs ONE sideband pair per run: the nonlinear
+terms keep only the Fourier indices {0, j, n, n + j, |n - j|} (pump, upper and lower sideband, ion density, mean), which is
+the truncation the reference theories assume; Nx = 2 ceil(1.5 (max index + 1)). Declared K points per (mass ratio, model):
+MAIN_JS below. A K point is GATED iff gamma_R1 > 0 and (ln(HI/SEED) + 0.5)/gamma_R1 <= 0.9 t_max (the 0.3 gamma_max condition
+of v1 is dropped: there is one K per run); t_max = 9000 (mi 1836), 4500 (mi 100). G1/G1b/G4 apply to the gated points;
+ungated points are recorded without a gate. G2: refinements at one K point per model (REF_J). SEED, LO, HI, nu, tolerances as in v2.
+G1's stability variant is dropped (R1 predicts weak growth for dark lower at w = 0.04). Everything else is unchanged.
+
 Setup (declared before running). v_te = 0.1 c (r_D = 0.1), T_e/T_i = 10 (main), eta = 0.3, Omega_D = 1 (= omega_pe at
 k = 0: the Langmuir wave splits into the upper (~1.17) and lower (~0.87) mixed Langmuir-dark normal modes; the pump is
 ONE normal mode, taken from the eigenvector of the linearized model itself at k0, so it is a pure right-moving
@@ -80,39 +92,49 @@ RTOL, ATOL = 1e-10, 1e-12
 RNG_SEED = 20261018
 TOL = {"G0a": 0.05, "G0b": 0.01, "G0c": 1e-4, "G1": 0.15, "G1b": 0.30, "G2": 0.03, "G3_ledger": 1e-6, "G3_gauss": 1e-8,
        "G4": 0.05}
-MAIN_J = (1, 3, 5, 7, 8, 10, 12, 16)
-O3_J = (1, 2, 3, 5, 6, 7)  # n = 4: j = 4 (K = k0) and 8 (2n) excluded
+# v3: one sideband pair per run (see REVISION v3); the list is the declared K points of each (mass ratio, model).
+MAIN_JS = {(1836.0, "ord"): (5, 8, 16), (1836.0, "dk_up"): (5, 7, 8), (1836.0, "dk_lo"): (5,),
+           (100.0, "ord"): (7, 10, 16), (100.0, "dk_up"): (3, 5, 7, 10), (100.0, "dk_lo"): (3,)}
+TMAX = {1836.0: 9000.0, 100.0: 4500.0}
+REF_J = {"ord": 8, "dk_up": 7}  # refinement and outside-regime K points (mi 1836)
 
 
-def _case(tag, model, mi=1836.0, tau=10.0, w=0.04, k0=0.05, n=2, J=MAIN_J, Nn=32, nu=100.0, tmax=None, Nx=None, dNx=0):
-    nx = Nx or 2 * int(np.ceil(1.5 * (n + max(J) + 2))) + dNx
-    tmax = tmax or (12000.0 if mi > 500 else 5000.0)
-    return {"name": f"{tag}_{model}", "model": model, "mi": mi, "tau": tau, "w": w, "k0": k0, "n": n, "J": list(J),
-            "Nn": Nn, "Nx": nx, "nu": nu, "tmax": tmax}
+def keep_indices(n, j):
+    return sorted({0, j, n, n + j, abs(n - j)})
+
+
+def _case(tag, model, j, mi=1836.0, tau=10.0, w=0.04, k0=0.05, n=2, Nn=32, nu=100.0, tmax=None, dNx=0):
+    nx = 2 * int(np.ceil(1.5 * (max(keep_indices(n, j)) + 1))) + dNx
+    return {"name": f"{tag}_{model}_j{j}", "tag": tag, "model": model, "mi": mi, "tau": tau, "w": w, "k0": k0, "n": n,
+            "J": [j], "Nn": Nn, "Nx": nx, "nu": nu, "tmax": tmax or TMAX[mi]}
 
 
 def all_cases():
     cs = []
-    for mi in (1836.0, 100.0):
-        for m in ("ord", "dk_up", "dk_lo"):
-            cs.append(_case(f"M_mi{int(mi)}", m, mi=mi))
-    for m in ("ord", "dk_up"):
-        cs.append(_case("R_Nn64", m, Nn=64))
-        cs.append(_case("R_Nx72", m, dNx=12))
-    cs.append(_case("R_nu300", "ord", nu=300.0))
-    for m in ("ord", "dk_up"):
-        cs.append(_case("O1_tau1", m, tau=1.0))
-        cs.append(_case("O2_w015", m, w=0.15, tmax=5000.0))
-        cs.append(_case("O3_k04", m, k0=0.4, n=4, J=O3_J, tmax=8000.0))
+    for (mi, m), js in MAIN_JS.items():
+        for j in js:
+            cs.append(_case(f"M_mi{int(mi)}", m, j, mi=mi))
+    for m, j in REF_J.items():
+        cs.append(_case("R_Nn64", m, j, Nn=64))
+        cs.append(_case("R_Nx+12", m, j, dNx=12))
+    cs.append(_case("R_nu300", "ord", REF_J["ord"], nu=300.0))
+    for m, j in REF_J.items():
+        cs.append(_case("O1_tau1", m, j if m == "ord" else 5, tau=1.0))
+        cs.append(_case("O2_w015", m, j, w=0.15, tmax=4500.0))
+    cs.append(_case("O3_k04", "ord", 5, k0=0.4, n=4, tmax=6000.0))
+    cs.append(_case("O3_k04", "dk_up", 5, k0=0.4, n=4, tmax=6000.0))
     return {c["name"]: c for c in cs}
 
 
 def apply_mask(model, c):
-    """Galerkin truncation: remove Fourier index 2n (pump second harmonic and the K = k0 / K = 2k0 families) from the
-    nonlinear terms, in addition to the parent 2/3 mask. Done in place on the model's parent dictionary."""
+    """Galerkin truncation to the Fourier indices of one sideband triad: pump n, upper n + j, lower |n - j|, the ion-density
+    index j and the mean (index 0). Every other index is removed from the nonlinear terms (and stays at its initial zero)."""
     import jax.numpy as jnp
+    keep = set(keep_indices(c["n"], c["J"][0]))
     mk = np.array(model.p["mask23"])
-    mk[:, 2 * c["n"], :] = 0.0
+    for i in range(mk.shape[1]):
+        if i not in keep:
+            mk[:, i, :] = 0.0
     model.p["mask23"] = jnp.asarray(mk)
     return model
 
@@ -147,10 +169,9 @@ def reference_table(c):
             row["gamma_R0"] = ref.growth(pl, c["k0"], K, E0, w0, "R0")[0]
             row["gamma_R0_printed_cs"] = ref.growth(pl, c["k0"], K, E0, w0, "R0", cs_T=1.5)[0]
         rows.append(row)
-    gmax = max(r["gamma_R1"] for r in rows)
     for r in rows:
         g = r["gamma_R1"]
-        r["gated"] = bool(g > 0 and g >= 0.3 * gmax and (np.log(HI / SEED) + 0.5) / g <= 0.9 * c["tmax"])
+        r["gated"] = bool(g > 0 and (np.log(HI / SEED) + 0.5) / g <= 0.9 * c["tmax"])
     eps = float(pl.deps_dw(w0.real, c["k0"]).real)
     return {"omega0": [w0.real, w0.imag], "g0": float(pl.g(w0.real, c["k0"]).real), "eps_prime": eps,
             "v_g": float((pl.omega(c["k0"] + 1e-4, w0) - pl.omega(c["k0"] - 1e-4, w0)).real / 2e-4),
@@ -177,7 +198,7 @@ def theory():
         tab[name] = {"config": c, **reference_table(c)}
         print(name, [(r["j"], round(r["gamma_R1"] * 1e3, 3), r["gated"]) for r in tab[name]["rows"]], flush=True)
     out["cases"] = tab
-    c = cases["M_mi1836_ord"]
+    c = cases["M_mi1836_ord_j8"]
     plo = plasma_of(c)
     pd_ = ref.Plasma(vte=VTE, mi=1836.0, tau=10.0, eta=1e-8, OmegaD=OMD)
     w0 = plo.omega(c["k0"])
@@ -371,60 +392,49 @@ def run_case(name):
 
 def summary():
     th = json.loads((out_dir / "theory.json").read_text())
-    recs = {p.stem: json.loads(p.read_text()) for p in out_dir.glob("*.json") if p.stem not in ("theory", "summary")}
-    S = {"gates": {}, "cases": {}}
-    S["gates"]["G0a"], S["gates"]["G0b"], S["gates"]["G0c"] = (th[g]["pass"] for g in ("G0a", "G0b", "G0c"))
-
-    def gated(name):
-        return [r for r in th["cases"][name]["rows"] if r["gated"]]
-
-    def gam(rec, j):
-        return next(r for r in rec["results"] if r["j"] == j)
-
+    recs = {p.stem: json.loads(p.read_text()) for p in out_dir.glob("*.json")
+            if p.stem not in ("theory", "summary") and p.stem in th["cases"]}
+    S = {"gates": {g: th[g]["pass"] for g in ("G0a", "G0b", "G0c")}, "cases": {}}
     for name, rec in recs.items():
-        rows = []
-        for r in gated(name):
-            m = gam(rec, r["j"])
-            g = m["gamma_fit"]
-            row = {"j": r["j"], "K_rD": r["K_rD"], "gamma_R1": r["gamma_R1"], "gamma_fit": g,
-                   "rel_R1": None if g is None else g / r["gamma_R1"] - 1, "pump_drift": m.get("pump_drift")}
-            if "gamma_R0" in r:
-                row["gamma_R0"] = r["gamma_R0"]
-                row["rel_R0"] = None if g is None else g / r["gamma_R0"] - 1
-            rows.append(row)
-        ok_ledger = rec["max_ledger_over_U0"] <= TOL["G3_ledger"]
-        ok_gauss = max(rec["max_gauss_over_Ap"]) <= TOL["G3_gauss"]
-        c = {"rows": rows, "ledger_over_U0": rec["max_ledger_over_U0"], "gauss_over_Ap": max(rec["max_gauss_over_Ap"]),
-             "G3": bool(ok_ledger and ok_gauss), "status": rec["status"], "steps": rec["steps"], "wall": rec["wall_time"]}
-        if name.startswith("M_"):
-            if rows:
-                c["G1"] = bool(all(r["rel_R1"] is not None and abs(r["rel_R1"]) <= TOL["G1"] for r in rows))
-            elif max(r["gamma_R1"] for r in th["cases"][name]["rows"]) == 0.0:
-                c["G1"] = bool(all(m["S_max_over_Ap"] < HI for m in rec["results"]))  # stability prediction
-                c["G1_kind"] = "stability"
+        r = th["cases"][name]["rows"][0]
+        m = rec["results"][0]
+        g = m["gamma_fit"]
+        row = {"name": name, "tag": rec["config"]["tag"], "model": rec["config"]["model"], "mi": rec["config"]["mi"],
+               "j": r["j"], "K_rD": r["K_rD"], "gated": r["gated"], "gamma_R1": r["gamma_R1"], "gamma_fit": g,
+               "rel_R1": None if g is None else g / r["gamma_R1"] - 1 if r["gamma_R1"] > 0 else None,
+               "gamma_halves": m.get("gamma_halves"), "window": m["window"], "pump_drift": m.get("pump_drift"),
+               "S_max_over_Ap": m["S_max_over_Ap"], "status": rec["status"], "steps": rec["steps"],
+               "wall": rec["wall_time"], "ledger_over_U0": rec["max_ledger_over_U0"],
+               "gauss_over_Ap": max(rec["max_gauss_over_Ap"])}
+        if "gamma_R0" in r:
+            row["gamma_R0"] = r["gamma_R0"]
+            row["rel_R0"] = None if g is None else g / r["gamma_R0"] - 1
+        row["G3"] = bool(row["ledger_over_U0"] <= TOL["G3_ledger"] and row["gauss_over_Ap"] <= TOL["G3_gauss"])
+        if row["tag"].startswith("M_") and row["gated"]:
+            row["G1"] = bool(row["rel_R1"] is not None and abs(row["rel_R1"]) <= TOL["G1"])
+            row["G4"] = bool(row["pump_drift"] is not None and abs(row["pump_drift"]) <= TOL["G4"])
+            if row["model"] == "ord":
+                row["G1b"] = bool(row["rel_R0"] is not None and abs(row["rel_R0"]) <= TOL["G1b"])
+        S["cases"][name] = row
+    for name, row in S["cases"].items():
+        if row["tag"].startswith("R_"):
+            bn = f"M_mi1836_{row['model']}_j{row['j']}"
+            b = S["cases"].get(bn)
+            if b and b["gamma_fit"] and row["gamma_fit"]:
+                row["G2_rel_to_base"] = row["gamma_fit"] / b["gamma_fit"] - 1
+                row["G2"] = bool(abs(row["G2_rel_to_base"]) <= TOL["G2"])
             else:
-                c["G1"] = None  # no gated K and growth predicted: recorded without a gate
-                c["G1_kind"] = "ungated"
-            c["G4"] = bool(all(r["pump_drift"] is not None and abs(r["pump_drift"]) <= TOL["G4"] for r in rows)) if rows else None
-            if name.endswith("_ord"):
-                c["G1b"] = bool(rows and all(r["rel_R0"] is not None and abs(r["rel_R0"]) <= TOL["G1b"] for r in rows))
-        S["cases"][name] = c
-    base = {"ord": "M_mi1836_ord", "dk_up": "M_mi1836_dk_up"}
-    for name in recs:
-        if name.startswith("R_"):
-            mod = "ord" if name.endswith("_ord") else "dk_up"
-            bn = base[mod]
-            if bn not in recs:
-                continue
-            diffs = []
-            for r in gated(bn):
-                g0, g1 = gam(recs[bn], r["j"])["gamma_fit"], gam(recs[name], r["j"])["gamma_fit"]
-                diffs.append(None if g0 is None or g1 is None else g1 / g0 - 1)
-            S["cases"][name]["G2_diffs"] = diffs
-            S["cases"][name]["G2"] = bool(all(d is not None and abs(d) <= TOL["G2"] for d in diffs))
+                row["G2"] = False
+    gl = {}
+    for row in S["cases"].values():
+        for g in ("G1", "G1b", "G2", "G3", "G4"):
+            if g in row:
+                gl.setdefault(g, []).append(row[g])
+    S["gate_summary"] = {g: {"pass": sum(v), "of": len(v)} for g, v in gl.items()}
     (out_dir / "summary.json").write_text(json.dumps(S, indent=2, default=float) + "\n")
     for k, v in S["cases"].items():
-        print(k, {q: v[q] for q in ("G1", "G1b", "G2", "G3", "G4") if q in v})
+        print(k, {q: v[q] for q in ("G1", "G1b", "G2", "G3", "G4") if q in v}, v["gamma_fit"], v["gamma_R1"])
+    print(S["gate_summary"])
 
 
 if __name__ == "__main__":
