@@ -61,3 +61,21 @@ def test_r1_phased_drive_and_linear_theory():
     tt = np.linspace(0, 100, 11)
     X, _ = r1.coupled_solution(tt, 0.02, 1.0)
     assert np.allclose(X, r1.coupled_solution_ivp(tt, 0.02, 1.0), atol=1e-8)
+
+
+def test_h08_run_restores_patches_and_continues_time_axis(tmp_path):
+    """h08.run patches _sim.run/_sim.rhs; repeated in-process calls must not stack offsets or closures."""
+    import json
+
+    import h08
+    from darkspectrax import _simulation as _sim
+
+    run0, rhs0 = _sim.run, _sim.rhs
+    h08.RUNS = tmp_path
+    args = SimpleNamespace(vq=0.03, nu=0.0, Nx=8, Nn=8, T=40.0, chunk=20.0, control=False)
+    for _ in range(2):
+        assert h08.run(args) == 0
+        assert _sim.run is run0 and _sim.rhs is rhs0
+    t = [np.load(tmp_path / f"vq0.03_nu0_Nx8_Nn8.part{i}.npz")["t"] for i in (0, 1)]
+    assert t[0][0] == 0.0 and np.isclose(t[1][0], t[0][-1]) and np.isclose(t[1][-1], 40.0)
+    assert json.loads((tmp_path / "vq0.03_nu0_Nx8_Nn8.part1.json").read_text())["t_start"] == pytest.approx(t[0][-1])

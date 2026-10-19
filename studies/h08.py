@@ -63,8 +63,11 @@ def nu_matrix(nu):
     return ((nu, nu), (0.0, nu * np.sqrt(1 / MI)))
 
 
+COLL = "dougherty"  # "dougherty_g" (LBO-G, beta = 0) is selected by studies/h08_lbog.py
+
+
 def model(vq, Nn, Nx, nu):
-    kw = dict(collision_model="dougherty", nu_dougherty=nu_matrix(nu)) if nu > 0 else {}
+    kw = dict(collision_model=COLL, nu_dougherty=nu_matrix(nu)) if nu > 0 else {}
     return ds.Model(Nx=Nx, Nn=Nn, Lx=Lx, qs=(-1.0, 1.0), Omega_cs=(1.0, 1 / MI), alpha_s=(a_e,) * 3 + (a_i,) * 3,
                     u_s=(0.0,) * 6, mode="prescribed_drive", E_drive=(vq * vte, 0.0, 0.0), omega_drive=w_tot,
                     frame="pump", **kw)
@@ -122,7 +125,7 @@ def run(a):
         y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], [] if a.control else seeds(0)))
     ipart = len(parts)
     t1 = min(a.T, t0 + max(SEG, SEG * (a.chunk // SEG)))
-    stats, run0 = [], _sim.run
+    stats, run0, rhs_orig = [], _sim.run, _sim.rhs
 
     def counted(*args, **kw):
         kw["t0"] = kw.get("t0", 0.0) + t0
@@ -131,10 +134,13 @@ def run(a):
         return o
 
     _sim.run = counted
-    install_closure(m, C_CLOSURE)
-    tic = time.perf_counter()
-    out = ds.run_adaptive(m, y0, t1 - t0, SEG, n_save_segment=NSAVE, rtol=1e-10, atol=1e-14, max_steps=200_000,
-                          noise_floor=NF)
+    try:  # restore the module-level patches so repeated in-process calls do not stack t0 offsets or closures
+        install_closure(m, C_CLOSURE)
+        tic = time.perf_counter()
+        out = ds.run_adaptive(m, y0, t1 - t0, SEG, n_save_segment=NSAVE, rtol=1e-10, atol=1e-14, max_steps=200_000,
+                              noise_floor=NF)
+    finally:
+        _sim.run, _sim.rhs = run0, rhs_orig
     wall = time.perf_counter() - tic
     good = np.isfinite(out["t"]) & np.all(np.isfinite(out["W"]), axis=1)
     for k in ("t", "K", "W", "B", "Ck", "Fk", "Dk", "U_gamma", "U_D"):

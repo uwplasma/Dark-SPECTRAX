@@ -36,7 +36,7 @@ jax.config.update("jax_enable_x64", True)
 PARENT_COMMIT = "3de6b2b8cdc8e79af68ea7175c318e135708c7b2"  # SPECTRAX integration/dark-baseline, not a release
 MODES = ("ordinary", "prescribed_drive", "self_consistent")
 FRAMES = ("fixed", "pump")
-COLLISION_MODELS = ("none", "dougherty")
+COLLISION_MODELS = ("none", "dougherty", "dougherty_g")
 _FFT_AXES = (-1, -3, -2)  # parent convention: rfft along x, stored on axis -2
 
 __all__ = ["Model", "MODES", "FRAMES", "COLLISION_MODELS", "PARENT_COMMIT", "rhs", "inner", "hermite_index", "basis_of"]
@@ -85,6 +85,7 @@ class Model:
     frame: str = "fixed"
     collision_model: str = "none"
     nu_dougherty: object = 0.0
+    beta: float = 0.0  # LBO-G cross-species parameter (collision_model "dougherty_g" only; parent #73)
     _p: dict = field(default=None, repr=False)
 
     def __post_init__(self):
@@ -198,11 +199,11 @@ def rhs(t, y, model: Model):
         p["sqrt_n_plus"], p["sqrt_n_minus"], p["sqrt_m_plus"], p["sqrt_m_minus"],
         p["sqrt_p_plus"], p["sqrt_p_minus"], p["Lx"], p["Ly"], p["Lz"], p["nu"], p["D"],
         a_s, u_s, p["qs"], p["Omega_cs"], Nn, Nm, Np, Ns, mask23=mask, F0=F0)
-    if m.collision_model == "dougherty":  # parent #71: conservative Dougherty, exact in the moving basis
+    if m.collision_model in ("dougherty", "dougherty_g"):  # parent #71 (LBO-EM) / #73 (LBO-G, beta): conservative Dougherty, exact in the moving basis
         nu_D = np.asarray(m.nu_dougherty, float)
         nu_D = np.eye(Ns) * nu_D if nu_D.ndim == 0 else nu_D
         dCk = dCk + _parent_dougherty(C.reshape(Ns, Np, Nm, Nn, Ny, Nx, Nz), nu_D, a_s, u_s, p["Omega_cs"],
-                                      Nn, Nm, Np, Ns, mask)
+                                      Nn, Nm, Np, Ns, mask, beta=m.beta if m.collision_model == "dougherty_g" else None)
     J = _parent_current(p["qs"], a_s, u_s, Ck, Nn, Nm, Np, Ns)
 
     dE = 1j * _cross(nabla, Fk[3:]) - J / om0

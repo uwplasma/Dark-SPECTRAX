@@ -1,6 +1,6 @@
 {
  "parent_commit": "dd80b0fdffa08378d0dc71fc2b0603a5a8ff090b",
- "repository_commit": "5d4132f65aa7168842b6ce579abb648833b58649",
+ "repository_commit": "1449549a6975c29d0b23da12b1e3a617ceae9142",
  "dev_vs_record": {
   "240": {
    "parts": 5,
@@ -24,5 +24,6 @@
  "criteria": {
   "chunk240_matches_1e-12": true,
   "chunk200_and_120_ge_1e-8": true
- }
+ },
+ "provenance_note": "Produced by the pre-rebase commit 5d4132f65aa7168842b6ce579abb648833b58649, whose content equals repository_commit (the rebased driver-fix commit); the record was not regenerated."
 }
