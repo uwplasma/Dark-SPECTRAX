@@ -72,7 +72,22 @@ Outside-regime runs (O1: T_e/T_i = 1, O2: w = 0.1, O3: k0 = 0.4 with K up to 0.7
 pass/fail gate: the measured growth is reported against R0 and R1, i.e. the kinetic correction relative to the Zakharov (R0)
 and semi-kinetic (R1) predictions, and the dark change gamma_dark/gamma_ord against R1.
 
-Run: python studies/b10.py theory | run <case> | summary | list
+FOLLOW-UP F1 (declared after the v3 results for the dark upper branch were seen: mi 1836 dark upper j = 7, 8 showed a growth
+3-4 x the R1 value with an explosive late stage, G1/G3 failed, while ordinary and dark j = 5 agreed with R1 within 6-10%). F1 computes the
+EXACT linear Floquet exponent of the same truncated model (same Hermite closure, same truncation, same pump) about the
+pump-only trajectory: the monodromy map over one pump period T0 = 2 pi/w0 acting on a perturbation of every kept Fourier
+index (exact tangent flow by jax.jvp through fixed-step Dopri8, dt = 0.02), its leading multipliers by Arnoldi (scipy eigs, k = 8),
+gamma_F = max ln|mu|/T0. It is a reference of the kinetic problem (no envelope or Boltzmann approximation) and is used
+to say whether R1 or the measured fit is closer for each point; no pass/fail threshold is set in advance (F1 is
+diagnostic, a record and a table). Run: python studies/b10.py floquet <case>
+
+FOLLOW-UP S2 (declared after the v3 results, before running it): at nu = 100 the mi 1836 dark-upper points j = 7, 8
+ended in an explosive stage and failed G1/G3, and the Nn = 64 refinements (ordinary j = 8, dark upper j = 7) blew up (G3), while
+the nu = 300 ordinary refinement (R_nu300) moved gamma by -5.3% (G2 failed at 3%). S2 re-runs the failed points with the
+stronger closure nu = 300 (dark upper j = 7, 8 at Nn = 32; ordinary j = 8 at Nn = 64). Criteria are G1/G3 (dark upper) and G2
+(ordinary Nn = 64 against R_nu300 at Nn = 32), unchanged. If the explosive stage persists at nu = 300 it is not the closure.
+
+Run: python studies/b10.py theory | run <case> | floquet <case> | summary | list
 """
 import json
 import sys
@@ -121,6 +136,11 @@ def all_cases():
     for m, j in REF_J.items():
         cs.append(_case("O1_tau1", m, j if m == "ord" else 5, tau=1.0))
         cs.append(_case("O2_w015", m, j, w=0.15, tmax=4500.0))
+    # S2 (declared after the v3 results): stronger closure, nu = 300, for the points where nu = 100 gave a late explosive stage
+    # (mi 1836 dark upper j = 7, 8) or a closure blow-up at Nn = 64 (ordinary j = 8, nu = 300 reference is R_nu300)
+    cs.append(_case("S2_nu300", "dk_up", 7, nu=300.0))
+    cs.append(_case("S2_nu300", "dk_up", 8, nu=300.0))
+    cs.append(_case("S2_Nn64nu300", "ord", 8, nu=300.0, Nn=64))
     cs.append(_case("O3_k04", "ord", 5, k0=0.4, n=4, tmax=6000.0))
     cs.append(_case("O3_k04", "dk_up", 5, k0=0.4, n=4, tmax=6000.0))
     return {c["name"]: c for c in cs}
@@ -390,6 +410,65 @@ def run_case(name):
     print(name, status, [(r["j"], r["gamma_fit"]) for r in res], flush=True)
 
 
+def floquet(name):
+    """Exact linear Floquet exponent of the truncated model about the pump-only trajectory (follow-up F1)."""
+    import jax.numpy as jnp
+    import darkspectrax as ds
+    from scipy.sparse.linalg import LinearOperator, eigs
+    c = all_cases()[name]
+    tic = time.time()
+    c0 = dict(c)
+    Lx = 2 * np.pi / (c["k0"] / c["n"])
+    model = apply_mask(model_of(c0, Lx=Lx), c0)
+    global SEED
+    seed_save, SEED = SEED, 0.0
+    try:
+        y, w0, _ = build_state(c0, model)
+    finally:
+        SEED = seed_save
+    T0 = 2 * np.pi / w0
+    keep = keep_indices(c["n"], c["J"][0])
+    keys = ["Ck", "Fk", "Dk"]
+    A_p = E0_of(c) / 2
+    sizes = [np.asarray(y[k]).shape[0] for k in keys]
+    nd = sum(sizes) * len(keep)
+    import diffrax
+    import jax
+    dt = 0.02
+    ys0 = {k: jnp.asarray(v) for k, v in y.items()}
+
+    def flow_ys(yy):
+        return ds.solve(model, yy, T0, n_save=2, fixed_dt=dt, adjoint=diffrax.ForwardMode())
+
+    def tang(v):
+        base = ys0
+        tan = {k: jnp.zeros_like(x) for k, x in base.items()}
+        o = 0
+        for i in keep:
+            for k, s_ in zip(keys, sizes):
+                tan[k] = tan[k].at[:, 0, i, 0].set(v[o:o + s_])
+                o += s_
+        _, t_out = jax.jvp(flow_ys, (base,), (tan,))
+        return jnp.concatenate([t_out[k][-1][:, 0, i, 0] for i in keep for k in keys])
+
+    tang = jax.jit(tang)
+
+    def mv(x):
+        v = jnp.asarray(x[:nd] + 1j * x[nd:])
+        d = np.asarray(tang(v))
+        return np.concatenate([d.real, d.imag])
+
+    op = LinearOperator((2 * nd, 2 * nd), matvec=mv, dtype=float)
+    vals = eigs(op, k=8, which="LM", return_eigenvectors=False, tol=1e-6, maxiter=400, ncv=40)
+    vals = sorted(vals, key=lambda z: -abs(z))
+    g = [float(np.log(abs(z)) / T0) for z in vals]
+    rec = {"case": name, "command": f"python studies/b10.py floquet {name}", "config": c, "T0": T0, "multipliers": [[z.real, z.imag] for z in vals],
+           "growth": g, "gamma_floquet": max(g), "dim": 2 * nd, "wall_time": time.time() - tic,
+           "repository_commit": ds._simulation._git_sha()}
+    (out_dir / f"floquet_{name}.json").write_text(json.dumps(rec, indent=2, default=float) + "\n")
+    print(name, "gamma_floquet", max(g), "all", g, flush=True)
+
+
 def summary():
     th = json.loads((out_dir / "theory.json").read_text())
     recs = {p.stem: json.loads(p.read_text()) for p in out_dir.glob("*.json")
@@ -410,15 +489,17 @@ def summary():
             row["gamma_R0"] = r["gamma_R0"]
             row["rel_R0"] = None if g is None else g / r["gamma_R0"] - 1
         row["G3"] = bool(row["ledger_over_U0"] <= TOL["G3_ledger"] and row["gauss_over_Ap"] <= TOL["G3_gauss"])
-        if row["tag"].startswith("M_") and row["gated"]:
+        if (row["tag"].startswith("M_") or row["tag"] == "S2_nu300") and row["gated"]:
             row["G1"] = bool(row["rel_R1"] is not None and abs(row["rel_R1"]) <= TOL["G1"])
             row["G4"] = bool(row["pump_drift"] is not None and abs(row["pump_drift"]) <= TOL["G4"])
             if row["model"] == "ord":
                 row["G1b"] = bool(row["rel_R0"] is not None and abs(row["rel_R0"]) <= TOL["G1b"])
         S["cases"][name] = row
     for name, row in S["cases"].items():
-        if row["tag"].startswith("R_"):
+        if row["tag"].startswith("R_") or row["tag"] == "S2_Nn64nu300":
             bn = f"M_mi1836_{row['model']}_j{row['j']}"
+            if row["tag"] == "S2_Nn64nu300":
+                bn = f"R_nu300_{row['model']}_j{row['j']}"
             b = S["cases"].get(bn)
             if b and b["gamma_fit"] and row["gamma_fit"]:
                 row["G2_rel_to_base"] = row["gamma_fit"] / b["gamma_fit"] - 1
@@ -443,6 +524,8 @@ if __name__ == "__main__":
         theory()
     elif cmd == "run":
         run_case(sys.argv[2])
+    elif cmd == "floquet":
+        floquet(sys.argv[2])
     elif cmd == "summary":
         summary()
     elif cmd == "list":

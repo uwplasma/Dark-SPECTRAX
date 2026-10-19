@@ -1,0 +1,116 @@
+{
+  "case": "R_Nn64_dk_up_j7",
+  "command": "python studies/b10.py run R_Nn64_dk_up_j7",
+  "config": {
+    "name": "R_Nn64_dk_up_j7",
+    "tag": "R_Nn64",
+    "model": "dk_up",
+    "mi": 1836.0,
+    "tau": 10.0,
+    "w": 0.04,
+    "k0": 0.05,
+    "n": 2,
+    "J": [
+      7
+    ],
+    "Nn": 64,
+    "Nx": 30,
+    "nu": 100.0,
+    "tmax": 9000.0
+  },
+  "reference": {
+    "omega0": [
+      1.1618463275237367,
+      0.0
+    ],
+    "g0": 1.3490771353402886,
+    "eps_prime": 3.0060837339362934,
+    "v_g": 0.019129002514217675,
+    "E0": 0.0282842712474619,
+    "A_p": 0.01414213562373095,
+    "rows": [
+      {
+        "j": 7,
+        "K": 0.17500000000000002,
+        "K_rD": 0.0175,
+        "gamma_R1": 0.0008384301227337165,
+        "re_Omega_R1": 0.00011866013328908018,
+        "gated": true
+      }
+    ]
+  },
+  "pump_omega_eigen": 1.1618463275192648,
+  "A_p": 0.01414213562373095,
+  "seeds": [
+    {
+      "j": 7,
+      "which": "up",
+      "index": 9,
+      "left_moving_partner": false,
+      "omega": -1.1713951864700558
+    },
+    {
+      "j": 7,
+      "which": "lo",
+      "index": 5,
+      "left_moving_partner": true,
+      "omega": -1.16438247814669
+    }
+  ],
+  "status": "failure",
+  "failure_reason": "diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+  "t_reached": 514.8350750659652,
+  "steps": 400000,
+  "U_field0": 0.0006725075866151711,
+  "max_ledger_defect": 0.4767036437988281,
+  "max_ledger_over_U0": 708.8450053004565,
+  "max_gauss": [
+    1.2862197421537486e-11,
+    4.7477017273697814e-12
+  ],
+  "max_gauss_over_Ap": [
+    9.094947017729282e-10,
+    3.3571320864742575e-10
+  ],
+  "pump_A0_over_Ap": 0.9999999999877193,
+  "results": [
+    {
+      "j": 7,
+      "K": 0.17500000000000002,
+      "S_final_over_Ap": 74998.42648069913,
+      "S_max_over_Ap": 74998.42648069913,
+      "trace_t": [
+        3.2,
+        219.6,
+        435.9
+      ],
+      "trace_lnS": [
+        -12.0238,
+        -12.0337,
+        -6.0589
+      ],
+      "window": [
+        362.3314078720553,
+        411.0027910190478
+      ],
+      "gamma_fit": 0.04800561487070132,
+      "gamma_halves": [
+        0.04784422959713005,
+        0.047622273813739575
+      ],
+      "pump_drift": -1.649251187396672e-06,
+      "up_over_lo_at_end": 157.35627702490657
+    }
+  ],
+  "wall_time": 534.2822756767273,
+  "repository_commit": "b29065326c6ef079997dc6c64abaf6e4b1928fb0",
+  "parent_commit": "3de6b2b8cdc8e79af68ea7175c318e135708c7b2",
+  "settings": {
+    "rtol": 1e-10,
+    "atol": 1e-12,
+    "M": 5,
+    "SEED": 0.0003,
+    "LO": 0.006,
+    "HI": 0.06
+  }
+}
