@@ -5,17 +5,32 @@ tier with exact Langmuir dispersion roots, kinetic ion function, and the dark ge
 Units: parent (c = omega_pe = 1, electron mass 1, eps0 = 1). Pump = the real wave E(x,t) = E0 cos(k0 x - w0 t), E0 = peak
 Poisson field, |F_k0| = E0/2 =: A_p, w = E0^2/(2 n T_e) (= |E|^2/(8 pi n T_e) of Zakharov 1972).
 
+REVISION v2 (declared in the commit that follows the v1 failure, before any production run of v2). The v1 production run
+(M_mi1836... only M_mi100_ord was started; record kept as studies/b10/v1_failed_M_mi100_ord.json) FAILED at t = 702: the
+Hermite closure with nu = 1 is numerically unstable (growth of the top electron coefficients, pump-only control confirmed it;
+nu = 3, 10, 40 also blew up in short shakedown runs for mi 100 ordinary or dark upper at t = 625-1725; nu = 100 survived
+t = 2500-5000). A second finding of the shakedown: with the periodic box the pump's Fourier index 2n hosts the second
+harmonic, the K = k0 and K = 2k0 (Bragg backscatter, lower sideband = the counter-propagating pump wave) sideband families,
+which grow from start-up transients faster than the seeded sidebands and deplete the pump (ordinary: counter-propagating wave 1.4e-2
+of the pump at t = 1335, pump amplitude -10% at t = 6000; dark upper: blow-up at t = 500-925 depending on Nx at nu = 10). v2
+therefore (i) uses nu = 100, (ii) removes Fourier index 2n from the nonlinear terms (Galerkin truncation on top of the parent
+2/3 mask: studies/b10.py apply_mask), which removes those families and with them j = 2n sidebands (J drops j = 6 whose lower
+sideband lives at index 2n = 4; J keeps no j = n, 2n), (iii) uses w = 0.04, SEED = 3e-4, LO = 6e-3, HI = 6e-2 (shorter windows,
+each 2.3 e-folds, so the run time is below the stiff-closure budget), (iv) replaces the nu 1 -> 0.25 refinement by nu 100 -> 300.
+The omission of index 2n changes the physics at order w (no second harmonic, no Bragg backscatter): it is a modelling choice,
+stated in the results. The v2 tolerances are those of v1.
+
 Setup (declared before running). v_te = 0.1 c (r_D = 0.1), T_e/T_i = 10 (main), eta = 0.3, Omega_D = 1 (= omega_pe at
 k = 0: the Langmuir wave splits into the upper (~1.17) and lower (~0.87) mixed Langmuir-dark normal modes; the pump is
 ONE normal mode, taken from the eigenvector of the linearized model itself at k0, so it is a pure right-moving
 travelling wave; the sidebands are seeded with the eigenvectors of the same branch). Main: k0 = 0.05 (k0 r_D = 0.005),
-w = 0.02 (v_osc/v_te = 0.2), box k1 = k0/2 (pump at Fourier index n = 2), sideband pairs K = j k1,
-j in {1,3,5,6,7,8,10,12,16} (K r_D = 0.0025 ... 0.04; j = n, 2n excluded: K = k0 puts a sideband at k = 0, K = 2k0 makes
-the lower sideband share the pump's Fourier index and frequency separation is lost). Sidebands: upper k0 + K at index
+w = 0.04 (v_osc/v_te = 0.28), box k1 = k0/2 (pump at Fourier index n = 2), sideband pairs K = j k1,
+j in {1,3,5,7,8,10,12,16} (K r_D = 0.0025 ... 0.04; j = n, 2n are not used: see v2). Sidebands: upper k0 + K at index
 n + j; lower k0 - K at index n - j if positive, else (j > n) the left-moving partner (conjugate) at index j - n. Each is seeded
-at 3e-5 A_p with a random phase (rng seed 20261018). Mass ratios 1836 and 100. Models: ordinary; dark upper; dark lower.
-Hermite order Nn (same for both species), 1D (Nm = Np = 1), Nx = 60, hypercollision nu = 1 (parent numerical closure),
-Dopri8, rtol 1e-10, atol 1e-12 (atol 1e-20 was found unstable at the shakedown stage and is not used).
+at SEED A_p = 3e-4 A_p with a random phase (rng seed 20261018). Mass ratios 1836 and 100. Models: ordinary; dark upper; dark lower.
+Hermite order Nn (same for both species), 1D (Nm = Np = 1), Nx = 60, hypercollision nu = 100 (parent numerical closure),
+Dopri8, rtol 1e-10, atol 1e-12 (atol 1e-20 was found unstable at the shakedown stage and is not used). The v1 text below with
+w = 0.02, SEED 3e-5, LO 3e-3, HI 4e-2, nu = 1 is superseded by the v2 values.
 
 Measurement. F_x(index m, t) = R_m e^{-i w0 t} + conj(L_m) e^{+i w0 t} (R_m: wave at +m k1, L_m: wave at -m k1, both with
 e^{-i w0 t}). R_m and L_m are obtained by demodulation with e^{+-i w0 t} (w0 = the pump's linear eigenfrequency) and three
@@ -37,7 +52,7 @@ Gates (declared before any production run; the 'theory' stage commits the refere
        mi 1836 and 100): |gamma_fit/gamma_R1 - 1| <= 0.15. Cases where a gated K does not reach HI count as failures.
   G1b ordinary only: same K, |gamma_fit/gamma_R0 - 1| <= 0.30 (R0 uses c_s^2 = (T_e + 3 T_i)/M; the paper's printed 3/2 T_i
        changes R0 by the recorded amount and is not used).
-  G2  refinement (mi 1836, ordinary and dark upper): Nn 32 -> 64, Nx 60 -> 72, and (ordinary) nu 1 -> 0.25: |gamma(refined)/gamma(base) - 1|
+  G2  refinement (mi 1836, ordinary and dark upper): Nn 32 -> 64, Nx 60 -> 72, and (ordinary) nu 100 -> 300: |gamma(refined)/gamma(base) - 1|
        <= 0.03 at every gated K.
   G3  every run: max |ledger defect| <= 1e-6 U_field(0) (cumulative over restart segments); Gauss residuals <= 1e-8 max|F|.
   G4  pump: |A_p(t_end)/A_p(0) - 1| <= 0.05 at the window end of every gated K.
@@ -58,20 +73,20 @@ import b10_ref as ref
 
 out_dir = Path(__file__).resolve().parent / "b10"
 VTE, ETA, OMD = 0.1, 0.3, 1.0
-SEED, LO, HI = 3e-5, 3e-3, 4e-2
+SEED, LO, HI = 3e-4, 6e-3, 6e-2
 MB = 5  # boxcar samples per period of exp(2 i w0 t)
 SEGN = 2500  # samples per restart segment
 RTOL, ATOL = 1e-10, 1e-12
 RNG_SEED = 20261018
 TOL = {"G0a": 0.05, "G0b": 0.01, "G0c": 1e-4, "G1": 0.15, "G1b": 0.30, "G2": 0.03, "G3_ledger": 1e-6, "G3_gauss": 1e-8,
        "G4": 0.05}
-MAIN_J = (1, 3, 5, 6, 7, 8, 10, 12, 16)
-O3_J = (1, 2, 3, 5, 6, 7)
+MAIN_J = (1, 3, 5, 7, 8, 10, 12, 16)
+O3_J = (1, 2, 3, 5, 6, 7)  # n = 4: j = 4 (K = k0) and 8 (2n) excluded
 
 
-def _case(tag, model, mi=1836.0, tau=10.0, w=0.02, k0=0.05, n=2, J=MAIN_J, Nn=32, nu=1.0, tmax=None, Nx=None, dNx=0):
+def _case(tag, model, mi=1836.0, tau=10.0, w=0.04, k0=0.05, n=2, J=MAIN_J, Nn=32, nu=100.0, tmax=None, Nx=None, dNx=0):
     nx = Nx or 2 * int(np.ceil(1.5 * (n + max(J) + 2))) + dNx
-    tmax = tmax or (24000.0 if mi > 500 else 12000.0)
+    tmax = tmax or (12000.0 if mi > 500 else 5000.0)
     return {"name": f"{tag}_{model}", "model": model, "mi": mi, "tau": tau, "w": w, "k0": k0, "n": n, "J": list(J),
             "Nn": Nn, "Nx": nx, "nu": nu, "tmax": tmax}
 
@@ -84,12 +99,22 @@ def all_cases():
     for m in ("ord", "dk_up"):
         cs.append(_case("R_Nn64", m, Nn=64))
         cs.append(_case("R_Nx72", m, dNx=12))
-    cs.append(_case("R_nu025", "ord", nu=0.25))
+    cs.append(_case("R_nu300", "ord", nu=300.0))
     for m in ("ord", "dk_up"):
         cs.append(_case("O1_tau1", m, tau=1.0))
-        cs.append(_case("O2_w01", m, w=0.1, tmax=12000.0))
-        cs.append(_case("O3_k04", m, k0=0.4, n=4, J=O3_J, tmax=12000.0))
+        cs.append(_case("O2_w015", m, w=0.15, tmax=5000.0))
+        cs.append(_case("O3_k04", m, k0=0.4, n=4, J=O3_J, tmax=8000.0))
     return {c["name"]: c for c in cs}
+
+
+def apply_mask(model, c):
+    """Galerkin truncation: remove Fourier index 2n (pump second harmonic and the K = k0 / K = 2k0 families) from the
+    nonlinear terms, in addition to the parent 2/3 mask. Done in place on the model's parent dictionary."""
+    import jax.numpy as jnp
+    mk = np.array(model.p["mask23"])
+    mk[:, 2 * c["n"], :] = 0.0
+    model.p["mask23"] = jnp.asarray(mk)
+    return model
 
 
 def plasma_of(c):
@@ -265,7 +290,7 @@ def run_case(name):
     tic = time.time()
     pl_ref = reference_table(c)
     Lx = 2 * np.pi / (c["k0"] / c["n"])
-    model = model_of(c, Lx=Lx)
+    model = apply_mask(model_of(c, Lx=Lx), c)
     y, w0, seeds = build_state(c, model)
     dt = np.pi / (MB * w0)
     nseg = int(np.ceil(c["tmax"] / (SEGN * dt)))
