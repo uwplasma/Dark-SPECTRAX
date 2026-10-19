@@ -25,7 +25,7 @@ studies/gpures_*.py, noise_floor 1e-14, rtol 1e-10, atol 1e-14, 20-unit segments
  * Spectra of J: dense eigvals at the dense checkpoints (t = 300, the second to last and the last), ARPACK (k = 12, LM and LR)
    at every checkpoint, compared where both exist.
  * Dopri8 stability function R(z) = 1 + z b^T (I - zA)^-1 1 from the diffrax tableau; h_stab(lambda) = the largest h with
-   |R(s lambda)| <= 1 for all s in (0, h] (eigenvalues with Re > 0 are put on the imaginary-axis direction: their growth is
+   |R(s lambda)| <= 1 + 1e-6 for all s in (0, h] (v2) (eigenvalues with Re > 0 are put on the imaginary-axis direction: their growth is
    physical, only their oscillation limits the explicit step); h_stab_min = min over the eigenvalues of J.
  * Step history: accepted steps and rejections per 20-unit segment from the run records (dt_acc = segment length / accepted
    steps).  Tolerance test from each checkpoint: 1 time unit with rtol in {1e-10, 1e-8, 1e-6, 1e-4}, same atol and noise
@@ -51,7 +51,7 @@ Decomposition of the collapse C = dt_acc(t_ref) / dt_acc(t_f):
  Both are reported; the curable fraction is stated as the interval [min, max] of the two, the rest is not curable by an integrator
  (accuracy needs the full resolution of a rough or growing solution).
 Gates:
- S0 (consistency of the numerics)  JVP vs central finite difference on a random direction rel. error <= 1e-5; J_L off-block
+ S0 (consistency of the numerics)  JVP vs central finite difference on a random direction (best of 3 eps, v2) rel. error <= 1e-5; J_L off-block
     leakage <= 1e-10 of ||J_L||_F; where dense and ARPACK both exist: |rho_dense - rho_arpack| <= 1e-3 rho_dense and
     |abscissa_dense - abscissa_arpack| <= 1e-3 + 1e-3 |abscissa_dense|.  A failure is recorded and the affected quantity is
     reported as unverified.
@@ -61,6 +61,22 @@ Gates:
 Eigenvalues of the strongly non-normal operator are round-off sensitive (rclosure: 0.756 dense vs 0.846 ARPACK vs 0.702
 time-domain); hence the time-domain tangent growth and the tolerance test are the primary evidence and the eigenvalue bounds
 secondary, and the report states this.
+
+REVISION v2 (declared after a smoke measurement on the t = 100 checkpoint of the c = 4 run, before any production-checkpoint
+result existed; the production runs only wrote the checkpoints).  The smoke test showed three definitional defects, fixed here
+and not by looking at near-failure numbers:
+ (i)  Dopri8 has |R(i y)| > 1 by up to 1e-8 for y < 2 (8th-order error term), so the strict criterion |R| <= 1 gives an imaginary-axis
+      "limit" of 0.008, which is meaningless for the step.  Stability now means |R(s lambda)| <= 1 + 1e-6 (a per-step amplification the
+      1e-10 tolerance does not control would be larger); this gives the imaginary-axis limit ~3.7 and the real-axis limit 5.17.
+ (ii) The closure rate nu in the #66 wrapper depends on max|E - <E>|, so the exact Jacobian contains a rank-one feedback of the field
+      on all Hermite rows (d nu/dE s(n) C_n).  The homogeneous-background J_L then has nu = 0 (no closure!).  Now: J_L is the
+      background linearization with the closure rate frozen at the checkpoint value nu* (closure = a linear damping operator, the
+      block an exponential/implicit treatment would take); J_fz is the full-state Jacobian with nu frozen; the exact J (live closure) is
+      what the integrator sees.  Reported separately: J_L (streaming + closure + Maxwell), J_fz - J_L (finite-amplitude mode coupling),
+      J - J_fz (closure-field feedback).  The gates HA/HC use the exact J.
+ (iii) The finite-difference check of the JVP (gate S0) uses the best of eps in {1e-4, 1e-5, 1e-6} relative to |v|, because max|E|
+      is only piecewise smooth.
+Everything else (checkpoints, hypotheses, thresholds, decomposition, verdict rules) is unchanged.
 
 Runs: studies/stiffdiag_batch.sh CASE (production to failure, checkpoints), then
   python studies/stiffdiag_gates.py measure CASE  -> studies/stiffdiag/<case>.json   (CASE in c4, c64)
@@ -108,7 +124,7 @@ def dopri8_stability():
     for i, t in enumerate(th):
         z = zs * np.exp(1j * t)
         R = np.abs(np.polyval(r[::-1], z))
-        bad = np.nonzero(R > 1.0)[0]
+        bad = np.nonzero(R > 1.0 + 1e-6)[0]
         crit[i] = zs[bad[0]] if bad.size else zs[-1]
     return r, th, crit
 
@@ -123,6 +139,33 @@ def h_stab(lam, th, crit):
     c = np.interp(ang, th, crit)
     with np.errstate(divide="ignore"):
         return np.where(mag > 1e-12, c / np.maximum(mag, 1e-300), np.inf)
+
+
+def closure_rhs(m, c, rhs0, nu_fixed=None):
+    """The nxconv_run.install_closure wrapper around ``rhs0``; ``nu_fixed`` (shape (Ns,)) freezes the closure rate."""
+    import jax.numpy as jnp
+    from spectrax._model import field_scaled_closure_rate
+
+    from darkspectrax._model import basis_of
+    Ns, Nn = m.Ns, m.Nn
+    n = np.arange(Nn, dtype=float)
+    sn = jnp.asarray(n * (n - 1) * (n - 2) / ((Nn - 1) * (Nn - 2) * (Nn - 3)))
+    qs, Om = jnp.asarray(np.asarray(m.qs, float)), jnp.asarray(np.asarray(m.Omega_cs, float))
+    mask = m.p["mask23"]
+
+    def nu_of(y, model):
+        Ex = jnp.fft.irfftn(y["Fk"][0] * mask, s=(m.Nz, m.Ny, m.Nx), axes=(-1, -3, -2), norm="forward")
+        F = jnp.stack([Ex, jnp.zeros_like(Ex), jnp.zeros_like(Ex)])
+        return field_scaled_closure_rate(F, basis_of(model, y)[1], qs, Om, Nn, 1, 1, Ns, c).reshape(Ns)
+
+    def rhs(t, y, model):
+        out = rhs0(t, y, model)
+        nu = nu_of(y, model) if nu_fixed is None else nu_fixed
+        Ck = y["Ck"].reshape(Ns, Nn, *y["Ck"].shape[1:])
+        damp = -(nu[:, None, None, None, None] * sn[None, :, None, None, None]) * Ck
+        return {**out, "Ck": out["Ck"] + damp.reshape(y["Ck"].shape)}
+    rhs.nu_of = nu_of
+    return rhs
 
 
 class System:
@@ -168,11 +211,9 @@ class System:
         return jnp.concatenate([C.real.ravel(), C.imag[:, 1:].ravel(), F.real.ravel(), F.imag[:, 1:].ravel(),
                                 jnp.real(y["B"][0])])
 
-    def func(self, base):
-        from darkspectrax import _simulation as _sim
-
+    def func(self, base, rhs):
         def f(v):
-            return self.pack(_sim.rhs(self.t, self.unpack(v, base), self.m))
+            return self.pack(rhs(self.t, self.unpack(v, base), self.m))
         return f
 
     def background(self):
@@ -181,10 +222,10 @@ class System:
         y["Fk"] = y["Fk"].at[:, 0, 1:, 0].set(0.0)
         return y
 
-    def dense(self, base, chunk=384):
+    def dense(self, base, rhs, chunk=384):
         import jax
         import jax.numpy as jnp
-        f = self.func(base)
+        f = self.func(base, rhs)
         v0 = self.pack(base)
         _, lin = jax.linearize(f, v0)
         vl = jax.jit(jax.vmap(lin))
@@ -194,9 +235,9 @@ class System:
             cols.append(np.asarray(vl(jnp.eye(self.n)[idx])))
         return np.concatenate(cols, 0).T  # J[:, j] = lin(e_j)
 
-    def operator(self, base):
+    def operator(self, base, rhs):
         import jax
-        f = self.func(base)
+        f = self.func(base, rhs)
         _, lin = jax.linearize(f, self.pack(base))
         lj = jax.jit(lin)
         return lambda x: np.asarray(lj(np.asarray(x, float)))
@@ -292,12 +333,12 @@ def segment_steps(info, npz, t_c):
 
 
 def measure(key):
-    import jax
     import jax.numpy as jnp
     from scipy.linalg import eigvals
     from scipy.sparse.linalg import svds
 
     import darkspectrax as ds
+    from darkspectrax import _simulation as _sim
     from lane_c_run import model
     from nxconv_run import install_closure
     case, c, want, dense_at = CASES[key]
@@ -308,7 +349,9 @@ def measure(key):
     sel = [(i, info, npz) for i, (info, npz) in enumerate(pr)
            if any(abs(info["t_end"] - w) < 1e-6 for w in want) or i == len(pr) - 1]
     m = model(0.1, 128, 64)
-    install_closure(m, c)
+    rhs0 = _sim.rhs
+    install_closure(m, c)  # the production wrapper (used by ds.run in the tolerance test)
+    live = closure_rhs(m, c, rhs0)
     _, th, crit = dopri8_stability()
     res = {"case": case, "c": c, "t_f": t_f, "dopri8_imag_limit": float(np.interp(np.pi / 2, th, crit)),
            "dopri8_real_limit": float(np.interp(np.pi, th, crit)), "checkpoints": []}
@@ -317,45 +360,51 @@ def measure(key):
         t_c, z = info["t_end"], np.load(npz)
         y = {k: jnp.asarray(z["y_" + k]) for k in ("Ck", "Fk", "Dk", "W", "B")}
         S = System(m, y, t_c)
+        base, bg = S.y, S.background()
+        nu_star = live.nu_of(base, m)
+        frozen = closure_rhs(m, c, rhs0, nu_fixed=nu_star)
         rec = {"t": t_c, "n": S.n, "dense": any(abs(t_c - d) < 1e-6 for d in dense_at) or ip == len(pr) - 1,
+               "nu_star": [float(x) for x in nu_star], "E_max": float(np.abs(np.fft.irfft(np.asarray(y["Fk"][0, 0, :, 0]), n=m.Nx) * m.Nx).max()),
                **segment_steps(info, npz, t_c)}
-        base = S.y
-        f = S.func(base)
+        f = S.func(base, live)
         v0 = S.pack(base)
+        rec["live_vs_production_rhs"] = float(np.abs(np.asarray(f(v0)) - np.asarray(S.pack(_sim.rhs(t_c, base, m)))).max())
         w = np.random.default_rng(2).standard_normal(S.n)
-        w *= np.linalg.norm(v0) * 1e-3 / np.linalg.norm(w)
-        mvf = S.operator(base)
-        eps = 1e-3
-        fd = (np.asarray(f(v0 + eps * w)) - np.asarray(f(v0 - eps * w))) / (2 * eps)
-        rec["fd_rel_err"] = float(np.linalg.norm(mvf(w) - fd) / max(np.linalg.norm(fd), 1e-300))
-        mv_full = mvf
-        mv_bg = S.operator(S.background())
+        mv_full = S.operator(base, live)
+        errs = []
+        for eps in (1e-4, 1e-5, 1e-6):
+            ww = w * (np.linalg.norm(v0) / np.linalg.norm(w))
+            fd = (np.asarray(f(v0 + eps * ww)) - np.asarray(f(v0 - eps * ww))) / (2 * eps)
+            errs.append(float(np.linalg.norm(mv_full(ww) - fd) / max(np.linalg.norm(fd), 1e-300)))
+        rec["fd_rel_err"], rec["fd_rel_err_all"] = min(errs), errs
+        mv_fz, mv_bg = S.operator(base, frozen), S.operator(bg, frozen)
         for which in ("LM", "LR"):
-            lam, ok = arnoldi(mv_full, S.n, which)
-            rec[f"arpack_{which}"] = {**spec_summary(lam), "converged": ok}
-            lam, ok = arnoldi(lambda x: mv_full(x) - mv_bg(x), S.n, which)
-            rec[f"arpack_NL_{which}"] = {**spec_summary(lam), "converged": ok}
+            for nm, mv in (("J", mv_full), ("Jfz", mv_fz), ("NLmode", lambda x: mv_fz(x) - mv_bg(x)),
+                           ("NLclosure", lambda x: mv_full(x) - mv_fz(x))):
+                lam, ok = arnoldi(mv, S.n, which)
+                rec[f"arpack_{nm}_{which}"] = {**spec_summary(lam), "converged": ok}
         if rec["dense"]:
-            J = S.dense(base)
-            JL = S.dense(S.background())
+            J = S.dense(base, live)
+            Jfz = S.dense(base, frozen)
+            JL = S.dense(bg, frozen)
             lamJ = eigvals(J, check_finite=False)
             lamL, per_k, leak = block_spectra(JL, S)
             rec["dense_J"] = spec_summary(lamJ)
             rec["J_L"] = {**spec_summary(lamL), "leakage": leak, "worst_k_abscissa": max(per_k, key=lambda d: d["abscissa"]),
-                          "worst_k_rho": max(per_k, key=lambda d: d["rho"])}
-            JN = J - JL
-            rec["J_NL"] = {"fro": float(np.linalg.norm(JN)), "op2": float(svds(JN, k=1, return_singular_vectors=False)[0]),
-                           "fro_J": float(np.linalg.norm(J)), "fro_J_L": float(np.linalg.norm(JL))}
+                          "worst_k_rho": max(per_k, key=lambda d: d["rho"]), "per_k": per_k}
+            rec["norms"] = {"fro_J": float(np.linalg.norm(J)), "fro_Jfz": float(np.linalg.norm(Jfz)), "fro_J_L": float(np.linalg.norm(JL)),
+                            "fro_NLmode": float(np.linalg.norm(Jfz - JL)), "fro_NLclosure": float(np.linalg.norm(J - Jfz)),
+                            "op2_NLmode": float(svds(Jfz - JL, k=1, return_singular_vectors=False)[0]),
+                            "op2_NLclosure": float(svds(J - Jfz, k=1, return_singular_vectors=False)[0])}
             hJ, hL = h_stab(lamJ, th, crit), h_stab(lamL, th, crit)
             rec["h_stab_min_J"], rec["h_stab_min_J_L"] = float(hJ.min()), float(hL.min())
             rec["n_unstable_J"] = int((lamJ.real > 1e-6).sum())
             rec["n_unstable_J_L"] = int((lamL.real > 1e-6).sum())
             rec["tangent"] = tangent_growth(J, S, m.Nn)
-            del J, JL, JN
-        else:
-            lam = np.asarray(arnoldi(mv_full, S.n, "LM")[0])
-            rec["h_stab_min_J_arpack_LM"] = float(h_stab(lam, th, crit).min())
-        # tolerance test
+            rec["tangent_Jfz"] = tangent_growth(Jfz, S, m.Nn)
+            del J, Jfz, JL
+        lam = np.asarray(arnoldi(mv_full, S.n, "LM")[0])
+        rec["h_stab_min_J_arpack_LM"] = float(h_stab(lam, th, crit).min())
         rec["tol_test"] = []
         for r in RTOLS:
             o = ds.run(m, y, 1.0, n_save=2, rtol=r, atol=1e-14, noise_floor=1e-14, t0=t_c, max_steps=300000)
@@ -388,11 +437,11 @@ def analyze():
             s = {x["rtol"]: x["steps"] for x in c["tol_test"]}
             return s[1e-10] / s[1e-4]
         rows = [{"t": c["t"], "dt_acc": c["dt_acc"], "dt_over_hstab": ratio(c), "steps_ratio_1e-10_over_1e-4": sratio(c),
-                 "abscissa_arpack": c["arpack_LR"].get("abscissa"), "abscissa_dense": c.get("dense_J", {}).get("abscissa"),
+                 "abscissa_arpack": c["arpack_J_LR"].get("abscissa"), "abscissa_dense": c.get("dense_J", {}).get("abscissa"),
                  "rho_dense": c.get("dense_J", {}).get("rho")} for c in cps]
         HA = all(ratio(c) >= 0.3 and sratio(c) <= 1.5 for c in near)
         HC = all(ratio(c) <= 0.05 and sratio(c) >= 3 for c in near)
-        ab = last.get("dense_J", {}).get("abscissa", last["arpack_LR"].get("abscissa"))
+        ab = last.get("dense_J", {}).get("abscissa", last["arpack_J_LR"].get("abscissa"))
         growth = [(c["t"], c["top3_amp_rate_measured"], c["tangent"]["top3_amp_rate"]) for c in cps if "tangent" in c]
         HB = bool(ab is not None and ab >= 0.01 and all(m is not None and 0.5 <= m / g <= 2 for _, m, g in growth if g > 0))
         verdict = "STIFFNESS-LIMITED" if HA else ("INSTABILITY/ACCURACY-LIMITED" if (HC and ab is not None and ab >= 0.01) else "MIXED")
@@ -405,8 +454,8 @@ def analyze():
         d["f_tol"] = float(1 - np.clip(np.log(s) / (0.75 * np.log(10)), 0, 1))
         d["S0"] = {"fd_rel_err_max": max(c["fd_rel_err"] for c in cps),
                    "leak_max": max((c["J_L"]["leakage"] for c in cps if "J_L" in c), default=None),
-                   "dense_vs_arpack": [{"t": c["t"], "rho": (c["dense_J"]["rho"], c["arpack_LM"].get("rho")),
-                                        "abscissa": (c["dense_J"]["abscissa"], c["arpack_LR"].get("abscissa"))}
+                   "dense_vs_arpack": [{"t": c["t"], "rho": (c["dense_J"]["rho"], c["arpack_J_LM"].get("rho")),
+                                        "abscissa": (c["dense_J"]["abscissa"], c["arpack_J_LR"].get("abscissa"))}
                                        for c in cps if "dense_J" in c]}
         out[key] = d
     (OUT / "summary.json").write_text(json.dumps(out, indent=1, default=float) + "\n")
