@@ -43,7 +43,7 @@ TQ = (250.0, 500.0, 750.0, 950.0, 1000.0)
 
 
 def setup():
-    h08.COLL, h08.RUNS = "dougherty_g", D / "runs"
+    h08.COLL, h08.RUNS = "dougherty_g", D / "runs"  # analysis only; run_all sets the same in its subprocesses
 
 
 def run_all():
@@ -51,7 +51,7 @@ def run_all():
         for extra in ([["--Nx", "8", "--control"], ["--Nx", "32"]]):
             for _ in range(8):  # one process per chunk
                 cmd = ["--vq", str(vq), "--nu", str(nu), "--chunk", str(CHUNK)] + extra
-                subprocess.run([sys.executable, "-c", "import sys, h08; from pathlib import Path; h08.COLL = 'dougherty_g'; "
+                subprocess.run([sys.executable, "-c", "import sys, h08; from pathlib import Path; h08.COLL = 'dougherty_g'; h08.SCRIPT = 'h08_lbog.py (h08.run, dougherty_g)'; "
                                 "h08.RUNS = Path(sys.argv[1]); h08.main(['run'] + sys.argv[2:])", str(D / "runs")] + cmd,
                                cwd=HERE, check=True)
                 nx = 8 if "--control" in extra else 32

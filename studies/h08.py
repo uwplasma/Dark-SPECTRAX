@@ -63,6 +63,7 @@ def nu_matrix(nu):
     return ((nu, nu), (0.0, nu * np.sqrt(1 / MI)))
 
 
+SCRIPT = "h08.py"  # name recorded in "command" (never argv, which can hold local paths)
 COLL = "dougherty"  # "dougherty_g" (LBO-G, beta = 0) is selected by studies/h08_lbog.py
 
 
@@ -161,7 +162,8 @@ def run(a):
            "t_end": t_end, "status": status, "failure_reason": out["failure_reason"], "events": len(out["events"]),
            "steps": int(st[:, 0].sum()), "rejected": int(st[:, 1].sum()), "compile_time": float(st[:, 2].sum()),
            "run_time": float(st[:, 3].sum()), "wall_time": wall, "repository_commit": _sim._git_sha(),
-           "parent_commit": ds.PARENT_COMMIT, "command": "python studies/h08.py " + " ".join(sys.argv[1:])}
+           "parent_commit": ds.PARENT_COMMIT, "command": f"python studies/{SCRIPT} run --vq {a.vq:g} --nu {a.nu:g} --Nx {a.Nx} --Nn {a.Nn} --T {a.T:g} --chunk {a.chunk:g}"
+           + (" --control" if a.control else "")}
     stem = RUNS / f"{case}.part{ipart}"
     np.savez_compressed(f"{stem}.npz", t=out["t"], K_species=Ks, Th=Th, Tx=Tx, W=out["W"],
                         ledger=out["ledger_defect"][0], Ek2=np.abs(out["Fk"][:, 0, 0, :, 0]) ** 2, P=P, R=R, R0=R0,
