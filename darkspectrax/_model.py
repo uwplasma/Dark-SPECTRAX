@@ -199,7 +199,7 @@ def rhs(t, y, model: Model):
         p["sqrt_n_plus"], p["sqrt_n_minus"], p["sqrt_m_plus"], p["sqrt_m_minus"],
         p["sqrt_p_plus"], p["sqrt_p_minus"], p["Lx"], p["Ly"], p["Lz"], p["nu"], p["D"],
         a_s, u_s, p["qs"], p["Omega_cs"], Nn, Nm, Np, Ns, mask23=mask, F0=F0)
-    if m.collision_model in ("dougherty", "dougherty_g"):  # parent #71 (LBO-EM) / #73 (LBO-G, beta): conservative Dougherty, exact in the moving basis
+    if m.collision_model in ("dougherty", "dougherty_g"):  # parent #71 LBO-EM / #73 LBO-G (beta), exact in the moving basis
         nu_D = np.asarray(m.nu_dougherty, float)
         nu_D = np.eye(Ns) * nu_D if nu_D.ndim == 0 else nu_D
         dCk = dCk + _parent_dougherty(C.reshape(Ns, Np, Nm, Nn, Ny, Nx, Nz), nu_D, a_s, u_s, p["Omega_cs"],
