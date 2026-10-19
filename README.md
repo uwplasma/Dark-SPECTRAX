@@ -106,6 +106,7 @@ At $k\to0$ the two coupled branches repel from the common frequency $\omega_{pe}
 | B08 cold perpendicular X (upper), $k=1.1$, $\omega$ ($v_t=0.01$; dark column $\Omega_D=1.2$) | 1.556730-0.000005i / 1.556634 | 1.727290-0.000008i / 1.727249 |
 | B09 weibel $k=1.2$, growth (dark column $\Omega_D=0.3$) | 0.107751 / 0.107751 | 0.112570 / 0.112570 |
 | B09 filament $k=1.2$, growth (dark column $\Omega_D=0.3$) | 0.166855 / 0.166855 | 0.173876 / 0.173876 |
+| B10 Langmuir sideband growth ($m_i/m_e=1836$, $w=0.04$, ordinary $Kr_D=0.02$; dark upper mode $Kr_D=0.0125$) vs semi-kinetic Zakharov R1 | 0.001112 / 0.001133 | 0.000790 / 0.000875 |
 | C05 Landau, same fit rule: Hermite / PIC rerun (128 cells, 320000 particles) | 1.413540-0.154975i / 1.414365-0.153538i | 1.429621-0.147445i / 1.428970-0.146058i |
 | B06 echo amplitude (N=512) vs grid | 1.15875e-03 / 1.15873e-03 | 1.12101e-03 / 1.12099e-03 (grid Vlasov-Ampere-Proca) |
 | H00 resonant mean field, t <= 1000 (HHS-v1-inspired) | error 1e-09, W_ext 3e-11 | - |

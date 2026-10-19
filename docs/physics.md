@@ -199,8 +199,9 @@ hydrodynamic limit (2.9)-(2.10), $\gamma_{\max}=3^{-1/2}\omega_p(\mu w)^{1/2}$ f
 gives $(\kappa r_D)^2=qw/6$ and $\gamma_{\max}=\frac14q\omega_pw$; the paper prints $\frac1{16}q\omega_pw$ and
 $(\kappa r_D)^2=w/6$ (algebra here; likely a misprint or $\gamma^2$). B10 must use (2.8)/(2.9) directly, not the printed
 maximum. No envelope reference existed in this repository for B10 planning, so nothing earlier is contradicted; the
-model has no dark term at this order (the dark field enters only through the Proca branch), which a dark B10 would
-have to derive first.
+model has no dark term at this order (the dark field enters only through the Proca branch); B10 derived it (force field E_f = g E,
+g = 1 + eta^2 Q/(Q - Omega_D^2), sideband operator eps_g'(Omega - Delta), coupling g0/eps_g' and ponderomotive g0^2; `studies/b10_ref.py`,
+results.md B10), with the eq 2.8/2.9 limits checked in code (gamma_max = q w omega_p/4 for 2.8, (mu w/3)^(1/2) for 2.9).
 
 HHS v1 facts used here (F): uniform k = 0 drive A0 cos(omega t) with no stated ramp; v_q^D/v_te = 0.03 and 1e-3 for the
 resonant runs; m_i/m_e = 1836, T_e = T_i = 1e-3 m_e c^2, L = 40 c/omega_pe, 1000 cells; relativistic Vay pusher in 1D1V;

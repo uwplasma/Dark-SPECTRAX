@@ -354,6 +354,77 @@ Saturation with EB (to t = 140). B_peak = 2|B_force,z(k0)| at the first maximum 
 - EB at c = 1 only postpones the collapse (t = 110 -> 146 at the base level), c = 0.5 becomes truncation-dominated at t = 126-132, and the velocity-doubled level fails at t = 112-118 at c = 1 and 126-138 at c = 2 (there with top-third energy ~1e-6, so that late failure is not the Hermite top-mode instability). Nothing is claimed after the first U_B maximum.
 - Claim (within the resolved window, t <= T_res): the first magnetic-energy maximum is at t = 115.5-120.5 with B_peak = 1.93-1.97 B_sat for ordinary and both dark models, unchanged to <= 0.5% by x-doubling, closure strength 0.5/2 and (at c = 2) velocity doubling. The dark/ordinary ratio of B_peak follows the bounce estimate to 2.3% (OD 0.3) and 1.3% (OD 1.2). Filamentation was not run.
 
+## B10: Langmuir sideband (modulational) instability of a finite-amplitude pump, ordinary and dark (`python studies/b10.py`, reference `studies/b10_ref.py`)
+
+Records: [studies/b10/](../studies/b10/) (runs made at b290653); gates, the declared revisions (v2, v3, follow-ups F1, S2 and S3) and the setup are in the `studies/b10.py` docstring and were committed before the runs they govern. Units: parent (c = omega_pe = 1), v_te = 0.1 c, T_e/T_i = 10, w = E0^2/(2 n T_e) = 0.04 for the pump E0 cos(k0 x - w0 t) (E0 the peak Poisson field; this w equals Zakharov's |E|^2/(8 pi n T_e)), k0 = 0.05 (k0 r_D = 0.005), pump at Fourier index n = 2, hypercollision nu = 100, Nn = 32, Nx per run (= 2 ceil(1.5 (max kept index + 1))). The pump is one eigenvector of the linearized model itself (a pure right-moving wave; for the dark model one of the two Langmuir-Proca mixed normal modes, 1.17 (upper) or 0.87 (lower) omega_pe at Omega_D = omega_pe, eta = 0.3); the sidebands are seeded (3e-4 A_p, random phase) with the eigenvectors of the same branch. One sideband pair per run: the nonlinear terms keep only the Fourier indices {0, j, n, n + j, |n - j|} (pump, sidebands, ion density, mean), which is the truncation the references assume.
+
+**References** (`studies/b10_ref.py`): R0 = Zakharov 1972 system (eqs 1.2, 1.9) with the exact quadratic Delta_pm = +-v_g K + (3/2) r_D^2 K^2, v_g = 3 k0 r_D^2, and c_s^2 = (T_e + 3 T_i)/M (the paper's printed 3/2 T_i is not used); its K-dependent limits are eq 2.8 (static: maximum gamma = (w/4) T_e/(T_e + T_i), NOT the printed w/16) and eq 2.9 (hydrodynamic: gamma -> (mu w/3)^(1/2), mu = m_e/m_i). R1 = semi-kinetic: exact Langmuir roots of the kinetic dispersion function, Delta_pm = omega(k0 +- K) - omega(k0), kinetic ion response varsigma = 1 + xi Z(xi) with Boltzmann electrons, and for the dark model the derived coupling: electrons feel the force field E_f = g E with g = 1 + eta^2 Q/(Q - Omega_D^2), Q = omega^2 - k^2, so the sideband operator is eps_g'(Omega - Delta), the quiver and the ponderomotive potential scale with g0 and g0^2, and 1 = G (g0/eps_g') E0^2 [1/(Omega - Delta_+) - 1/(Omega + Delta_-)], G = -varsigma g0^2/(4 w0^2 (T_i + varsigma T_e)). Dark change at this order: the Langmuir wave becomes a mixed mode with group velocity of order the Proca one (v_g = 0.019 c for the upper mode against 0.0015 c ordinary at k0 = 0.05), a dispersion ~1/(2 omega) instead of 3 r_D^2/2, and g0 = 1.37 (upper) / 0.76 (lower); the model is stable for K below k0 and the instability moves to K of order 0.1-0.2. Declared theory checks: G0a (R1 static maximum vs eq 2.8: -0.81%, gate 5%) pass; G0b (R0 hydrodynamic limit vs eq 2.9: -1.7e-05) pass; G0c (dark R1 at eta -> 1e-8 equals ordinary R1: 7.6e-06) pass.
+
+**Declared gates (passes / points):** G1: 10/21, G3: 26/35, G4: 19/21, G1b: 7/7, G2: 2/6. G1 = growth within 15% of R1 at the gated points (window: first S >= 6e-3 A_p to first S >= 6e-2 A_p, S = rss of the two sideband amplitudes; nothing after the window end is claimed), G1b = within 30% of R0 (ordinary), G2 = refinement change <= 3%, G3 = ledger <= 1e-6 and Gauss <= 1e-8, G4 = pump amplitude change <= 5% at the window end.
+
+| case | m_i/m_e | model | K r_D | gamma R0 (1e-3) | gamma R1 (1e-3) | gamma sim (1e-3) | sim/R1 - 1 | Floquet (1e-3) | pump change | gates |
+|---|---|---|---|---|---|---|---|---|---|---|
+| M_mi100_dk_lo_j3 | 100 | dk_lo | 0.0075 | - | 0.77 | - | - | - | - | ungated; G3 ok |
+| M_mi100_dk_up_j3 | 100 | dk_up | 0.0075 | - | 1.62 | 1.17 | -27.4% | - | -0.2% | G1 FAIL G3 ok G4 ok |
+| M_mi100_dk_up_j5 | 100 | dk_up | 0.0125 | - | 2.36 | 2.08 | -12.0% | - | -0.2% | G1 ok G3 ok G4 ok |
+| M_mi100_dk_up_j7 | 100 | dk_up | 0.0175 | - | 2.71 | 2.28 | -15.7% | 2.98 | -0.2% | G1 FAIL G3 ok G4 ok |
+| M_mi100_dk_up_j10 | 100 | dk_up | 0.0250 | - | 2.37 | 1.43 | -39.6% | - | -0.2% | G1 FAIL G3 ok G4 ok |
+| M_mi100_ord_j7 | 100 | ord | 0.0175 | 1.88 | 1.88 | 1.75 | -6.9% | - | -0.2% | G1 ok G1b ok G3 ok G4 ok |
+| M_mi100_ord_j10 | 100 | ord | 0.0250 | 2.63 | 2.63 | 2.48 | -5.6% | 2.51 | -0.2% | G1 ok G1b ok G3 ok G4 ok |
+| M_mi100_ord_j16 | 100 | ord | 0.0400 | 3.93 | 3.94 | 3.71 | -5.7% | - | -0.2% | G1 ok G1b ok G3 ok G4 ok |
+| M_mi1836_dk_lo_j5 | 1836 | dk_lo | 0.0125 | - | 0.25 | - | - | - | - | ungated; G3 ok |
+| M_mi1836_dk_up_j5 | 1836 | dk_up | 0.0125 | - | 0.87 | 0.79 | -9.7% | - | -0.2% | G1 ok G3 ok G4 ok |
+| M_mi1836_dk_up_j7 | 1836 | dk_up | 0.0175 | - | 0.84 | run failed | - | - | -0.0% | G1 FAIL G3 FAIL G4 ok [run ended: failure] |
+| M_mi1836_dk_up_j8 | 1836 | dk_up | 0.0200 | - | 0.77 | run failed | - | - | -0.0% | G1 FAIL G3 FAIL G4 ok [run ended: failure] |
+| M_mi1836_ord_j5 | 1836 | ord | 0.0125 | 0.74 | 0.74 | 0.72 | -2.5% | - | -0.2% | G1 ok G1b ok G3 ok G4 ok |
+| M_mi1836_ord_j8 | 1836 | ord | 0.0200 | 1.13 | 1.13 | 1.11 | -1.8% | - | -0.2% | G1 ok G1b ok G3 ok G4 ok |
+| M_mi1836_ord_j16 | 1836 | ord | 0.0400 | 1.85 | 1.85 | 1.78 | -3.8% | - | -0.2% | G1 ok G1b ok G3 ok G4 ok |
+
+Refinement and follow-ups (change of the fitted growth against the stated base):
+
+| case | gamma sim (1e-3) | against | change | G2 | G3 | note |
+|---|---|---|---|---|---|---|
+| R_Nn64_dk_up_j7 | run failed | M_mi1836_dk_up_j7 | - | FAIL | FAIL | ledger/Gauss 7e+02 / 9e-10 |
+| R_Nn64_ord_j8 | run failed | M_mi1836_ord_j8 | - | FAIL | FAIL | ledger/Gauss 1e-01 / 1e-11 |
+| R_Nx+12_dk_up_j7 | run failed | M_mi1836_dk_up_j7 | - | ok | FAIL | ledger/Gauss 2e-04 / 2e-12 |
+| R_Nx+12_ord_j8 | 1.11 | M_mi1836_ord_j8 | +0.0% | ok | ok | ledger/Gauss 5e-10 / 6e-15 |
+| R_nu300_ord_j8 | 1.05 | M_mi1836_ord_j8 | -5.3% | FAIL | ok | ledger/Gauss 5e-14 / 5e-15 |
+| S2_Nn64nu300_ord_j8 | run failed | R_nu300_ord_j8 | - | FAIL | FAIL | ledger/Gauss 3e-06 / 1e-12 |
+| S2_nu300_dk_up_j7 | - | M_mi1836_dk_up_j7 | - | - | ok | ledger/Gauss 2e-13 / 1e-14 |
+| S2_nu300_dk_up_j8 | - | M_mi1836_dk_up_j8 | - | - | ok | ledger/Gauss 4e-13 / 1e-14 |
+
+Outside the Zakharov regime (no pass/fail gate; kinetic corrections are the departures from R0 and R1; O1: T_e/T_i = 1, O2: w = 0.15, O3: k0 = 0.4 (k0 r_D = 0.04)):
+
+| case | model | K r_D | gamma R1 (1e-3) | gamma sim (1e-3) | sim/R1 - 1 | sim/R0 - 1 | G3 |
+|---|---|---|---|---|---|---|---|
+| O1_tau1_dk_up_j5 | dk_up | 0.0125 | 0.79 | 0.70 | -12.5% | - | ok |
+| O1_tau1_ord_j8 | ord | 0.0200 | 1.03 | 0.98 | -4.6% | -2.3% | ok |
+| O2_w015_dk_up_j7 | dk_up | 0.0175 | 1.64 | run failed | - | - | FAIL |
+| O2_w015_ord_j8 | ord | 0.0200 | 1.67 | run failed | - | - | FAIL |
+| O3_k04_dk_up_j5 | dk_up | 0.0500 | 0.00 | run failed | - | - | FAIL |
+| O3_k04_ord_j5 | ord | 0.0500 | 1.76 | 1.70 | -3.6% | -4.0% | ok |
+
+Dark-coupling change at common K (upper mixed mode against ordinary, same K, same w): measured and R1 ratio of the growth rates:
+
+| m_i/m_e | j | K r_D | gamma_dark/gamma_ord measured | R1 |
+|---|---|---|---|---|
+| 1836 | 5 | 0.0125 | 1.10 | 1.19 |
+| 100 | 7 | 0.0175 | 1.31 | 1.44 |
+| 100 | 10 | 0.0250 | 0.58 | 0.90 |
+
+Findings (all from the records above; nothing past a window end is claimed):
+
+- **Ordinary, R1 and R0.** At T_e/T_i = 10, w = 0.04 the fitted sideband growth is -2.5%, -1.8%, -3.8% from R1 at K r_D = 0.0125, 0.02, 0.04 (m_i/m_e = 1836) and -6.9%, -5.6%, -5.7% (m_i/m_e = 100): inside the declared 15% (G1) and 30% against R0 (G1b, 7/7). R0 and R1 differ by less than 1% (ion kinetic corrections to the fluid sound response are negligible at T_e/T_i = 10 here), so the fit is a test of the Zakharov structure itself. Growth is 0.7-1.8e-3 omega_pe at 1836 (an e-folding of 500-1400 / omega_pe), the window is 2.3 e-folds, the pump changed by at most 0.25% at every window end (G4 19/21; the two non-passes are the S2 points that never reached a window), ledger <= 1.1e-9 and Gauss <= 1e-13 of the pump scales.
+- **Closure sensitivity.** The Hermite closure is the weak point. nu = 1, 3, 10, 40 all blew up in shakedown runs (not records) and nu = 100 is the smallest value found stable; a run with nu = 300 changes the ordinary growth by -5.3% (m_i/m_e = 1836, j = 8) and -8.7% (m_i/m_e = 100, j = 10): the declared G2 gate (3%) fails, so the ordinary agreement above carries a closure uncertainty of 5-9%, and the sign (nu = 300 is further below R1) suggests the nu -> 0 value is closer to R1. Nx + 12 reproduces the base to 12 digits. The Nn = 64 refinements (nu = 100, and ordinary also at nu = 300) ended in a closure blow-up (G3 failed); the Nn refinement gate is therefore NOT met and no Nn-converged claim is made.
+- **Dark upper mode.** The derived dark reference R1 agrees with the fit to -9.7% (-10.4% at nu = 300) at the R1 maximum for m_i/m_e = 1836 (j = 5) and -12.0% (m_i/m_e = 100, j = 5), and over-predicts at the other K: -27.4% (j = 3), -15.7% (j = 7), -39.6% (j = 10); the nu = 300 repeat gives -21.3%, -15.2%, -18.1%, -39.9%, i.e. the dark departure is not a closure effect. G1 fails at 4 of 5 m_i/m_e = 100 dark points and passes only at j = 5. The derived dark envelope (g0, eps_g', Doppler) is therefore the right structure at the peak and incomplete away from it; which neglected term (low-frequency dark force, second-order electron coupling of the mixed mode, branch mixing at the sidebands) is responsible was not isolated.
+- **Dark upper, m_i/m_e = 1836, j = 7, 8 at nu = 100: failed (G1, G3).** The runs show growth 3-4 times R1 followed by an explosive stage and ended in a step-budget failure. Re-running them at nu = 300 (S2) removes the explosive stage (G3 ok) and shows slow growth (post-hoc trace estimate, S in [1.5e-3, 2e-2] A_p: j = 7 0.68e-3 against R1 0.84e-3; j = 8: S_max 0.015 A_p at t_max, no window), so the nu = 100 anomaly is a closure artifact, and no gated agreement exists for these two points.
+- **Dark lower mode and stability.** R1 predicts weak growth (0.25e-3 for m_i/m_e = 1836, j = 5; 0.77e-3 for 100, j = 3), which the declared windows cannot resolve; the records reached S_max = 0.0018 A_p and 0.0128 A_p (no window, no gate).
+- **Dark change.** Measured gamma_dark/gamma_ord at the same K and w: see the table; at the common peak points the dark upper mode grows faster than the ordinary one (m_i/m_e = 1836, j = 5: x1.10 against R1 x1.19; m_i/m_e = 100, j = 7: x1.31 against x1.44) and slower at the larger K (m_i/m_e = 100, j = 10: x0.58 against x0.90). The qualitative R1 statements that the dark modes move the unstable band to smaller K (stable below K = k0) and reduce the rate at large K are supported by the measured ordering; the K < k0 stability was not run.
+- **Outside the Zakharov regime** (no gate). T_e/T_i = 1 (strong ion Landau damping): ordinary -4.6%, dark upper -12.5% from R1 (R1 contains the kinetic ion function; R0 differs from R1 by -2.3% there). k0 r_D = 0.04: ordinary -3.6% from R1; the dark upper run (R1: stable) failed in the closure. w = 0.15: both runs failed in the closure (step budget, ledger blow-up); no growth is claimed. The kinetic correction to the Zakharov (R0) growth that these runs can resolve is therefore the 5-14% closure-limited shift above, not a separate effect.
+- **Floquet cross-check (follow-up F1, diagnostic).** The exact tangent flow of the same truncated model over one pump period (jvp through fixed-step Dopri8, dt = 0.02, Arnoldi) gives gamma_F = 2.51e-3 for m_i/m_e = 100 ordinary j = 10 (fit 2.48e-3, R1 2.63e-3): the fit and the exact flow agree to -1.2%. For the dark upper j = 7 (m_i/m_e = 100) it gives 2.98e-3 against fit 2.28e-3 and R1 2.71e-3 (not consistent with either; unresolved). The m_i/m_e = 1836 Floquet runs returned 7e-3 and 1.6e-2, which contradict the stable simulations at the same points; they are a failure of the fixed-step tangent at that mass ratio and are NOT used.
+- **Not done:** an Nn-converged result (closure blow-up at Nn = 64), a kinetic Floquet/Silin finite-k pump reference beyond the diagnostic above, K < k0 runs, the dark lower branch with a resolved window, pump amplitude scans, and any state after a window end (saturation, soliton formation).
+
+
 ## B11: collisional relaxation with the conservative Dougherty operator (`python studies/b11.py`)
 
 Record: [run.json](../studies/b11/run.json) (made at 193f5b9, parent a4bdd72 = SPECTRAX integration with #71). Operator, analytic references and gates G1-G5 are in the script docstring, declared before the recorded run. Homogeneous and uncharged (qs = 0), so the collision operator is the whole dynamics; Dopri8, rtol = atol = 1e-12. Overall: passed.

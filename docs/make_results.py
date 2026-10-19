@@ -945,20 +945,90 @@ def b09_section():
     return "\n".join(L)
 
 
+def _b10_trace_rate(name, lo=1.5e-3, hi_cap=2e-2):
+    """Post-hoc growth estimate from the stored S(t) trace (every 250 time units): slope of ln S where lo A_p <= S <= min(hi_cap,
+    0.9 S_max) A_p. Not a declared gate."""
+    rec = json.loads((root / f"studies/b10/{name}.json").read_text())
+    x = rec["results"][0]
+    t, S = np.array(x["trace_t"]), np.exp(np.array(x["trace_lnS"])) / rec["A_p"]
+    hi = min(hi_cap, 0.9 * S.max())
+    m = (S >= lo) & (S <= hi)
+    return float(np.polyfit(t[m], np.log(S[m]), 1)[0]) if m.sum() >= 4 else None
+
+
+def b10_notes(rows, fl, th):
+    g = lambda n: rows[n]["gamma_fit"]
+    rel = lambda n: 100 * rows[n]["rel_R1"]
+    tr = {n: _b10_trace_rate(n) for n in ("S2_nu300_dk_up_j7", "S2_nu300_dk_up_j8")}
+    sm = lambda n: rows[n]["S_max_over_Ap"]
+    L = ["", "Findings (all from the records above; nothing past a window end is claimed):", "",
+         f"- **Ordinary, R1 and R0.** At T_e/T_i = 10, w = 0.04 the fitted sideband growth is {rel('M_mi1836_ord_j5'):+.1f}%, "
+         f"{rel('M_mi1836_ord_j8'):+.1f}%, {rel('M_mi1836_ord_j16'):+.1f}% from R1 at K r_D = 0.0125, 0.02, 0.04 (m_i/m_e = 1836) and "
+         f"{rel('M_mi100_ord_j7'):+.1f}%, {rel('M_mi100_ord_j10'):+.1f}%, {rel('M_mi100_ord_j16'):+.1f}% (m_i/m_e = 100): inside the declared 15% "
+         "(G1) and 30% against R0 (G1b, 7/7). R0 and R1 differ by less than 1% (ion kinetic corrections to the fluid sound response are "
+         "negligible at T_e/T_i = 10 here), so the fit is a test of the Zakharov structure itself. Growth is 0.7-1.8e-3 omega_pe at "
+         "1836 (an e-folding of 500-1400 / omega_pe), the window is 2.3 e-folds, the pump changed by at most 0.25% at every window end "
+         "(G4 19/21; the two non-passes are the S2 points that never reached a window), ledger <= 1.1e-9 and Gauss <= 1e-13 of the pump scales.",
+         f"- **Closure sensitivity.** The Hermite closure is the weak point. nu = 1, 3, 10, 40 all blew up in shakedown runs (not records) "
+         "and nu = 100 is the smallest value found stable; a run with nu = 300 changes the ordinary growth by "
+         f"{100 * (g('R_nu300_ord_j8') / g('M_mi1836_ord_j8') - 1):+.1f}% (m_i/m_e = 1836, j = 8) and "
+         f"{100 * (g('S3_nu300_mi100_ord_j10') / g('M_mi100_ord_j10') - 1):+.1f}% (m_i/m_e = 100, j = 10): the declared G2 gate (3%) fails, so the "
+         "ordinary agreement above carries a closure uncertainty of 5-9%, and the sign (nu = 300 is further below R1) suggests the nu -> 0 value "
+         "is closer to R1. Nx + 12 reproduces the base to 12 digits. The Nn = 64 refinements (nu = 100, and ordinary also at nu = 300) ended "
+         "in a closure blow-up (G3 failed); the Nn refinement gate is therefore NOT met and no Nn-converged claim is made.",
+         f"- **Dark upper mode.** The derived dark reference R1 agrees with the fit to {rel('M_mi1836_dk_up_j5'):+.1f}% ({rel('S3_nu300_dk_up_j5'):+.1f}% "
+         f"at nu = 300) at the R1 maximum for m_i/m_e = 1836 (j = 5) and {rel('M_mi100_dk_up_j5'):+.1f}% (m_i/m_e = 100, j = 5), and over-predicts at "
+         f"the other K: {rel('M_mi100_dk_up_j3'):+.1f}% (j = 3), {rel('M_mi100_dk_up_j7'):+.1f}% (j = 7), {rel('M_mi100_dk_up_j10'):+.1f}% (j = 10); "
+         f"the nu = 300 repeat gives {rel('S3_nu300_mi100_dk_up_j3'):+.1f}%, {rel('S3_nu300_mi100_dk_up_j5'):+.1f}%, {rel('S3_nu300_mi100_dk_up_j7'):+.1f}%, "
+         f"{rel('S3_nu300_mi100_dk_up_j10'):+.1f}%, i.e. the dark departure is not a closure effect. G1 fails at 4 of 5 m_i/m_e = 100 dark "
+         "points and passes only at j = 5. The derived dark envelope (g0, eps_g', Doppler) is therefore the right structure at the peak and "
+         "incomplete away from it; which neglected term (low-frequency dark force, second-order electron coupling of the mixed mode, "
+         "branch mixing at the sidebands) is responsible was not isolated.",
+         "- **Dark upper, m_i/m_e = 1836, j = 7, 8 at nu = 100: failed (G1, G3).** The runs show growth 3-4 times R1 followed by an explosive "
+         "stage and ended in a step-budget failure. Re-running them at nu = 300 (S2) removes the explosive stage (G3 ok) and shows slow growth "
+         f"(post-hoc trace estimate, S in [1.5e-3, 2e-2] A_p: j = 7 {1e3 * tr['S2_nu300_dk_up_j7']:.2f}e-3 against R1 {1e3 * rows['S2_nu300_dk_up_j7']['gamma_R1']:.2f}e-3; "
+         f"j = 8: S_max {sm('S2_nu300_dk_up_j8'):.3f} A_p at t_max, no window), so the nu = 100 anomaly is a closure artifact, and no gated "
+         "agreement exists for these two points.",
+         f"- **Dark lower mode and stability.** R1 predicts weak growth (0.25e-3 for m_i/m_e = 1836, j = 5; 0.77e-3 for 100, j = 3), which the declared "
+         f"windows cannot resolve; the records reached S_max = {sm('M_mi1836_dk_lo_j5'):.4f} A_p and {sm('M_mi100_dk_lo_j3'):.4f} A_p (no window, no gate).",
+         "- **Dark change.** Measured gamma_dark/gamma_ord at the same K and w: see the table; at the common peak points the dark upper mode grows "
+         "faster than the ordinary one (m_i/m_e = 1836, j = 5: x1.10 against R1 x1.19; m_i/m_e = 100, j = 7: x1.31 against x1.44) and slower "
+         "at the larger K (m_i/m_e = 100, j = 10: x0.58 against x0.90). The qualitative R1 statements that the dark modes move the unstable band to "
+         "smaller K (stable below K = k0) and reduce the rate at large K are supported by the measured ordering; the K < k0 stability was not run.",
+         "- **Outside the Zakharov regime** (no gate). T_e/T_i = 1 (strong ion Landau damping): ordinary "
+         f"{rel('O1_tau1_ord_j8'):+.1f}%, dark upper {rel('O1_tau1_dk_up_j5'):+.1f}% from R1 (R1 contains the kinetic ion function; R0 differs from R1 by "
+         f"{100 * (rows['O1_tau1_ord_j8']['gamma_R0'] / rows['O1_tau1_ord_j8']['gamma_R1'] - 1):+.1f}% there). k0 r_D = 0.04: ordinary {rel('O3_k04_ord_j5'):+.1f}% from R1; the dark "
+         "upper run (R1: stable) failed in the closure. w = 0.15: both runs failed in the closure (step budget, ledger blow-up); no growth "
+         "is claimed. The kinetic correction to the Zakharov (R0) growth that these runs can resolve is therefore the 5-14% closure-limited "
+         "shift above, not a separate effect.",
+         "- **Floquet cross-check (follow-up F1, diagnostic).** The exact tangent flow of the same truncated model over one pump period "
+         "(jvp through fixed-step Dopri8, dt = 0.02, Arnoldi) gives gamma_F = "
+         f"{1e3 * fl['M_mi100_ord_j10']['gamma_floquet']:.2f}e-3 for m_i/m_e = 100 ordinary j = 10 (fit {1e3 * g('M_mi100_ord_j10'):.2f}e-3, R1 "
+         f"{1e3 * rows['M_mi100_ord_j10']['gamma_R1']:.2f}e-3): the fit and the exact flow agree to {100 * (g('M_mi100_ord_j10') / fl['M_mi100_ord_j10']['gamma_floquet'] - 1):+.1f}%. For the dark upper j = 7 (m_i/m_e = 100) it gives "
+         f"{1e3 * fl['M_mi100_dk_up_j7']['gamma_floquet']:.2f}e-3 against fit {1e3 * g('M_mi100_dk_up_j7'):.2f}e-3 and R1 {1e3 * rows['M_mi100_dk_up_j7']['gamma_R1']:.2f}e-3 "
+         "(not consistent with either; unresolved). The m_i/m_e = 1836 Floquet runs returned 7e-3 and 1.6e-2, which contradict the stable "
+         "simulations at the same points; they are a failure of the fixed-step tangent at that mass ratio and are NOT used.",
+         "- **Not done:** an Nn-converged result (closure blow-up at Nn = 64), a kinetic Floquet/Silin finite-k pump reference beyond the diagnostic above, "
+         "K < k0 runs, the dark lower branch with a resolved window, pump amplitude scans, and any state after a window end (saturation, "
+         "soliton formation).", ""]
+    return "\n".join(L)
+
+
 def b10_section():
     d = root / "studies/b10"
     th = json.loads((d / "theory.json").read_text())
     S = json.loads((d / "summary.json").read_text())
     fl = {p.stem[len("floquet_"):]: json.loads(p.read_text()) for p in d.glob("floquet_*.json")}
     rows = S["cases"]
-    commit = next(iter(json.loads(p.read_text())["repository_commit"] for p in d.glob("M_*.json")))[:7]
+    cm = sorted({json.loads(p.read_text())["repository_commit"][:7] for p in d.glob("[MROS]*.json")})
+    commit = ", ".join(cm)
     f = lambda x, n=2: "-" if x is None else f"{x * 1e3:.{n}f}"
     pc = lambda x: "-" if x is None else f"{100 * x:+.1f}%"
     gs = S["gate_summary"]
     L = ["## B10: Langmuir sideband (modulational) instability of a finite-amplitude pump, ordinary and dark "
          "(`python studies/b10.py`, reference `studies/b10_ref.py`)", "",
-         f"Records: [studies/b10/](../studies/b10/) (made at {commit}); gates, the three declared revisions (v2, v3, "
-         "follow-ups F1 and S2) and the setup are in the `studies/b10.py` docstring and were committed before the runs they "
+         f"Records: [studies/b10/](../studies/b10/) (runs made at {commit}); gates, the declared revisions (v2, v3, "
+         "follow-ups F1, S2 and S3) and the setup are in the `studies/b10.py` docstring and were committed before the runs they "
          "govern. Units: parent (c = omega_pe = 1), v_te = 0.1 c, T_e/T_i = 10, w = E0^2/(2 n T_e) = 0.04 for the pump "
          "E0 cos(k0 x - w0 t) (E0 the peak Poisson field; this w equals Zakharov's |E|^2/(8 pi n T_e)), k0 = 0.05 (k0 r_D = "
          "0.005), pump at Fourier index n = 2, hypercollision nu = 100, Nn = 32, Nx per run (= 2 ceil(1.5 (max kept index + 1))). "
@@ -994,23 +1064,26 @@ def b10_section():
         gt = " ".join(f"{g} {'ok' if r[g] else 'FAIL'}" for g in ("G1", "G1b", "G3", "G4") if g in r)
         if not r["gated"]:
             gt = "ungated; " + gt
-        fq = fl.get(r["name"])
+        fq = fl.get(r["name"]) if r["mi"] < 500 else None  # mi 1836 Floquet runs are rejected (see findings)
+        bad = r["status"] != "success"
         L.append(f"| {r['name']} | {r['mi']:g} | {r['model']} | {r['K_rD']:.4f} | {f(r.get('gamma_R0'))} | {f(r['gamma_R1'])} | "
-                 f"{f(r['gamma_fit'])} | {pc(r['rel_R1'])} | {f(fq['gamma_floquet']) if fq else '-'} | "
+                 f"{'run failed' if bad else f(r['gamma_fit'])} | {'-' if bad else pc(r['rel_R1'])} | {f(fq['gamma_floquet']) if fq else '-'} | "
                  f"{pc(r['pump_drift'])} | {gt}{'' if r['status'] == 'success' else ' [run ended: ' + r['status'] + ']'} |")
     L += ["", "Refinement and follow-ups (change of the fitted growth against the stated base):", "",
           "| case | gamma sim (1e-3) | against | change | G2 | G3 | note |", "|---|---|---|---|---|---|---|"]
     for r in sorted((r for r in rows.values() if r["tag"].startswith(("R_", "S2"))), key=order):
         base = f"M_mi1836_{r['model']}_j{r['j']}" if r["tag"] != "S2_Nn64nu300" else f"R_nu300_{r['model']}_j{r['j']}"
-        L.append(f"| {r['name']} | {f(r['gamma_fit'])} | {base} | {pc(r.get('G2_rel_to_base'))} | "
+        bad = r["status"] != "success"
+        L.append(f"| {r['name']} | {'run failed' if bad else f(r['gamma_fit'])} | {base} | {pc(r.get('G2_rel_to_base')) if not bad else '-'} | "
                  f"{'ok' if r.get('G2') else ('FAIL' if 'G2' in r else '-')} | {'ok' if r['G3'] else 'FAIL'} | "
                  f"{'ledger/Gauss ' + format(r['ledger_over_U0'], '.0e') + ' / ' + format(r['gauss_over_Ap'], '.0e')} |")
     L += ["", "Outside the Zakharov regime (no pass/fail gate; kinetic corrections are the departures from R0 and R1; "
           "O1: T_e/T_i = 1, O2: w = 0.15, O3: k0 = 0.4 (k0 r_D = 0.04)):", "",
           "| case | model | K r_D | gamma R1 (1e-3) | gamma sim (1e-3) | sim/R1 - 1 | sim/R0 - 1 | G3 |", "|---|---|---|---|---|---|---|---|"]
     for r in sorted((r for r in rows.values() if r["tag"].startswith("O")), key=order):
-        L.append(f"| {r['name']} | {r['model']} | {r['K_rD']:.4f} | {f(r['gamma_R1'])} | {f(r['gamma_fit'])} | {pc(r['rel_R1'])} | "
-                 f"{pc(r.get('rel_R0'))} | {'ok' if r['G3'] else 'FAIL'} |")
+        bad = r["status"] != "success"
+        L.append(f"| {r['name']} | {r['model']} | {r['K_rD']:.4f} | {f(r['gamma_R1'])} | {'run failed' if bad else f(r['gamma_fit'])} | "
+                 f"{'-' if bad else pc(r['rel_R1'])} | {'-' if bad else pc(r.get('rel_R0'))} | {'ok' if r['G3'] else 'FAIL'} |")
     # dark change at common K
     L += ["", "Dark-coupling change at common K (upper mixed mode against ordinary, same K, same w): measured and R1 ratio of "
           "the growth rates:", "", "| m_i/m_e | j | K r_D | gamma_dark/gamma_ord measured | R1 |", "|---|---|---|---|---|"]
@@ -1018,9 +1091,9 @@ def b10_section():
         for j in sorted({r["j"] for r in rows.values() if r["tag"].startswith("M_") and r["mi"] == mi and r["model"] == "dk_up"}):
             o = rows.get(f"M_mi{int(mi)}_ord_j{j}")
             dk = rows.get(f"M_mi{int(mi)}_dk_up_j{j}")
-            if o and dk and o["gamma_fit"] and dk["gamma_fit"]:
+            if o and dk and o["gamma_fit"] and dk["gamma_fit"] and o["status"] == "success" and dk["status"] == "success":
                 L.append(f"| {mi:g} | {j} | {o['K_rD']:.4f} | {dk['gamma_fit'] / o['gamma_fit']:.2f} | {dk['gamma_R1'] / o['gamma_R1']:.2f} |")
-    L += [S.get("notes_md", "")]
+    L += [b10_notes(rows, fl, th)]
     return "\n".join(L)
 
 
@@ -1608,6 +1681,10 @@ def readme_table():
                 for m in ("ordinary", "dark_OD0.3")]
         L.append(f"| B09 {case} $k=1.2$, growth (dark column $\\Omega_D=0.3$) | {o['omega_fit'][1]:.6f} / {o['gamma_root']:.6f} | "
                  f"{d['omega_fit'][1]:.6f} / {d['gamma_root']:.6f} |")
+    sm = json.loads((root / "studies/b10/summary.json").read_text())["cases"]
+    o, d = sm["M_mi1836_ord_j8"], sm["M_mi1836_dk_up_j5"]
+    L.append(f"| B10 Langmuir sideband growth ($m_i/m_e=1836$, $w=0.04$, ordinary $Kr_D=0.02$; dark upper mode $Kr_D=0.0125$) vs semi-kinetic Zakharov R1 "
+             f"| {o['gamma_fit']:.6f} / {o['gamma_R1']:.6f} | {d['gamma_fit']:.6f} / {d['gamma_R1']:.6f} |")
     pf = pic[-1]
     L.append(f"| C05 Landau, same fit rule: Hermite / PIC rerun ({pf['cells']} cells, {pf['particles']} particles) | "
              f"{c(c05['spectrax']['ordinary_Nn256']['maxima_fit'])} / {c(pf['ordinary'])} | "
