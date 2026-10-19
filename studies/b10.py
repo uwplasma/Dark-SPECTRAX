@@ -87,6 +87,13 @@ the nu = 300 ordinary refinement (R_nu300) moved gamma by -5.3% (G2 failed at 3%
 stronger closure nu = 300 (dark upper j = 7, 8 at Nn = 32; ordinary j = 8 at Nn = 64). Criteria are G1/G3 (dark upper) and G2
 (ordinary Nn = 64 against R_nu300 at Nn = 32), unchanged. If the explosive stage persists at nu = 300 it is not the closure.
 
+FOLLOW-UP S3 (declared after the first S2 result, before running S3): S2 dark upper j = 7 at nu = 300 completed WITHOUT the
+explosive stage (G3 ok) and grew at about 6e-4 (trace estimate, not a gated window: HI was not reached by t_max), against R1 8.4e-4 and
+against 2.9e-3 at nu = 100: the late explosive stage of the nu = 100 dark-upper runs is a closure artifact. Since the nu = 100 dark
+growth rates may carry closure error at the 5-30% level, S3 repeats ALL dark-upper points of the m_i/m_e = 100 set (j = 3, 5, 7, 10), the
+mi 1836 j = 5 point and ordinary mi 100 j = 10 at nu = 300 with the same windows and gates (G1 vs R1, G3, G4 with the same
+tolerances); the pairs (nu = 100, nu = 300) are the closure-sensitivity record. Criteria: G1, G3, G4 as in v3.
+
 Run: python studies/b10.py theory | run <case> | floquet <case> | summary | list
 """
 import json
@@ -141,6 +148,11 @@ def all_cases():
     cs.append(_case("S2_nu300", "dk_up", 7, nu=300.0))
     cs.append(_case("S2_nu300", "dk_up", 8, nu=300.0))
     cs.append(_case("S2_Nn64nu300", "ord", 8, nu=300.0, Nn=64))
+    # S3 (declared after the S2 first result): the whole dark-upper set and one ordinary point at nu = 300
+    for j in (3, 5, 7, 10):
+        cs.append(_case("S3_nu300_mi100", "dk_up", j, mi=100.0, nu=300.0))
+    cs.append(_case("S3_nu300_mi100", "ord", 10, mi=100.0, nu=300.0))
+    cs.append(_case("S3_nu300", "dk_up", 5, nu=300.0))
     cs.append(_case("O3_k04", "ord", 5, k0=0.4, n=4, tmax=6000.0))
     cs.append(_case("O3_k04", "dk_up", 5, k0=0.4, n=4, tmax=6000.0))
     return {c["name"]: c for c in cs}
@@ -489,7 +501,7 @@ def summary():
             row["gamma_R0"] = r["gamma_R0"]
             row["rel_R0"] = None if g is None else g / r["gamma_R0"] - 1
         row["G3"] = bool(row["ledger_over_U0"] <= TOL["G3_ledger"] and row["gauss_over_Ap"] <= TOL["G3_gauss"])
-        if (row["tag"].startswith("M_") or row["tag"] == "S2_nu300") and row["gated"]:
+        if (row["tag"].startswith(("M_", "S3_")) or row["tag"] == "S2_nu300") and row["gated"]:
             row["G1"] = bool(row["rel_R1"] is not None and abs(row["rel_R1"]) <= TOL["G1"])
             row["G4"] = bool(row["pump_drift"] is not None and abs(row["pump_drift"]) <= TOL["G4"])
             if row["model"] == "ord":
