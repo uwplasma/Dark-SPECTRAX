@@ -245,6 +245,11 @@ class System:
             cols.append(np.asarray(vl(jnp.eye(self.n)[idx])))
         return np.concatenate(cols, 0).T  # J[:, j] = lin(e_j)
 
+    def linfn(self, base, rhs):
+        import jax
+        _, lin = jax.linearize(self.func(base, rhs), self.pack(base))
+        return lin
+
     def operator(self, base, rhs):
         import jax
         f = self.func(base, rhs)
@@ -321,25 +326,35 @@ def block_spectra(J, sysm):
     return np.concatenate(eigs_all), per_k, leak
 
 
-def tangent_growth(J, sysm, nhe, tau=5.0, reps=4, seed=1):
-    """Power iteration of exp(tau J): norm and top-third electron Hermite amplitude growth rates (last reps-1 repeats)."""
-    from scipy.sparse.linalg import expm_multiply
-    R, K, s = sysm.R, sysm.K, sysm.sl
+def tangent_growth(S, lin, v0, nhe, tau=5.0, reps=4, seed=1):
+    """Finite-time tangent growth by integrating dw/dt = D^-1 lin(D w) (Dopri8, rtol 1e-6) in the similarity-scaled variables
+    (v4: expm_multiply of the dense J did not finish for late states, entries up to 1e23); power iteration over ``reps``
+    repeats of length ``tau``; the rates of the last reps-1 repeats are averaged.  Norm and top-third electron Hermite
+    amplitude (physical variables D w) growth per unit time."""
+    import diffrax
+    import jax.numpy as jnp
+    R, K, s = S.R, S.K, S.sl
+    d = jnp.asarray(similarity_scale(S, np.asarray(v0)))
     top = np.arange(R)
-    top = top[(top < nhe) & (top >= (2 * nhe) // 3)]  # electron rows, n >= 2Nn/3
+    top = top[(top < nhe) & (top >= (2 * nhe) // 3)]
 
-    def e3(v):
+    def e3(w):
+        v = np.asarray(d) * np.asarray(w)
         re = v[s["reC"][0]:s["reC"][1]].reshape(R, K)[top]
         im = np.concatenate([np.zeros((R, 1)), v[s["imC"][0]:s["imC"][1]].reshape(R, K - 1)], 1)[top]
         return float((re ** 2 + im ** 2).sum())
-    v = np.random.default_rng(seed).standard_normal(sysm.n)
-    v /= np.linalg.norm(v)
-    rec, A = [], J * tau
+    term = diffrax.ODETerm(lambda t, w, args: lin(d * w) / d)
+    w = np.random.default_rng(seed).standard_normal(S.n)
+    w /= np.linalg.norm(w)
+    rec = []
     for _ in range(reps):
-        e0 = e3(v)
-        w = expm_multiply(A, v)
-        rec.append((float(np.log(np.linalg.norm(w)) / tau), 0.5 * float(np.log(max(e3(w), 1e-300) / max(e0, 1e-300))) / tau))
-        v = w / np.linalg.norm(w)
+        e0 = e3(w)
+        sol = diffrax.diffeqsolve(term, diffrax.Dopri8(), 0.0, tau, 1e-3, jnp.asarray(w), saveat=diffrax.SaveAt(t1=True),
+                                  stepsize_controller=diffrax.PIDController(rtol=1e-6, atol=1e-12), max_steps=400000, throw=False)
+        w1 = np.asarray(sol.ys[0])
+        rec.append((float(np.log(np.linalg.norm(w1)) / tau), 0.5 * float(np.log(max(e3(w1), 1e-300) / max(e0, 1e-300))) / tau,
+                    int(sol.stats["num_steps"])))
+        w = w1 / np.linalg.norm(w1)
     return {"norm_rate": float(np.mean([r[0] for r in rec[1:]])), "top3_amp_rate": float(np.mean([r[1] for r in rec[1:]])),
             "per_repeat": rec}
 
@@ -472,8 +487,7 @@ def measure(key):
             rec["h_stab_min_J"], rec["h_stab_min_J_L"] = float(hJ.min()), float(hL.min())
             rec["n_unstable_J"] = int((lamJ.real > 1e-6).sum())
             rec["n_unstable_J_L"] = int((lamL.real > 1e-6).sum())
-            rec["tangent"] = tangent_growth(J, S, m.Nn)
-            rec["tangent_Jfz"] = tangent_growth(Jfz, S, m.Nn)
+            rec["tangent"] = tangent_growth(S, S.linfn(base, live), v0, m.Nn)
             del J, Jfz, JL
         lam = np.asarray(arnoldi(mv_full, S.n, "LM")[0])
         rec["h_stab_min_J_arpack_LM"] = float(h_stab(lam, th, crit).min())
