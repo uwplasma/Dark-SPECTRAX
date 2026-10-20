@@ -1131,6 +1131,50 @@ Run end (last saved time): Nx16 Nn128: t = 703.5 (non-finite), Nx16 Nn64: t = 63
 
 Verdict: REJECTED as declared. G3 pairs agree only to t = 634 (< 650: rejection rule); G4 max ledger/W for 50 < t <= 600: Nx16 Nn128 4.1e-04, Nx16 Nn64 1.2e-03, Nx32 Nn128 7.9e-06, Nx32 Nn256 7.9e-06, Nx32 Nn64 1.9e-05. Option A (#66 closure) stays in production.
 
+## Anti-symmetric (square-root symmetric-weight) Hermite candidate (`studies/antisym/`)
+
+Gates are in the docstring of `studies/antisym/antisym_gates.py` (committed before any run; amendments A1-A2 there). Literature: Issan et al. arXiv:2312.05439 (anti-symmetric SW Galerkin, centred or Fourier-Galerkin x, truncation closure: sum |C|^2 = int f^2 conserved for any E(t), u(t); square-root form g = sqrt f with the same linear equation: sum C^2 = particle number, density positive; momentum and energy not conserved), 2407.09626 (no closure restores number, momentum and energy in SW), 2412.07073 (AW with hypercollisions; no stability theorem for AW). SQ = that square-root form, s = sqrt2 sigma. Its frozen-field linear operator is the SW operator already rejected on H05, so stage 1 cannot discriminate SQ from SW; the new content is the quadratic moment map, tested in stage 2.
+
+**Stage 1 (linear, 18 frozen points: E1 1e-3/4e-3, K 2/5/10, Nn 32/64/128; 12 Floquet points).**
+
+| variant | frozen: points with max Re lambda > 1e-10 | frozen max Re lambda | Floquet points > 1e-10 | Floquet max |
+|---|---|---|---|---|
+| AW_c0 | 18 / 18 | 8.4e-01 | 11 / 12 | 1.5e-01 |
+| AW_c1 | 18 / 18 | 3.6e-01 | 9 / 12 | 4.9e-09 |
+| SQ | 0 / 18 | 4.0e-15 | 0 / 12 | 2.4e-15 |
+
+G1 PASS (SQ <= 4e-15 everywhere). G2 PASS: 30 OTSI points (k5/k12/k20, Nn 32-128), SQ vs Silin max error 0.25% (AW 1.36% on the full dai scan); SQ equals the AW Floquet rate to 2.5e-10 relative (the linearisation of f = g^2 about the Maxwellian is the AW system in the free-energy norm int df^2/f_M). G5 PASS: SQ normality defect 0e+00, dense vs time-domain growth 4e-15; AW_c0 normality defect 0.94, eigenvector condition 2e+26, dense max Re 0.416 against time-domain 0.468 (largest dense/time-domain gap over the 18 points 0.16).
+
+G3 (finite-N conservation of the SQ moments, instantaneous relative defect of d/dt of N, P, KE on random states, K = 5, frozen random field; AW rows 0-2 are exact by construction, not re-run):
+
+| Nn | spectrum | top-2 fraction | dN | dP | dKE |
+|---|---|---|---|---|---|
+| 32 | n^-1 | 6.5e-04 | 3e-19 | 3.2e-03 | 2.7e-03 |
+| 32 | n^-2 | 2.4e-07 | 2e-18 | 1.9e-06 | 2.1e-05 |
+| 32 | n^-4 | 3.7e-13 | 7e-19 | 3.2e-12 | 1.1e-10 |
+| 64 | n^-1 | 2.1e-05 | 4e-19 | 6.1e-06 | 2.1e-03 |
+| 64 | n^-2 | 2.7e-08 | 4e-18 | 2.0e-06 | 3.5e-06 |
+| 64 | n^-4 | 7.2e-16 | 2e-19 | 1.5e-14 | 3.0e-13 |
+| 128 | n^-1 | 1.4e-05 | 4e-19 | 8.4e-04 | 1.7e-03 |
+| 128 | n^-2 | 7.5e-10 | 2e-19 | 7.0e-09 | 5.5e-07 |
+| 128 | n^-4 | 1.0e-17 | 3e-20 | 3.2e-16 | 6.9e-14 |
+
+G4 (banded kernels, pseudo-spectral RHS, Nx 32): SQ/AW wall ratio 1.51 (Nn 64), 1.53 (Nn 128); frozen operator nnz ratio 1.5 (SW couples n+-1 in the force, AW only n-1). The first, dense-kernel record (ratios 3.2 and 5.8) is kept as `cost_dense_firstrun.json` (amendment A2).
+
+**Stage 2 (H05 v_q/v_te 0.1, nu = 0, no closure, RK4 dt 0.02, standalone pump-frame 1D1V two-species Vlasov-Ampere; gates identical to the SW study).** Declared after stage 1 and before the runs; the SQ driver reproduces the SW driver's dK_e to 1e-9 relative for t <= 150 (ungated check).
+
+| SQ run | t_res(dK_e) vs grid | t_res(W_ext) | last finite t | ledger/W > 1e-3 first at | SW same case: t_res(dK_e) |
+|---|---|---|---|---|---|
+| Nx16_Nn128 | 391.0 | >=393 | 393 | None | 703.5 |
+| Nx16_Nn64 | 391.0 | >=397.5 | 397.5 | 392.5 | 634.5 |
+| Nx32_Nn128 | 498.0 | >=499.5 | 499.5 | 498.5 | 737.5 |
+| Nx32_Nn256 | >=497 | >=497 | 497 | 496.5 | 685.0 |
+| Nx32_Nn64 | 498.0 | >=500.5 | 500.5 | 498.5 | 681.0 |
+
+G3 FAIL (refinement pairs agree only to t = 391; reject-before-650 triggered); G4 FAIL. Ungated diagnostics (not in the declared batch): Nx16_Nn64_dt0.005_T420: last finite t 420, ledger/W > 1e-3 first at 392.5; Nx64_Nn64_dt0.02_T1000: last finite t 538, ledger/W > 1e-3 first at 537.5.
+
+**Verdict.** SQ is linearly neutral to round-off, Silin-accurate, normal (no round-off pathology) and costs 1.5x AW, but it fails the nonlinear H05 test earlier than the SW basis it contains linearly: it departs from the grid at t = 391 (Nx 16) and 498 (Nx 32), with Nn 64-256 identical and dt 0.02 -> 0.005 unchanged, i.e. the loss is not Hermite truncation or time step; the Nx 64 diagnostic fails at 538. The bounded quantity (particle number, sum C^2) stays at 1e-9 until the top Hermite band fills within about 10 time units (top fraction 2e-11 -> 5e-2), after which RK4 diverges and the energy ledger leaves 1e-3 W_ext. SQ is rejected; A (#66 closure) stays in production. See `docs/design/l2-stable-basis.md`, Verdict on E.
+
 ## C09: derivatives of converged dark observables, AD vs finite differences (`studies/c09_ad.py`)
 
 - Record: `studies/c09/run.json`, repository `c0db27b`, parent `f33dfda`, JAX 0.11.2, Diffrax 0.7.2, CPU float64; wall 672 s.

@@ -127,6 +127,7 @@ physics.md sets the rule: only full-text sources may set a benchmark.
 | O'Neil, Phys. Fluids 8, 2255 (1965) | B01 trapping time and bounce scaling | read 2026-10-15 (physics.md C1) |
 | Gould, O'Neil, Malmberg, PRL 19, 219 (1967) | B06 echo theory | read 2026-10-15 (physics.md C2) |
 | Zakharov, Sov. Phys. JETP 35, 908 (1972) | B10 | read 2026-10-15, Secs. 1-2 (physics.md C3) |
+| Issan et al., arXiv:2312.05439, 2407.09626, 2412.07073 | anti-symmetric SW and square-root forms (design note option E) | read in full 2026-10-19; prototyped in studies/antisym (stage 2 fails) |
 | Dai, arXiv:2608.09827 (N15) | stable AW Galerkin (design note option C) | held locally; prototyped in studies/dai (gate 1 fails in AW form) |
 
 ## Next steps, in order
@@ -138,6 +139,9 @@ physics.md sets the rule: only full-text sources may set a benchmark.
    whose design tests 3-4 (H05 0.1 to t = 700/1000, energy ledger) are the follow-up.
    **Option B (SW) tests 3-4: done, rejected** (`studies/sw/`, results.md): all SW runs blow up at t = 637-738,
    the Nx16 Nn pair agrees only to t = 634 and the Nx16 Nn64 ledger hits 1.2e-3 W_ext before t = 600. A stays.
+   **Anti-symmetric square-root SW (Issan et al., design note option E): done, rejected** (`studies/antisym/`, results.md):
+   stage 1 linear gates pass (max Re lambda <= 4e-15, Silin 0.25%, 1.5x AW cost) but the H05 0.1 pilot departs from the grid at
+   t = 391 (Nx 16) / 498 (Nx 32), earlier than SW (634-738), independent of Nn and dt. A stays.
 2. **v_q/v_te = 0.1 grid reference with vmax > 32 v_te: done** (lane "gridref", batch 11, results.md). vmax 48/64
    moves edge contact only from t = 701.5 to 754.5 (tail accelerated past 64 v_te), and negativity at t = 645.5 is
    set by Nx, not the box. Grid reference certified for dK_e/W_ext to about 750, spectrum to about 640; Hermite c = 4

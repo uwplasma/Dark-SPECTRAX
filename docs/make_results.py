@@ -580,6 +580,80 @@ def dai_section():
     return "\n".join(L)
 
 
+def antisym_section():
+    """Square-root symmetric-weight Hermite (Issan et al.), frozen/Floquet/OTSI prototype and H05 pilot (studies/antisym/)."""
+    A = root / "studies/antisym"
+    sm = json.loads((A / "summary.json").read_text())
+    hs = json.loads((A / "h05_summary.json").read_text())
+    S = sm["summary"]
+    cs = sm["cons"]
+    cd = [r for r in sm["cond"]]
+    g = lambda v, k: f"{S[v][k]:.1e}"  # noqa: E731
+    L = ["## Anti-symmetric (square-root symmetric-weight) Hermite candidate (`studies/antisym/`)", "",
+         "Gates are in the docstring of `studies/antisym/antisym_gates.py` (committed before any run; amendments A1-A2 there). "
+         "Literature: Issan et al. arXiv:2312.05439 (anti-symmetric SW Galerkin, centred or Fourier-Galerkin x, truncation closure: "
+         "sum |C|^2 = int f^2 conserved for any E(t), u(t); square-root form g = sqrt f with the same linear equation: "
+         "sum C^2 = particle number, density positive; momentum and energy not conserved), 2407.09626 (no closure restores "
+         "number, momentum and energy in SW), 2412.07073 (AW with hypercollisions; no stability theorem for AW). "
+         "SQ = that square-root form, s = sqrt2 sigma. Its frozen-field linear operator is the SW operator already rejected on H05, "
+         "so stage 1 cannot discriminate SQ from SW; the new content is the quadratic moment map, tested in stage 2.", "",
+         "**Stage 1 (linear, 18 frozen points: E1 1e-3/4e-3, K 2/5/10, Nn 32/64/128; 12 Floquet points).**", "",
+         "| variant | frozen: points with max Re lambda > 1e-10 | frozen max Re lambda | Floquet points > 1e-10 | Floquet max |",
+         "|---|---|---|---|---|"]
+    for v in ("AW_c0", "AW_c1", "SQ"):
+        L.append(f"| {v} | {S[v]['n_frozen_gt_1e10']} / {S[v]['n_frozen']} | {g(v, 'frozen_max')} | "
+                 f"{S[v]['n_floquet_gt_1e10']} / {S[v]['n_floquet']} | {g(v, 'floquet_max')} |")
+    c0 = next(r for r in cd if r["var"] == "AW_c0" and r["K"] == 5 and r["E1"] == 4e-3)
+    q0 = next(r for r in cd if r["var"] == "SQ" and r["K"] == 5 and r["E1"] == 4e-3)
+    L += ["", f"G1 {'PASS' if sm['G1'] else 'FAIL'} (SQ <= 4e-15 everywhere). G2 {'PASS' if sm['G2'] else 'FAIL'}: "
+          f"{sm['G2_points']} OTSI points (k5/k12/k20, Nn 32-128), SQ vs Silin max error {100 * sm['G2_max_rel']:.2f}% "
+          f"(AW 1.36% on the full dai scan); SQ equals the AW Floquet rate to {sm['G2_max_sq_vs_aw']:.1e} relative "
+          "(the linearisation of f = g^2 about the Maxwellian is the AW system in the free-energy norm int df^2/f_M). "
+          f"G5 {'PASS' if sm['G5'] else 'FAIL'}: SQ normality defect {q0['normality_defect']:.0e}, dense vs time-domain growth "
+          f"{sm['SQ_dense_vs_td_max']:.0e}; AW_c0 normality defect {c0['normality_defect']:.2f}, eigenvector condition "
+          f"{c0['cond_eigvec']:.0e}, dense max Re {c0['dense_max_re']:.3f} against time-domain {c0['td_rate']:.3f} "
+          f"(largest dense/time-domain gap over the 18 points {sm['AW_dense_vs_td_max']:.2f}).", "",
+          "G3 (finite-N conservation of the SQ moments, instantaneous relative defect of d/dt of N, P, KE on random states, K = 5, "
+          "frozen random field; AW rows 0-2 are exact by construction, not re-run):", "",
+          "| Nn | spectrum | top-2 fraction | dN | dP | dKE |", "|---|---|---|---|---|---|"]
+    for r in cs:
+        L.append(f"| {r['Nn']} | n^-{r['p']} | {r['top2_frac']:.1e} | {r['dN_rel']:.0e} | {r['dP_rel']:.1e} | {r['dK_rel']:.1e} |")
+    ct = sm["G4_ratio"]
+    L += ["", f"G4 (banded kernels, pseudo-spectral RHS, Nx 32): SQ/AW wall ratio {ct[0]:.2f} (Nn 64), {ct[1]:.2f} (Nn 128); frozen "
+          "operator nnz ratio 1.5 (SW couples n+-1 in the force, AW only n-1). The first, dense-kernel record (ratios 3.2 and 5.8) "
+          "is kept as `cost_dense_firstrun.json` (amendment A2).", "",
+          "**Stage 2 (H05 v_q/v_te 0.1, nu = 0, no closure, RK4 dt 0.02, standalone pump-frame 1D1V two-species Vlasov-Ampere; "
+          "gates identical to the SW study).** Declared after stage 1 and before the runs; the SQ driver reproduces the SW driver's "
+          "dK_e to 1e-9 relative for t <= 150 (ungated check).", "",
+          "| SQ run | t_res(dK_e) vs grid | t_res(W_ext) | last finite t | ledger/W > 1e-3 first at | SW same case: t_res(dK_e) |",
+          "|---|---|---|---|---|---|"]
+    swr = {"Nx16_Nn64": 634.5, "Nx16_Nn128": 703.5, "Nx32_Nn64": 681.0, "Nx32_Nn128": 737.5, "Nx32_Nn256": 685.0}
+    gname = "g_vq0.1_Nx64_Nv16384_dt0.02_osc_v64_spectral_xmask23"
+    for led in hs["ledger"]:
+        tag = led["case"].split("sq_vq0.1_")[1].split("_dt")[0]
+        row = next(r for r in hs["vs_grid"] if r["run"] == led["case"] and r["grid"] == gname)
+        L.append(f"| {tag} | {row['dK_e']} | {row['W_ext']} | {led['T']:g} | {led['first_energy_defect_over_W_gt_1e-3']} | {swr[tag]} |")
+    gt = hs["gates"]
+    d = {}
+    for tag in ("sq_vq0.1_Nx16_Nn64_dt0.005_T420", "sq_vq0.1_Nx64_Nn64_dt0.02_T1000"):
+        p = A / "runs" / f"{tag}.json"
+        if p.exists():
+            d[tag] = json.loads(p.read_text())
+    L += ["", f"G3 {'PASS' if gt['G3_pass'] else 'FAIL'} (refinement pairs agree only to t = {gt['G3_pairs_min']:g}; reject-before-650 "
+          f"{'triggered' if gt['G3_reject_before_650'] else 'not triggered'}); G4 {'PASS' if gt['G4_pass'] else 'FAIL'}. "
+          "Ungated diagnostics (not in the declared batch): "
+          + "; ".join(f"{k.split('sq_vq0.1_')[1]}: last finite t {v['T']:g}, ledger/W > 1e-3 first at {v['first_energy_defect_over_W_gt_1e-3']}"
+                      for k, v in d.items()) + ".", "",
+          "**Verdict.** SQ is linearly neutral to round-off, Silin-accurate, normal (no round-off pathology) and costs 1.5x AW, "
+          "but it fails the nonlinear H05 test earlier than the SW basis it contains linearly: it departs from the grid at t = 391 "
+          "(Nx 16) and 498 (Nx 32), with Nn 64-256 identical and dt 0.02 -> 0.005 unchanged, i.e. the loss is not Hermite truncation or "
+          "time step; the Nx 64 diagnostic fails at 538. The bounded quantity (particle number, sum C^2) stays at 1e-9 until the "
+          "top Hermite band fills within about 10 time units (top fraction 2e-11 -> 5e-2), after which RK4 diverges and the energy "
+          "ledger leaves 1e-3 W_ext. SQ is rejected; A (#66 closure) stays in production. See `docs/design/l2-stable-basis.md`, "
+          "Verdict on E."]
+    return "\n".join(L)
+
+
 def noise_floor_section():
     fl = ("1e-16", "1e-15", "1e-14", "1e-13", "1e-12", "1e-10")
     g = lambda part, f, key: nfs.get((part, None if f is None else float(f), key))  # noqa: E731
@@ -1717,6 +1791,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {dai_section()}
 
 {sw_section()}
+
+{antisym_section()}
 
 {c09_section()}
 

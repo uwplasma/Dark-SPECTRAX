@@ -57,3 +57,29 @@ between t = 637.5 and 737.5, and Nn 256 dies earlier than Nn 128 at Nx 32. The N
 (rejection threshold 650) and the Nx16 Nn64 energy ledger reaches 1.2e-3 W_ext before t = 600 (Nx32: <= 1.9e-5).
 Until blow-up SW tracks the grid through the OTSI growth. Electron density and momentum are not exact (2.3e-3 and
 1.1e-3 at Nx16 Nn64, down to ~5e-8 at Nx32 Nn256). B is rejected; A (#66 closure) stays in production.
+
+## Verdict on E: anti-symmetric square-root SW (Issan et al.), 2026-10-19, `studies/antisym/`, docs/results.md
+
+Literature (read in full: arXiv:2312.05439, 2407.09626, 2412.07073; follow-up search found nothing newer): what is provably
+bounded is sum|C|^2 = int f^2 dv dx (SW f-form) or sum C^2 = particle number (square-root form g = sqrt f), in the symmetrically
+weighted orthonormal Hermite basis with weight 1, closure by truncation (any modified last row or source breaks it), x by
+centred differences or Fourier-Galerkin, for ANY E(t) and ANY moving centre u(t) (the shift generator is skew; a width change
+is skew in the symmetrised form (XD+DX)/2, not stated in the paper), and the argument extends to magnetised terms ((v x B).d_v
+is divergence-free), but the papers treat only Vlasov-Poisson. Number is exact for every Nv in the square-root form; momentum
+and energy are not (drift rates depend on the last coefficients, which vanish only as Nv -> infinity), and 2407.09626 shows no
+closure restores all three in SW. There is no AW statement: the AW L2(f) norm is unbounded and the only AW quadratic invariant
+is the linear free-energy norm int df^2/f_M, valid for perturbations of a fixed Maxwellian (this is what the OTSI Floquet
+test exercises), not for the frozen non-uniform field or the nonlinear problem.
+
+Result. Stage 1 (declared gates G1-G5): the square-root form is exactly normal and neutral (max Re lambda <= 4e-15 at 18/18
+frozen and 12/12 Floquet points where AW_c0 is unstable at 18/18 and 11/12 and AW + #66 closure at 18/18 and 9/12), reproduces the
+Silin OTSI rate to 0.25% and equals the AW linearisation to 2.5e-10, has eigenvector condition 40-105 against 1e19-1e29 for AW,
+and costs 1.5x the AW RHS and nnz. Finite-N conservation: number to 1e-18; momentum and kinetic energy defects scale with the
+top-two Hermite fraction (3e-3 at fraction 6e-4; 1e-12 to 1e-14 for steep spectra). Stage 1 cannot separate SQ from SW (identical
+frozen operator), so stage 2 (the H05 v_q 0.1 pilot that would have been planned for SPECTRAX) was run standalone with gates
+identical to the SW study, declared before the runs: SQ departs from the grid at t = 391 (Nx 16) and 498 (Nx 32), earlier than SW
+(634-738), independent of Nn (64-256) and dt (0.02 vs 0.005), fails G3 and G4, and blows up within about 10 time units after the
+top Hermite band fills (a diagnostic Nx 64 run fails at 538). E is rejected; A (#66 closure) stays in production. No SPECTRAX
+implementation plan is written because the pilot it would serve has been run and failed. Open question for a different study
+(not run): why the square-root x-discretisation fails at an Nn-independent, Nx-dependent time while the f-form tracks the grid
+(the two drivers agree to 1e-9 until t = 250), for example the 2/3 mask on g versus on f = g^2.
