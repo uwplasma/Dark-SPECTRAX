@@ -42,7 +42,7 @@ int (F(xa) - F(xb)) dt over the zone between the planes (cold: exact; warm: negl
 and the pressure work, both O(v_te^2)).
 
 GATES
- Reference (r3_ref.py; N_ref = 4096 points, scipy DOP853 with rtol 1e-12, atol 1e-20, dense output every 0.05;
+ Reference (r3_ref.py; N_ref = 4096 points, scipy DOP853 with rtol 1e-12, atol 1e-11 * amplitude (second pre-run correction: 1e-20 forced the step size through round-off in empty regions), dense output every 0.05;
   PRE-RUN CORRECTION committed before any production run: the first draft said RK4 dt = 0.05, whose energy loss per step
   (omega dt)^6/72 would give ~1e-5 over T = 330 and could never meet R1):
   R1 energy: max_t |E_tot(t) - E_in|/E_in <= 1e-8.
