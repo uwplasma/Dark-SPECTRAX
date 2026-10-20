@@ -1,0 +1,15 @@
+--kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+--kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+--kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+--kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+--kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+--kind pre --vq 0.07 --Nx 64 --Nn 64 --c 64
+--kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+--kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+--kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+--kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+--kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+--kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+--kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+--kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+--kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
