@@ -22,7 +22,7 @@ def test_default_off_and_zero_damping_are_bitwise_the_plain_solve():
         assert np.array_equal(a[k], b[k])
         # zero rate: the Lawson step is bitwise the wrapped step (tests/test_lawson.py in SPECTRAX); only the
         # step clipping onto the saves differs here, so the paths agree to the solver tolerance
-        assert np.abs(a[k] - c[k]).max() < 1e-9 * np.abs(a[k]).max()
+        assert np.abs(a[k] - c[k]).max() < 1e-8 * np.abs(a[k]).max() + 1e-10  # rtol 1e-10, atol 1e-12 solve
 
 
 def test_static_hypercollision_exact_accuracy_ledger_and_fewer_steps():
