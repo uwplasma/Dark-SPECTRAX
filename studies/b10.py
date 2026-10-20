@@ -337,6 +337,10 @@ def boxcar3(z):
     return z
 
 
+LAWSON = "--lawson" in sys.argv   # integrate nu*col exactly (SPECTRAX LawsonSolver); record gets the suffix _li
+RERUN = "--rerun" in sys.argv     # plain Dopri8 rerun for a same-machine wall-time pair; record gets the suffix _rerun
+
+
 def run_case(name):
     import darkspectrax as ds
     c = all_cases()[name]
@@ -355,7 +359,8 @@ def run_case(name):
     cache = {}
     t = 0.0
     for s in range(nseg):
-        out = ds.run(model, y, seg, n_save=SEGN + 1, rtol=RTOL, atol=ATOL, t0=t, cache=cache, max_steps=400_000)
+        out = ds.run(model, y, seg, n_save=SEGN + 1, rtol=RTOL, atol=ATOL, t0=t, cache=cache, max_steps=400_000,
+                      integrating_factor=True if LAWSON else None)
         steps += out["num_steps"]
         if out["status"] != "success":
             status, reason = "failure", out["failure_reason"]
@@ -410,7 +415,7 @@ def run_case(name):
         else:
             row.update({"window": None, "gamma_fit": None})
         res.append(row)
-    rec = {"case": name, "command": f"python studies/b10.py run {name}", "config": c, "reference": pl_ref,
+    rec = {"case": name, "command": f"python studies/b10.py run {name}" + (" --lawson" if LAWSON else "") + (" --rerun" if RERUN else ""), "config": c, "reference": pl_ref,
            "pump_omega_eigen": w0, "A_p": A_p, "seeds": seeds, "status": status, "failure_reason": reason,
            "t_reached": float(t[-1]), "steps": steps, "U_field0": U0, "max_ledger_defect": defect_max,
            "max_ledger_over_U0": defect_max / U0, "max_gauss": [float(v) for v in gauss_max],
@@ -418,7 +423,8 @@ def run_case(name):
            "results": res, "wall_time": time.time() - tic, "repository_commit": ds._simulation._git_sha(),
            "parent_commit": ds.PARENT_COMMIT, "settings": {"rtol": RTOL, "atol": ATOL, "M": MB, "SEED": SEED, "LO": LO, "HI": HI}}
     out_dir.mkdir(exist_ok=True)
-    (out_dir / f"{name}.json").write_text(json.dumps(rec, indent=2, default=float) + "\n")
+    (out_dir / f"{name}{'_li' if LAWSON else ''}{'_rerun' if RERUN else ''}.json").write_text(
+        json.dumps(rec, indent=2, default=float) + "\n")
     print(name, status, [(r["j"], r["gamma_fit"]) for r in res], flush=True)
 
 

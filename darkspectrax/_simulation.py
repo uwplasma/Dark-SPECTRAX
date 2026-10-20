@@ -19,6 +19,7 @@ import numpy as np
 import spectrax
 
 from ._diagnostics import charge_density, energies, gauss_residuals, moments
+from ._closure import static_rate
 from ._model import PARENT_COMMIT, Model, rhs
 
 __all__ = ["maxwellian", "consistent_fields", "proca_mode", "run", "save_record", "adapt_basis", "run_adaptive",
@@ -93,7 +94,17 @@ def proca_mode(model: Model, y, index, A):
     return {**y, "Dk": y["Dk"].at[:, iy, ix, iz].add(vals)}
 
 
-def _compile(model, y0, t_max, n_save, rtol, atol, dt0, solver, max_steps, progress, fixed_dt, dtmin, noise_floor):
+def _wrap_solver(solver, model, integrating_factor):
+    """``solver`` itself, or its Lawson (integrating-factor) version with the diagonal rate frozen at the step start."""
+    if integrating_factor is None or integrating_factor is False:
+        return solver
+    rate = static_rate(model) if integrating_factor is True else integrating_factor
+    return spectrax.LawsonSolver(solver, lambda t, y, args: rate(t, y, model))
+
+
+def _compile(model, y0, t_max, n_save, rtol, atol, dt0, solver, max_steps, progress, fixed_dt, dtmin, noise_floor,
+             integrating_factor=None):
+    solver = _wrap_solver(solver, model, integrating_factor)
     term = diffrax.ODETerm(lambda t, y, args: rhs(t, y, model))
     meter = diffrax.TqdmProgressMeter() if progress else diffrax.NoProgressMeter()
     if fixed_dt is not None:
@@ -111,6 +122,8 @@ def _compile(model, y0, t_max, n_save, rtol, atol, dt0, solver, max_steps, progr
             controller = spectrax.FlooredPIDController(rtol=rtol, atol=atol, dtmin=dtmin, force_dtmin=False,
                                                        floor=floor)
         ts = t0 + jnp.linspace(0.0, t_max, n_save)
+        if integrating_factor and fixed_dt is None:  # Lawson dense output is only accurate for r h <~ 1: step onto the saves
+            controller = diffrax.ClipStepSizeController(controller, step_ts=ts)
         return diffrax.diffeqsolve(
             term, solver, t0, t0 + t_max, dt0, y0, saveat=diffrax.SaveAt(ts=ts),
             stepsize_controller=controller, max_steps=max_steps, throw=False, progress_meter=meter)
@@ -136,7 +149,7 @@ def _row_floor(model: Model, Ck, noise_floor):
 
 def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
         solver=None, max_steps=200_000, progress=False, fixed_dt=None, t0=0.0, dtmin=None,
-        noise_floor=None, cache=None):
+        noise_floor=None, cache=None, integrating_factor=None):
     """Integrate from ``t0`` to ``t0 + t_max`` with Dopri8 (adaptive PID, or constant ``fixed_dt``).
 
     Restart a run by passing its final state (including the work ledger ``W``) and final time as ``t0``.
@@ -152,9 +165,17 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
     rows of species ``s``, so round-off in coefficients far below a species' own scale cannot drive the
     step size (see docs/results.md, unseeded pump-frame stall). ``cache`` (a dict) reuses the compiled
     solve across calls with equal settings and shapes; ``t0`` is a traced argument.
+
+    ``integrating_factor`` (default None / False: plain solver, bitwise the previous path) wraps the Dopri8 step in the
+    SPECTRAX Lawson (integrating-factor) solver so the diagonal damping is integrated exactly: ``True`` takes the model's
+    constant hypercollision ``nu * col``; a callable ``rate_fn(t, y, model) -> rate pytree`` (non-negative rates,
+    structure of ``y``, ``0.0`` for the field, dark, work-ledger and basis states; see :func:`darkspectrax.field_closure`)
+    takes any state-dependent diagonal rate, frozen at the step start. The right-hand side must contain the same damping
+    (the wrapper only treats it exactly). Order and limits: ``spectrax._lawson``.
     """
     solver = diffrax.Dopri8() if solver is None else solver
     key = (id(model), t_max, n_save, rtol, atol, dt0, type(solver), max_steps, progress, fixed_dt, dtmin, noise_floor,
+           integrating_factor,
            tuple((k, jnp.shape(v), str(jnp.result_type(v))) for k, v in sorted(y0.items())))
     compiled = None if cache is None else cache.get(key)
     tic = _time.perf_counter()
@@ -162,7 +183,7 @@ def run(model: Model, y0, t_max, n_save=101, rtol=1e-10, atol=1e-12, dt0=1e-3,
         warnings.filterwarnings("ignore", message="Complex dtype support")
         if compiled is None:
             compiled = _compile(model, y0, t_max, n_save, rtol, atol, dt0, solver, max_steps, progress, fixed_dt,
-                                dtmin, noise_floor)
+                                dtmin, noise_floor, integrating_factor)
             if cache is not None:
                 cache[key] = compiled
         t1 = _time.perf_counter()
@@ -223,7 +244,7 @@ def with_params(model: Model, **params):
 
 
 def solve(model: Model, y0, t_max, n_save=2, params=None, rtol=1e-10, atol=1e-12, dt0=1e-3, solver=None,
-          max_steps=200_000, fixed_dt=None, adjoint=None):
+          max_steps=200_000, fixed_dt=None, adjoint=None, integrating_factor=None):
     """Differentiable solve: the saved states ``ys`` (a pytree with a leading save axis) on
     ``linspace(0, t_max, n_save)``.
 
@@ -239,8 +260,10 @@ def solve(model: Model, y0, t_max, n_save=2, params=None, rtol=1e-10, atol=1e-12
     term = diffrax.ODETerm(lambda t, y, args: rhs(t, y, m))
     controller = (diffrax.ConstantStepSize() if fixed_dt is not None
                   else diffrax.PIDController(rtol=rtol, atol=atol))
+    if integrating_factor and fixed_dt is None:  # Lawson dense output is only accurate for r h <~ 1: step onto the saves
+        controller = diffrax.ClipStepSizeController(controller, step_ts=jnp.linspace(0.0, t_max, n_save))
     sol = diffrax.diffeqsolve(
-        term, diffrax.Dopri8() if solver is None else solver, 0.0, t_max, dt0 if fixed_dt is None else fixed_dt,
+        term, _wrap_solver(diffrax.Dopri8() if solver is None else solver, m, integrating_factor), 0.0, t_max, dt0 if fixed_dt is None else fixed_dt,
         y0, saveat=diffrax.SaveAt(ts=jnp.linspace(0.0, t_max, n_save)), stepsize_controller=controller,
         max_steps=max_steps, adjoint=diffrax.RecursiveCheckpointAdjoint() if adjoint is None else adjoint)
     return sol.ys

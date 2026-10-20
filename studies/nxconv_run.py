@@ -68,6 +68,9 @@ def main(argv=None):
     ap.add_argument("--noise-floor", type=float, default=None)
     ap.add_argument("--max-steps", type=int, default=200_000)
     ap.add_argument("--tag", default="")
+    ap.add_argument("--lawson", action="store_true",
+                    help="integrate the field-scaled closure exactly (SPECTRAX LawsonSolver, rate frozen at the step start); "
+                         "use with --tag _li. Default off: the plain Dopri8 path of every earlier record.")
     a = ap.parse_args(argv)
     case = f"vq{a.vq:g}_Nx{a.Nx}_Nn{a.Nn}_c{a.field_nu:g}" + (f"_nf{a.noise_floor:g}" if a.noise_floor else "") + a.tag
     OUT.mkdir(parents=True, exist_ok=True)
@@ -96,11 +99,16 @@ def main(argv=None):
         return o
 
     _sim.run = counted
-    if a.field_nu > 0:
+    li = {}
+    if a.lawson:
+        if a.field_nu <= 0:
+            raise SystemExit("--lawson needs --field-nu > 0")
+        _sim.rhs, li["integrating_factor"] = ds.field_closure(m, a.field_nu)
+    elif a.field_nu > 0:
         install_closure(m, a.field_nu)
     tic = time.perf_counter()
     out = ds.run_adaptive(m, y0, t1 - t0, SEG, n_save_segment=NSAVE, rtol=1e-10, atol=1e-14, max_steps=a.max_steps,
-                          **({"noise_floor": a.noise_floor} if a.noise_floor else {}))
+                          **({"noise_floor": a.noise_floor} if a.noise_floor else {}), **li)
     wall = time.perf_counter() - tic
     good = np.isfinite(out["t"]) & np.all(np.isfinite(out["W"]), axis=1)
     for k in ("t", "K", "W", "B", "Ck", "Fk", "Dk", "U_gamma", "U_D"):
