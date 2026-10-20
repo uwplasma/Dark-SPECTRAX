@@ -1,0 +1,40 @@
+{
+ "name": "kin_eta0.3_w4_B0_y_Nx512_Nn4_nopacket",
+ "case": {
+  "eta": 0.3,
+  "w": 4.0,
+  "theta": null,
+  "pol": "y",
+  "amp": 0.0001,
+  "ntrunc": 0,
+  "name": "eta0.3_w4_B0_y"
+ },
+ "Nx": 512,
+ "Nn": 4,
+ "amp_scale": 1.0,
+ "nopacket": true,
+ "vte": 0.01,
+ "rtol": 1e-10,
+ "background": {
+  "balance_residual_max": 2.1704289395457744e-13,
+  "balance_base_max": 31.354545324618353,
+  "E0_max": 4.229750233608209e-05,
+  "dark_near_Ex_max": 4.3669275473668654e-07,
+  "lstsq_rank": 340,
+  "lstsq_cond": 149.0357258836164
+ },
+ "status": "success",
+ "steps": 189,
+ "run_time": 1.9851770829991437,
+ "bg_time": 0.7157046669744886,
+ "ledger_max_abs": [
+  3.919418450657216e-25,
+  1.3959453578434248e-26,
+  3.744177773584069e-29
+ ],
+ "parent": "35231ab997d14f54a777397a7f76679f4c4aaf9e",
+ "repository_commit": "a8aa09cd53df8ed59deee326c41787ad1436738c",
+ "command": "python studies/r3_kin.py 0.3 4 none y --nopacket",
+ "max_dn_over_nhi": 2.9804644956380043e-16,
+ "max_abs_E_dark_final": 4.693938605745704e-18
+}
