@@ -1,0 +1,6 @@
+--kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 1 --T 800
+--kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 10 --T 800
+--kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 1 --T 800
+--kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 10 --T 800
+--kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 100 --real 0 --T 800
+--kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 300 --real 0 --T 800

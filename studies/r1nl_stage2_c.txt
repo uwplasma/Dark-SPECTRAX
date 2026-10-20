@@ -1,0 +1,6 @@
+--kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 0 --T 800
+--kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 1 --T 800
+--kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 2 --T 800
+--kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 3 --T 800
+--kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
+--kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 5 --T 800
