@@ -733,6 +733,91 @@ F1 (deficit scales as the seed amplitude squared: D(s=0.1)/D(s=1) in [0.005, 0.0
 **Reading.** (1) At the strongest certified drive (v_q/v_te = 0.07, window 791.5, 10% pairs over four resolutions plus a closure-strength pair and a grid cross-check) the energy transfer follows the linear resonant law: W_ext is within 0.68% of it over the whole window, the four refinement members agree on that deficit to 2e-4, and the frequency shift of the mean field is below 7e-6 omega_pe (the declared resolution threshold was 1e-3 omega_L). No saturation or detuning is resolved: the upper bound on the nonlinear correction to W_ext is 0.7%. (2) The 0.7% is not a drive effect. It is identical at v_q/v_te = 0.03-0.07, grows as t^2 and is proportional to the square of the seed amplitude (unseeded control 2e-9 at t = 400), i.e. it is the back-reaction of the quiver-advected seed modulation on the mean field (the <dn dE> term of the mean-field identity), set by the fluctuation level that was imposed, not by the pump. A physical fluctuation level other than 5e-4 would rescale it. (3) The reason the transfer stays linear is energetic: 96-97% of W_ext sits in coherent k = 0 electron quiver energy (dK_e = 370 of 381 n T_e V); the thermal gain of the electrons is 0.14-0.24 n T_e V (about 0.04-0.06% of W_ext) and the ions receive 0.05%, and the fluctuating-field amplitude (sum of |E_k|^2 over k >= 1) reaches ~2000 E_0^2 only when the OTSI turns on at t of about 780-860 (onset definition in the gates), after which the window ends by positivity loss. Within the window the instability has not yet extracted a resolvable fraction of the work. (4) Finite reservoir at the same drive (u = 1, 10): U_D follows the linear coupled-oscillator prediction to 0.23% / 0.81% of U_D0, W_D follows the matched prescribed drive until t_split = 50.5 / 72, equal to the linear t_split; the reservoir gives up 47% of its energy (u = 1, W_D/U_D0 at the window end) and for u = 10 exchanges energy through beats (first minimum of U_D at 4e-4 U_D0, linear 4e-6; W_D/U_D0 = 1.6% at the window end against 0.7% linear), with W_D within 1.0% / 2.7% of the linear prediction while it is above 20% of its running maximum. (5) Finite coherence (tau omega_pe = 100, 300; six realizations each): R = <W_kin>/<W_lin> = 1.0050 +- 0.0058 and 1.0000 +- 0.0038; the bound on the ensemble nonlinear correction is 1.7% and 0.8%, and the single refined realization agrees (+1.8%, -0.03%). Individual realizations deviate more (up to 4.7% of the peak linear W_ext at tau = 100, 1.5% at tau = 300), with ratios on both sides of 1. (6) Scope: one box (L = 40), one ion mass, T_i = T_e, drives up to 0.07, windows set by the AW truncation instability of the Hermite basis (not by the physical OTSI), fluctuation seeds of fixed amplitude, Lorentzian line only, reservoir and coherence not combined in one run. Beyond the window (> 790) the result says nothing; at v_q/v_te = 0.1 no window beyond ~760 exists (rclosure).
 
 
+## R3 inhomogeneous and magnetized conversion: a density ramp and B0 (`studies/r3_gates.py`, `studies/r3_followup_gates.py`)
+
+**Question.** How do a smooth density variation n(x) and a magnetic field B0 change dark-photon to plasma conversion and escape? **Set-up** (declared in `studies/r3_gates.py` before any run; two pre-run corrections of the reference integrator are recorded there): periodic box 640, immobile ions, electron density n(x) = omega_pe^2(x) rising from 0.02 to 2.98 through a tanh ramp of width w (the resonance omega_pe = Omega_D = 1 sits at n = 1, L_c = n_c/n' = 0.77 w), a plateau of 260 and a down ramp the packet does not reach; incident right-moving free Proca packet (k0 = 1, omega0 = sqrt 2, group velocity 0.71, sigma_k = 0.04, peak |E_D| = 1e-4), polarization x (longitudinal), y or z, eta = 0.15 and 0.3, T = 330, |Omega_c| = 0.3 with B0 along (cos th, 0, sin th), th = 0, 45, 90 deg. **Reference** (`studies/r3_ref.py`, NumPy/SciPy only): cold electron fluid + Maxwell + canonical Proca in 1D, pseudo-spectral in x (4096 points), DOP853 (rtol 1e-12), same discrete spectrum as the kinetic runs. **Kinetic**: Dark-SPECTRAX, v_te = 0.01, Nn = Nm = Np = 4, Nx 512 (and Nx 768, Nn 6 refinement), starting from an exact kinetic equilibrium: Maxwellian n(x) in the static field E0 = -v_te^2 n'/n, which is solved on the discrete C_1 row (residual 2e-13 against a base 10) with the dark near field of the residual charge; the equilibrium stays put to 3e-16 in n/n_hi (K1). Channels are energy fractions of the packet at t = T: reflected/transmitted dark and photon (cold eigen-branch projection of the fields in uniform windows, energy inner product), energy stored at the ramp, and (kinetic) absorbed thermal energy; fluxes S = E x B and S_D = E_D x B_D + Omega_D^2 phi_D A_D at planes xu -/+ 7w. Deviation from the declared set-up: the reflected photon (speed 0.9) reaches x = 0 and wraps around before T, so 1.0-1.1% (w = 4) of the energy sits in the declared 'beyond' window; it is reported as the 'wrap-corrected' reflected photon (left-moving branches in x > xd + 6w) and the declared left-window value is also tabulated.
+
+![transverse conversion](_static/r3/transverse_conversion.png)
+
+### Declared gates
+
+| Gate | Rule | Result |
+|---|---|---|
+| R1 | cold energy drift <= 1e-8 | PASS: max 3.5e-10 over 48 cases |
+| R2 | N 4096 -> 6144, rtol 1e-12 -> 1e-13: channels change <= 1e-4 (3 cases) | PASS: max 4.5e-05 |
+| R3 | flux budget with the phi_D A_D term <= 1e-4 of E_in; without it > 1e-2 for B0 = 0 longitudinal | with term: FAIL (max 1.3e-03; every transverse-decoupled case <= 3.5e-6, the 14 failures are the cases with energy at a cold resonance layer, where the layer wavenumber exceeds the grid); omission: PASS (smallest omission residual 0.02 of E_in) |
+| R4 | Landau-Zener law within 0.03 in V (k Lc >= 3, eta f n_c <= 0.25 kbar^2) | FAIL: 2 of 4 cases in V (eta0.15_w12_B0_y 0.045, eta0.15_w8_B0_y 0.035); see below |
+| R5 | longitudinal: stored = WKB tunnelling, refl_dark = 1 - T (0.10) | FAIL (2 of 10 gated cases): the WKB number is the TRANSMITTED dark fraction, not the absorbed one (declared prediction wrong) |
+| K1 | background-only run | PASS: |dn|/n_hi 3e-16, fields 5e-18 |
+| K2 | success and ledger <= 1e-6 E_in | PASS: 30 runs, ledger <= 2e-10 E_in |
+| K3 | closure <= 2e-3, flux budget <= 5e-3 | closure max 1.5e-04 PASS; flux residual: transverse-decoupled cases up to 1.5e-2 at Nx 512 (eta 0.3, w 2: FAIL; 3.9e-3 at w 4 and 3e-4 at w 8: pass) and <= 3.4e-4 at Nx 768 / Nn 6 (pass); resonance cases 0.05-0.2: FAIL |
+| K4 | kinetic vs cold twin (band-limited profile of the same Nx): 0.02 / 0.03 / longitudinal 0.05 | Nx 512: 8 of 15 pass. All transverse-decoupled cases (B0 = 0 y, th 0 y, th 90 z: 16 runs) agree to 4e-04; longitudinal and oblique-B0 cases FAIL at Nx 512/768 (resolution, next paragraph) |
+| K5 | refinement pair (Nx 768, Nn 6) changes <= 0.005 | 11 of 15 pass; not converged: eta0.3_w2_None_x, eta0.3_w4_None_x, eta0.3_w4_45_x, eta0.3_w4_90_y |
+| K6 | amplitude x 3 | PASS: change 4e-09 (linear) |
+
+### Transverse conversion and the Landau-Zener law
+
+Cold reference (kinetic Nx 512 agrees to <= 4e-4 at v_te = 0.01), B0 = 0, polarization y; T = transmitted dark, Rg and Rd = reflected photon (wrap-corrected) and dark. LZ: P_d = exp(-pi g^2/(kbar |dDelta/dx|)), g = eta n_c, n_c = Omega_D^2/(1 - eta^2), kbar^2 = omega^2 - n_c, T = P_d, Rg = P_d(1 - P_d), Rd = (1 - P_d)^2, averaged over the packet spectrum. Refined law (follow-up G, declared before it was computed): the Dykhne complex-turning-point exponent of the exact local eigenwavenumbers.
+
+| eta | w | L_c k | s = eta n_c/kbar^2 | T ref | Rg ref | Rd ref | T LZ | Rg LZ | Rd LZ | max dev LZ | max dev refined |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0.05 | 4 | 3.1 | 0.05 | 0.976 | 0.023 | 0.001 | 0.976 | 0.023 | 0.001 | 0.000 | 0.000 |
+| 0.05 | 8 | 6.1 | 0.05 | 0.953 | 0.044 | 0.002 | 0.953 | 0.045 | 0.002 | 0.001 | 0.000 |
+| 0.05 | 12 | 9.2 | 0.05 | 0.930 | 0.064 | 0.005 | 0.930 | 0.065 | 0.005 | 0.001 | 0.002 |
+| 0.1 | 4 | 3.1 | 0.10 | 0.910 | 0.082 | 0.008 | 0.906 | 0.085 | 0.009 | 0.004 | 0.001 |
+| 0.1 | 8 | 6.1 | 0.10 | 0.830 | 0.141 | 0.029 | 0.821 | 0.147 | 0.032 | 0.009 | 0.000 |
+| 0.1 | 12 | 9.2 | 0.10 | 0.754 | 0.184 | 0.058 | 0.744 | 0.191 | 0.066 | 0.011 | 0.001 |
+| 0.15 | 2 | 1.5 | 0.16 | 0.895 | 0.094 | 0.011 | 0.891 | 0.097 | 0.012 | 0.004 | 0.008 |
+| 0.15 | 3 | 2.3 | 0.16 | 0.855 | 0.124 | 0.021 | 0.841 | 0.134 | 0.025 | 0.014 | 0.003 |
+| 0.15 | 4 | 3.1 | 0.16 | 0.814 | 0.151 | 0.034 | 0.794 | 0.164 | 0.043 | 0.021 | 0.001 |
+| 0.15 | 6 | 4.6 | 0.16 | 0.736 | 0.194 | 0.069 | 0.707 | 0.207 | 0.086 | 0.029 | 0.000 |
+| 0.15 | 8 | 6.1 | 0.16 | 0.665 | 0.223 | 0.112 | 0.630 | 0.233 | 0.137 | 0.035 | 0.000 |
+| 0.15 | 12 | 9.2 | 0.16 | 0.541 | 0.248 | 0.205 | 0.500 | 0.250 | 0.250 | 0.045 | 0.004 |
+| 0.2 | 4 | 3.1 | 0.22 | 0.704 | 0.208 | 0.087 | 0.648 | 0.228 | 0.124 | 0.056 | 0.002 |
+| 0.2 | 8 | 6.1 | 0.22 | 0.499 | 0.250 | 0.251 | 0.420 | 0.244 | 0.336 | 0.085 | 0.000 |
+| 0.2 | 12 | 9.2 | 0.22 | 0.351 | 0.228 | 0.413 | 0.272 | 0.198 | 0.530 | 0.116 | 0.007 |
+| 0.3 | 2 | 1.5 | 0.36 | 0.678 | 0.218 | 0.104 | 0.562 | 0.246 | 0.192 | 0.116 | 0.025 |
+| 0.3 | 3 | 2.3 | 0.36 | 0.580 | 0.243 | 0.176 | 0.421 | 0.244 | 0.335 | 0.159 | 0.009 |
+| 0.3 | 4 | 3.0 | 0.36 | 0.491 | 0.250 | 0.259 | 0.316 | 0.216 | 0.468 | 0.209 | 0.003 |
+| 0.3 | 6 | 4.6 | 0.36 | 0.347 | 0.226 | 0.426 | 0.178 | 0.146 | 0.676 | 0.250 | 0.000 |
+| 0.3 | 8 | 6.1 | 0.36 | 0.244 | 0.184 | 0.571 | 0.100 | 0.090 | 0.810 | 0.239 | 0.001 |
+| 0.3 | 12 | 9.1 | 0.36 | 0.120 | 0.106 | 0.765 | 0.032 | 0.031 | 0.938 | 0.173 | 0.009 |
+
+**Domain of validity.** The simple law is accurate where s = eta n_c/kbar^2 <~ 0.1 (deviation <= 0.01, eta <= 0.1 at kbar ~ 1); it systematically overestimates the exponent, ln T_ref/ln P_LZ ~ 1 - 4.5 s^2 (0.99, 0.95, 0.89, 0.80, 0.61 at eta = 0.05, 0.1, 0.15, 0.2, 0.3; ![exponent ratio](_static/r3/lz_exponent_ratio.png)) independently of L_c for L_c kbar >= 3. The declared predicate V (s <= 0.25) was too permissive: R4 fails for eta 0.15, w 8 and 12. The refined exponent (FU4: PASS) reproduces all three channels to 0.009 (gated: k Lc >= 3) and 0.025 (all cases, worst at w = 2 where the ramp is no longer slow), including eta = 0.3, where the simple law is off by 0.25. The relative exponent error scales with eta^2/kbar^2, so for non-relativistic dark photons (kbar = v Omega_D) the simple formula needs eta << 0.3 v; nothing here tests v << 1 (needs a longer box), and the 4% bandwidth is included in the average. The reflected photon returns through the resonance once (turning point at n = omega^2 above the resonance), so the three channels follow T, T(1 - T) and (1 - T)^2 with no interference term.
+
+### Longitudinal polarization: tunnelling to a resonance layer
+
+![longitudinal](_static/r3/longitudinal_conversion.png)
+
+The cold longitudinal dispersion k^2 = omega^2 - Omega_D^2 (omega^2 - n)/(omega^2 - (1 + eta^2) n) (checked against the 19x19 cold matrix to 2e-15) has an evanescent window between n_t = omega^2 k^2/(omega^2 (1 + eta^2) - Omega_D^2) and the cold resonance n_p = omega^2/(1 + eta^2). The reference shows that the WKB tunnelling factor exp(-2 int kappa dx) is the **transmitted dark fraction** (eta 0.3, w 4: T_ref 0.274 against 0.274; eta 0.15, w 8: 0.451 against 0.450); the remainder splits into reflected dark and energy left in the layer (up to 25%). That layer energy phase-mixes with wavenumber k(t) = |d omega_pe/dx| t, about 40 at T = 330 for w = 4, which the first-step grids (k <= 1.67 at Nx 512) cannot hold. Follow-up F (declared before it was run) refines Nx to 3072 (k <= 10): 
+longitudinal B0: FU1 PASS (change 2.3e-03 between Nx 2048 and 3072), FU2 PASS (refl_dark 0.5262 / 0.5263, trans_dark 0.2746 / 0.2744, layer remnant 0.205 / 0.199, kinetic / cold); 
+th45 y: FU1 PASS (change 2.8e-04 between Nx 2048 and 3072), FU2 PASS (refl_dark 0.3150 / 0.3151, trans_dark 0.4882 / 0.4882, layer remnant 0.065 / 0.065, kinetic / cold); 
+thermal dependence at Nx 3072 (v_te 0.005 / 0.01 / 0.02): longitudinal remnant 0.201 / 0.205 / 0.213, transmitted 0.2746 / 0.2746 / 0.2749: no resolved kinetic correction to the propagating channels at v_te <= 0.02 over T = 330; thermal absorption of the layer energy is below the 1% noise of the thermal-energy diagnostic (the layer wavenumber 40 times v_te/omega = 0.3 would start Landau damping only near the end). Accounting at Nx >= 1536 is limited by the fixed 4096-point analysis grid (closure to 4e-3, absorbed noise +-1%).
+
+### Effect of B0 (cold reference, eta 0.3, w 4; kinetic agrees where converged)
+
+![B0](_static/r3/b0_effect.png)
+
+| B0 | pol | T dark | Rd | Rg (wrap-corr.) | stored | change of T vs B0 = 0 |
+|---|---|---|---|---|---|---|
+| th = 0 | x | 0.274 | 0.526 | 0.000 | 0.199 | +0.000 |
+| th = 0 | y | 0.490 | 0.261 | 0.249 | 0.000 | -0.001 |
+| th = 45 | x | 0.273 | 0.418 | 0.264 | 0.044 | -0.001 |
+| th = 45 | y | 0.488 | 0.315 | 0.132 | 0.065 | -0.003 |
+| th = 45 | z | 0.490 | 0.290 | 0.173 | 0.047 | -0.001 |
+| th = 90 | x | 0.272 | 0.405 | 0.272 | 0.050 | -0.002 |
+| th = 90 | y | 0.487 | 0.357 | 0.052 | 0.104 | -0.004 |
+| th = 90 | z | 0.491 | 0.259 | 0.250 | 0.000 | +0.000 |
+
+- B0 along the gradient (th = 0, R and L parts with n -> n omega/(omega -/+ Omega_c)): no change within 0.002 (the shifts of the two circular parts cancel in the packet average) and the refined circular law (n -> f n in the two-level system) reproduces it (deviation 0.003); B0 perpendicular with the field along B0 (th = 90, pol z, ordinary mode): identical to B0 = 0.
+- The transmitted dark fraction is insensitive to B0 at w >= 4 (<= 0.004), because it is set by the tunnelling/LZ exponent, which B0 does not change at |Omega_c| = 0.3; at w = 2 it moves by 0.02-0.06.
+- What B0 changes is the fate of the rest: with oblique B0 the longitudinal resonance energy that was trapped at the layer (0.20 of the packet at B0 = 0) escapes as reflected ordinary photons (th 45, 90 x: stored 0.04-0.05, reflected photon 0.26-0.27), and a transversely polarized packet leaves 0.05-0.10 at the layer (hybrid-type resonance) while the reflected photon fraction drops (0.25 -> 0.13 at th 45 y, 0.05 at th 90 y; X mode).
+
+### Scope and limits
+
+First step: linear amplitude (K6), one packet (k0 = 1, 4% bandwidth), immobile ions, v_te = 0.01 T <= 330, eta 0.15-0.3 (large against the physical eta), |Omega_c| = 0.3, Hermite order 4 (no collisions, no closure). Not done: non-relativistic packets (k0 << Omega_D) where the photon turning point approaches the resonance, a frequency-domain boundary-value solution of the Beadle-Caputo-Ellis kind (arXiv:2405.13882, abstract read only), thermal absorption at the longitudinal layer (needs Nx >~ 12000 and Nn >> 4), mobile ions, 2D geometry, nonlinear amplitudes. The cold reference is exact in the linear cold limit, so for the converged cases the kinetic runs add no new physics at v_te = 0.01; they certify the reference and the equilibrium construction. Kinetic records have the plane-flux time series stripped (`--keep-series` regenerates it).
+
+
 ## Independent dark reference: grid Vlasov-Ampere-Proca (`python studies/dark_grid_reference.py`)
 
 `studies/refs/code/slv_proca.py` extends the imported semi-Lagrangian solver with Ampere's law and the longitudinal Proca fields (E_D, A_D, phi_D at every k including k = 0, exact per-k propagator, mid-step current from the exact velocity shift). It shares no code with SPECTRAX or Dark-SPECTRAX; it shares the field convention and the D_L equation. c = 10 (beta = 0.1), eta = 0.3, Omega_D = omega_pe.

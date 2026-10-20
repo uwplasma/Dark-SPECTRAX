@@ -439,6 +439,112 @@ def r1nl_section():
     return "\n".join(L)
 
 
+def r3_section():
+    """R3 first step: dark-photon conversion at a smooth density ramp, with and without B0; cold reference vs Dark-SPECTRAX."""
+    S = json.loads((root / "studies/r3/summary.json").read_text())
+    F = json.loads((root / "studies/r3/followup_summary.json").read_text())
+    f3 = lambda x: f"{x:.3f}"
+    L = ["## R3 inhomogeneous and magnetized conversion: a density ramp and B0 (`studies/r3_gates.py`, `studies/r3_followup_gates.py`)", "",
+         "**Question.** How do a smooth density variation n(x) and a magnetic field B0 change dark-photon to plasma conversion and escape? "
+         "**Set-up** (declared in `studies/r3_gates.py` before any run; two pre-run corrections of the reference integrator are recorded there): "
+         "periodic box 640, immobile ions, electron density n(x) = omega_pe^2(x) rising from 0.02 to 2.98 through a tanh ramp of width w "
+         "(the resonance omega_pe = Omega_D = 1 sits at n = 1, L_c = n_c/n' = 0.77 w), a plateau of 260 and a down ramp the packet does not reach; "
+         "incident right-moving free Proca packet (k0 = 1, omega0 = sqrt 2, group velocity 0.71, sigma_k = 0.04, peak |E_D| = 1e-4), polarization x "
+         "(longitudinal), y or z, eta = 0.15 and 0.3, T = 330, |Omega_c| = 0.3 with B0 along (cos th, 0, sin th), th = 0, 45, 90 deg. "
+         "**Reference** (`studies/r3_ref.py`, NumPy/SciPy only): cold electron fluid + Maxwell + canonical Proca in 1D, pseudo-spectral in x (4096 points), "
+         "DOP853 (rtol 1e-12), same discrete spectrum as the kinetic runs. **Kinetic**: Dark-SPECTRAX, v_te = 0.01, Nn = Nm = Np = 4, Nx 512 (and Nx 768, Nn 6 refinement), "
+         "starting from an exact kinetic equilibrium: Maxwellian n(x) in the static field E0 = -v_te^2 n'/n, which is solved on the discrete C_1 row (residual "
+         f"{S['K1']['balance_residual_max']:.0e} against a base {1e1:.0f}) with the dark near field of the residual charge; the equilibrium stays put to "
+         f"{S['K1']['max_dn_over_nhi']:.0e} in n/n_hi (K1). Channels are energy fractions of the packet at t = T: reflected/transmitted dark and photon "
+         "(cold eigen-branch projection of the fields in uniform windows, energy inner product), energy stored at the ramp, and (kinetic) absorbed thermal energy; "
+         "fluxes S = E x B and S_D = E_D x B_D + Omega_D^2 phi_D A_D at planes xu -/+ 7w. "
+         "Deviation from the declared set-up: the reflected photon (speed 0.9) reaches x = 0 and wraps around before T, so 1.0-1.1% (w = 4) of the energy "
+         "sits in the declared 'beyond' window; it is reported as the 'wrap-corrected' reflected photon (left-moving branches in x > xd + 6w) and the declared "
+         "left-window value is also tabulated.", ""]
+    L += ["![transverse conversion](_static/r3/transverse_conversion.png)", ""]
+    r1_, r2_, r3_ = S["R1"], S["R2"], S["R3"]
+    L += ["### Declared gates", "",
+          "| Gate | Rule | Result |", "|---|---|---|",
+          f"| R1 | cold energy drift <= 1e-8 | {'PASS' if r1_['pass'] else 'FAIL'}: max {r1_['max_energy_drift']:.1e} over {r1_['n_cases']} cases |",
+          f"| R2 | N 4096 -> 6144, rtol 1e-12 -> 1e-13: channels change <= 1e-4 (3 cases) | {'PASS' if r2_['pass'] else 'FAIL'}: max {max(x['max_channel_change'] for x in r2_['cases']):.1e} |",
+          f"| R3 | flux budget with the phi_D A_D term <= 1e-4 of E_in; without it > 1e-2 for B0 = 0 longitudinal | "
+          f"with term: {'PASS' if r3_['pass_with'] else 'FAIL'} (max {r3_['max_residual_with_phiA']:.1e}; every transverse-decoupled case <= 3.5e-6, the 14 failures are the cases with energy at a cold resonance layer, where the layer wavenumber exceeds the grid); "
+          f"omission: {'PASS' if r3_['pass_omission'] else 'FAIL'} (smallest omission residual {min(r3_['omission_residuals_B0_x'].values()):.2f} of E_in) |"]
+    r4 = S["R4"]
+    bad = [x for x in r4["rows"] if x["valid"] and not x["pass"]]
+    bad_txt = ", ".join(f"{x['case']} {x['max_abs_dev']:.3f}" for x in bad)
+    L += [f"| R4 | Landau-Zener law within 0.03 in V (k Lc >= 3, eta f n_c <= 0.25 kbar^2) | FAIL: {len(bad)} of {r4['n_valid']} cases in V ({bad_txt}); see below |"]
+    r5 = S["R5"]
+    L += [f"| R5 | longitudinal: stored = WKB tunnelling, refl_dark = 1 - T (0.10) | FAIL ({sum(1 for x in r5['rows'] if x['gated'] and x['pass'])} of {sum(1 for x in r5['rows'] if x['gated'])} gated cases): the WKB number is the TRANSMITTED dark fraction, not the absorbed one (declared prediction wrong) |"]
+    k2, k3 = S["K2"], S["K3"]
+    L += [f"| K1 | background-only run | PASS: |dn|/n_hi {S['K1']['max_dn_over_nhi']:.0e}, fields {S['K1']['max_field_final']:.0e} |",
+          f"| K2 | success and ledger <= 1e-6 E_in | {'PASS' if k2['pass'] else 'FAIL'}: {k2['n_runs']} runs, ledger <= {k2['max_ledger_rel_E_in']:.0e} E_in |",
+          f"| K3 | closure <= 2e-3, flux budget <= 5e-3 | closure max {k3['max_closure']:.1e} PASS; flux residual: transverse-decoupled cases up to 1.5e-2 at Nx 512 (eta 0.3, w 2: FAIL; 3.9e-3 at w 4 and 3e-4 at w 8: pass) and <= 3.4e-4 at Nx 768 / Nn 6 (pass); resonance cases 0.05-0.2: FAIL |"]
+    k4 = [r for r in S["kin_rows"] if "K4_pass" in r]
+    k4_512 = [r for r in k4 if r["Nx"] == 512]
+    dec = [r for r in k4 if (r["pol"] == "y" and r["theta"] in (None, 0)) or (r["pol"] == "z" and r["theta"] == 90)]
+    L += [f"| K4 | kinetic vs cold twin (band-limited profile of the same Nx): 0.02 / 0.03 / longitudinal 0.05 | Nx 512: {sum(1 for r in k4_512 if r['K4_pass'])} of {len(k4_512)} pass. All transverse-decoupled cases (B0 = 0 y, th 0 y, th 90 z: {len(dec)} runs) agree to {max(r['K4_max'] for r in dec):.0e}; "
+          "longitudinal and oblique-B0 cases FAIL at Nx 512/768 (resolution, next paragraph) |",
+          f"| K5 | refinement pair (Nx 768, Nn 6) changes <= 0.005 | {sum(1 for x in S['K5'] if x['pass'])} of {len(S['K5'])} pass; not converged: " +
+          ", ".join(x['case'] for x in S['K5'] if not x['pass']) + " |",
+          f"| K6 | amplitude x 3 | {'PASS' if S['K6']['pass'] else 'FAIL'}: change {S['K6']['max_channel_change']:.0e} (linear) |", ""]
+    L += ["### Transverse conversion and the Landau-Zener law", "",
+          "Cold reference (kinetic Nx 512 agrees to <= 4e-4 at v_te = 0.01), B0 = 0, polarization y; T = transmitted dark, Rg and Rd = reflected photon (wrap-corrected) and "
+          "dark. LZ: P_d = exp(-pi g^2/(kbar |dDelta/dx|)), g = eta n_c, n_c = Omega_D^2/(1 - eta^2), kbar^2 = omega^2 - n_c, T = P_d, Rg = P_d(1 - P_d), Rd = (1 - P_d)^2, averaged over the packet spectrum. "
+          "Refined law (follow-up G, declared before it was computed): the Dykhne complex-turning-point exponent of the exact local eigenwavenumbers.", "",
+          "| eta | w | L_c k | s = eta n_c/kbar^2 | T ref | Rg ref | Rd ref | T LZ | Rg LZ | Rd LZ | max dev LZ | max dev refined |", "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for r in sorted(F["FU4"]["rows"], key=lambda r: (r["eta"], r["w"])):
+        if r["theta"] is not None:
+            continue
+        L.append(f"| {r['eta']:g} | {r['w']:g} | {r['kbarLc']:.1f} | {r['eta_fnc_over_kbar2']:.2f} | {f3(r['ref']['trans_dark'])} | {f3(r['ref']['refl_photon'])} | {f3(r['ref']['refl_dark'])} | "
+                 f"{f3(r['simple']['trans_dark'])} | {f3(r['simple']['refl_photon'])} | {f3(r['simple']['refl_dark'])} | {r['max_dev_simple']:.3f} | {r['max_dev_refined']:.3f} |")
+    L += ["", f"**Domain of validity.** The simple law is accurate where s = eta n_c/kbar^2 <~ 0.1 (deviation <= 0.01, eta <= 0.1 at kbar ~ 1); it systematically "
+          "overestimates the exponent, ln T_ref/ln P_LZ ~ 1 - 4.5 s^2 (0.99, 0.95, 0.89, 0.80, 0.61 at eta = 0.05, 0.1, 0.15, 0.2, 0.3; "
+          "![exponent ratio](_static/r3/lz_exponent_ratio.png)) independently of L_c for L_c kbar >= 3. The declared predicate V (s <= 0.25) was too permissive: "
+          f"R4 fails for eta 0.15, w 8 and 12. The refined exponent (FU4: {'PASS' if F['FU4']['pass'] else 'FAIL'}) reproduces all three channels to "
+          f"{F['FU4']['max_dev_refined_gated']:.3f} (gated: k Lc >= 3) and {F['FU4']['max_dev_refined_all']:.3f} (all cases, worst at w = 2 where the ramp is no longer slow), "
+          "including eta = 0.3, where the simple law is off by 0.25. The relative exponent error scales with eta^2/kbar^2, so for non-relativistic dark photons (kbar = v Omega_D) the simple formula needs "
+          "eta << 0.3 v; nothing here tests v << 1 (needs a longer box), and the 4% bandwidth is included in the average. "
+          "The reflected photon returns through the resonance once (turning point at n = omega^2 above the resonance), so the three channels follow T, T(1 - T) and (1 - T)^2 with no interference term.", ""]
+    L += ["### Longitudinal polarization: tunnelling to a resonance layer", "",
+          "![longitudinal](_static/r3/longitudinal_conversion.png)", "",
+          "The cold longitudinal dispersion k^2 = omega^2 - Omega_D^2 (omega^2 - n)/(omega^2 - (1 + eta^2) n) (checked against the 19x19 cold matrix to 2e-15) has an evanescent window between "
+          "n_t = omega^2 k^2/(omega^2 (1 + eta^2) - Omega_D^2) and the cold resonance n_p = omega^2/(1 + eta^2). The reference shows that the WKB tunnelling factor exp(-2 int kappa dx) is the "
+          "**transmitted dark fraction** (eta 0.3, w 4: T_ref 0.274 against 0.274; eta 0.15, w 8: 0.451 against 0.450; |difference| <= 1.4e-3 for w >= 3, and 0.014 / 0.09 at w = 2 where k Lc < 3); the remainder splits into reflected dark and energy left in the layer (up to 28%). "
+          "That layer energy phase-mixes with wavenumber k(t) = |d omega_pe/dx| t, about 40 at T = 330 for w = 4, which the first-step grids (k <= 1.67 at Nx 512) cannot hold. "
+          "Follow-up F (declared before it was run) refines Nx to 3072 (k <= 10): "]
+    for label in ("longitudinal_B0", "th45_y"):
+        lad = F["ladder"][label]
+        k, c = lad["rows"][-1]["kin"], lad["rows"][-1]["cold"]
+        L.append(f"{label.replace('_', ' ')}: FU1 {'PASS' if lad['FU1']['converged'] else 'FAIL'} (change {lad['FU1']['max']:.1e} between Nx 2048 and 3072), FU2 {'PASS' if lad['FU2']['pass'] else 'FAIL'} "
+                 f"(refl_dark {k['refl_dark']:.4f} / {c['refl_dark']:.4f}, trans_dark {k['trans_dark']:.4f} / {c['trans_dark']:.4f}, layer remnant {k['remnant']:.3f} / {c['remnant']:.3f}, kinetic / cold); ")
+    th3 = F["ladder"]["longitudinal_B0"]["FU3"]
+    L += [f"thermal dependence at Nx 3072 (v_te 0.005 / 0.01 / 0.02): longitudinal remnant {th3['0.005']['remnant']:.3f} / {th3['0.01']['remnant']:.3f} / {th3['0.02']['remnant']:.3f}, "
+             f"transmitted {th3['0.005']['trans_dark']:.4f} / {th3['0.01']['trans_dark']:.4f} / {th3['0.02']['trans_dark']:.4f}: no resolved kinetic correction to the propagating channels at v_te <= 0.02 over T = 330; "
+             "thermal absorption of the layer energy is below the 1% noise of the thermal-energy diagnostic (the layer wavenumber 40 times v_te/omega = 0.3 would start Landau damping only near the end). "
+             "Accounting at Nx >= 1536 is limited by the fixed 4096-point analysis grid (closure to 4e-3, absorbed noise +-1%).", ""]
+    L += ["### Effect of B0 (cold reference, eta 0.3, w 4; kinetic agrees where converged)", "", "![B0](_static/r3/b0_effect.png)", "",
+          "| B0 | pol | T dark | Rd | Rg (wrap-corr.) | stored | change of T vs B0 = 0 |", "|---|---|---|---|---|---|---|"]
+    for r in sorted(S["R6"], key=lambda r: (r["theta"], r["pol"])):
+        if r["w"] != 4.0:
+            continue
+        c = r["channels"]
+        L.append(f"| th = {r['theta']} | {r['pol']} | {f3(c['trans_dark'])} | {f3(r['wrap']['refl_dark_wrapcorr'])} | {f3(r['wrap']['refl_photon_wrapcorr'])} | {f3(c['stored'])} | {r['delta_vs_B0']['trans_dark']:+.3f} |")
+    L += ["", "- B0 along the gradient (th = 0, R and L parts with n -> n omega/(omega -/+ Omega_c)): no change within 0.002 (the shifts of the two circular parts cancel in the packet average) and "
+          "the refined circular law (n -> f n in the two-level system) reproduces it (deviation 0.003); B0 perpendicular with the field along B0 (th = 90, pol z, ordinary mode): identical to B0 = 0.",
+          "- The transmitted dark fraction is insensitive to B0 at w >= 4 (<= 0.004), because it is set by the tunnelling/LZ exponent, which B0 does not change at |Omega_c| = 0.3; at w = 2 it moves by 0.02-0.06.",
+          "- What B0 changes is the fate of the rest: with oblique B0 the longitudinal resonance energy that was trapped at the layer (0.20 of the packet at B0 = 0) escapes as reflected ordinary photons "
+          "(th 45, 90 x: stored 0.04-0.05, reflected photon 0.26-0.27), and a transversely polarized packet leaves 0.05-0.10 at the layer (hybrid-type resonance) while the reflected photon fraction drops "
+          "(0.25 -> 0.13 at th 45 y, 0.05 at th 90 y; X mode).", "",
+          "### Scope and limits", "",
+          "First step: linear amplitude (K6), one packet (k0 = 1, 4% bandwidth), immobile ions, v_te = 0.01 T <= 330, eta 0.15-0.3 (large against the physical eta), |Omega_c| = 0.3, Hermite order 4 (no collisions, no closure). "
+          "Not done: non-relativistic packets (k0 << Omega_D) where the photon turning point approaches the resonance, a frequency-domain boundary-value solution of the Beadle-Caputo-Ellis kind "
+          "(arXiv:2405.13882, abstract read only), thermal absorption at the longitudinal layer (needs Nx >~ 12000 and Nn >> 4), mobile ions, 2D geometry, nonlinear amplitudes. "
+          "The cold reference is exact in the linear cold limit, so for the converged cases the kinetic runs add no new physics at v_te = 0.01; they certify the reference and the equilibrium construction. "
+          "Kinetic records have the plane-flux time series stripped (`--keep-series` regenerates it).", ""]
+    return "\n".join(L)
+
+
 def expint_section():
     sm = json.loads((root / "studies/expint/summary.json").read_text())
     cost = json.loads((root / "studies/expint/cost.json").read_text())
@@ -1953,6 +2059,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {r1_section()}
 
 {r1nl_section()}
+
+{r3_section()}
 
 {third_round()}
 
