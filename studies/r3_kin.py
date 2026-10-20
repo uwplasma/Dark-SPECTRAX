@@ -120,6 +120,7 @@ def main():
     ap.add_argument("--tag", default="")
     ap.add_argument("--seg", type=int, default=3)
     ap.add_argument("--vte", type=float, default=g.VTE)
+    ap.add_argument("--keep-series", action="store_true", help="store the plane-flux time series (records in the repository were stripped of it)")
     a = ap.parse_args()
     theta = None if a.theta == "none" else int(a.theta)
     case = ref.Case(a.eta, a.w, theta, a.pol, g.AMP * a.amp)
@@ -195,7 +196,8 @@ def main():
         EzT = zone_E(XT, neT)
         flux = np.trapezoid(Fa.sum(1) - Fb.sum(1), t_all)
         flux_no = np.trapezoid(Fa[:, :2].sum(1) - Fb[:, :2].sum(1), t_all)
-        rec["flux_series"] = {"t": t_all[::1].tolist(), "Fa": (Fa / E_in).tolist(), "Fb": (Fb / E_in).tolist()}
+        if a.keep_series:
+            rec["flux_series"] = {"t": t_all[::1].tolist(), "Fa": (Fa / E_in).tolist(), "Fb": (Fb / E_in).tolist()}
         rec.update({"E_in": E_in, "channels": ch, "branch_windows": res,
                     "ledger_rel_E_in": (ledger_max / E_in).tolist(),
                     "budget": {"zone_dE": (EzT - Ez0) / E_in, "flux_in": flux / E_in, "residual": (EzT - Ez0 - flux) / E_in,

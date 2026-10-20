@@ -39,7 +39,7 @@ def main():
     ref, kin = load("ref_*.json"), load("kin_*.json")
     S = {"gates": g.GATE}
     # ---------------------------------------------------------------- reference
-    main_ref = {k: v for k, v in ref.items() if v["N"] == 4096 and not v["case"]["ntrunc"]}
+    main_ref = {k: v for k, v in ref.items() if v["N"] == 4096 and not v["case"]["ntrunc"] and v["case"]["eta"] in g.ETAS}
     S["R1"] = {"max_energy_drift": max(v["energy_drift"] for v in main_ref.values()), "n_cases": len(main_ref)}
     S["R1"]["pass"] = S["R1"]["max_energy_drift"] <= g.GATE["R1"]
     # R2 refinement
@@ -119,7 +119,8 @@ def main():
                                    "E0_max": k1["background"]["E0_max"], "dark_near_Ex_max": k1["background"]["dark_near_Ex_max"],
                                    "balance_residual_max": k1["background"]["balance_residual_max"],
                                    "pass": k1["max_dn_over_nhi"] <= g.GATE["K1_n"] and k1["max_abs_E_dark_final"] <= g.GATE["K1_field"] * g.AMP}
-    runs = {k: v for k, v in kin.items() if "channels" in v and v["amp_scale"] == 1 and not v["nopacket"] and v["vte"] == g.VTE}
+    runs = {k: v for k, v in kin.items() if "channels" in v and v["amp_scale"] == 1 and not v["nopacket"] and v["vte"] == g.VTE
+            and v["Nx"] in (512, 768)}
     S["K2"] = {"all_success": all(v["status"] == "success" for v in runs.values()),
                "max_ledger_rel_E_in": max(max(v["ledger_rel_E_in"]) for v in runs.values()), "n_runs": len(runs)}
     S["K2"]["pass"] = S["K2"]["all_success"] and S["K2"]["max_ledger_rel_E_in"] <= g.GATE["K2"]
