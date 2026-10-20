@@ -223,6 +223,12 @@ def branch_energy(Xw, nw, b0, eta):
     return out
 
 
+def closure_of(ch):
+    keys = ("refl_dark", "refl_photon", "inc_left", "trans_dark", "trans_photon", "left_back_in_mid", "static_left",
+            "static_mid", "stored", "beyond", "absorbed")
+    return abs(sum(ch[k] for k in keys) - 1.0)
+
+
 def channels(X, case, N, n, E_in):
     dx = g.LB / N
     x = np.arange(N) * dx
@@ -232,24 +238,26 @@ def channels(X, case, N, n, E_in):
     mid = (x > g.XU + 6 * w) & (x < g.XD - 6 * w)
     zone = np.abs(x - g.XU) <= 6 * w
     beyond = x >= g.XD - 6 * w
+    wrap = x > g.XD + 6 * w  # periodic image of the left side: reflected waves that crossed x = 0 (box wraparound)
     res = {}
-    for name, mask in (("left", left), ("mid", mid)):
+    for name, mask in (("left", left), ("mid", mid), ("wrap", wrap)):
         Xw = X * mask[None, :]
         nw = float(np.mean(n[mask]))
         be = branch_energy(Xw, nw, case.b0, case.eta)
         res[name] = {k: v / E_in for k, v in be.items()}
         res[name]["direct"] = float(np.sum(u[mask]) * dx / E_in)
     res["stored"] = float(np.sum(u[zone]) * dx / E_in)
-    res["beyond"] = float(np.sum(u[beyond & ~left & ~mid & ~zone]) * dx / E_in)
+    res["beyond"] = float(np.sum(u[beyond]) * dx / E_in)
     ch = {"refl_dark": res["left"]["left_dark"], "refl_photon": res["left"]["left_ord"],
           "inc_left": res["left"]["right_dark"] + res["left"]["right_ord"],
           "trans_dark": res["mid"]["right_dark"], "trans_photon": res["mid"]["right_ord"],
           "left_back_in_mid": res["mid"]["left_dark"] + res["mid"]["left_ord"],
-          "stored": res["stored"], "beyond": res["beyond"], "absorbed": 0.0}
-    ch["static_left"] = res["left"]["static"]
-    ch["static_mid"] = res["mid"]["static"]
-    ch["closure"] = abs(sum(v for kk, v in ch.items() if kk not in ("closure", "static_left", "static_mid")) +
-                        ch["static_left"] + ch["static_mid"] + ch["left_back_in_mid"] * 0 - 1.0)
+          "stored": res["stored"], "beyond": res["beyond"], "absorbed": 0.0,
+          # wraparound decomposition of 'beyond' (declared window x > xd - 6w; reflected waves reach x = 0 before T)
+          "wrap_refl_dark": res["wrap"]["left_dark"], "wrap_refl_photon": res["wrap"]["left_ord"],
+          "wrap_right": res["wrap"]["right_dark"] + res["wrap"]["right_ord"],
+          "static_left": res["left"]["static"], "static_mid": res["mid"]["static"]}
+    ch["closure"] = closure_of(ch)
     return ch, res
 
 
