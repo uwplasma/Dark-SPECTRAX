@@ -17,7 +17,7 @@ import darkspectrax as ds  # noqa: E402
 from darkspectrax import _simulation as _sim  # noqa: E402
 from lane_c_run import model  # noqa: E402
 
-R = Path(__file__).resolve().parent / "nxconv" / "runs"
+R = Path(__file__).resolve().parent / "stiffdiag" / "runs"
 
 
 def main(c=64, part=2, T=4.0):

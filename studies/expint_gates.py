@@ -46,11 +46,25 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from nxconv_analysis import herm, t_pos  # noqa: E402
+import nxconv_analysis as na  # noqa: E402
+from nxconv_analysis import t_pos  # noqa: E402
 
 D = Path(__file__).resolve().parent / "expint"
 TOL_A, TOL_L = 1e-6, 1e-9
 T_ACC = 500.0
+
+
+SD = Path(__file__).resolve().parent / "stiffdiag" / "runs"   # the committed Dopri8 baseline records live here
+
+
+def herm(case_name):
+    """Records of ``case_name``: the baseline (`_sd`) from studies/stiffdiag/runs, the Lawson (`_li`) from studies/nxconv/runs."""
+    old = na.R
+    na.R = SD if case_name.endswith("_sd") else old
+    try:
+        return na.herm(case_name)
+    finally:
+        na.R = old
 
 
 def case(c, tag):
