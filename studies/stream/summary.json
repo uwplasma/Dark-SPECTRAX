@@ -1,0 +1,86 @@
+{
+  "cases": {
+    "4": {
+      "steps_ls": null,
+      "wall_ls": null,
+      "steps_li2": 10716.0,
+      "wall_li2": 56.18226112576667,
+      "S1": false,
+      "steps_li_committed": 10770.0,
+      "wall_li_committed": 270.3056111035403,
+      "steps_plain_cpu": 10595.0,
+      "wall_plain_cpu": 265.22417352418415,
+      "A_vs_plain_cpu": {
+        "n_common_saves": 914,
+        "t_common_max": 456.5,
+        "dKe": 1.259231087287801e-09,
+        "Wx": 2.6969748498098288e-11
+      },
+      "S2": true,
+      "A_ungated_vs_li2": {
+        "n_common_saves": 914,
+        "t_common_max": 456.5,
+        "dKe": 1.2254018119514168e-09,
+        "Wx": 8.813776265997286e-12
+      },
+      "ledger_ls": 2.5285521792976704e-09,
+      "ledger_li2": 1.646428891994775e-12,
+      "status_ls": "failure",
+      "t_end_ls": 456.5,
+      "S3": false
+    },
+    "64": {
+      "steps_ls": 9652.0,
+      "wall_ls": 129.5303892508964,
+      "steps_li2": 9606.0,
+      "wall_li2": 52.13256287307013,
+      "steps_ratio_li2_over_ls": 0.9952341483630336,
+      "wall_ratio_li2_over_ls": 0.40247360619052064,
+      "S1": false,
+      "steps_li_committed": 9696.0,
+      "wall_li_committed": 245.3196745836176,
+      "steps_plain_cpu": 48601.0,
+      "wall_plain_cpu": 1288.3772635865025,
+      "A_vs_plain_cpu": {
+        "n_common_saves": 1001,
+        "t_common_max": 500.0,
+        "dKe": 3.3766551160688234e-10,
+        "Wx": 2.6706328796667794e-11
+      },
+      "S2": true,
+      "A_ungated_vs_li2": {
+        "n_common_saves": 1001,
+        "t_common_max": 500.0,
+        "dKe": 3.5752002061435563e-10,
+        "Wx": 3.718039610649887e-12
+      },
+      "ledger_ls": 3.664142426633608e-12,
+      "ledger_li2": 2.390038646201453e-12,
+      "status_ls": "success",
+      "t_end_ls": 500.0,
+      "S3": true
+    }
+  },
+  "S1_all": false,
+  "S2_all": true,
+  "S3_all": false,
+  "S4_streaming_earns_its_place": false,
+  "b10": {
+    "steps_ls": 400000,
+    "steps_li2": 25845,
+    "steps_ratio_li2_over_ls": 0.0646125,
+    "wall_ls": 931.5243661403656,
+    "wall_li2": 172.03574299812317,
+    "gamma_fit_record": 0.0024793403074800076,
+    "gamma_fit_ls": null,
+    "ledger_over_U0_ls": 9.238065015872154e-09,
+    "ledger_over_U0_li2": 8.394398661974359e-09,
+    "gauss_over_Ap": [
+      3.524559252177925e-09,
+      0.0
+    ],
+    "B1s": false,
+    "B2s": false,
+    "B3s": false
+  }
+}

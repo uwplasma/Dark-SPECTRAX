@@ -378,6 +378,41 @@ def expint_section():
     return "\n".join(L)
 
 
+def stream_section():
+    sm = json.loads((root / "studies/stream/summary.json").read_text())
+    cost = json.loads((root / "studies/stream/cost.json").read_text())
+    b = sm["b10"]
+    L = ["## Exact Hermite streaming in the integrating factor (`studies/streaming_gates.py`)", "",
+         "SPECTRAX PR #83 (stacked on the Lawson wrapper #82) integrates the free-streaming operator exactly per Fourier mode: one real eigh of the Hermite "
+         "tridiagonal (Gauss-Hermite nodal transform, shared by all k, species, widths and drifts; widths and drifts from the state basis frozen at the "
+         "step start) and the Strang product `A(h/2) B(h) A(h/2)` with the field-scaled closure rate (`darkspectrax.run(..., integrating_factor=darkspectrax.streaming(rate_fn))`). "
+         "The composition is an exact identity (the split `w' = Phi^-1 (f(Phi w) - Phi' w)` has no splitting error); what is left explicit is of the order "
+         "`(h |G|)^2 |r|`, which the gates were designed to test. Gates were committed in `studies/streaming_gates.py` before any run; runs and the same-session "
+         "closure-only control ran on a laptop CPU (2 threads), not on the office machine of the expint records (so wall times are comparable within this section only).", "",
+         "| case | steps closure-only (`_li2`) / streaming (`_ls`) to 500 | wall s closure-only / streaming | dK_e / W_ext vs plain CPU | ledger (ls) | status ls | S1 | S2 | S3 |",
+         "|---|---|---|---|---|---|---|---|---|"]
+    for c in ("4", "64"):
+        r = sm["cases"][c]
+        st = f"{r['steps_ls']:.0f}" if r['steps_ls'] else f"not reached (ends t = {r['t_end_ls']:g}, step budget)"
+        wl = f"{r['wall_ls']:.0f}" if r['wall_ls'] else "-"
+        L.append(f"| c = {c} | {r['steps_li2']:.0f} / {st} | {r['wall_li2']:.0f} / {wl} | {r['A_vs_plain_cpu']['dKe']:.1e} / {r['A_vs_plain_cpu']['Wx']:.1e} "
+                 f"(common saves to {r['A_vs_plain_cpu']['t_common_max']:g}) | {r['ledger_ls']:.1e} | {r['status_ls']} | "
+                 f"{'pass' if r['S1'] else 'FAIL'} | {'pass' if r['S2'] else 'FAIL'} | {'pass' if r['S3'] else 'FAIL'} |")
+    L += ["", f"**Verdict S4: streaming does NOT earn its place in this regime** (S1 fails both cases, S3 fails c = 4). c = 64: the same {sm['cases']['64']['steps_li2']:.0f} vs "
+          f"{sm['cases']['64']['steps_ls']:.0f} steps (ratio {sm['cases']['64']['steps_ratio_li2_over_ls']:.3f}), so streaming was not what limited the step (as stiffdiag found: the stiff mode is the "
+          f"closure), and the {cost['cost_per_step_ratio_streaming_over_lawson']:.2f}x higher cost per step (c = 64 from t = 300, 4 units: closure-only {cost['lawson']['steps']} steps at "
+          f"{1e3*cost['lawson']['time_per_step']:.2f} ms, streaming {cost['streaming']['steps']} steps at {1e3*cost['streaming']['time_per_step']:.2f} ms, plain {cost['plain']['steps']} steps at "
+          f"{1e3*cost['plain']['time_per_step']:.2f} ms) makes it {1/sm['cases']['64']['wall_ratio_li2_over_ls']:.1f}x slower in wall time. c = 4: identical steps to t = 400, then the run "
+          f"ends at t = {sm['cases']['4']['t_end_ls']:g} on the step budget (201927 steps in a 100-unit chunk against {5444} for the closure-only control): with a large closure rate and "
+          "a large `h k a sqrt(2 Nn)` the Strang leftover `O((h|G|)^2 |r|)` is stiff in the transformed variable and the step collapses. "
+          f"Ordinary B10 (`M_mi100_ord_j10`, nu = 100): closure-only {b['steps_li2']} steps; streaming reached the 400000-step budget ({b['wall_ls']:.0f} s against {b['wall_li2']:.0f} s), "
+          f"B1s, B2s and B3s fail (the closure-only ledger/U0 is {b['ledger_over_U0_li2']:.1e}, streaming {b['ledger_over_U0_ls']:.1e}). Accuracy where it finished is fine "
+          "(dK_e, W_ext within 3.4e-10 and 2.7e-11 of the plain CPU record at c = 64). The streaming factor itself is exact (unit tests: analytic Hermite front, generator equals the "
+          "streaming part of the RHS in fixed and pump bases, unitarity, order, gradient); it helps where the streaming stability bound is the limit and nothing stiff is present "
+          "(SPECTRAX default two-stream, Nx 128 Nn 128, tolerance 1e-8: 1049 -> 29 steps, 12x wall), which is not the H05 / B10 regime.", ""]
+    return "\n".join(L)
+
+
 def gpures_section():
     g = json.loads((root / "studies/gpures/summary.json").read_text())
     c8 = json.loads((root / "studies/gpures/c08.json").read_text())
@@ -1829,6 +1864,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {stiffdiag_section()}
 
 {expint_section()}
+
+{stream_section()}
 
 {otsi_section()}
 

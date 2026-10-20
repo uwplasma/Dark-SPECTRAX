@@ -152,3 +152,16 @@ and 4.3x (to 740) at equal per-step cost, c = 4 gives 0.96x (the closure is not 
 positivity parts of D2 passed (dK_e, W_ext within 5e-10 of the record, ledger 8e-13 to 2e-11, no earlier positivity loss), the window did not
 change (760; 579.5 vs 578), as expected. A Lawson interpolant is only accurate for r h of order one: dense output of a stiff damped mode is
 garbage, so steps are clipped onto the saves (found by a failing test, not a design choice).
+
+## 10. Result of S1 for the streaming operator (2026-10-20, `studies/streaming_gates.py`, results.md "Exact Hermite streaming in the integrating factor")
+
+Built: SPECTRAX PR #83 (stacked on #82): the streaming operator `-i k (a T + u)` per Hermite axis is exponentiated exactly with one real eigh of the
+Hermite tridiagonal (Gauss-Hermite nodal transform shared by all k, species, widths, drifts), and composed with the diagonal closure by the Strang product
+`Phi = A(h/2) B(h) A(h/2)` inside the integrating factor. The transformed system `w' = Phi^-1 (f(Phi w) - Phi' w)` is an exact identity (no splitting error in the
+scheme), but the part left explicit is `O((h |G|)^2 |r|)` (symmetric BCH), so a stiff closure is removed completely only while `h |G|` is small. Measured: per-step cost
+2.7x the closure-only Lawson (two Nn x Nn transforms per stage); H05 c = 64 identical step counts (9652 vs 9606: streaming was not the limit), 2.5x slower wall; c = 4
+steps identical to t = 400, then step collapse (201927 steps in a chunk, run ends at 456.5 by the budget); B10 reaches the 400000-step budget (closure-only 25845). Exact
+streaming alone is correct (analytic Hermite front at 13x the Dopri8 stability step, order, gradient) and cuts steps 5-36x on smooth streaming-limited problems
+(SPECTRAX default two-stream, Nx 64-128 Nn 128), which is not this regime. A joint exponential per k (non-Hermitian eig of `G - R`, CPU-only, rate-dependent every step) would
+remove the leftover and was not built. D1 (frozen-field one-step maps) remains open.
+

@@ -1,0 +1,29 @@
+{
+  "c": 64,
+  "t0": 300.0,
+  "T": 4.0,
+  "plain": {
+    "status": "success",
+    "steps": 498,
+    "run_time": 2.1062570000067353,
+    "wall": 2.276789666968398,
+    "time_per_step": 0.004229431726921155
+  },
+  "lawson": {
+    "status": "success",
+    "steps": 92,
+    "run_time": 0.43403929099440575,
+    "wall": 0.6049405410303734,
+    "time_per_step": 0.004717818380373976
+  },
+  "streaming": {
+    "status": "success",
+    "steps": 105,
+    "run_time": 1.3329241250175983,
+    "wall": 1.4997527499799617,
+    "time_per_step": 0.012694515476358078
+  },
+  "cost_per_step_ratio_streaming_over_lawson": 2.6907596801875613,
+  "cost_per_step_ratio_lawson_over_plain": 1.1154733507918204,
+  "steps_ratio_lawson_over_streaming": 0.8761904761904762
+}
