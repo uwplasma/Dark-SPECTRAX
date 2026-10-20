@@ -336,6 +336,109 @@ def stiffdiag_section():
     return "\n".join(L)
 
 
+def r1nl_section():
+    """R1 second step: certified windows with the strong closure (Lawson) and nonlinear-detuning diagnostics at the strongest drive."""
+    s1 = json.loads((root / "studies/r1nl/stage1_summary.json").read_text())
+    s2 = json.loads((root / "studies/r1nl/stage2_summary.json").read_text())
+    v = s2["vstar"]
+    f = lambda x, fmt=".3g": "-" if x is None else format(x, fmt)
+    L = ["## R1 nonlinear: detuning and saturation of the energy transfer at the strongest certified drive (`studies/r1nl_gates.py`)", "",
+         "Gates, the case lists and the decision rules were committed in `studies/r1nl_gates.py` (69a56e9) before any production run; "
+         "the analysis (`studies/r1nl_analysis.py`) implements them without change. H05 set-up (mobile ions, pump frame + remap, seeds r0, "
+         "omega = omega_L, noise floor 1e-14, rtol 1e-10, atol 1e-14), strong field-scaled closure c = 64 integrated exactly by the Lawson wrapper "
+         "(`run(..., integrating_factor=)`), saves every 0.5, GPU (RTX A4000, float64). v_q/v_te is the effective initial force. Stage-1 runs go to T = 1000 (or to the first positivity loss / step budget); stage-2 runs were integrated to T = 800, which is above the window of the strongest drive (the Nx 64 member loses positivity at 791.5), so nothing inside the window is cut. One stage-2 coherence realization (tau = 300, seed 1) loses positivity at 792, just beyond the window.", "",
+         "### Stage 1: certified windows (members B = Nx 32/Nn 64, X = Nx 64/Nn 64, N = Nx 32/Nn 128, XN = Nx 64/Nn 128, C = Nx 32/Nn 64 at c = 32)", "",
+         "| v_q/v_te | window | limiter | pair B-X | B-N | X-XN | N-XN | B-C (c 32/64) | first K_s or T_x <= 0 (B / X / N / XN / C) | t reached (B / X / N / XN / C) | max ledger | grid Nx 32 / 64 agree with B until |",
+         "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for k, r in s1["vqs"].items():
+        pn = r["pairs"]
+        fp = " / ".join(f(r["first_nonpositive"][m], "g") for m in ("B", "X", "N", "XN", "C"))
+        tr = " / ".join(f(r["t_reached"][m], "g") for m in ("B", "X", "N", "XN", "C"))
+        g = r["grid"]
+        gg = " / ".join(f(g.get(f"grid_Nx{n}_vs_B", {}).get("agree_until"), "g") for n in (32, 64))
+        L.append(f"| {k} | {r['window']:g} | {r['limiter']} | {pn['B-X']:g} | {pn['B-N']:g} | {pn['X-XN']:g} | {pn['N-XN']:g} | {pn['B-C']:g} | "
+                 f"{fp} | {tr} | {max(r['ledger'].values()):.1e} | {gg} |")
+    L += ["", f"Window = min(1000, all pair times (10% rule on dK_e and W_ext, t > 50), all positivity times, all t reached). All three drives are certified "
+          f"(ledger gate 1e-6). The pairs agree to the end of the shorter run except where noted in the table; the windows are set by positivity "
+          f"loss of the Nx 64 members, i.e. by the AW truncation instability reaching the resolved range, not by disagreement of the refinement pairs. "
+          f"Strongest certified drive (declared rule): v_q/v_te = {v:g}, window {s2['window']:g}. The grid comparison is a reported cross-check (not in the window).", "",
+          f"### Stage 2 at v_q/v_te = {v:g}, window {s2['window']:g}", ""]
+    n1, n2, n3 = s2["N1"], s2["N2"], s2["N3"]
+    L += ["**N1, W_ext against the linear resonant law (the homogeneous mean-field ODE).** "
+          f"D = W_ext/W_lin - 1: max |D| over (50, window] B {n1['max_abs_D_by_member']['B']:.2e}, X {n1['max_abs_D_by_member']['X']:.2e}, "
+          f"N {n1['max_abs_D_by_member']['N']:.2e}, XN {n1['max_abs_D_by_member']['XN']:.2e}; at the window end D = {n1['D_at_window_end']['B']:+.2e} (B), "
+          f"{n1['D_at_window_end']['XN']:+.2e} (XN); W_ext(window)/(n T_e V) = {n1['Wext_over_nTe_at_window']['B']:.1f} kinetic, {n1['Wext_lin_over_nTe_at_window']:.1f} linear. "
+          f"Departure rule (|D_B| > 0.10 and all refinements > 0.05): **{'MET' if n1['departure'] else 'not met'}**; upper bound on the nonlinear correction to W_ext "
+          f"(including refinement spread): {n1['bound_max_abs_D']:.2e}.", "",
+          "**N2, effective frequency shift of the mean field.** "
+          f"Slope of the lock-in phase difference kinetic - linear over t >= {n2['lo']:.0f}: delta_omega (omega_pe units) = "
+          + ", ".join(f"{m} {n2['delta_omega_by_member'][m]:.2e}" for m in ("B", "X", "N", "XN"))
+          + f" (delta_omega/omega_L = {n2['delta_omega_over_wL_B']:.1e} for B); refinement spread {n2['refinement_spread']:.1e}; resolved (> 1e-3 omega_L and > 3 spread): **{'yes' if n2['resolved'] else 'no'}**; "
+          f"bound |delta_omega| <= {n2['bound']:.1e}. Peak |E-bar| kinetic/linear in the last 31 units: "
+          + ", ".join(f"{m} {n2['Ebar_amp_ratio_kin_over_lin_at_window'][m]:.4f}" for m in ("B", "X", "N", "XN")) + ".", "",
+          "**N3, energy partition at the window end (units n T_e V), Q_i and OTSI onset (reported, ungated).**", "",
+          "| member | dK_e | dK_i | W_ext | dU_field | dTh_e (k=0 thermal) | dTh_i | ion share dK_i/W_ext | max abs Q_i | rms Q_i (last 20%) | corr(Q_i, Ebar) last 20% | max sum_k>=1 abs E_k^2 / E0^2 | t_OTSI (4 <= k < Nx/3) | energy growth rate in +-50 |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for m in ("B", "X", "N", "XN"):
+        r = n3[m]
+        L.append(f"| {m} | {r['dKe']:.2f} | {r['dKi']:.3f} | {r['Wext']:.2f} | {r['dU_gamma']:.2f} | {r['dTh_e']:.3f} | {r['dTh_i']:.4f} | {r['ion_share']:.2e} | "
+                 f"{r['Qi_max_abs']:.1e} | {r['Qi_rms_last20pct']:.1e} | {r['Qi_corr_with_Ebar_last20pct']:.2f} | {r['Ek_fluct_max_ratio_to_E0sq']:.0f} | "
+                 f"{f(r['t_otsi'], 'g')} | {f(r['growth_rate_energy_of_k>=4_sum_within_50'], '.3f')} |")
+    L += ["", "The upper-k band of the OTSI onset definition has 9 modes at Nx 32 and 20 at Nx 64 (floor(Nx/3) - 1), so t_OTSI and its growth rate are compared within equal Nx only.", ""]
+    L += ["**N4, finite reservoir (self-consistent dark field, Omega_D = omega_L).**", "",
+          "| u = U_D0/(n T_e V) | eta | window | max abs(U_D - U_D^lin)/U_D0 (B / XN) | min U_D/U_D0 kin / lin | W_D/U_D0 at window kin / lin | max abs(W_D/W_D^lin - 1) B / XN | departure | t_split kin / lin | ledger B / XN |",
+          "|---|---|---|---|---|---|---|---|---|---|"]
+    for k, r in s2["N4"].items():
+        if r.get("missing"):
+            L.append(f"| {k} | missing |"); continue
+        dp = r["WD_departure"]
+        L.append(f"| {r['U_D0_over_nTe']:.3g} | {r['eta']:.3e} | {r['window_sc']:g} | {r['max_dev_UD_over_UD0']['B']:.2e} / {r['max_dev_UD_over_UD0']['XN']:.2e} | "
+                 f"{r['min_UD_over_UD0_kin']:.3f} / {r['min_UD_over_UD0_lin']:.3f} | {r['WD_over_UD0_at_window_kin_lin'][0]:.3f} / {r['WD_over_UD0_at_window_kin_lin'][1]:.3f} | "
+                 f"{dp['max_abs_D_by_member']['B']:.2e} / {dp['max_abs_D_by_member']['XN']:.2e} | {'MET' if dp['departure'] else 'no'} | "
+                 f"{f(r['t_split_kin'], 'g')} / {f(r['t_split_lin'], 'g')} | {r['ledger'][0]:.1e} / {r['ledger'][1]:.1e} |")
+    L += ["", "**N5, finite coherence (v2 definition, tau = field coherence time; realizations seeds 0-5 in B, seed 0 in XN).**", "",
+          "| tau omega_pe | window | R = <W_kin>/<W_lin> late (se), per-realization | XN r0 D at window | departure | bound if none | max abs D by realization (relative; large where W_lin is small) | max abs(W_kin - W_lin) / peak W_lin by realization | late slope W_ext /(n T_e V) | ledger max |",
+          "|---|---|---|---|---|---|---|---|---|---|"]
+    for k, r in s2["N5"].items():
+        if r.get("missing"):
+            L.append(f"| {k} | missing |"); continue
+        L.append(f"| {k[3:]} | {r['window_coh']:g} | {r['R']:.4f} ({r['se']:.1e}); " + ", ".join(f"{x:.4f}" for x in r["R_by_realization"])
+                 + f" | {r['XN_r0_D_at_window']:+.2e} | {'MET' if r['departure'] else 'no'} | {r['bound_if_none']:.2e} | "
+                 + ", ".join(f"{x:.1e}" for x in r["max_abs_D_by_realization"]) + " | " + ", ".join(f"{x:.1e}" for x in r["max_abs_diff_over_peak_Wlin_by_realization"]) + f" | {r['late_slope_over_nTe']:.3g} | {r['ledger_max']:.1e} |")
+    n6 = s2["N6"]
+    L += ["", f"N6 ledger over all {n6['n_runs']} stage-1 and stage-2 runs: max {n6['ledger_max']:.1e} ({'pass' if n6['pass'] else 'FAIL'}, gate 1e-6).", ""]
+    fu = json.loads((root / "studies/r1nl/followup_summary.json").read_text())
+    L += ["### Follow-up: what sets the small W_ext deficit? (`studies/r1nl_followup.py`, declared after stage 2 and before its runs)", "",
+          "D(t) of the coherent drive is the same at v_q/v_te = 0.03, 0.05 and 0.07 to three digits (D = -1.0e-8 t^2: -1.0e-4 at 100, -4.1e-4 at 200, -1.66e-3 at 400) until the OTSI stage, "
+          "so it is not a drive nonlinearity. Seed-scale test at v_q/v_te = 0.07, Nx 32/Nn 64, T = 400 (seeds multiplied by s):", "",
+          "| seed scale s | D(100) | D(200) | D(300) | D(400) | ledger |", "|---|---|---|---|---|---|"]
+    for k, lab in (("s0", "0 (unseeded)"), ("s0.1", "0.1"), ("s1", "1 (stage-1 B run)")):
+        d = fu["D"][k]
+        L.append(f"| {lab} | {d['100']:.2e} | {d['200']:.2e} | {d['300']:.2e} | {d['400']:.2e} | {fu['ledger'][k]:.1e} |")
+    L += ["", f"F1 (deficit scales as the seed amplitude squared: D(s=0.1)/D(s=1) in [0.005, 0.02] and the unseeded control below 10% of D(s=0.1)): "
+          f"ratio {fu['F1']['ratio_s0.1_over_s1']:.4f}, unseeded/D(s=0.1) {fu['F1']['unseeded_over_s0.1']:.1e}: **{'pass' if fu['F1']['pass'] else 'FAIL'}**. "
+          f"F2 (the deficit is a property of the seedless homogeneous Hermite system): unseeded/D(s=1) = {fu['F2']['unseeded_over_s1']:.1e}: **{'pass' if fu['F2']['pass'] else 'FAIL'}** "
+          f"(so that hypothesis is rejected). F3 ledger: {'pass' if fu['F3']['pass'] else 'FAIL'}.", "",
+          "**Reading.** (1) At the strongest certified drive (v_q/v_te = 0.07, window 791.5, 10% pairs over four resolutions plus a closure-strength pair and a grid "
+          "cross-check) the energy transfer follows the linear resonant law: W_ext is within 0.68% of it over the whole window, the four refinement members agree on that deficit "
+          "to 2e-4, and the frequency shift of the mean field is below 7e-6 omega_pe (the declared resolution threshold was 1e-3 omega_L). No saturation or detuning is resolved: "
+          "the upper bound on the nonlinear correction to W_ext is 0.7%. (2) The 0.7% is not a drive effect. It is identical at v_q/v_te = 0.03-0.07, grows as t^2 and is "
+          "proportional to the square of the seed amplitude (unseeded control 2e-9 at t = 400), i.e. it is the back-reaction of the quiver-advected seed modulation on the mean "
+          "field (the <dn dE> term of the mean-field identity), set by the fluctuation level that was imposed, not by the pump. A physical fluctuation level other than 5e-4 would rescale it. "
+          "(3) The reason the transfer stays linear is energetic: 96-97% of W_ext sits in coherent k = 0 electron quiver energy (dK_e = 370 of 381 n T_e V); the thermal gain of the "
+          "electrons is 0.14-0.24 n T_e V (about 0.04-0.06% of W_ext) and the ions receive 0.05%, and the fluctuating-field amplitude (sum of |E_k|^2 over k >= 1) reaches ~2000 E_0^2 only when the OTSI "
+          "turns on at t of about 780-860 (onset definition in the gates), after which the window ends by positivity loss. Within the window the instability has not yet extracted a "
+          "resolvable fraction of the work. (4) Finite reservoir at the same drive (u = 1, 10): U_D follows the linear coupled-oscillator prediction to 0.23% / 0.81% of U_D0, "
+          "W_D follows the matched prescribed drive until t_split = 50.5 / 72, equal to the linear t_split; the reservoir gives up 47% of its energy (u = 1, W_D/U_D0 at the window end) and for u = 10 exchanges "
+          "energy through beats (first minimum of U_D at 4e-4 U_D0, linear 4e-6; W_D/U_D0 = 1.6% at the window end against 0.7% linear), with W_D within 1.0% / 2.7% of the linear prediction while it is above 20% of its running maximum. (5) Finite coherence (tau omega_pe = 100, 300; six realizations "
+          "each): R = <W_kin>/<W_lin> = 1.0050 +- 0.0058 and 1.0000 +- 0.0038; the bound on the ensemble nonlinear correction is 1.7% and 0.8%, and the single refined "
+          "realization agrees (+1.8%, -0.03%). Individual realizations deviate more (up to 4.7% of the peak linear W_ext at tau = 100, 1.5% at tau = 300), with ratios on both sides of 1. (6) Scope: one box (L = 40), "
+          "one ion mass, T_i = T_e, drives up to 0.07, windows set by the AW truncation instability of the Hermite basis (not by the physical OTSI), fluctuation seeds of fixed "
+          "amplitude, Lorentzian line only, reservoir and coherence not combined in one run. Beyond the window (> 790) the result says nothing; at v_q/v_te = 0.1 no window "
+          "beyond ~760 exists (rclosure).", ""]
+    return "\n".join(L)
+
+
 def expint_section():
     sm = json.loads((root / "studies/expint/summary.json").read_text())
     cost = json.loads((root / "studies/expint/cost.json").read_text())
@@ -1848,6 +1951,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {h08_lbog_section()}
 
 {r1_section()}
+
+{r1nl_section()}
 
 {third_round()}
 

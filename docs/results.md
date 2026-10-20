@@ -671,6 +671,68 @@ Gates: G1 ledger max 2.5e-10 (pass); G4 identity max 3.5e-16 (pass); G8 quadratu
 Gates: G1 ledger max 4.5e-10 (pass); G4 identity max 3.9e-16 (pass); G8 quadrature check 3.3e-06 (pass); G9 Monte Carlo vs derived expectation (pass); G10 no 10% kinetic-vs-linear departure: inf pass, 30 pass, 100 pass, 300 pass; G11 realized phase variance rate x tau: {'tau30': 1.9900000000000002, 'tau100': 1.9900000000000002, 'tau300': 1.99} (pass).
 
 
+## R1 nonlinear: detuning and saturation of the energy transfer at the strongest certified drive (`studies/r1nl_gates.py`)
+
+Gates, the case lists and the decision rules were committed in `studies/r1nl_gates.py` (69a56e9) before any production run; the analysis (`studies/r1nl_analysis.py`) implements them without change. H05 set-up (mobile ions, pump frame + remap, seeds r0, omega = omega_L, noise floor 1e-14, rtol 1e-10, atol 1e-14), strong field-scaled closure c = 64 integrated exactly by the Lawson wrapper (`run(..., integrating_factor=)`), saves every 0.5, GPU (RTX A4000, float64). v_q/v_te is the effective initial force. Stage-1 runs go to T = 1000 (or to the first positivity loss / step budget); stage-2 runs were integrated to T = 800, which is above the window of the strongest drive (the Nx 64 member loses positivity at 791.5), so nothing inside the window is cut. One stage-2 coherence realization (tau = 300, seed 1) loses positivity at 792, just beyond the window.
+
+### Stage 1: certified windows (members B = Nx 32/Nn 64, X = Nx 64/Nn 64, N = Nx 32/Nn 128, XN = Nx 64/Nn 128, C = Nx 32/Nn 64 at c = 32)
+
+| v_q/v_te | window | limiter | pair B-X | B-N | X-XN | N-XN | B-C (c 32/64) | first K_s or T_x <= 0 (B / X / N / XN / C) | t reached (B / X / N / XN / C) | max ledger | grid Nx 32 / 64 agree with B until |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0.03 | 1000 | cap | 1000 | 1000 | 1000 | 1000 | 1000 | - / - / - / - / - | 1000 / 1000 / 1000 / 1000 / 1000 | 6.6e-12 | 1000 / 1000 |
+| 0.05 | 892 | cap X | 897.5 | 979 | 897.5 | 976.5 | 978 | 964 / 892 / - / 964 / - | 980 / 900 / 1000 / 980 / 1000 | 3.3e-12 | 979.5 / 962.5 |
+| 0.07 | 791.5 | cap X | 797.5 | 870 | 797.5 | 860 | 870.5 | 860.5 / 791.5 / 936 / 851 / 917 | 875.5 / 800 / 940 / 860 / 920 | 9.7e-13 | 870 / 863 |
+
+Window = min(1000, all pair times (10% rule on dK_e and W_ext, t > 50), all positivity times, all t reached). All three drives are certified (ledger gate 1e-6). The pairs agree to the end of the shorter run except where noted in the table; the windows are set by positivity loss of the Nx 64 members, i.e. by the AW truncation instability reaching the resolved range, not by disagreement of the refinement pairs. Strongest certified drive (declared rule): v_q/v_te = 0.07, window 791.5. The grid comparison is a reported cross-check (not in the window).
+
+### Stage 2 at v_q/v_te = 0.07, window 791.5
+
+**N1, W_ext against the linear resonant law (the homogeneous mean-field ODE).** D = W_ext/W_lin - 1: max |D| over (50, window] B 6.83e-03, X 6.83e-03, N 6.60e-03, XN 6.60e-03; at the window end D = -6.83e-03 (B), -6.60e-03 (XN); W_ext(window)/(n T_e V) = 381.3 kinetic, 384.0 linear. Departure rule (|D_B| > 0.10 and all refinements > 0.05): **not met**; upper bound on the nonlinear correction to W_ext (including refinement spread): 6.83e-03.
+
+**N2, effective frequency shift of the mean field.** Slope of the lock-in phase difference kinetic - linear over t >= 633: delta_omega (omega_pe units) = B -4.95e-06, X -4.96e-06, N -3.35e-06, XN -3.35e-06 (delta_omega/omega_L = -4.9e-06 for B); refinement spread 1.6e-06; resolved (> 1e-3 omega_L and > 3 spread): **no**; bound |delta_omega| <= 6.5e-06. Peak |E-bar| kinetic/linear in the last 31 units: B 0.9832, X 0.9832, N 0.9854, XN 0.9854.
+
+**N3, energy partition at the window end (units n T_e V), Q_i and OTSI onset (reported, ungated).**
+
+| member | dK_e | dK_i | W_ext | dU_field | dTh_e (k=0 thermal) | dTh_i | ion share dK_i/W_ext | max abs Q_i | rms Q_i (last 20%) | corr(Q_i, Ebar) last 20% | max sum_k>=1 abs E_k^2 / E0^2 | t_OTSI (4 <= k < Nx/3) | energy growth rate in +-50 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| B | 370.55 | 0.207 | 381.33 | 10.58 | 0.243 | 0.0054 | 5.43e-04 | 2.7e-04 | 9.3e-05 | -0.10 | 2077 | 783.5 | 0.040 |
+| X | 369.37 | 0.209 | 381.33 | 11.75 | -0.926 | 0.0074 | 5.48e-04 | 2.6e-04 | 9.3e-05 | -0.10 | 2317 | 783.5 | 0.113 |
+| N | 372.20 | 0.204 | 381.42 | 9.02 | 0.143 | 0.0015 | 5.35e-04 | 1.6e-04 | 6.9e-05 | -0.08 | 1756 | 862 | 0.046 |
+| XN | 372.20 | 0.204 | 381.42 | 9.02 | 0.143 | 0.0015 | 5.35e-04 | 1.6e-04 | 6.9e-05 | -0.08 | 1756 | 827.5 | 0.109 |
+
+The upper-k band of the OTSI onset definition has 9 modes at Nx 32 and 20 at Nx 64 (floor(Nx/3) - 1), so t_OTSI and its growth rate are compared within equal Nx only.
+
+**N4, finite reservoir (self-consistent dark field, Omega_D = omega_L).**
+
+| u = U_D0/(n T_e V) | eta | window | max abs(U_D - U_D^lin)/U_D0 (B / XN) | min U_D/U_D0 kin / lin | W_D/U_D0 at window kin / lin | max abs(W_D/W_D^lin - 1) B / XN | departure | t_split kin / lin | ledger B / XN |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 4.950e-02 | 791.5 | 2.29e-03 / 2.29e-03 | 0.000 / 0.000 | 0.468 / 0.466 | 1.02e-02 / 1.02e-02 | no | 50.5 / 50.5 | 7.6e-10 / 1.7e-09 |
+| 10 | 1.565e-02 | 791.5 | 8.14e-03 / 8.14e-03 | 0.000 / 0.000 | 0.016 / 0.007 | 2.71e-02 / 2.71e-02 | no | 72 / 72 | 6.5e-11 / 1.2e-10 |
+
+**N5, finite coherence (v2 definition, tau = field coherence time; realizations seeds 0-5 in B, seed 0 in XN).**
+
+| tau omega_pe | window | R = <W_kin>/<W_lin> late (se), per-realization | XN r0 D at window | departure | bound if none | max abs D by realization (relative; large where W_lin is small) | max abs(W_kin - W_lin) / peak W_lin by realization | late slope W_ext /(n T_e V) | ledger max |
+|---|---|---|---|---|---|---|---|---|---|
+| 100 | 791.5 | 1.0050 (5.8e-03); 1.0226, 1.0221, 0.9972, 0.9931, 1.0049, 0.9903 | +1.76e-02 | no | 1.67e-02 | 1.6e-01, 8.1e-02, 2.9e-03, 1.2e-02, 3.7e-02, 7.7e-01 | 1.8e-02, 4.7e-02, 2.6e-03, 1.2e-02, 1.8e-02, 8.5e-03 | 0.105 | 1.8e-11 |
+| 300 | 791.5 | 1.0000 (3.8e-03); 1.0002, 0.9977, 0.9965, 0.9930, 0.9943, 1.0185 | -2.99e-04 | no | 7.72e-03 | 9.3e-04, 4.1e-03, 3.5e-03, 1.1e-02, 6.5e-03, 3.2e-02 | 3.1e-04, 3.9e-03, 3.5e-03, 1.1e-02, 6.5e-03, 1.5e-02 | 0.383 | 2.7e-12 |
+
+N6 ledger over all 33 stage-1 and stage-2 runs: max 1.7e-09 (pass, gate 1e-6).
+
+### Follow-up: what sets the small W_ext deficit? (`studies/r1nl_followup.py`, declared after stage 2 and before its runs)
+
+D(t) of the coherent drive is the same at v_q/v_te = 0.03, 0.05 and 0.07 to three digits (D = -1.0e-8 t^2: -1.0e-4 at 100, -4.1e-4 at 200, -1.66e-3 at 400) until the OTSI stage, so it is not a drive nonlinearity. Seed-scale test at v_q/v_te = 0.07, Nx 32/Nn 64, T = 400 (seeds multiplied by s):
+
+| seed scale s | D(100) | D(200) | D(300) | D(400) | ledger |
+|---|---|---|---|---|---|
+| 0 (unseeded) | 1.00e-10 | 8.58e-10 | 1.58e-09 | 2.27e-09 | 2.8e-09 |
+| 0.1 | -1.03e-06 | -4.15e-06 | -9.36e-06 | -1.66e-05 | 8.6e-11 |
+| 1 (stage-1 B run) | -1.03e-04 | -4.15e-04 | -9.35e-04 | -1.66e-03 | 4.2e-13 |
+
+F1 (deficit scales as the seed amplitude squared: D(s=0.1)/D(s=1) in [0.005, 0.02] and the unseeded control below 10% of D(s=0.1)): ratio 0.0100, unseeded/D(s=0.1) 1.4e-04: **pass**. F2 (the deficit is a property of the seedless homogeneous Hermite system): unseeded/D(s=1) = 1.4e-06: **FAIL** (so that hypothesis is rejected). F3 ledger: pass.
+
+**Reading.** (1) At the strongest certified drive (v_q/v_te = 0.07, window 791.5, 10% pairs over four resolutions plus a closure-strength pair and a grid cross-check) the energy transfer follows the linear resonant law: W_ext is within 0.68% of it over the whole window, the four refinement members agree on that deficit to 2e-4, and the frequency shift of the mean field is below 7e-6 omega_pe (the declared resolution threshold was 1e-3 omega_L). No saturation or detuning is resolved: the upper bound on the nonlinear correction to W_ext is 0.7%. (2) The 0.7% is not a drive effect. It is identical at v_q/v_te = 0.03-0.07, grows as t^2 and is proportional to the square of the seed amplitude (unseeded control 2e-9 at t = 400), i.e. it is the back-reaction of the quiver-advected seed modulation on the mean field (the <dn dE> term of the mean-field identity), set by the fluctuation level that was imposed, not by the pump. A physical fluctuation level other than 5e-4 would rescale it. (3) The reason the transfer stays linear is energetic: 96-97% of W_ext sits in coherent k = 0 electron quiver energy (dK_e = 370 of 381 n T_e V); the thermal gain of the electrons is 0.14-0.24 n T_e V (about 0.04-0.06% of W_ext) and the ions receive 0.05%, and the fluctuating-field amplitude (sum of |E_k|^2 over k >= 1) reaches ~2000 E_0^2 only when the OTSI turns on at t of about 780-860 (onset definition in the gates), after which the window ends by positivity loss. Within the window the instability has not yet extracted a resolvable fraction of the work. (4) Finite reservoir at the same drive (u = 1, 10): U_D follows the linear coupled-oscillator prediction to 0.23% / 0.81% of U_D0, W_D follows the matched prescribed drive until t_split = 50.5 / 72, equal to the linear t_split; the reservoir gives up 47% of its energy (u = 1, W_D/U_D0 at the window end) and for u = 10 exchanges energy through beats (first minimum of U_D at 4e-4 U_D0, linear 4e-6; W_D/U_D0 = 1.6% at the window end against 0.7% linear), with W_D within 1.0% / 2.7% of the linear prediction while it is above 20% of its running maximum. (5) Finite coherence (tau omega_pe = 100, 300; six realizations each): R = <W_kin>/<W_lin> = 1.0050 +- 0.0058 and 1.0000 +- 0.0038; the bound on the ensemble nonlinear correction is 1.7% and 0.8%, and the single refined realization agrees (+1.8%, -0.03%). Individual realizations deviate more (up to 4.7% of the peak linear W_ext at tau = 100, 1.5% at tau = 300), with ratios on both sides of 1. (6) Scope: one box (L = 40), one ion mass, T_i = T_e, drives up to 0.07, windows set by the AW truncation instability of the Hermite basis (not by the physical OTSI), fluctuation seeds of fixed amplitude, Lorentzian line only, reservoir and coherence not combined in one run. Beyond the window (> 790) the result says nothing; at v_q/v_te = 0.1 no window beyond ~760 exists (rclosure).
+
+
 ## Independent dark reference: grid Vlasov-Ampere-Proca (`python studies/dark_grid_reference.py`)
 
 `studies/refs/code/slv_proca.py` extends the imported semi-Lagrangian solver with Ampere's law and the longitudinal Proca fields (E_D, A_D, phi_D at every k including k = 0, exact per-k propagator, mid-step current from the exact velocity shift). It shares no code with SPECTRAX or Dark-SPECTRAX; it shares the field convention and the D_L equation. c = 10 (beta = 0.1), eta = 0.3, Omega_D = omega_pe.

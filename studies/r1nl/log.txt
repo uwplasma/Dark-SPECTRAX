@@ -535,3 +535,21 @@ exit 0 14:24:28 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4
 start 14:24:28 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
 phase_vq0.07_Nx32_Nn64_c64_tau300_r4: nothing to do (success, t_end 800)
 exit 0 14:24:33 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
+start 14:36:13 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0
+start 14:36:13 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0.1
+{"case": "pre_vq0.07_Nx32_Nn64_c64_seed0", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 737, "rejected": 53, "compile_time": 5.0786349477712065, "run_time": 36.27164219529368, "wall_time": 127.14145401096903, "kind": "pre", "vq": 0.07,
+exit 0 14:39:51 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0
+start 14:39:51 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0
+{"case": "pre_vq0.07_Nx32_Nn64_c64_seed0.1", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1179, "rejected": 209, "compile_time": 5.306231244234368, "run_time": 56.91146231722087, "wall_time": 147.8884156390559, "kind": "pre", "vq": 0.0
+exit 0 14:40:11 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0.1
+start 14:40:11 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0.1
+{"case": "pre_vq0.07_Nx32_Nn64_c64_seed0", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 775, "rejected": 54, "compile_time": 5.297460339963436, "run_time": 28.797406777041033, "wall_time": 121.0801688961219, "kind": "pre", "vq": 0.07
+exit 0 14:43:20 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0
+start 14:43:20 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0
+pre_vq0.07_Nx32_Nn64_c64_seed0: nothing to do (success, t_end 400)
+exit 0 14:43:26 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0
+{"case": "pre_vq0.07_Nx32_Nn64_c64_seed0.1", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1561, "rejected": 438, "compile_time": 5.2613692013546824, "run_time": 71.2573912779335, "wall_time": 162.93521868693642, "kind": "pre", "vq": 
+exit 0 14:44:22 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0.1
+start 14:44:22 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0.1
+pre_vq0.07_Nx32_Nn64_c64_seed0.1: nothing to do (success, t_end 400)
+exit 0 14:44:28 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0.1

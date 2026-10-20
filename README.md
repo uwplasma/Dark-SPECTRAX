@@ -218,6 +218,9 @@ valid only to about 650 ([Nx convergence](docs/results.md#h05-nx-convergence-to-
 The broadband finite-k growth is the oscillating two-stream instability ([high-k section](docs/results.md#h05-x-refinement-aw-truncation-instability-field-scaled-closure-physical-high-k-limit-studieshighk_py)). Records: [lane C](studies/lane_c/summary.json) · [lane B](studies/lane_b/summary.json) ·
 [H00-H07](studies/hhs/run.json); table and limits in [docs/results.md](docs/results.md).
 
+**Finite reservoir and coherence at the strongest certified drive (R1).** With the strong closure (c = 64, exact Lawson integration) the certified windows are 1000, 892 and 791.5 at $v_q/v_{te}=0.03$, 0.05, 0.07 (set by positivity of the Nx = 64 members). At 0.07 the energy transfer follows the linear resonant law to 0.7% over the window (refinement spread 2e-4), the mean-field frequency shift is below $7\times10^{-6}\,\omega_{pe}$, a finite dark reservoir ($U_{D0}/nT_eV = 1, 10$) follows the linear coupled oscillator to 0.8% of $U_{D0}$, and finite coherence ($\tau\omega_{pe}=100, 300$, six realizations) leaves $\langle W\rangle/\langle W_{\rm lin}\rangle = 1.005\pm0.006$, $1.000\pm0.004$: no saturation or detuning is resolved and the bound on the nonlinear correction is 0.7-1.7%. The small deficit is independent of the drive and scales with the square of the seed amplitude. Scope: windows below 800, one box and mass ratio, fixed seed level ([R1 nonlinear](docs/results.md#r1-nonlinear-detuning-and-saturation-of-the-energy-transfer-at-the-strongest-certified-drive-studiesr1nl_gatespy)).
+
+
 ## Conservation and convergence
 
 In the strong-drive scan the work ledger closes to 8e-10 of $W_{\rm ext}$ or better in every run that stays
