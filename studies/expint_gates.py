@@ -27,6 +27,11 @@ Gates, per case c in {4, 64}:
  L    ledger: max_t |(K(t) - K(0)) - sum_j W_j(t)| / max_t |W_ext| <= 1e-9 over the whole Lawson run (the gpures G3 definition).
  P    positivity: the first save with K_s <= 0 or k=0 T_x <= 0 of the Lawson run is not earlier than that of the baseline
       (baseline without such a save: not earlier than the baseline's last save, t_end).
+Platform note (added with the analysis code before the Lawson analysis, no gate changed): GPU 0 was busy (other users, 100%) for the
+whole session, so the Lawson runs were made on the office CPU (JAX_PLATFORMS=cpu, 2 threads, nice) with the identical script and
+chunking; the committed baseline is a GPU record. Wall ratios are therefore not comparable and D2 is decided by the step ratio
+only (still "OR wall" as declared, but wall is reported, not used); to separate platform from integrator the plain Dopri8 was rerun
+on the same CPU to t = 500 (tag `_sdcpu`, ungated controls A_ungated_*).
 Ungated (reported): window reached by each Lawson run (t_end, t_pos), steps and wall ratios at 500 and at the end, the
 step-to-failure trajectory, and per-step cost (studies/expint_cost.py). Expected from the design note
 (docs/design/implicit-exponential-hermite.md D2): speed-up, not a longer window (the AW truncation instability is not removed).
@@ -131,6 +136,11 @@ def main():
         ok_d2.append(r["D2"])
         r["A"] = compare(b, li)
         r["A_pass"] = bool(r["A"]["dKe"] <= TOL_A and r["A"]["Wx"] <= TOL_A)
+        cp = herm(case(c, "_sdcpu"))  # ungated platform control: plain Dopri8 on the same CPU as the Lawson runs, t <= 500
+        if cp is not None:
+            r["A_ungated_cpu_plain_vs_gpu_record"] = compare(b, cp)   # platform effect alone
+            r["A_ungated_lawson_vs_cpu_plain"] = compare(cp, li)       # integrator effect alone
+            r["steps_cpu_plain_to_500"] = at(cp, T_ACC)[0]
         r["L"] = ledger(li)
         r["L_pass"] = bool(r["L"] <= TOL_L)
         r["L_baseline"] = ledger(b)
