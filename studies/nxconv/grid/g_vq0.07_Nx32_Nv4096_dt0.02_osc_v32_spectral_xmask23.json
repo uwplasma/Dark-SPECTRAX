@@ -1,0 +1,16 @@
+{
+ "case": "g_vq0.07_Nx32_Nv4096_dt0.02_osc_v32_spectral_xmask23",
+ "T": 1000.0,
+ "finite": true,
+ "wall_time": 1148.8935824190266,
+ "steps": 50000,
+ "t_fneg_1e-3": 595.5,
+ "min_f_rel": -0.9733247468313047,
+ "max_negfrac": 0.2667160635576141,
+ "max_edge": 0.7187775150377608,
+ "max_energy_defect_over_W": 0.47278047155348035,
+ "max_mass_drift": 1.7319479184152442e-14,
+ "max_momentum": 0.12404702784601446,
+ "repository_commit": "69a56e9d8084e361d4ea2e73a44fb3e98195bc81",
+ "command": "python studies/nxconv_grid.py --vq 0.07 --T 1000 --Nx 32 --Nv 4096 --chunk 200 --frame osc --vmax 32 --xshift mask23 --workers 1"
+}

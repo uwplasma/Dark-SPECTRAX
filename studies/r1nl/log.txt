@@ -1,0 +1,537 @@
+start 06:37:25 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+start 06:37:25 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+start 06:37:25 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.05_Nx32_Nn64_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1816, "rejected": 540, "compile_time": 5.25712439022027, "run_time": 127.00572953745723, "wall_time": 231.5375994509086, "kind": "pre", "vq": 0.05, "Nx":
+exit 0 06:43:09 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+start 06:43:09 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.03_Nx32_Nn64_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1795, "rejected": 596, "compile_time": 5.250405133003369, "run_time": 127.55985256494023, "wall_time": 234.26253102114424, "kind": "pre", "vq": 0.03, "Nx
+exit 0 06:43:14 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+start 06:43:14 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.07_Nx32_Nn64_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1981, "rejected": 634, "compile_time": 5.157852565636858, "run_time": 137.55446288827807, "wall_time": 240.4327511349693, "kind": "pre", "vq": 0.07, "Nx"
+exit 0 06:43:19 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+start 06:43:19 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.03_Nx32_Nn64_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2893, "rejected": 994, "compile_time": 4.857530879788101, "run_time": 274.1885379597079, "wall_time": 382.79514469299465, "kind": "pre", "vq": 0.03, "N
+exit 0 06:51:32 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+start 06:51:32 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.05_Nx32_Nn64_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 5, "steps": 3616, "rejected": 1294, "compile_time": 5.307907806942239, "run_time": 339.1592521460261, "wall_time": 450.59652023995295, "kind": "pre", "vq": 0.05, "
+exit 0 06:52:29 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+start 06:52:29 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.07_Nx32_Nn64_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 6, "steps": 4146, "rejected": 1468, "compile_time": 4.995666165836155, "run_time": 387.8358329772018, "wall_time": 499.27531146700494, "kind": "pre", "vq": 0.07, "
+exit 0 06:53:15 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+start 06:53:15 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.03_Nx32_Nn64_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 6, "steps": 4393, "rejected": 1529, "compile_time": 5.257223323686048, "run_time": 242.82954314514063, "wall_time": 342.7073516359087, "kind": "pre", "vq": 0.03, "
+exit 0 06:58:59 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+start 06:58:59 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.05_Nx32_Nn64_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 8, "steps": 5479, "rejected": 1731, "compile_time": 5.158008330967277, "run_time": 297.5778472851962, "wall_time": 397.5532323140651, "kind": "pre", "vq": 0.05, "N
+exit 0 07:00:55 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+start 07:00:55 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.07_Nx32_Nn64_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 9, "steps": 7564, "rejected": 2667, "compile_time": 5.337378809927031, "run_time": 452.65652839816175, "wall_time": 558.1376469000243, "kind": "pre", "vq": 0.07, "
+exit 0 07:04:12 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+start 07:04:12 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.03_Nx32_Nn64_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 8, "steps": 6080, "rejected": 1922, "compile_time": 5.450600241776556, "run_time": 322.6475839354098, "wall_time": 423.94556905003265, "kind": "pre", "vq": 0.03, "
+exit 0 07:07:49 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+start 07:07:49 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.05_Nx32_Nn64_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 10219, "rejected": 3735, "compile_time": 4.793111937586218, "run_time": 441.2671900850255, "wall_time": 545.1528317690827, "kind": "pre", "vq": 0.05, "
+exit 0 07:11:45 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+start 07:11:45 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.07_Nx32_Nn64_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 8, "steps": 13216, "rejected": 4621, "compile_time": 5.479871130548418, "run_time": 589.7903799528722, "wall_time": 700.8799778649118, "kind": "pre", "vq": 0.07, "
+exit 0 07:17:35 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+start 07:17:35 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+{"case": "pre_vq0.03_Nx32_Nn64_c64", "part": 4, "t_start": 800.0, "t_end": 1000.0, "status": "success", "failure_reason": null, "events": 8, "steps": 11891, "rejected": 4302, "compile_time": 5.138624070677906, "run_time": 716.588325010147, "wall_time": 827.7854603680316, "kind": "pre", "vq": 0.03, "
+exit 0 07:23:28 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+start 07:23:28 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+pre_vq0.03_Nx32_Nn64_c64: nothing to do (success, t_end 1000)
+exit 0 07:23:34 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 64
+start 07:23:34 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.03_Nx64_Nn64_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1571, "rejected": 493, "compile_time": 4.987885203678161, "run_time": 122.12623442825861, "wall_time": 223.46786865103059, "kind": "pre", "vq": 0.03, "Nx
+exit 0 07:29:04 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+start 07:29:04 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.03_Nx64_Nn64_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2748, "rejected": 947, "compile_time": 4.951523527968675, "run_time": 328.52867345605046, "wall_time": 462.4819375660736, "kind": "pre", "vq": 0.03, "N
+exit 0 07:39:11 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+start 07:39:11 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.05_Nx32_Nn64_c64", "part": 4, "t_start": 800.0, "t_end": 980.0, "status": "failure", "failure_reason": "segment 8: positivity lost at t = 964", "events": 8, "steps": 16335, "rejected": 4955, "compile_time": 5.027811831096187, "run_time": 1458.3175706947222, "wall_time": 1570.781808
+exit 0 07:40:06 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+start 07:40:06 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+pre_vq0.05_Nx32_Nn64_c64: nothing to do (failure, t_end 980)
+exit 0 07:40:12 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 64
+start 07:40:12 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.05_Nx64_Nn64_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1731, "rejected": 542, "compile_time": 4.881689953850582, "run_time": 204.7549585190136, "wall_time": 331.53838372416794, "kind": "pre", "vq": 0.05, "Nx"
+exit 0 07:47:55 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+start 07:47:55 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.03_Nx64_Nn64_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 6, "steps": 4250, "rejected": 1456, "compile_time": 5.2073435296770185, "run_time": 477.64582789829, "wall_time": 607.0558845701162, "kind": "pre", "vq": 0.03, "Nx
+exit 0 07:51:24 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+start 07:51:24 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.05_Nx64_Nn64_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 5, "steps": 3502, "rejected": 1247, "compile_time": 4.956019016448408, "run_time": 419.9248748391401, "wall_time": 551.7624219919089, "kind": "pre", "vq": 0.05, "N
+exit 0 07:59:15 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+start 07:59:15 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.03_Nx64_Nn64_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 8, "steps": 6984, "rejected": 2656, "compile_time": 5.155432689469308, "run_time": 682.7805269428063, "wall_time": 802.0241645779461, "kind": "pre", "vq": 0.03, "N
+exit 0 08:06:10 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+start 08:06:10 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.05_Nx64_Nn64_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 8, "steps": 6495, "rejected": 2508, "compile_time": 4.722923366818577, "run_time": 334.74890631227754, "wall_time": 434.12330228299834, "kind": "pre", "vq": 0.05, 
+exit 0 08:07:57 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+start 08:07:57 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.03_Nx64_Nn64_c64", "part": 4, "t_start": 800.0, "t_end": 1000.0, "status": "success", "failure_reason": null, "events": 8, "steps": 13028, "rejected": 5087, "compile_time": 4.962366512045264, "run_time": 246.0558889019303, "wall_time": 342.0243600588292, "kind": "pre", "vq": 0.03, 
+exit 0 08:13:25 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+start 08:13:25 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+pre_vq0.03_Nx64_Nn64_c64: nothing to do (success, t_end 1000)
+exit 0 08:13:30 --kind pre --vq 0.03 --Nx 64 --Nn 64 --c 64
+start 08:13:30 --kind pre --vq 0.07 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.05_Nx64_Nn64_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 10930, "rejected": 4242, "compile_time": 4.669567312346771, "run_time": 298.59642547671683, "wall_time": 394.10446808091365, "kind": "pre", "vq": 0.05,
+exit 0 08:16:15 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+start 08:16:15 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.07_Nx64_Nn64_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1906, "rejected": 621, "compile_time": 4.9327176481019706, "run_time": 136.7055441569537, "wall_time": 237.76513420697302, "kind": "pre", "vq": 0.07, "Nx
+exit 0 08:19:15 --kind pre --vq 0.07 --Nx 64 --Nn 64 --c 64
+start 08:19:15 --kind pre --vq 0.07 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.07_Nx64_Nn64_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 6, "steps": 4453, "rejected": 1691, "compile_time": 4.74910057685338, "run_time": 368.9677653473336, "wall_time": 474.99674297706224, "kind": "pre", "vq": 0.07, "N
+exit 0 08:28:47 --kind pre --vq 0.07 --Nx 64 --Nn 64 --c 64
+start 08:28:47 --kind pre --vq 0.07 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.05_Nx64_Nn64_c64", "part": 4, "t_start": 800.0, "t_end": 900.0, "status": "failure", "failure_reason": "segment 4: positivity lost at t = 892", "events": 4, "steps": 17891, "rejected": 4161, "compile_time": 4.767360537312925, "run_time": 950.7662664738018, "wall_time": 1007.8365891
+exit 0 08:33:49 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+start 08:33:49 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+pre_vq0.05_Nx64_Nn64_c64: nothing to do (failure, t_end 900)
+exit 0 08:33:55 --kind pre --vq 0.05 --Nx 64 --Nn 64 --c 64
+start 08:33:55 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.07_Nx64_Nn64_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 9, "steps": 7644, "rejected": 2800, "compile_time": 4.627972507383674, "run_time": 210.85854603373446, "wall_time": 302.79596425709315, "kind": "pre", "vq": 0.07, 
+exit 0 08:35:18 --kind pre --vq 0.07 --Nx 64 --Nn 64 --c 64
+start 08:35:18 --kind pre --vq 0.07 --Nx 64 --Nn 64 --c 64
+{"case": "pre_vq0.03_Nx32_Nn128_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1469, "rejected": 436, "compile_time": 5.02175100822933, "run_time": 18.223024187842384, "wall_time": 112.65211012098007, "kind": "pre", "vq": 0.03, "Nx
+exit 0 08:37:15 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+start 08:37:15 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx32_Nn128_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2520, "rejected": 794, "compile_time": 5.373840348562226, "run_time": 75.66713808150962, "wall_time": 168.1281099410262, "kind": "pre", "vq": 0.03, "N
+exit 0 08:41:35 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+start 08:41:35 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.07_Nx64_Nn64_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "failure", "failure_reason": "segment 9: positivity lost at t = 791.5", "events": 8, "steps": 19080, "rejected": 6688, "compile_time": 5.119171206140891, "run_time": 439.04743122239597, "wall_time": 534.18074
+exit 0 08:45:37 --kind pre --vq 0.07 --Nx 64 --Nn 64 --c 64
+start 08:45:37 --kind pre --vq 0.07 --Nx 64 --Nn 64 --c 64
+pre_vq0.07_Nx64_Nn64_c64: nothing to do (failure, t_end 800)
+exit 0 08:45:43 --kind pre --vq 0.07 --Nx 64 --Nn 64 --c 64
+start 08:45:43 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx32_Nn128_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 6, "steps": 3843, "rejected": 1291, "compile_time": 4.676845275564119, "run_time": 100.08784915856086, "wall_time": 191.81383256521076, "kind": "pre", "vq": 0.03,
+exit 0 08:46:18 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+start 08:46:18 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.05_Nx32_Nn128_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1585, "rejected": 447, "compile_time": 5.078654476907104, "run_time": 80.78931052424014, "wall_time": 169.17476577800699, "kind": "pre", "vq": 0.05, "Nx
+exit 0 08:50:00 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+start 08:50:00 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx32_Nn128_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 8, "steps": 5379, "rejected": 1704, "compile_time": 4.835066685918719, "run_time": 270.28431785991415, "wall_time": 361.09773838100955, "kind": "pre", "vq": 0.03,
+exit 0 08:53:47 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+start 08:53:47 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.05_Nx32_Nn128_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 5, "steps": 2982, "rejected": 955, "compile_time": 4.761763082817197, "run_time": 151.10396336391568, "wall_time": 243.88579689408652, "kind": "pre", "vq": 0.05, 
+exit 0 08:55:36 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+start 08:55:36 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.05_Nx32_Nn128_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 8, "steps": 4969, "rejected": 1621, "compile_time": 4.63636865420267, "run_time": 297.9050082138274, "wall_time": 394.3998124091886, "kind": "pre", "vq": 0.05, "N
+exit 0 09:04:09 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+start 09:04:09 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx32_Nn128_c64", "part": 4, "t_start": 800.0, "t_end": 1000.0, "status": "success", "failure_reason": null, "events": 8, "steps": 9473, "rejected": 3383, "compile_time": 4.445854062447324, "run_time": 614.3131482480094, "wall_time": 715.2052509139758, "kind": "pre", "vq": 0.03, 
+exit 0 09:07:35 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+start 09:07:35 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+pre_vq0.03_Nx32_Nn128_c64: nothing to do (success, t_end 1000)
+exit 0 09:07:42 --kind pre --vq 0.03 --Nx 32 --Nn 128 --c 64
+start 09:07:42 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.07_Nx32_Nn128_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1674, "rejected": 465, "compile_time": 6.27996128378436, "run_time": 134.19644706184044, "wall_time": 243.92631377186626, "kind": "pre", "vq": 0.07, "Nx
+exit 0 09:13:24 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+start 09:13:24 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.05_Nx32_Nn128_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 8186, "rejected": 2860, "compile_time": 6.019366975408047, "run_time": 550.6183856409043, "wall_time": 664.8604773939587, "kind": "pre", "vq": 0.05, "
+exit 0 09:17:14 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+start 09:17:14 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.07_Nx32_Nn128_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 6, "steps": 3539, "rejected": 1135, "compile_time": 5.319134603487328, "run_time": 263.9291202770546, "wall_time": 378.7335492079146, "kind": "pre", "vq": 0.07, "
+exit 0 09:21:41 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+start 09:21:41 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.07_Nx32_Nn128_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 9, "steps": 6297, "rejected": 2146, "compile_time": 6.851371140452102, "run_time": 489.2488252327312, "wall_time": 605.3496110159904, "kind": "pre", "vq": 0.07, "
+exit 0 09:33:38 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+start 09:33:38 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.05_Nx32_Nn128_c64", "part": 4, "t_start": 800.0, "t_end": 1000.0, "status": "success", "failure_reason": null, "events": 8, "steps": 16999, "rejected": 6378, "compile_time": 5.645664012990892, "run_time": 1198.8454224411398, "wall_time": 1311.5998201200273, "kind": "pre", "vq": 0.0
+exit 0 09:40:45 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+start 09:40:45 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+pre_vq0.05_Nx32_Nn128_c64: nothing to do (success, t_end 1000)
+exit 0 09:40:51 --kind pre --vq 0.05 --Nx 32 --Nn 128 --c 64
+start 09:40:51 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx64_Nn128_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1310, "rejected": 364, "compile_time": 5.882618196774274, "run_time": 70.3602132492233, "wall_time": 174.2982787389774, "kind": "pre", "vq": 0.03, "Nx":
+exit 0 09:45:31 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+start 09:45:31 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.07_Nx32_Nn128_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 13406, "rejected": 5759, "compile_time": 4.864919472485781, "run_time": 737.9404815316666, "wall_time": 840.575065867044, "kind": "pre", "vq": 0.07, "
+exit 0 09:49:21 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+start 09:49:21 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx64_Nn128_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2358, "rejected": 722, "compile_time": 6.953795139212161, "run_time": 115.36983684520237, "wall_time": 230.77174929599278, "kind": "pre", "vq": 0.03, 
+exit 0 09:51:03 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+start 09:51:03 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx64_Nn128_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 6, "steps": 3739, "rejected": 1266, "compile_time": 5.03726816107519, "run_time": 194.25652468204498, "wall_time": 298.52272366010584, "kind": "pre", "vq": 0.03, 
+exit 0 09:58:00 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+start 09:58:00 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.07_Nx32_Nn64_c64", "part": 4, "t_start": 800.0, "t_end": 875.5, "status": "failure", "failure_reason": "segment 3: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>", "events": 3, "steps": 205755, "rejected": 2426, "compile_time"
+exit 0 10:01:58 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+start 10:01:58 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+pre_vq0.07_Nx32_Nn64_c64: nothing to do (failure, t_end 875.5)
+exit 0 10:02:03 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64
+start 10:02:03 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.07_Nx32_Nn128_c64", "part": 4, "t_start": 800.0, "t_end": 940.0, "status": "failure", "failure_reason": "segment 6: positivity lost at t = 936", "events": 6, "steps": 13729, "rejected": 4840, "compile_time": 5.511009276146069, "run_time": 746.9409644580446, "wall_time": 825.0040359
+exit 0 10:04:23 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+start 10:04:23 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+pre_vq0.07_Nx32_Nn128_c64: nothing to do (failure, t_end 940)
+exit 0 10:04:29 --kind pre --vq 0.07 --Nx 32 --Nn 128 --c 64
+start 10:04:29 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx64_Nn128_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 8, "steps": 5912, "rejected": 2198, "compile_time": 6.416572941001505, "run_time": 330.95009964099154, "wall_time": 436.0915327430703, "kind": "pre", "vq": 0.03, 
+exit 0 10:06:59 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+start 10:06:59 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.05_Nx64_Nn128_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1507, "rejected": 433, "compile_time": 4.607333284104243, "run_time": 92.81489920872264, "wall_time": 195.6649799188599, "kind": "pre", "vq": 0.05, "Nx"
+exit 0 10:06:59 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+start 10:06:59 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.07_Nx64_Nn128_c64", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1553, "rejected": 433, "compile_time": 4.964312308467925, "run_time": 33.040990974521264, "wall_time": 138.92589233792387, "kind": "pre", "vq": 0.07, "N
+exit 0 10:08:25 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+start 10:08:25 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.05_Nx64_Nn128_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 5, "steps": 2871, "rejected": 904, "compile_time": 5.908507799729705, "run_time": 53.26427166513167, "wall_time": 161.24647864699364, "kind": "pre", "vq": 0.05, "
+exit 0 10:11:27 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+start 10:11:27 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx64_Nn128_c64", "part": 4, "t_start": 800.0, "t_end": 1000.0, "status": "success", "failure_reason": null, "events": 8, "steps": 10091, "rejected": 4207, "compile_time": 5.515384208178148, "run_time": 161.63675954635255, "wall_time": 270.4439948699437, "kind": "pre", "vq": 0.03
+exit 0 10:13:25 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+start 10:13:25 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+pre_vq0.03_Nx64_Nn128_c64: nothing to do (success, t_end 1000)
+exit 0 10:13:33 --kind pre --vq 0.03 --Nx 64 --Nn 128 --c 64
+start 10:13:33 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+{"case": "pre_vq0.07_Nx64_Nn128_c64", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 6, "steps": 3575, "rejected": 1214, "compile_time": 5.732497640419751, "run_time": 80.67286106594838, "wall_time": 191.55199336493388, "kind": "pre", "vq": 0.07, 
+exit 0 10:13:34 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+start 10:13:34 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.05_Nx64_Nn128_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 8, "steps": 5455, "rejected": 1997, "compile_time": 6.3229485508054495, "run_time": 74.52601137477905, "wall_time": 203.2300911489874, "kind": "pre", "vq": 0.05, 
+exit 0 10:16:40 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+start 10:16:40 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx32_Nn64_c32", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1622, "rejected": 471, "compile_time": 7.246628326829523, "run_time": 50.144909277092665, "wall_time": 163.89423211407848, "kind": "pre", "vq": 0.03, "Nx
+exit 0 10:17:58 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+start 10:17:58 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+{"case": "pre_vq0.07_Nx64_Nn128_c64", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 9, "steps": 6543, "rejected": 2405, "compile_time": 7.393634926062077, "run_time": 223.00199535675347, "wall_time": 337.5375602680724, "kind": "pre", "vq": 0.07, 
+exit 0 10:20:55 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+start 10:20:55 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx32_Nn64_c32", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2780, "rejected": 927, "compile_time": 5.32802873197943, "run_time": 130.52433256222866, "wall_time": 244.14490046491846, "kind": "pre", "vq": 0.03, "N
+exit 0 10:24:00 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+start 10:24:00 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+{"case": "pre_vq0.05_Nx64_Nn128_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 8143, "rejected": 3056, "compile_time": 6.034209311706945, "run_time": 372.3179590108339, "wall_time": 487.44243785296567, "kind": "pre", "vq": 0.05, 
+exit 0 10:26:40 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+start 10:26:40 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx32_Nn64_c32", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 6, "steps": 4269, "rejected": 1477, "compile_time": 6.60131953493692, "run_time": 201.2041375960689, "wall_time": 320.56636133394204, "kind": "pre", "vq": 0.03, "N
+exit 0 10:31:15 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+start 10:31:15 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+{"case": "pre_vq0.07_Nx64_Nn128_c64", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 13207, "rejected": 5928, "compile_time": 8.194998513208702, "run_time": 614.8438632094767, "wall_time": 739.8243618209381, "kind": "pre", "vq": 0.07, 
+exit 0 10:35:10 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+start 10:35:10 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+{"case": "pre_vq0.03_Nx32_Nn64_c32", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 8, "steps": 5797, "rejected": 1869, "compile_time": 6.795418523950502, "run_time": 241.97698301402852, "wall_time": 362.5206359201111, "kind": "pre", "vq": 0.03, "
+exit 0 10:39:12 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+start 10:39:12 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+{"case": "pre_vq0.07_Nx64_Nn128_c64", "part": 4, "t_start": 800.0, "t_end": 860.0, "status": "failure", "failure_reason": "segment 2: positivity lost at t = 851", "events": 2, "steps": 6296, "rejected": 2485, "compile_time": 6.405481201130897, "run_time": 276.97081103897654, "wall_time": 322.0675177
+exit 0 10:41:08 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+start 10:41:08 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+pre_vq0.07_Nx64_Nn128_c64: nothing to do (failure, t_end 860)
+exit 0 10:41:14 --kind pre --vq 0.07 --Nx 64 --Nn 128 --c 64
+start 10:41:14 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+{"case": "pre_vq0.05_Nx64_Nn128_c64", "part": 4, "t_start": 800.0, "t_end": 980.0, "status": "failure", "failure_reason": "segment 8: positivity lost at t = 964", "events": 7, "steps": 21224, "rejected": 7872, "compile_time": 6.737510609673336, "run_time": 877.6429596582893, "wall_time": 987.3330332
+exit 0 10:44:46 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+start 10:44:46 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+pre_vq0.05_Nx64_Nn128_c64: nothing to do (failure, t_end 980)
+exit 0 10:44:52 --kind pre --vq 0.05 --Nx 64 --Nn 128 --c 64
+start 10:44:52 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+{"case": "pre_vq0.05_Nx32_Nn64_c32", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1749, "rejected": 512, "compile_time": 6.383207728387788, "run_time": 76.90268488926813, "wall_time": 192.791143538896, "kind": "pre", "vq": 0.05, "Nx": 
+exit 0 10:46:11 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+start 10:46:11 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+{"case": "pre_vq0.07_Nx32_Nn64_c32", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1856, "rejected": 560, "compile_time": 6.057711197994649, "run_time": 81.45836571813561, "wall_time": 184.61329667596146, "kind": "pre", "vq": 0.07, "Nx"
+exit 0 10:49:30 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+start 10:49:30 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+{"case": "pre_vq0.03_Nx32_Nn64_c32", "part": 4, "t_start": 800.0, "t_end": 1000.0, "status": "success", "failure_reason": null, "events": 8, "steps": 10714, "rejected": 4020, "compile_time": 6.444773784372956, "run_time": 454.16248085256666, "wall_time": 566.7253046061378, "kind": "pre", "vq": 0.03,
+exit 0 10:50:16 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+start 10:50:16 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+pre_vq0.03_Nx32_Nn64_c32: nothing to do (success, t_end 1000)
+exit 0 10:50:23 --kind pre --vq 0.03 --Nx 32 --Nn 64 --c 32
+{"case": "pre_vq0.05_Nx32_Nn64_c32", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 5, "steps": 3465, "rejected": 1198, "compile_time": 6.4877864648588, "run_time": 138.22974480106495, "wall_time": 241.60338458511978, "kind": "pre", "vq": 0.05, "N
+exit 0 10:51:46 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+start 10:51:46 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+start 10:52:47 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 1 --T 800
+{"case": "pre_vq0.07_Nx32_Nn64_c32", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 6, "steps": 3996, "rejected": 1367, "compile_time": 5.245106232352555, "run_time": 165.14548453572206, "wall_time": 263.4507409669459, "kind": "pre", "vq": 0.07, "
+exit 0 10:55:29 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+start 10:55:29 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+{"case": "sc_vq0.07_Nx32_Nn64_c64_u1", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1954, "rejected": 747, "compile_time": 5.23809879203327, "run_time": 92.32291202596389, "wall_time": 189.42957231309265, "kind": "sc", "vq": 0.07, "Nx"
+exit 0 10:57:30 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 1 --T 800
+start 10:57:30 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 1 --T 800
+{"case": "pre_vq0.05_Nx32_Nn64_c32", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 8, "steps": 5390, "rejected": 1746, "compile_time": 4.9931323828641325, "run_time": 242.83342761034146, "wall_time": 344.1181157690007, "kind": "pre", "vq": 0.05, 
+exit 0 10:59:07 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+start 10:59:07 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+{"case": "sc_vq0.07_Nx32_Nn64_c64_u1", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1866, "rejected": 687, "compile_time": 5.438828182639554, "run_time": 87.6218615390826, "wall_time": 185.97765870206058, "kind": "sc", "vq": 0.07, "N
+exit 0 11:02:17 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 1 --T 800
+start 11:02:17 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 1 --T 800
+{"case": "pre_vq0.07_Nx32_Nn64_c32", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 9, "steps": 6997, "rejected": 2440, "compile_time": 5.215384221170098, "run_time": 315.89755634521134, "wall_time": 414.754798169015, "kind": "pre", "vq": 0.07, "N
+exit 0 11:04:02 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+start 11:04:02 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+{"case": "sc_vq0.07_Nx32_Nn64_c64_u1", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1571, "rejected": 453, "compile_time": 5.934087396832183, "run_time": 60.63914458826184, "wall_time": 164.78752734791487, "kind": "sc", "vq": 0.07, "
+exit 0 11:06:41 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 1 --T 800
+start 11:06:41 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 1 --T 800
+{"case": "pre_vq0.05_Nx32_Nn64_c32", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 9330, "rejected": 3425, "compile_time": 5.1910009370185435, "run_time": 371.22718133195303, "wall_time": 477.79945587413386, "kind": "pre", "vq": 0.05,
+exit 0 11:08:39 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+start 11:08:39 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+{"case": "sc_vq0.07_Nx32_Nn64_c64_u1", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1682, "rejected": 562, "compile_time": 5.143391898833215, "run_time": 76.31854094308801, "wall_time": 178.84940333012491, "kind": "sc", "vq": 0.07, "
+exit 0 11:11:19 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 1 --T 800
+start 11:11:19 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 1 --T 800
+sc_vq0.07_Nx32_Nn64_c64_u1: nothing to do (success, t_end 800)
+exit 0 11:11:27 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 1 --T 800
+start 11:11:27 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 10 --T 800
+{"case": "pre_vq0.07_Nx32_Nn64_c32", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 12897, "rejected": 5044, "compile_time": 5.265141977230087, "run_time": 509.4282636756543, "wall_time": 619.0676918770187, "kind": "pre", "vq": 0.07, "
+exit 0 11:15:58 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+start 11:15:58 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+{"case": "sc_vq0.07_Nx32_Nn64_c64_u10", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1749, "rejected": 487, "compile_time": 5.579243670217693, "run_time": 80.0429504730273, "wall_time": 184.83395274495706, "kind": "sc", "vq": 0.07, "Nx
+exit 0 11:16:09 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 10 --T 800
+start 11:16:09 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 10 --T 800
+{"case": "sc_vq0.07_Nx32_Nn64_c64_u10", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2796, "rejected": 966, "compile_time": 5.669516749912873, "run_time": 103.69752175919712, "wall_time": 211.22907858691178, "kind": "sc", "vq": 0.07,
+exit 0 11:21:26 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 10 --T 800
+start 11:21:26 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 10 --T 800
+{"case": "pre_vq0.05_Nx32_Nn64_c32", "part": 4, "t_start": 800.0, "t_end": 1000.0, "status": "success", "failure_reason": null, "events": 8, "steps": 16786, "rejected": 5768, "compile_time": 5.695104882121086, "run_time": 614.2035085535608, "wall_time": 724.0350568839349, "kind": "pre", "vq": 0.05, 
+exit 0 11:22:29 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+start 11:22:29 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+pre_vq0.05_Nx32_Nn64_c32: nothing to do (success, t_end 1000)
+exit 0 11:22:37 --kind pre --vq 0.05 --Nx 32 --Nn 64 --c 32
+{"case": "pre_vq0.07_Nx32_Nn64_c32", "part": 4, "t_start": 800.0, "t_end": 920.0, "status": "failure", "failure_reason": "segment 5: positivity lost at t = 917", "events": 4, "steps": 11564, "rejected": 4065, "compile_time": 5.727698567323387, "run_time": 382.17451355373487, "wall_time": 453.8491477
+exit 0 11:24:34 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+start 11:24:34 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+pre_vq0.07_Nx32_Nn64_c32: nothing to do (failure, t_end 920)
+exit 0 11:24:40 --kind pre --vq 0.07 --Nx 32 --Nn 64 --c 32
+{"case": "sc_vq0.07_Nx32_Nn64_c64_u10", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 0, "steps": 3068, "rejected": 1045, "compile_time": 6.658646354218945, "run_time": 92.58513924176805, "wall_time": 200.0742950171698, "kind": "sc", "vq": 0.07, 
+exit 0 11:26:29 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 10 --T 800
+start 11:26:29 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 10 --T 800
+start 11:31:32 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 0 --T 800
+start 11:31:32 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 0 --T 800
+{"case": "sc_vq0.07_Nx32_Nn64_c64_u10", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 3, "steps": 4144, "rejected": 1701, "compile_time": 5.29593746853061, "run_time": 198.81038843397982, "wall_time": 297.8601716370322, "kind": "sc", "vq": 0.07, 
+exit 0 11:33:20 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 10 --T 800
+start 11:33:20 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 10 --T 800
+sc_vq0.07_Nx32_Nn64_c64_u10: nothing to do (success, t_end 800)
+exit 0 11:33:28 --kind sc --vq 0.07 --Nx 32 --Nn 64 --c 64 --u 10 --T 800
+start 11:33:28 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 1 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r0", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1931, "rejected": 648, "compile_time": 5.425651362398639, "run_time": 164.8325882696081, "wall_time": 276.10668331803754, "kind": "phase", "v
+exit 0 11:38:00 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 0 --T 800
+start 11:38:00 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 0 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r0", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1971, "rejected": 630, "compile_time": 5.263038128381595, "run_time": 168.27795582870021, "wall_time": 278.8565869939048, "kind": "phase", "v
+exit 0 11:38:01 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 0 --T 800
+start 11:38:01 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 0 --T 800
+{"case": "sc_vq0.07_Nx64_Nn128_c64_u1", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1437, "rejected": 450, "compile_time": 5.3365915031172335, "run_time": 119.04968287283555, "wall_time": 226.1980070360005, "kind": "sc", "vq": 0.07, "
+exit 0 11:39:08 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 1 --T 800
+start 11:39:08 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 1 --T 800
+{"case": "sc_vq0.07_Nx64_Nn128_c64_u1", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1874, "rejected": 714, "compile_time": 5.701768804341555, "run_time": 152.48998021613806, "wall_time": 265.8993858429603, "kind": "sc", "vq": 0.07, 
+exit 0 11:45:25 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 1 --T 800
+start 11:45:25 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 1 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r0", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 3, "steps": 3453, "rejected": 1234, "compile_time": 6.613711313577369, "run_time": 277.1614257527981, "wall_time": 393.7434673279058, "kind": "phase", 
+exit 0 11:46:33 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 0 --T 800
+start 11:46:33 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 0 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r0", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 4, "steps": 3889, "rejected": 1347, "compile_time": 5.597623059293255, "run_time": 311.86443820782006, "wall_time": 425.02731547597796, "kind": "phase"
+exit 0 11:47:08 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 0 --T 800
+start 11:47:08 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 0 --T 800
+{"case": "sc_vq0.07_Nx64_Nn128_c64_u1", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1270, "rejected": 293, "compile_time": 6.62017247476615, "run_time": 103.90999590815045, "wall_time": 223.57181006786413, "kind": "sc", "vq": 0.07, 
+exit 0 11:50:59 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 1 --T 800
+start 11:50:59 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 1 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r0", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 7, "steps": 4376, "rejected": 1703, "compile_time": 6.834041105117649, "run_time": 331.7387139732018, "wall_time": 448.7048942730762, "kind": "phase", 
+exit 0 11:56:01 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 0 --T 800
+start 11:56:01 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 0 --T 800
+{"case": "sc_vq0.07_Nx64_Nn128_c64_u1", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1305, "rejected": 325, "compile_time": 6.269782793940976, "run_time": 90.99904389795847, "wall_time": 202.1265631550923, "kind": "sc", "vq": 0.07, "
+exit 0 11:56:16 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 1 --T 800
+start 11:56:16 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 1 --T 800
+sc_vq0.07_Nx64_Nn128_c64_u1: nothing to do (success, t_end 800)
+exit 0 11:56:24 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 1 --T 800
+start 11:56:24 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 10 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r0", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 7, "steps": 5488, "rejected": 1803, "compile_time": 4.759331426816061, "run_time": 381.82493416103534, "wall_time": 496.82026915904135, "kind": "phase"
+exit 0 11:57:19 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 0 --T 800
+start 11:57:19 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 0 --T 800
+{"case": "sc_vq0.07_Nx64_Nn128_c64_u10", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1441, "rejected": 361, "compile_time": 5.8211455817800015, "run_time": 73.90493680001236, "wall_time": 187.51739213615656, "kind": "sc", "vq": 0.07, 
+exit 0 12:01:10 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 10 --T 800
+start 12:01:10 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 10 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r0", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 3, "steps": 4386, "rejected": 1728, "compile_time": 6.839883919805288, "run_time": 215.46967391273938, "wall_time": 324.41639522393234, "kind": "phase"
+exit 0 12:03:04 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 0 --T 800
+start 12:03:04 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 0 --T 800
+phase_vq0.07_Nx32_Nn64_c64_tau100_r0: nothing to do (success, t_end 800)
+exit 0 12:03:10 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 0 --T 800
+start 12:03:10 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 1 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r0", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 6138, "rejected": 2130, "compile_time": 6.3834000083152205, "run_time": 304.9906536140479, "wall_time": 411.4506845360156, "kind": "phase",
+exit 0 12:06:02 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 0 --T 800
+start 12:06:02 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 0 --T 800
+phase_vq0.07_Nx32_Nn64_c64_tau300_r0: nothing to do (success, t_end 800)
+exit 0 12:06:09 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 0 --T 800
+start 12:06:09 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 1 --T 800
+{"case": "sc_vq0.07_Nx64_Nn128_c64_u10", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2210, "rejected": 670, "compile_time": 4.995823797304183, "run_time": 111.52154573076405, "wall_time": 218.94478633604012, "kind": "sc", "vq": 0.07
+exit 0 12:06:39 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 10 --T 800
+start 12:06:39 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 10 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r1", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1996, "rejected": 643, "compile_time": 5.916601659962907, "run_time": 99.65707978792489, "wall_time": 211.9398050729651, "kind": "phase", "vq
+exit 0 12:08:25 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 1 --T 800
+start 12:08:25 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 1 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r1", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1919, "rejected": 580, "compile_time": 6.576137582538649, "run_time": 96.01786629040726, "wall_time": 200.3420133329928, "kind": "phase", "vq
+exit 0 12:11:32 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 1 --T 800
+start 12:11:32 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 1 --T 800
+{"case": "sc_vq0.07_Nx64_Nn128_c64_u10", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2461, "rejected": 757, "compile_time": 5.449660272104666, "run_time": 123.62102805403993, "wall_time": 230.90132371615618, "kind": "sc", "vq": 0.07
+exit 0 12:12:38 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 10 --T 800
+start 12:12:38 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 10 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r1", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 6, "steps": 3991, "rejected": 1457, "compile_time": 5.252493848558515, "run_time": 196.67021866329014, "wall_time": 314.3075913931243, "kind": "phase",
+exit 0 12:15:28 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 1 --T 800
+start 12:15:28 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 1 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r1", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 6, "steps": 4032, "rejected": 1421, "compile_time": 6.459356276784092, "run_time": 200.9811218632385, "wall_time": 313.91027094516903, "kind": "phase",
+exit 0 12:18:28 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 1 --T 800
+start 12:18:28 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 1 --T 800
+{"case": "sc_vq0.07_Nx64_Nn128_c64_u10", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 3, "steps": 3139, "rejected": 1090, "compile_time": 6.261569370981306, "run_time": 157.38597539509647, "wall_time": 269.8896124600433, "kind": "sc", "vq": 0.07
+exit 0 12:18:49 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 10 --T 800
+start 12:18:49 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 10 --T 800
+sc_vq0.07_Nx64_Nn128_c64_u10: nothing to do (success, t_end 800)
+exit 0 12:18:57 --kind sc --vq 0.07 --Nx 64 --Nn 128 --c 64 --u 10 --T 800
+start 12:18:57 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 100 --real 0 --T 800
+{"case": "phase_vq0.07_Nx64_Nn128_c64_tau100_r0", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1568, "rejected": 477, "compile_time": 5.090502905193716, "run_time": 80.81701086065732, "wall_time": 177.2063285249751, "kind": "phase", "v
+exit 0 12:23:31 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 100 --real 0 --T 800
+start 12:23:31 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 100 --real 0 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r1", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 9, "steps": 6015, "rejected": 1872, "compile_time": 6.447560541797429, "run_time": 299.25751655432396, "wall_time": 405.7028346050065, "kind": "phase",
+exit 0 12:23:54 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 1 --T 800
+start 12:23:54 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 1 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r1", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 9, "steps": 6899, "rejected": 2219, "compile_time": 5.47720958921127, "run_time": 341.5280012812, "wall_time": 440.83573054592125, "kind": "phase", "vq
+exit 0 12:27:26 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 1 --T 800
+start 12:27:26 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 1 --T 800
+{"case": "phase_vq0.07_Nx64_Nn128_c64_tau100_r0", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 3, "steps": 2741, "rejected": 870, "compile_time": 6.031292843865231, "run_time": 139.26437138440087, "wall_time": 241.5746387480758, "kind": "phase",
+exit 0 12:29:08 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 100 --real 0 --T 800
+start 12:29:08 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 100 --real 0 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r1", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 9399, "rejected": 3150, "compile_time": 5.969177953666076, "run_time": 461.6669944941532, "wall_time": 560.7314532359596, "kind": "phase", 
+exit 0 12:34:48 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 1 --T 800
+start 12:34:48 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 1 --T 800
+phase_vq0.07_Nx32_Nn64_c64_tau100_r1: nothing to do (success, t_end 800)
+exit 0 12:34:54 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 1 --T 800
+start 12:34:54 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 2 --T 800
+{"case": "phase_vq0.07_Nx64_Nn128_c64_tau100_r0", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 7, "steps": 3563, "rejected": 1274, "compile_time": 5.153960853582248, "run_time": 180.6283295240719, "wall_time": 276.64581759111024, "kind": "phase"
+exit 0 12:35:19 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 100 --real 0 --T 800
+start 12:35:19 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 100 --real 0 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r2", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2080, "rejected": 727, "compile_time": 5.211464393883944, "run_time": 105.40693471557461, "wall_time": 198.52585582993925, "kind": "phase", "
+exit 0 12:39:44 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 2 --T 800
+start 12:39:44 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 2 --T 800
+{"case": "phase_vq0.07_Nx64_Nn128_c64_tau100_r0", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 3, "steps": 3633, "rejected": 1351, "compile_time": 5.112672962713987, "run_time": 182.95166004495695, "wall_time": 277.349688939983, "kind": "phase",
+exit 0 12:41:30 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 100 --real 0 --T 800
+start 12:41:30 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 100 --real 0 --T 800
+phase_vq0.07_Nx64_Nn128_c64_tau100_r0: nothing to do (success, t_end 800)
+exit 0 12:41:36 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 100 --real 0 --T 800
+start 12:41:36 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 300 --real 0 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r1", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "failure", "failure_reason": "segment 9: positivity lost at t = 792", "events": 8, "steps": 14796, "rejected": 5299, "compile_time": 5.82257797406055, "run_time": 730.9301683250815, "wall_time": 8
+exit 0 12:42:52 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 1 --T 800
+start 12:42:52 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 1 --T 800
+phase_vq0.07_Nx32_Nn64_c64_tau300_r1: nothing to do (failure, t_end 800)
+exit 0 12:42:58 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 1 --T 800
+start 12:42:58 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 2 --T 800
+{"case": "phase_vq0.07_Nx64_Nn128_c64_tau300_r0", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1542, "rejected": 427, "compile_time": 5.639427595073357, "run_time": 78.73580900370143, "wall_time": 174.09256653906778, "kind": "phase", "
+exit 0 12:46:07 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 300 --real 0 --T 800
+start 12:46:07 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 300 --real 0 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r2", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 6, "steps": 3967, "rejected": 1388, "compile_time": 5.022372275590897, "run_time": 196.64873780473135, "wall_time": 294.50226749596186, "kind": "phase"
+exit 0 12:46:14 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 2 --T 800
+start 12:46:14 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 2 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r2", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2070, "rejected": 714, "compile_time": 4.975949397310615, "run_time": 104.08610710129142, "wall_time": 198.8322885259986, "kind": "phase", "v
+exit 0 12:47:50 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 2 --T 800
+start 12:47:50 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 2 --T 800
+{"case": "phase_vq0.07_Nx64_Nn128_c64_tau300_r0", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 4, "steps": 3188, "rejected": 1031, "compile_time": 5.216403056168929, "run_time": 159.29177532112226, "wall_time": 252.54014460206963, "kind": "phase
+exit 0 12:51:50 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 300 --real 0 --T 800
+start 12:51:50 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 300 --real 0 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r2", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 8, "steps": 5748, "rejected": 1833, "compile_time": 5.120144387707114, "run_time": 285.4636124649551, "wall_time": 380.3287101229653, "kind": "phase", 
+exit 0 12:54:07 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 2 --T 800
+start 12:54:07 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 2 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r2", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 6, "steps": 4112, "rejected": 1469, "compile_time": 5.153122633928433, "run_time": 205.20757650886662, "wall_time": 298.5967781599611, "kind": "phase",
+exit 0 12:54:19 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 2 --T 800
+start 12:54:19 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 2 --T 800
+{"case": "phase_vq0.07_Nx64_Nn128_c64_tau300_r0", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 7, "steps": 5275, "rejected": 1920, "compile_time": 5.086355067091063, "run_time": 262.892840272747, "wall_time": 355.0235371568706, "kind": "phase", 
+exit 0 12:59:14 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 300 --real 0 --T 800
+start 12:59:14 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 300 --real 0 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r2", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 8, "steps": 6764, "rejected": 2321, "compile_time": 4.783350223209709, "run_time": 338.24753770115785, "wall_time": 430.56875288509764, "kind": "phase"
+exit 0 13:03:00 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 2 --T 800
+start 13:03:00 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 2 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r2", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 8, "steps": 7936, "rejected": 3276, "compile_time": 5.157686325488612, "run_time": 395.49892878788523, "wall_time": 489.67199925892055, "kind": "phase"
+exit 0 13:03:47 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 2 --T 800
+start 13:03:47 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 2 --T 800
+phase_vq0.07_Nx32_Nn64_c64_tau100_r2: nothing to do (success, t_end 800)
+exit 0 13:03:53 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 2 --T 800
+start 13:03:53 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 3 --T 800
+{"case": "phase_vq0.07_Nx64_Nn128_c64_tau300_r0", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 6424, "rejected": 2691, "compile_time": 4.740906805265695, "run_time": 320.77521652681753, "wall_time": 413.78289054799825, "kind": "phase
+exit 0 13:07:40 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 300 --real 0 --T 800
+start 13:07:40 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 300 --real 0 --T 800
+phase_vq0.07_Nx64_Nn128_c64_tau300_r0: nothing to do (success, t_end 800)
+exit 0 13:07:46 --kind phase --vq 0.07 --Nx 64 --Nn 128 --c 64 --tau 300 --real 0 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r3", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2091, "rejected": 739, "compile_time": 5.396493918029591, "run_time": 106.30864921095781, "wall_time": 194.95182553702034, "kind": "phase", "
+exit 0 13:08:37 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 3 --T 800
+start 13:08:37 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 3 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r3", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 6, "steps": 3913, "rejected": 1357, "compile_time": 5.407369284890592, "run_time": 174.9565250694286, "wall_time": 272.3267114330083, "kind": "phase", 
+exit 0 13:14:41 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 3 --T 800
+start 13:14:41 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 3 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r2", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 8, "steps": 12030, "rejected": 4821, "compile_time": 5.226927148643881, "run_time": 547.7765178307891, "wall_time": 640.6026648699772, "kind": "phase",
+exit 0 13:15:09 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 2 --T 800
+start 13:15:09 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 2 --T 800
+phase_vq0.07_Nx32_Nn64_c64_tau300_r2: nothing to do (success, t_end 800)
+exit 0 13:15:15 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 2 --T 800
+start 13:15:15 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 3 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r3", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2118, "rejected": 760, "compile_time": 5.247126034460962, "run_time": 99.84084957907908, "wall_time": 188.72365171904676, "kind": "phase", "v
+exit 0 13:19:51 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 3 --T 800
+start 13:19:51 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 3 --T 800
+start 13:20:28 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 5 --T 800 --out studies/r1nl/runs_d
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r3", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 7, "steps": 6488, "rejected": 2234, "compile_time": 5.313396848971024, "run_time": 303.0297399761621, "wall_time": 395.944797412958, "kind": "phase", "
+exit 0 13:22:48 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 3 --T 800
+start 13:22:48 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 3 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r5", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2116, "rejected": 756, "compile_time": 4.934141288744286, "run_time": 106.90223239711486, "wall_time": 199.43237766600214, "kind": "phase", "
+exit 0 13:25:19 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 5 --T 800 --out studies/r1nl/runs_d
+start 13:25:19 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 5 --T 800 --out studies/r1nl/runs_d
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r3", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 6, "steps": 4103, "rejected": 1444, "compile_time": 5.155068039195612, "run_time": 204.272004715167, "wall_time": 299.86520453495905, "kind": "phase", 
+exit 0 13:26:23 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 3 --T 800
+start 13:26:23 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 3 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r5", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2930, "rejected": 1056, "compile_time": 5.348549745511264, "run_time": 147.8769963053055, "wall_time": 238.43683843198232, "kind": "phase",
+exit 0 13:30:44 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 5 --T 800 --out studies/r1nl/runs_d
+start 13:30:44 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 5 --T 800 --out studies/r1nl/runs_d
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r3", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 8, "steps": 7452, "rejected": 2630, "compile_time": 5.07135629770346, "run_time": 373.3336085367482, "wall_time": 464.1977889400441, "kind": "phase", "
+exit 0 13:35:39 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 3 --T 800
+start 13:35:39 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 3 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r5", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2771, "rejected": 974, "compile_time": 5.469790909206495, "run_time": 141.2041103017982, "wall_time": 232.4182022078894, "kind": "phase", "
+exit 0 13:36:09 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 5 --T 800 --out studies/r1nl/runs_d
+start 13:36:09 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 5 --T 800 --out studies/r1nl/runs_d
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r3", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 13252, "rejected": 4878, "compile_time": 4.719769942807034, "run_time": 658.9271080570761, "wall_time": 753.9772380408831, "kind": "phase",
+exit 0 13:36:55 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 3 --T 800
+start 13:36:55 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 3 --T 800
+phase_vq0.07_Nx32_Nn64_c64_tau100_r3: nothing to do (success, t_end 800)
+exit 0 13:37:01 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 3 --T 800
+start 13:37:01 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 4 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r4", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1958, "rejected": 626, "compile_time": 5.311384927248582, "run_time": 100.93970369244926, "wall_time": 190.5896989761386, "kind": "phase", "v
+exit 0 13:41:43 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 4 --T 800
+start 13:41:43 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 4 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r5", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 5, "steps": 3869, "rejected": 1395, "compile_time": 5.226391684962437, "run_time": 194.09546161442995, "wall_time": 288.1634876411408, "kind": "phase",
+exit 0 13:42:28 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 5 --T 800 --out studies/r1nl/runs_d
+start 13:42:28 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 5 --T 800 --out studies/r1nl/runs_d
+phase_vq0.07_Nx32_Nn64_c64_tau100_r5: nothing to do (success, t_end 800)
+exit 0 13:42:34 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 5 --T 800 --out studies/r1nl/runs_d
+start 13:42:34 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 5 --T 800 --out studies/r1nl/runs_d
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r5", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 2119, "rejected": 750, "compile_time": 5.188149989815429, "run_time": 108.77486962033436, "wall_time": 199.04605162609369, "kind": "phase", "
+exit 0 13:47:24 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 5 --T 800 --out studies/r1nl/runs_d
+start 13:47:24 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 5 --T 800 --out studies/r1nl/runs_d
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r4", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 4, "steps": 3834, "rejected": 1361, "compile_time": 5.010908069321886, "run_time": 192.64937413786538, "wall_time": 284.2681708969176, "kind": "phase",
+exit 0 13:47:59 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 4 --T 800
+start 13:47:59 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 4 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r3", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 8, "steps": 14843, "rejected": 5102, "compile_time": 5.309070465853438, "run_time": 734.103632786544, "wall_time": 829.2114792799111, "kind": "phase", 
+exit 0 13:51:00 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 3 --T 800
+start 13:51:00 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 3 --T 800
+phase_vq0.07_Nx32_Nn64_c64_tau300_r3: nothing to do (success, t_end 800)
+exit 0 13:51:06 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 3 --T 800
+start 13:51:06 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r5", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 3, "steps": 3528, "rejected": 1228, "compile_time": 5.49299973086454, "run_time": 177.23489697487094, "wall_time": 270.33709058514796, "kind": "phase",
+exit 0 13:53:25 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 5 --T 800 --out studies/r1nl/runs_d
+start 13:53:25 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 5 --T 800 --out studies/r1nl/runs_d
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r4", "part": 0, "t_start": 0.0, "t_end": 200.0, "status": "success", "failure_reason": null, "events": 0, "steps": 1969, "rejected": 637, "compile_time": 4.823623065138236, "run_time": 99.27207492361777, "wall_time": 191.65948006697, "kind": "phase", "vq":
+exit 0 13:55:51 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
+start 13:55:51 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r4", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 8, "steps": 6590, "rejected": 2158, "compile_time": 4.746278890874237, "run_time": 328.21899157972075, "wall_time": 423.85260806418955, "kind": "phase"
+exit 0 13:56:37 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 4 --T 800
+start 13:56:37 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 4 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r5", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 8, "steps": 5350, "rejected": 1832, "compile_time": 5.875989665044472, "run_time": 266.57747932570055, "wall_time": 359.29297973494977, "kind": "phase"
+exit 0 14:00:55 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 5 --T 800 --out studies/r1nl/runs_d
+start 14:00:55 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 5 --T 800 --out studies/r1nl/runs_d
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r4", "part": 1, "t_start": 200.0, "t_end": 400.0, "status": "success", "failure_reason": null, "events": 4, "steps": 4004, "rejected": 1352, "compile_time": 4.954392651095986, "run_time": 202.0740349246189, "wall_time": 296.0002633170225, "kind": "phase", 
+exit 0 14:02:21 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
+start 14:02:21 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau100_r4", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 8, "steps": 12504, "rejected": 4528, "compile_time": 4.865542313084006, "run_time": 600.3826443490107, "wall_time": 693.5643876008689, "kind": "phase",
+exit 0 14:09:41 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 4 --T 800
+start 14:09:41 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 4 --T 800
+phase_vq0.07_Nx32_Nn64_c64_tau100_r4: nothing to do (success, t_end 800)
+exit 0 14:09:47 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 100 --real 4 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r5", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 7, "steps": 8378, "rejected": 2806, "compile_time": 4.957853970583528, "run_time": 410.407533924561, "wall_time": 501.2523892300669, "kind": "phase", "
+exit 0 14:10:46 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 5 --T 800 --out studies/r1nl/runs_d
+start 14:10:46 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 5 --T 800 --out studies/r1nl/runs_d
+phase_vq0.07_Nx32_Nn64_c64_tau300_r5: nothing to do (success, t_end 800)
+exit 0 14:10:52 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 5 --T 800 --out studies/r1nl/runs_d
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r4", "part": 2, "t_start": 400.0, "t_end": 600.0, "status": "success", "failure_reason": null, "events": 8, "steps": 7678, "rejected": 2645, "compile_time": 4.88887825794518, "run_time": 380.9832602131646, "wall_time": 476.05308051989414, "kind": "phase", 
+exit 0 14:11:45 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
+start 14:11:45 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
+{"case": "phase_vq0.07_Nx32_Nn64_c64_tau300_r4", "part": 3, "t_start": 600.0, "t_end": 800.0, "status": "success", "failure_reason": null, "events": 9, "steps": 13973, "rejected": 4936, "compile_time": 4.893781959079206, "run_time": 584.4423451798502, "wall_time": 676.3083812138066, "kind": "phase",
+exit 0 14:24:28 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
+start 14:24:28 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800
+phase_vq0.07_Nx32_Nn64_c64_tau300_r4: nothing to do (success, t_end 800)
+exit 0 14:24:33 --kind phase --vq 0.07 --Nx 32 --Nn 64 --c 64 --tau 300 --real 4 --T 800

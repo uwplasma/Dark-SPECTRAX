@@ -1,0 +1,286 @@
+{
+ "vqs": {
+  "0.03": {
+   "window": 1000.0,
+   "limiter": "cap",
+   "certified": true,
+   "ledger": {
+    "B": 3.2595429959711265e-12,
+    "X": 4.722438221596174e-12,
+    "N": 3.85729014940351e-12,
+    "XN": 6.590075882428666e-12,
+    "C": 2.8056581092231916e-12
+   },
+   "pairs": {
+    "B-X": 1000.0,
+    "B-N": 1000.0,
+    "X-XN": 1000.0,
+    "N-XN": 1000.0,
+    "B-C": 1000.0
+   },
+   "pairs_by_observable": {
+    "B-X": {
+     "dKe": null,
+     "Wext": null
+    },
+    "B-N": {
+     "dKe": null,
+     "Wext": null
+    },
+    "X-XN": {
+     "dKe": null,
+     "Wext": null
+    },
+    "N-XN": {
+     "dKe": null,
+     "Wext": null
+    },
+    "B-C": {
+     "dKe": null,
+     "Wext": null
+    }
+   },
+   "t_reached": {
+    "B": 1000.0,
+    "X": 1000.0,
+    "N": 1000.0,
+    "XN": 1000.0,
+    "C": 1000.0
+   },
+   "first_nonpositive": {
+    "B": null,
+    "X": null,
+    "N": null,
+    "XN": null,
+    "C": null
+   },
+   "status": {
+    "B": "success",
+    "X": "success",
+    "N": "success",
+    "XN": "success",
+    "C": "success"
+   },
+   "failure": {
+    "B": null,
+    "X": null,
+    "N": null,
+    "XN": null,
+    "C": null
+   },
+   "steps": {
+    "B": 27052,
+    "X": 28581,
+    "N": 22684,
+    "XN": 23410,
+    "C": 25182
+   },
+   "wall_s": {
+    "B": 2211.496056768112,
+    "X": 2437.0542154239956,
+    "N": 1548.8970419222023,
+    "XN": 1410.12827930809,
+    "C": 1657.8514344391879
+   },
+   "grid": {
+    "grid_Nx32_vs_B": {
+     "t_reached_grid": 1000.0,
+     "agree_until": 1000.0
+    },
+    "grid_Nx64_vs_B": {
+     "t_reached_grid": 1000.0,
+     "agree_until": 1000.0
+    }
+   }
+  },
+  "0.05": {
+   "window": 892.0,
+   "limiter": "cap X",
+   "certified": true,
+   "ledger": {
+    "B": 1.046581041039991e-12,
+    "X": 2.5449381200482553e-12,
+    "N": 1.5340383139208932e-12,
+    "XN": 3.2651920032707954e-12,
+    "C": 9.529009100657785e-13
+   },
+   "pairs": {
+    "B-X": 897.5,
+    "B-N": 979.0,
+    "X-XN": 897.5,
+    "N-XN": 976.5,
+    "B-C": 978.0
+   },
+   "pairs_by_observable": {
+    "B-X": {
+     "dKe": 897.5,
+     "Wext": null
+    },
+    "B-N": {
+     "dKe": 979.0,
+     "Wext": null
+    },
+    "X-XN": {
+     "dKe": 897.5,
+     "Wext": null
+    },
+    "N-XN": {
+     "dKe": 976.5,
+     "Wext": null
+    },
+    "B-C": {
+     "dKe": 978.0,
+     "Wext": null
+    }
+   },
+   "t_reached": {
+    "B": 980.0,
+    "X": 900.0,
+    "N": 1000.0,
+    "XN": 980.0,
+    "C": 1000.0
+   },
+   "first_nonpositive": {
+    "B": 964.0,
+    "X": 892.0,
+    "N": null,
+    "XN": 964.0,
+    "C": null
+   },
+   "status": {
+    "B": "failure",
+    "X": "failure",
+    "N": "success",
+    "XN": "failure",
+    "C": "success"
+   },
+   "failure": {
+    "B": "segment 8: positivity lost at t = 964",
+    "X": "segment 4: positivity lost at t = 892",
+    "N": null,
+    "XN": "segment 8: positivity lost at t = 964",
+    "C": null
+   },
+   "steps": {
+    "B": 37465,
+    "X": 40549,
+    "N": 34721,
+    "XN": 39200,
+    "C": 36720
+   },
+   "wall_s": {
+    "B": 3195.621992659988,
+    "X": 2719.365165267838,
+    "N": 2783.920672595268,
+    "XN": 2034.9170208387077,
+    "C": 1980.3471566510852
+   },
+   "grid": {
+    "grid_Nx32_vs_B": {
+     "t_reached_grid": 1000.0,
+     "agree_until": 979.5
+    },
+    "grid_Nx64_vs_B": {
+     "t_reached_grid": 1000.0,
+     "agree_until": 962.5
+    }
+   }
+  },
+  "0.07": {
+   "window": 791.5,
+   "limiter": "cap X",
+   "certified": true,
+   "ledger": {
+    "B": 4.1753444002250003e-13,
+    "X": 7.756024698386477e-13,
+    "N": 7.373249960081858e-13,
+    "XN": 9.747652474892738e-13,
+    "C": 6.418119617538818e-13
+   },
+   "pairs": {
+    "B-X": 797.5,
+    "B-N": 870.0,
+    "X-XN": 797.5,
+    "N-XN": 860.0,
+    "B-C": 870.5
+   },
+   "pairs_by_observable": {
+    "B-X": {
+     "dKe": 797.5,
+     "Wext": null
+    },
+    "B-N": {
+     "dKe": 870.0,
+     "Wext": null
+    },
+    "X-XN": {
+     "dKe": 797.5,
+     "Wext": null
+    },
+    "N-XN": {
+     "dKe": null,
+     "Wext": null
+    },
+    "B-C": {
+     "dKe": 870.5,
+     "Wext": null
+    }
+   },
+   "t_reached": {
+    "B": 875.5,
+    "X": 800.0,
+    "N": 940.0,
+    "XN": 860.0,
+    "C": 920.0
+   },
+   "first_nonpositive": {
+    "B": 860.5,
+    "X": 791.5,
+    "N": 936.0,
+    "XN": 851.0,
+    "C": 917.0
+   },
+   "status": {
+    "B": "failure",
+    "X": "failure",
+    "N": "failure",
+    "XN": "failure",
+    "C": "failure"
+   },
+   "failure": {
+    "B": "segment 3: diffrax._solution.RESULTS<The maximum number of solver steps was reached. Try increasing `max_steps`.>",
+    "X": "segment 9: positivity lost at t = 791.5",
+    "N": "segment 6: positivity lost at t = 936",
+    "XN": "segment 2: positivity lost at t = 851",
+    "C": "segment 5: positivity lost at t = 917"
+   },
+   "steps": {
+    "B": 232662,
+    "X": 33083,
+    "N": 38645,
+    "XN": 31174,
+    "C": 37310
+   },
+   "wall_s": {
+    "B": 11822.487955374876,
+    "X": 1549.7385850411374,
+    "N": 2893.5885758346412,
+    "XN": 1729.9073255518451,
+    "C": 1935.73567545088
+   },
+   "grid": {
+    "grid_Nx32_vs_B": {
+     "t_reached_grid": 1000.0,
+     "agree_until": 870.0
+    },
+    "grid_Nx64_vs_B": {
+     "t_reached_grid": 1000.0,
+     "agree_until": 863.0
+    }
+   }
+  }
+ },
+ "gates_doc": "studies/r1nl_gates.py",
+ "vstar": "0.07",
+ "vstar_rule": "largest certified v_q with Window >= 300; else the largest Window"
+}

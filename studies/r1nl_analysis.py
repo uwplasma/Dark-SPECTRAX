@@ -267,7 +267,7 @@ def stage2():
         tt = R[0]["t"]
         nm = min(r["t"].size for r in R)
         tt = tt[:nm]
-        ratios, Ds, Dxx = [], [], None
+        ratios, Ds, Dabs = [], [], []
         late = (tt >= 0.8 * wc) & (tt <= wc)
         for r, h in enumerate(R):
             z = c1.noise_knots(tau, r, fac=2.0)
@@ -275,6 +275,8 @@ def stage2():
             Dr = np.where(tt > 50, h["Wext"][:nm] / np.where(np.abs(Wl) > 0, Wl, np.nan) - 1, 0.0)
             Ds.append(float(np.nanmax(np.abs(Dr[(tt > 50) & (tt <= wc)]))))
             ratios.append(float(h["Wext"][:nm][late].mean() / Wl[late].mean()))
+            wsel = (tt > 50) & (tt <= wc)  # ungated robust companion: absolute difference over the realization's own peak |W_lin|
+            Dabs.append(float(np.abs(h["Wext"][:nm] - Wl)[wsel].max() / np.abs(Wl[wsel]).max()))
             if r == 0:
                 Wl0 = Wl
         nx = min(nm, Rx["t"].size)
@@ -284,7 +286,7 @@ def stage2():
         dep = bool(abs(Rm - 1) > 0.05 and abs(Rm - 1) > 3 * se and np.sign(Dx0) == np.sign(Rm - 1) and abs(Dx0) > 0.025)
         S["N5"][f"tau{tau:g}"] = {
             "window_coh": wc, "R_by_realization": ratios.tolist(), "R": Rm, "se": se, "departure": dep, "XN_r0_D_at_window": Dx0,
-            "bound_if_none": abs(Rm - 1) + 2 * se, "max_abs_D_by_realization": Ds, "ledger_max": max(r["ledger"] for r in R + [Rx]),
+            "bound_if_none": abs(Rm - 1) + 2 * se, "max_abs_D_by_realization": Ds, "max_abs_diff_over_peak_Wlin_by_realization": Dabs, "ledger_max": max(r["ledger"] for r in R + [Rx]),
             "late_slope_over_nTe": float(np.polyfit(tt[late], np.mean([h["Wext"][:nm][late] for h in R], axis=0), 1)[0] / VT2),
             "mean_Wext_over_nTe_at_window": float(np.mean([np.interp(wc, tt, h["Wext"][:nm]) for h in R]) / VT2)}
     # N6 ledger of every stage-2 run
