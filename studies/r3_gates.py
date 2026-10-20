@@ -42,9 +42,11 @@ int (F(xa) - F(xb)) dt over the zone between the planes (cold: exact; warm: negl
 and the pressure work, both O(v_te^2)).
 
 GATES
- Reference (r3_ref.py; N_ref = 4096 points, RK4, dt = 0.05):
+ Reference (r3_ref.py; N_ref = 4096 points, scipy DOP853 with rtol 1e-12, atol 1e-20, dense output every 0.05;
+  PRE-RUN CORRECTION committed before any production run: the first draft said RK4 dt = 0.05, whose energy loss per step
+  (omega dt)^6/72 would give ~1e-5 over T = 330 and could never meet R1):
   R1 energy: max_t |E_tot(t) - E_in|/E_in <= 1e-8.
-  R2 refinement (N 6144, dt 0.025 on the cases eta 0.3, w 4, B0 = 0, polarizations x and y, and B0 45 deg polarization y):
+  R2 refinement (N 6144, rtol 1e-13 on the cases eta 0.3, w 4, B0 = 0, polarizations x and y, and B0 45 deg polarization y):
      every channel fraction changes by <= 1e-4.
   R3 flux budget (planes, saved every 0.05): |residual|/E_in <= 1e-4 with the phi_D A_D term, and without that term the
      residual must exceed 1e-2 E_in for B0 = 0 polarization x (longitudinal), demonstrating the term is needed.
