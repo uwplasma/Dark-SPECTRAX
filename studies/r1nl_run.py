@@ -37,6 +37,8 @@ def case_name(a):
         s += f"_tau{a.tau:g}_r{a.real}"
     if a.kind == "sc":
         s += f"_u{a.u:g}"
+    if a.seed_scale != 1.0:
+        s += f"_seed{a.seed_scale:g}"
     return s + a.tag
 
 
@@ -44,6 +46,9 @@ def build(a):
     E0 = a.vq * c1.vte
     if a.kind == "pre":
         m = c1.mobile_model(a.Nx, a.Nn, mode="prescribed_drive", E0=E0)
+        if a.seed_scale != 1.0:  # follow-up (studies/r1nl_followup.py): seeds scaled; 0 = unseeded homogeneous control
+            sd = [(sp, k, A * a.seed_scale) for sp, k, A in c1.seeds] if a.seed_scale > 0 else []
+            return m, ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], sd)), 0.0
         return m, c1.initial(m), 0.0
     if a.kind == "phase":
         z = c1.noise_knots(a.tau, a.real, fac=2.0)
@@ -64,6 +69,7 @@ def main(argv=None):
     ap.add_argument("--tau", type=float, default=np.inf)
     ap.add_argument("--real", type=int, default=0)
     ap.add_argument("--u", type=float, default=1.0)
+    ap.add_argument("--seed-scale", type=float, default=1.0)
     ap.add_argument("--T", type=float, default=1000.0)
     ap.add_argument("--chunk", type=float, default=1e9)
     ap.add_argument("--max-steps", type=int, default=200_000)

@@ -1,0 +1,2 @@
+--kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0
+--kind pre --vq 0.07 --Nx 32 --Nn 64 --c 64 --T 400 --seed-scale 0.1
