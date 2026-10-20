@@ -339,6 +339,54 @@ def lz_params(case, om, f):
     return Pd, Lc, kbar2, n_c
 
 
+def refined_pd(case, om, f):
+    """Dykhne complex-turning-point exponent (follow-up G, r3_followup_gates.py): P_d = exp(-Theta)."""
+    eta, OD2 = case.eta, g.OMEGA_D ** 2
+    D = g.N_HI - g.N_LO
+    out = np.zeros(np.shape(om))
+    for idx, (o, ff) in enumerate(zip(np.ravel(om), np.ravel(f))):
+        ns = OD2 / (ff * (1 + 1j * eta) ** 2)  # one of the conjugate pair; take the upper-half-plane member below
+        if ns.imag < 0:
+            ns = np.conj(ns)
+        nr = ns.real
+        o2 = o ** 2
+
+        def integrand(t):
+            n = nr + t * (ns - nr)
+            disc_sqrt = ff * (1 + eta ** 2) * np.sqrt(n - ns) * np.sqrt(n - np.conj(ns))
+            mean = 0.5 * (ff * n + OD2 + eta ** 2 * ff * n)
+            lam_m, lam_p = mean - 0.5 * disc_sqrt, mean + 0.5 * disc_sqrt
+            kp, km = np.sqrt(o2 - lam_m + 0j), np.sqrt(o2 - lam_p + 0j)  # k_+ (smaller lambda) is the larger wavenumber
+            tau = 2 * (n - g.N_LO) / D - 1
+            npr = D / (2 * case.w) * (1 - tau ** 2)
+            return (kp - km) / npr * (ns - nr)
+        ts = np.linspace(0.0, 1.0, 4001)
+        vals = np.array([integrand(t) for t in ts])
+        # integrable (n - n*)^(1/2) end point: Simpson on a grid refined by the substitution is not needed at this accuracy
+        integral = np.trapezoid(vals, ts)
+        out.flat[idx] = np.exp(-2 * abs(integral.imag))
+    return out
+
+
+def refined_prediction(case):
+    k, om, wgt = spectral_weights()
+    if case.theta is None:
+        fs = [lambda o: np.ones_like(o)]
+    elif case.theta == 0 and case.pol == "y":
+        fs = [lambda o: o / (o - g.OMEGA_C), lambda o: o / (o + g.OMEGA_C)]
+    else:
+        return None
+    sel = np.linspace(0, om.size - 1, 21).astype(int)
+    tr = rp = rd = 0.0
+    for fn in fs:
+        f = fn(om)
+        P = np.interp(np.arange(om.size), sel, refined_pd(case, om[sel], f[sel]))
+        tr += np.sum(wgt * P) / len(fs)
+        rp += np.sum(wgt * P * (1 - P)) / len(fs)
+        rd += np.sum(wgt * (1 - P) ** 2) / len(fs)
+    return {"trans_dark": float(tr), "refl_photon": float(rp), "refl_dark": float(rd)}
+
+
 def lz_prediction(case):
     """Transverse (polarization y, B0 = 0 or B0 || x). Returns spectrally averaged channels and validity data."""
     k, om, wgt = spectral_weights()
@@ -421,6 +469,7 @@ def analytic(case):
     out = {}
     if case.pol in ("y", "z") and (case.theta is None or (case.theta == 0 and case.pol == "y")):
         out["lz"] = lz_prediction(case)
+        out["refined"] = refined_prediction(case)
     if case.theta is None and case.pol == "x":
         out["wkb"] = wkb_longitudinal(case)
     return out
@@ -484,6 +533,10 @@ def batch_cases(which):
                     continue
                 for w in (2.0, 4.0, 8.0):
                     cs.append(Case(0.3, w, th, pol))
+    if which in ("scan", "all"):  # follow-up G eta scan (r3_followup_gates.py)
+        for eta in (0.05, 0.1, 0.2):
+            for w in (4.0, 8.0, 12.0):
+                cs.append(Case(eta, w, None, "y"))
     if which in ("trunc", "all"):  # band-limited twins of the kinetic cases (Nx 512 and 768)
         for nt in (512, 768):
             for c in kinetic_cases():
