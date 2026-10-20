@@ -99,7 +99,19 @@ def main(argv):
         ref = th.p_ss(0.03 * th.vte, g.T0_NU, om(tag))
         out["T0"][tag] = {"slope": sl, "p_ss": ref, "rel": sl / ref - 1}
         t0ok.append(abs(sl / ref - 1) <= g.T0_TOL)
-    out["gates"]["T0"] = all(t0ok)
+    out["gates"]["T0"] = all(t0ok)  # as declared: fails (window longer than record, NaN); see T0b
+    t0b = []
+    for tag in g.OMEGA:
+        t = np.linspace(0, g.T0B_T, int(g.T0B_T * 100) + 1)
+        W = th.exact_linear(0.03, g.T0_NU, om(tag), t)[1]
+        n_per = g.T0B_PERIODS * 2 * np.pi / om(tag)
+        a, b = t[-1] - n_per, t[-1] - np.pi / om(tag)
+        sl = (cmean(t, W, b, om(tag)) - cmean(t, W, a + np.pi / om(tag), om(tag))) / (b - a - np.pi / om(tag))
+        ref = th.p_ss(0.03 * th.vte, g.T0_NU, om(tag))
+        out["T0b"] = out.get("T0b", {})
+        out["T0b"][tag] = {"slope": sl, "p_ss": ref, "rel": sl / ref - 1}
+        t0b.append(abs(sl / ref - 1) <= g.T0_TOL)
+    out["gates"]["T0b"] = all(t0b)
     # controls
     c0 = []
     for conv, vq, nu, tag, _, _ in [c for c in g.cases() if c[5]]:

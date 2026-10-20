@@ -69,6 +69,12 @@ DELTA, TOL_R, TOL_REF, TOL_SS = 250.0, 0.05, 0.02, 0.05
 CV_W, CV_K = 1e-3, 1e-2
 W_MIN, TE_REL = 300.0, 90.0
 
+# DECLARATION DEFECT in T0 (found by the first analysis pass on partial data, before the production runs finished; recorded, T0 is kept as
+# declared and is reported as FAILED because its averaging window (80 periods = 502 units) is longer than its record (400)).  Declared
+# follow-up, theory-only (no kinetic run involved):
+#  T0b same check as T0 with the ODE integrated to t = 1000 and the mean slope taken over the last 40 drive periods; tolerance unchanged.
+T0B_T, T0B_PERIODS = 1000.0, 40
+
 
 def cases():
     """All production runs: (conv, vq, nu, omega, member, control)."""
