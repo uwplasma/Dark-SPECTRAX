@@ -124,7 +124,7 @@ def cons():
         mask = (np.arange(K + 1) <= K).astype(float)
         Ex = irf(Ek)
         g = irf(C)  # (M, Nn)
-        dC = -1j * kk[:, None] * s * (C @ X.T) - (qm / s) * rf(Ex[:, None] * irf(C @ Dm.T))
+        dC = -1j * kk[:, None] * s * (C @ X.T) - (qm / s) * rf(Ex[:, None] * irf(C @ Dm.T))[:K + 1]
         dg = irf(dC)
         dx = 40.0 / M
         nn = s * np.sum(g * g, 1)
@@ -145,34 +145,53 @@ def cons():
 
 
 def cost():
+    """Banded (tridiagonal) kernels for both variants -- the fair implementation (amendment: the first run used dense N x N
+    matmuls and a dense moment einsum, which inflated the SQ/AW ratio to 3.2-5.8; recorded in docs)."""
     from time import perf_counter
     out = []
-    Lx, Nx, s, qm = 40.0, 32, ops.A, -1.0
+    Nx, s, qm = 32, ops.A, -1.0
     nk = Nx // 2 + 1
     kk = K1 * np.arange(nk)
     mask = (np.arange(nk) <= (Nx - 1) // 3).astype(float)
     rf = lambda g: np.fft.rfft(g, axis=0) / Nx  # noqa: E731
     irf = lambda G: np.fft.irfft(G * Nx, n=Nx, axis=0)  # noqa: E731
     rng = np.random.default_rng(0)
+
+    def shifts(Nn):
+        o = np.sqrt(np.arange(1, Nn) / 2.0)
+        return o
+
+    def Xmul(C, o):  # (X C)_n = o_n C_{n+1} + o_{n-1} C_{n-1}
+        R = np.zeros_like(C)
+        R[:, :-1] += o * C[:, 1:]
+        R[:, 1:] += o * C[:, :-1]
+        return R
+
+    def Dmul(C, o):  # (D C)_n = o_n C_{n+1} - o_{n-1} C_{n-1}
+        R = np.zeros_like(C)
+        R[:, :-1] += o * C[:, 1:]
+        R[:, 1:] -= o * C[:, :-1]
+        return R
+
     for Nn in (64, 128):
-        X, X2 = ops.sq_moment_mats(Nn)
-        Dm = np.diag(np.sqrt(np.arange(1, Nn) / 2.0), 1) - np.diag(np.sqrt(np.arange(1, Nn) / 2.0), -1)
-        Fl = np.diag(np.sqrt(2 * np.arange(1, Nn)) / s, -1)
+        o = shifts(Nn)
+        f2 = np.sqrt(2 * np.arange(1, Nn)) / s
         C = (rng.standard_normal((nk, Nn)) + 1j * rng.standard_normal((nk, Nn))) * mask[:, None] * 1e-3
         E = (rng.standard_normal(nk) + 1j * rng.standard_normal(nk)) * mask * 1e-3
 
         def rhs_aw(C, E):
             Et = irf(E)
-            dC = -1j * kk[:, None] * s * (C @ X.T) - qm * rf(Et[:, None] * irf(C @ Fl.T)) * mask[:, None]
-            J = (C @ np.eye(Nn)[1]) * s * np.sqrt(0.5)
-            return dC, -J * mask
+            F = np.zeros_like(C)
+            F[:, 1:] = f2 * C[:, :-1]
+            dC = -1j * kk[:, None] * s * Xmul(C, o) - qm * rf(Et[:, None] * irf(F)) * mask[:, None]
+            return dC, -(C[:, 1] * s * np.sqrt(0.5)) * mask
 
         def rhs_sq(C, E):
             Et = irf(E)
             gx = irf(C)
-            dC = -1j * kk[:, None] * s * (C @ X.T) - (qm / s) * rf(Et[:, None] * irf(C @ Dm.T)) * mask[:, None]
-            J = rf(s ** 2 * np.einsum("xn,nm,xm->x", gx, X, gx)) * mask
-            return dC, -J * mask
+            dC = -1j * kk[:, None] * s * Xmul(C, o) - (qm / s) * rf(Et[:, None] * irf(Dmul(C, o))) * mask[:, None]
+            j = s ** 2 * 2 * np.sum(gx[:, :-1] * gx[:, 1:] * o, axis=1)
+            return dC, -rf(j) * mask
 
         res = {}
         for nm, f in (("AW", rhs_aw), ("SQ", rhs_sq)):
@@ -184,7 +203,6 @@ def cost():
                     f(C, E)
                 t.append((perf_counter() - t0) / 200)
             res[nm] = min(t)
-        # frozen operator nnz (K = 10, E1 = 4e-3) and sparse matvec time
         nz = {}
         for v in ("AW", "SQ"):
             L = sps.csr_matrix(ops.operator(10, Nn, 4e-3, v))

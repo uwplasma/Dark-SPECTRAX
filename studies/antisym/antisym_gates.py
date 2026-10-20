@@ -34,3 +34,9 @@ the nonlinear question (SW blew up at t 640-740 on H05) is NOT settled by any of
 separately declared stage 2 (studies/antisym/antisym_h05.py), declared after stage 1 results are committed.
 Run: python studies/antisym/antisym_run.py PART  (frozen, floquet, otsi, cons, cost, cond) -> studies/antisym/PART.json
 """
+
+Amendments (made after the first batch, before the re-runs; no gate threshold changed):
+  A1 cons: the first run crashed (array-shape bug in the x-mode truncation, no result produced); fixed and re-run.
+  A2 cost (G4): the first run used dense N x N matmuls for both variants and a dense einsum for the SQ moment, giving a
+     SQ/AW RHS ratio 3.2 (Nn 64) and 5.8 (Nn 128); that record is kept as cost_dense_firstrun.json.  Both variants are
+     re-run with banded (tridiagonal) kernels, the implementation a production code would use.
