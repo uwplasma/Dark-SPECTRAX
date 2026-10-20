@@ -1,0 +1,17 @@
+{
+ "case": "vq0.1_Nx64_Nn128_c4_nf1e-14_sdcpu",
+ "part": 3,
+ "t_start": 300.0,
+ "t_end": 400.0,
+ "status": "success",
+ "failure_reason": null,
+ "events": 3,
+ "steps": 2574,
+ "rejected": 917,
+ "compile_time": 2.1872412101365626,
+ "run_time": 60.75782525888644,
+ "wall_time": 84.76377665088512,
+ "repository_commit": "95244cdba8ebcf23bcac6eaebd040eea0cf273d7",
+ "parent_commit": "4090fbe8767ae06ccd08db48448f52240dc02161",
+ "command": "python studies/nxconv_run.py --vq 0.1 --Nx 64 --Nn 128 --field-nu 4 --noise-floor 1e-14 --T 500 --chunk 100 --tag _sdcpu"
+}

@@ -336,6 +336,48 @@ def stiffdiag_section():
     return "\n".join(L)
 
 
+def expint_section():
+    sm = json.loads((root / "studies/expint/summary.json").read_text())
+    cost = json.loads((root / "studies/expint/cost.json").read_text())
+    L = ["## Exact integration of the diagonal closure damping (Lawson wrapper) (`studies/expint_gates.py`)", "",
+         "SPECTRAX `LawsonSolver` (integration/dark-baseline, PR #81) wraps Dopri8: with `w = exp(r (t - t0)) y` and the rate "
+         "`r = nu_s s(n)` frozen at the step start, the diagonal closure is integrated exactly and everything else (streaming, force, "
+         "fields, the variation of nu over the step) stays explicit; the order of Dopri8 is kept because the split is an identity for "
+         "any `r` (derivation in `spectrax/_lawson.py`). Opt-in: `darkspectrax.run(..., integrating_factor=True)` (constant `nu col`) or "
+         "`integrating_factor=rate_fn` with `rate_fn` from `darkspectrax.field_closure(model, c)`; default off is bitwise the earlier path. Fields, dark "
+         "fields, work ledger and pump-frame basis have rate zero, rows n <= 2 are untouched. Streaming is not exponentiated. Steps are clipped onto the "
+         "saves (the Lawson dense output is accurate only for r h <~ 1). Gates, the platform note and the CPU controls are in the docstring of "
+         "`studies/expint_gates.py`, committed before the Lawson runs. The Lawson runs and the plain CPU controls ran on the office CPU (GPU 0 was "
+         "busy); the baseline is the committed GPU stiffdiag record.", "",
+         "| case | T_cmp | steps plain / Lawson | step ratio (t <= 500) | same-CPU wall ratio (t <= 500) | max rel diff dK_e / W_ext (t <= 500) | ledger | first non-positive t plain / Lawson | window end plain / Lawson | D2 |",
+         "|---|---|---|---|---|---|---|---|---|---|"]
+    for c in ("4", "64"):
+        r = sm["cases"][c]
+        L.append(f"| c = {c} | {r['T_cmp']:g} | {r['steps_base']:.0f} / {r['steps_lawson']:.0f} | {r['steps_ratio_500']:.2f} | "
+                 f"{r['wall_ratio_same_cpu_500']:.2f} | {r['A']['dKe']:.1e} / {r['A']['Wx']:.1e} | {r['L']:.1e} | "
+                 f"{r['t_pos_base']:g} / {r['t_pos_lawson']:g} | {r['t_end_base']:g} / {r['t_end_lawson']:g} | {'pass' if r['D2'] else 'FAIL'} |")
+    b = sm["b10"]
+    L += ["", f"Gates (declared): D2 steps ratio >= 3 at T_cmp per case (c = 4: {sm['cases']['4']['steps_ratio']:.2f} at 560 **FAIL**; c = 64: "
+          f"{sm['cases']['64']['steps_ratio']:.2f} at 740 pass), so D2 as a whole (both cases) **fails**; accuracy A <= 1e-6 on dK_e and W_ext to t = 500 passes "
+          f"for both (the CPU-plain control differs from the GPU record by {sm['cases']['64']['A_ungated_cpu_plain_vs_gpu_record']['dKe']:.1e}, "
+          f"so the platform alone explains most of it); ledger <= 1e-9 passes; positivity not earlier passes (c = 4: 571 vs 568, c = 64: 760 both). "
+          f"Per-step cost (c = 64 from t = 300, 4 units, CPU): plain {cost['plain']['steps']} steps, Lawson {cost['lawson']['steps']} steps, "
+          f"cost per step ratio {cost['cost_per_step_ratio']:.2f}.", "",
+          f"**Ordinary B10** (`M_mi100_ord_j10`, constant nu = 100, Nn 32): {b['steps_record']} -> {b['steps_lawson']} steps ({b['steps_ratio']:.2f}x, B1 pass by steps); "
+          f"wall {b['wall_rerun']:.0f} s -> {b['wall_lawson']:.0f} s on the same machine ({b['wall_ratio']:.2f}x: the per-step cost is about 3x higher on this tiny state); "
+          f"gamma_fit {b['gamma_fit_lawson']:.9g} vs {b['gamma_fit_record']:.9g} (relative {b['gamma_rel_diff']:.1e}, window identical; B2 pass); "
+          f"**B3 FAIL**: ledger / U_field0 = {b['ledger_over_U0']:.1e} against the declared 1e-9 (plain 8.4e-12). The plain value is a by-product of its "
+          "stability-limited steps being far smaller than accuracy needs; the Lawson steps are accuracy-limited, so the quadratic field-energy "
+          "ledger closes only at the solver tolerance (absolute 1.7e-12 with atol 1e-12). The gate was too strict for an accuracy-limited step and is not amended.", "",
+          "**Reading.** (1) Where the closure is the stiff mode (c = 64, t >= 100) the exact treatment cuts the steps 5.0x to t = 500 and 4.3x to t = 740 "
+          "(the counterfactual of stiffdiag predicted 6-9x for the last unit; the realized factor is lower because streaming and the force now set "
+          "the step) at the same per-step cost, so a same-CPU wall ratio of 5.3x including compile, with dK_e and W_ext equal to the plain record to 5e-10. "
+          "(2) Where it is not (c = 4 to t = 540; nu_e <= 100, dt/h_stab <= 0.5) there is no gain (0.96x to 500) and the clipping onto the saves costs a few steps. "
+          "(3) The window does not move: c = 64 still ends at 760 by positivity loss and c = 4 at 579.5 (plain 578) by the step budget inside the AW instability, as the design "
+          "note predicted; the instability is not an integrator problem. (4) Streaming Lawson (Gauss-Hermite nodal transform) was not built.", ""]
+    return "\n".join(L)
+
+
 def gpures_section():
     g = json.loads((root / "studies/gpures/summary.json").read_text())
     c8 = json.loads((root / "studies/gpures/c08.json").read_text())
@@ -1785,6 +1827,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {rclosure_section()}
 
 {stiffdiag_section()}
+
+{expint_section()}
 
 {otsi_section()}
 

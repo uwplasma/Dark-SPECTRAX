@@ -140,7 +140,9 @@ def main():
         if cp is not None:
             r["A_ungated_cpu_plain_vs_gpu_record"] = compare(b, cp)   # platform effect alone
             r["A_ungated_lawson_vs_cpu_plain"] = compare(cp, li)       # integrator effect alone
-            r["steps_cpu_plain_to_500"] = at(cp, T_ACC)[0]
+            r["steps_cpu_plain_to_500"], wcp = at(cp, T_ACC)
+            r["wall_cpu_plain_to_500"], r["wall_lawson_to_500"] = wcp, w5l
+            r["wall_ratio_same_cpu_500"] = wcp / w5l  # same machine, same threads: compile + run
         r["L"] = ledger(li)
         r["L_pass"] = bool(r["L"] <= TOL_L)
         r["L_baseline"] = ledger(b)

@@ -142,3 +142,13 @@ norm 0.97, force block nilpotent to round-off (checked). Per-step growth rate of
 RK4 loses stability where `h * rho` passes about 2.8 (h about 1.2 here); Lawson and Strang do not. Larger K and Nn raise
 rho by K sqrt(Nn), so the RK4 limit scales down accordingly. This is a linear frozen-field check: it says nothing yet about the
 nonlinear run or the step budget.
+
+## 9. Result of S1 for the diagonal closure only (2026-10-19, `studies/expint_gates.py`, results.md "Exact integration of the diagonal closure damping")
+
+Built: SPECTRAX `LawsonSolver` (PR #81) exponentiates only the diagonal closure/hypercollision (rate frozen at the step start; order of the
+wrapped tableau kept because `f = -r y + N` is an identity for any `r`); streaming is NOT exponentiated, so D1 (frozen-field one-step maps)
+and the streaming part of S1 remain open. D2 as declared (both c = 4 and c = 64 at least 3x fewer steps) FAILED: c = 64 gives 5.0x (t <= 500)
+and 4.3x (to 740) at equal per-step cost, c = 4 gives 0.96x (the closure is not the stiff mode before t ~ 540). The accuracy, ledger and
+positivity parts of D2 passed (dK_e, W_ext within 5e-10 of the record, ledger 8e-13 to 2e-11, no earlier positivity loss), the window did not
+change (760; 579.5 vs 578), as expected. A Lawson interpolant is only accurate for r h of order one: dense output of a stiff damped mode is
+garbage, so steps are clipped onto the saves (found by a failing test, not a design choice).
