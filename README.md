@@ -35,7 +35,7 @@ python -m pip install -e ".[test]"
 python -m darkspectrax examples/landau.toml --out artifacts/landau
 ```
 
-The parent is pinned to SPECTRAX commit `4090fbe8767ae06ccd08db48448f52240dc02161`: the SPECTRAX integration branch
+The parent is pinned to SPECTRAX commit `35231ab997d14f54a777397a7f76679f4c4aaf9e`: the SPECTRAX integration branch
 `integration/dark-baseline` of unmerged PRs (main `bf41830` plus #48, #46, #13, #12, #9, #55, #50, #44, #18, #51,
 the moving-Hermite-basis stack #56-#60, the lane-A filter #61, the field-scaled closure #66 and the
 species-TOML usability stack #62-#65, then the public mask/weights names #70, separate rtol/atol and

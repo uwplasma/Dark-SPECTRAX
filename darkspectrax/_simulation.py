@@ -20,6 +20,7 @@ import spectrax
 
 from ._diagnostics import charge_density, energies, gauss_residuals, moments
 from ._closure import static_rate
+from ._streaming import Streaming, streaming_factor_fn
 from ._model import PARENT_COMMIT, Model, rhs
 
 __all__ = ["maxwellian", "consistent_fields", "proca_mode", "run", "save_record", "adapt_basis", "run_adaptive",
@@ -98,6 +99,8 @@ def _wrap_solver(solver, model, integrating_factor):
     """``solver`` itself, or its Lawson (integrating-factor) version with the diagonal rate frozen at the step start."""
     if integrating_factor is None or integrating_factor is False:
         return solver
+    if isinstance(integrating_factor, Streaming):  # exact Hermite streaming (+ optional diagonal rate in the factor)
+        return spectrax.LawsonSolver(solver, factor_fn=streaming_factor_fn(model, integrating_factor.rate))
     rate = static_rate(model) if integrating_factor is True else integrating_factor
     return spectrax.LawsonSolver(solver, lambda t, y, args: rate(t, y, model))
 

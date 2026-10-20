@@ -2,12 +2,13 @@
 
 from ._model import FRAMES, MODES, PARENT_COMMIT, Model, basis_of, hermite_index, inner, rhs
 from ._closure import field_closure, static_rate
+from ._streaming import streaming, Streaming
 from ._diagnostics import charge_density, energies, fit_modes, gauss_residuals, moments
 from ._simulation import (CONTROLS, adapt_basis, consistent_fields, maxwellian, proca_mode, run, run_adaptive,
                           save_record, solve, with_params)
 
 __version__ = "0.1.0"
-__all__ = ["CONTROLS", "field_closure", "static_rate", "FRAMES", "MODES", "PARENT_COMMIT",
+__all__ = ["CONTROLS", "field_closure", "static_rate", "streaming", "Streaming", "FRAMES", "MODES", "PARENT_COMMIT",
            "basis_of", "adapt_basis", "run_adaptive",
            "Model", "hermite_index", "inner", "rhs", "charge_density",
            "energies", "fit_modes", "gauss_residuals", "moments", "consistent_fields",

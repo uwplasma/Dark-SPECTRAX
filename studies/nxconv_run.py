@@ -71,6 +71,9 @@ def main(argv=None):
     ap.add_argument("--lawson", action="store_true",
                     help="integrate the field-scaled closure exactly (SPECTRAX LawsonSolver, rate frozen at the step start); "
                          "use with --tag _li. Default off: the plain Dopri8 path of every earlier record.")
+    ap.add_argument("--streaming", action="store_true",
+                    help="exact Hermite streaming and the field-scaled closure together in the integrating factor "
+                         "(SPECTRAX #83, Strang composition); use with --tag _ls. Implies the closure of --lawson.")
     a = ap.parse_args(argv)
     case = f"vq{a.vq:g}_Nx{a.Nx}_Nn{a.Nn}_c{a.field_nu:g}" + (f"_nf{a.noise_floor:g}" if a.noise_floor else "") + a.tag
     OUT.mkdir(parents=True, exist_ok=True)
@@ -100,10 +103,12 @@ def main(argv=None):
 
     _sim.run = counted
     li = {}
-    if a.lawson:
+    if a.lawson or a.streaming:
         if a.field_nu <= 0:
-            raise SystemExit("--lawson needs --field-nu > 0")
+            raise SystemExit("--lawson/--streaming needs --field-nu > 0")
         _sim.rhs, li["integrating_factor"] = ds.field_closure(m, a.field_nu)
+        if a.streaming:
+            li["integrating_factor"] = ds.streaming(li["integrating_factor"])
     elif a.field_nu > 0:
         install_closure(m, a.field_nu)
     tic = time.perf_counter()
