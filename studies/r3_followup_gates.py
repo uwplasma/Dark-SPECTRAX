@@ -23,3 +23,19 @@ Nothing in FU1-FU3 changes a first-step gate.
 NX = (1024, 1536, 2048, 3072)
 VTES = (0.005, 0.02)
 GATE = {"FU1": 0.01, "FU2": 0.02, "FU2_remnant": 0.03}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Follow-up G (declared after the first-step R4 result and before it is computed): is the failure of R4 at eta 0.15 (w 8, 12:
+# deviations 0.035 / 0.045 > 0.03; transmitted dark larger than exp(-pi g^2/(kbar |dDelta/dx|))) a first-order-in-eta
+# correction of the two-level law that a complex-turning-point (Dykhne) exponent captures?
+# Refined law: with the local eigenvalues lambda_pm(n) of M^2 = [[f n, eta f n], [eta f n, Omega_D^2 + eta^2 f n]]
+# (f = 1, or f_R, f_L of R4), k_pm = sqrt(omega^2 - lambda_pm), the diabatic (stay-dark) probability is
+#   P_d = exp(-Theta),  Theta = 2 |Im int_{n_r}^{n*} (k_+ - k_-) dn / n'(n)|,   n* = Omega_D^2/(f (1 +- i eta)^2) (the complex point where
+# lambda_+ = lambda_-), n_r = Re n*, straight path in the complex n plane, n'(n) = (D/(2w)) (1 - tau^2), tau = 2(n - n_lo)/D - 1, D = n_hi - n_lo,
+# the branch of sqrt(disc) chosen continuous (positive on the real axis). Channels as in R4 (T = P_d, photon P_d (1 - P_d),
+# dark (1 - P_d)^2), spectral average as in R4.
+#  FU4 gate: for every R4 reference case with kbar Lc >= 3 (B0 = 0 and th 0, eta 0.15 and 0.3) the refined T, refl_photon, refl_dark are
+#      within 0.02 of the reference channels (refl_photon with the wrap correction, declared left-window value also reported).
+#  FU4b: new cold reference runs (same code, N = 4096): eta in {0.05, 0.1, 0.2}, w in {4, 8, 12}, B0 = 0, polarization y; the same comparison
+#      (simple R4 law and refined law), and the exponent ratio ln T_ref / ln P_LZ(simple) reported against eta f n_c/kbar^2.
+# The simple law (R4) is not replaced: its failure stays recorded.
