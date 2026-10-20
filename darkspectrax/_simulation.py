@@ -263,7 +263,8 @@ def solve(model: Model, y0, t_max, n_save=2, params=None, rtol=1e-10, atol=1e-12
     if integrating_factor and fixed_dt is None:  # Lawson dense output is only accurate for r h <~ 1: step onto the saves
         controller = diffrax.ClipStepSizeController(controller, step_ts=jnp.linspace(0.0, t_max, n_save))
     sol = diffrax.diffeqsolve(
-        term, _wrap_solver(diffrax.Dopri8() if solver is None else solver, m, integrating_factor), 0.0, t_max, dt0 if fixed_dt is None else fixed_dt,
+        term, _wrap_solver(diffrax.Dopri8() if solver is None else solver, m, integrating_factor), 0.0, t_max,
+        dt0 if fixed_dt is None else fixed_dt,
         y0, saveat=diffrax.SaveAt(ts=jnp.linspace(0.0, t_max, n_save)), stepsize_controller=controller,
         max_steps=max_steps, adjoint=diffrax.RecursiveCheckpointAdjoint() if adjoint is None else adjoint)
     return sol.ys
