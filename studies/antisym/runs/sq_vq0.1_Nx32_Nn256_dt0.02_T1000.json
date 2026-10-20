@@ -1,0 +1,18 @@
+{
+ "case": "sq_vq0.1_Nx32_Nn256_dt0.02_T1000",
+ "T": 497.0,
+ "finite": false,
+ "wall_time": 118.25129225000273,
+ "steps": 24850,
+ "rhs_evals": 99400,
+ "max_energy_defect_over_runmaxW_t<=600": NaN,
+ "first_energy_defect_over_W_gt_1e-3": 496.5,
+ "max_mass_drift_e": NaN,
+ "max_mass_drift_i": NaN,
+ "max_momentum_drift": NaN,
+ "max_momentum_drift_t<=600": NaN,
+ "max_L2_drift_e": NaN,
+ "max_top_frac": NaN,
+ "repository_commit": "b29d61543ab965588e4f71d3169d7d2e9172d46d",
+ "command": "python studies/antisym/antisym_h05.py --vq 0.1 --T 1000 --dt 0.02 --Nx 32 --Nn 256"
+}

@@ -1,0 +1,79 @@
+{
+"sha": "4625428",
+"command": "python studies/antisym/antisym_run.py cond",
+"wall_s": 192.5849861659808,
+"results": [
+{
+"var": "AW_c0",
+"K": 5,
+"Nn": 64,
+"E1": 0.004,
+"normality_defect": 0.938817823675496,
+"cond_eigvec": 1.9006370483104406e+26,
+"dense_max_re": 0.4162796487584083,
+"dense_max_re_perturbed_1e13": 0.41627964999059985,
+"td_rate": 0.4678104547557717,
+"L2norm": 1.0011921766591145
+},
+{
+"var": "SQ",
+"K": 5,
+"Nn": 64,
+"E1": 0.004,
+"normality_defect": 0.0,
+"cond_eigvec": 39.342652653158254,
+"dense_max_re": 1.1102230189596672e-15,
+"dense_max_re_perturbed_1e13": 1.306278162222892e-14,
+"td_rate": 3.330669073875469e-18,
+"L2norm": 0.9166476001527875
+},
+{
+"var": "AW_c0",
+"K": 5,
+"Nn": 64,
+"E1": 0.01,
+"normality_defect": 0.9927590177805925,
+"cond_eigvec": 5.568383724548793e+27,
+"dense_max_re": 0.7611639438208565,
+"dense_max_re_perturbed_1e13": 0.8779819142683395,
+"td_rate": 0.8613778851660805,
+"L2norm": 2.4334005066085362
+},
+{
+"var": "SQ",
+"K": 5,
+"Nn": 64,
+"E1": 0.01,
+"normality_defect": 0.0,
+"cond_eigvec": 39.86832536059774,
+"dense_max_re": 3.4935297876477058e-15,
+"dense_max_re_perturbed_1e13": 3.1789892964135856e-14,
+"td_rate": -7.605027718682325e-17,
+"L2norm": 2.276064814708966
+},
+{
+"var": "AW_c0",
+"K": 10,
+"Nn": 128,
+"E1": 0.004,
+"normality_defect": 0.6524989110958703,
+"cond_eigvec": 1.3381301087113639e+29,
+"dense_max_re": 0.8381546936305138,
+"dense_max_re_perturbed_1e13": 0.8381546936330746,
+"td_rate": 0.860340063626976,
+"L2norm": 1.7471350679963789
+},
+{
+"var": "SQ",
+"K": 10,
+"Nn": 128,
+"E1": 0.004,
+"normality_defect": 0.0,
+"cond_eigvec": 105.0211398203982,
+"dense_max_re": 1.9186041644303486e-15,
+"dense_max_re_perturbed_1e13": 1.5809991715203176e-14,
+"td_rate": 1.1102230246251543e-18,
+"L2norm": 1.503880026379397
+}
+]
+}
