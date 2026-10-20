@@ -146,7 +146,7 @@ def main(argv):
             for tag in g.OMEGA:
                 nm = {m: r2_run.case_name("EM", vq, nu, tag, *g.MEMBERS[m], False) for m in g.MEMBERS}
                 B, X, N = (hs.get(nm[m]) for m in "BXN")
-                if B is None:
+                if B is None or X is None or N is None:  # incomplete case (partial data while runs are in progress)
                     continue
                 key = f"vq{vq:g}_nu{nu:g}_w{tag}"
                 mem = [h for h in (B, X, N) if h is not None]
