@@ -13,5 +13,5 @@ pdflatex cover_letter
 
 Every number quoted in the text comes from `numbers.tex` or `tables_gen.tex`, generated from the committed records in `studies/` and `docs/_static/`.
 Records and study scripts are those of commit `a3ef7a6`; the manuscript follows it on `main` (see `git log -- paper`).
-SPECTRAX integration commits (branch `integration/dark-baseline`, unmerged, not a release): R1 `3de6b2b`, R1 nonlinear `4090fbe`, R2 `35231ab`; branch tip when written `729d7fe`.
+SPECTRAX integration commits (branch `integration/dark-baseline`, unmerged, not a release): reservoir and coherence study `3de6b2b`, strong-drive study `4090fbe`, collisions `35231ab`; branch tip when written `729d7fe`.
 The acknowledgments line is a placeholder for the author to complete.
