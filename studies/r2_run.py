@@ -29,8 +29,9 @@ def omega_of(tag):
     return w_tot if tag == "res" else float(tag)
 
 
-def case_name(conv, vq, nu, om, Nx, Nn, control):
-    return f"{conv}_vq{vq:g}_nu{nu:g}_w{om}_Nx{Nx}_Nn{Nn}" + ("_control" if control else "")
+def case_name(conv, vq, nu, om, Nx, Nn, control, seed_scale=1.0):
+    return (f"{conv}_vq{vq:g}_nu{nu:g}_w{om}_Nx{Nx}_Nn{Nn}" + ("_control" if control else "")
+            + (f"_seed{seed_scale:g}" if seed_scale != 1.0 else ""))
 
 
 def model(conv, vq, Nx, Nn, nu, om, collisional=True):
@@ -41,7 +42,7 @@ def model(conv, vq, Nx, Nn, nu, om, collisional=True):
 
 
 def run(a):
-    case = case_name(a.conv, a.vq, a.nu, a.omega, a.Nx, a.Nn, a.control)
+    case = case_name(a.conv, a.vq, a.nu, a.omega, a.Nx, a.Nn, a.control, a.seed_scale)
     out_dir = Path(a.out) if a.out else OUT
     out_dir.mkdir(parents=True, exist_ok=True)
     parts = sorted(out_dir.glob(f"{case}.part*.npz"), key=lambda p: int(p.suffixes[-2][5:]))
@@ -57,7 +58,7 @@ def run(a):
         y0 = {k: jnp.asarray(last[f"y_{k}"]) for k in ("Ck", "Fk", "Dk", "W", "B")}
     else:
         t0 = 0.0
-        y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], [] if a.control else seeds(0)))
+        y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], [] if a.control else [(sp, k, A * a.seed_scale) for sp, k, A in seeds(0)]))
     ipart = len(parts)
     t1 = min(a.T, t0 + max(SEG, SEG * (a.chunk // SEG)))
     stats, run0, rhs0 = [], _sim.run, _sim.rhs
@@ -92,7 +93,7 @@ def run(a):
     t_end = float(out["t"][-1])
     status = out["status"] if (out["status"] != "success" or t_end >= t1 - 1e-9) else "short"
     rec = {"case": case, "conv": a.conv, "vq_over_vte": a.vq, "nu_ei": a.nu, "omega": a.omega, "omega_value": omega_of(a.omega),
-           "Nx": a.Nx, "Nn": a.Nn, "control": a.control, "closure_c": a.c, "noise_floor": NF, "part": ipart,
+           "Nx": a.Nx, "Nn": a.Nn, "control": a.control, "seed_scale": a.seed_scale, "closure_c": a.c, "noise_floor": NF, "part": ipart,
            "t_start": t0, "t_end": t_end, "status": status, "failure_reason": out["failure_reason"], "events": len(out["events"]),
            "steps": int(st[:, 0].sum()), "rejected": int(st[:, 1].sum()), "compile_time": float(st[:, 2].sum()),
            "run_time": float(st[:, 3].sum()), "wall_time": wall, "repository_commit": _sim._git_sha(),
@@ -121,6 +122,7 @@ def main(argv=None):
     ap.add_argument("--T", type=float, default=1000.0)
     ap.add_argument("--chunk", type=float, default=200.0)
     ap.add_argument("--max-steps", type=int, default=200_000)
+    ap.add_argument("--seed-scale", type=float, default=1.0)  # follow-up F (studies/r2_followup.py); default unchanged
     ap.add_argument("--control", action="store_true")
     ap.add_argument("--out", default=None)
     return run(ap.parse_args(argv))
