@@ -1005,6 +1005,76 @@ other runs reach T. The nonlinear Landau runs are resolved by all rules to T = 1
 remain illustrations of trapping onset only."""
 
 
+def r2_section():
+    """R2: sustained dark-to-plasma absorption with Dougherty collisions vs the linear drag law."""
+    s = json.loads((root / "studies/r2/summary.json").read_text())
+    fu = json.loads((root / "studies/r2/followup_summary.json").read_text())
+    C, gt = s["cases"], s["gates"]
+    om = {"res": "resonant", "0.9": "0.9", "1.1": "1.1"}
+    L = ["## R2: sustained absorption with collisions vs the linear drag law (`studies/r2_gates.py`)", "",
+         "Gates, case list and decision rules were committed in `studies/r2_gates.py` (92e0775) before any production run; the analysis "
+         "(`studies/r2_analysis.py`) implements them without rule changes, records are in `studies/r2/` (`summary.json`, slim records, `followup_summary.json`), "
+         "figure ![R2](_static/r2/r2_absorption.png). H05 set-up (mobile ions 1836, pump frame + remap, seeds r0, c = 64 field-scaled closure with Lawson, noise floor 1e-14, "
+         "T = 1000), Dougherty e-e/e-i/i-i with nu_ee = nu_ei, nu_ii = nu_ei sqrt(m_e/m_i), both conventions (EM = `dougherty`, G = `dougherty_g` beta = 0). "
+         "Grid: v_q/v_te 0.01/0.03/0.05 x nu_ei 1e-3/3e-3/1e-2/3e-2 x omega resonant (omega_L), 0.9, 1.1 (units of omega_pe); members Nx 32 Nn 64 (B), Nx 64 (X), Nn 128 (N) for EM, B for G; "
+         "unseeded controls (Nx 8). 192 runs, 1.3e6 steps.", "",
+         "**Linear law** (`studies/r2_theory.py`). The uniform relative velocity relaxes at nu_eff = (nu_ei/2)(1 + m_e/m_i) (Morse rate, identical in EM and G beta = 0), so the "
+         "uniform driven cold response obeys J' = omega_L^2 (Ebar + Ed) - nu_eff J and the steady absorbed power per volume is "
+         "P_ss = omega_L^2 nu_eff omega^2 E0^2 / (2 [(omega_L^2 - omega^2)^2 + nu_eff^2 omega^2]) (resonant: omega_L^2 E0^2 / (2 nu_eff)); the transient (natural mode) decays as exp(-nu_eff t/2) "
+         "(1/e time 4/nu_ei: 4000, 1333, 400, 133). Literature form (read for this study, paraphrased): Dubovsky and Hernandez-Chifflet (arXiv:1509.00039) write the same cold two-fluid friction "
+         "-m_e nu (u_e - u_i) with nu = (4 sqrt(2 pi) alpha^2 n_e / (3 m_e^(1/2) T_e^(3/2))) log Lambda, obtain the electron response u_e = -e E / (m_e (nu - i omega)), and find that "
+         "plasma shielding suppresses the hidden-photon coupling by m^2/omega_p^2 for nu << m << omega_p and by i nu m/omega_p^2 for m << nu (a Drude response with complex plasma frequency omega_p^2/(1 + i nu/omega)); McDermott and Witte (arXiv:1911.05086) use the "
+"off-shell (non-resonant) absorption rate proportional to nu m^2/omega_p^2 with the same Spitzer-like nu (their Eq. 5-6), plus resonant conversion at m = omega_p. The B12 form above is the "
+         "same Drude law; the nu of those papers corresponds to nu_eff here (friction on the electron-ion relative velocity), not to nu_ei. In the model nu is **constant**: the Spitzer "
+         "dependence nu ~ T_e^(-3/2) (heating reduces the absorption in the cosmological estimates) is not present.", "",
+         f"Gates: T0 (theory self-check as declared) **FAILED by declaration defect** (80-period averaging window longer than the 400-unit record, result NaN); T0b (declared as a follow-up, theory only: "
+         f"1000 units, 40 periods) pass, deviations from P_ss {max(abs(v['rel']) for v in s['T0b'].values()):.1e}; C0 controls pass (Ebar {max(v['Ebar_err'] for v in s['controls'].values()):.1e}, "
+         f"W_ext {max(v['Wext_err'] for v in s['controls'].values()):.1e}, gate 1e-6; 48 runs); L1 ledger {'pass' if gt['L1'] else 'FAIL'} (max {max(v['max_ledger_over_Wext'] for v in s['runs'].values()):.1e}); "
+         f"L2 no net collisional work {'pass' if gt['L2'] else 'FAIL'} (max {max(v['max_Psum_over_Pe'] for v in s['runs'].values()):.1e}); L3 identity {'pass' if gt['L3'] else 'FAIL'} "
+         f"(max {max(v['max_R_over_wL2E0'] for v in s['runs'].values()):.1e}); CV convention check {s['counts']['CV'][0]}/{s['counts']['CV'][1]} pass; K3 steady-state law {s['counts']['K3'][0]}/{s['counts']['K3'][1]} pass; "
+         f"K2 kinetic = linear within 5% (late rate and cumulative work, plus refinement spread <= 0.02) **{s['counts']['K2'][0]}/{s['counts']['K2'][1]}** (the six failures are the nu_ei = 1e-3 detuned cases, see below).", "",
+         "Windows: every EM case reaches Wn = 1000 (pairs B/X, B/N agree to 1000 in dK_e and W_ext; refinement spread of the late rate <= 2.2e-4). The nonrelativistic window Wp (T_e/T_e(0) < 90) is shorter only for "
+         "v_q/v_te = 0.05 resonant: " + ", ".join(f"nu {k.split('_')[1][2:]}: {r['Wp']:g}" for k, r in C.items() if r["Wp"] < 1000) + ". Everything below is evaluated at tb = Wn - pi/omega = 996.5 (rate interval Delta = 250 resonant, 188-189 detuned).", "",
+         "### Late-time rate, kinetic vs exact linear (B member; R = P_kin/P_lin on the same interval; f_ss = P_lin/P_ss; T_e/T_e(0), ion heating and exchange at tb)", "",
+         "| omega | v_q/v_te | nu_ei | R_late | R_cum | f_ss | P_kin/P_ss | K2 | T_e/T_e(0) | T_i/T_i(0) | dK_i/W_ext | Q_i/W_ext |", "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for k, r in C.items():
+        v, n, w = k.split("_")
+        b, p = r["B"], r["report"]
+        L.append(f"| {om[w[1:]]} | {v[2:]} | {n[2:]} | {b['R_late']:.4f} | {b['R_cum']:.4f} | {b['f_ss']:.2f} | {b['P_kin_over_pss']:.3f} | {'pass' if r['K2'] else 'FAIL'} | "
+                 f"{p['Te_over_Te0']:.3g} | {p['Ti_over_Ti0']:.3f} | {p['dKi_over_Wext']:.1e} | {p['Qi_over_Wext']:.1e} |")
+    L += ["", "### Deposition law (K4, reported)", "", "Fit ln P = a + p ln(v_q/v_te) + q ln(nu_ei) over the 12 cases per omega (each interval as above; standard errors from the residual scatter, so they include the "
+          "transient-state curvature, not only noise). The exact linear fit differs from kinetic only by the seed effect.", "",
+          "| omega | p kinetic | p linear | q kinetic | q linear | kappa = geometric mean of P_kin/P_lin | range of P_kin/P_lin |", "|---|---|---|---|---|---|---|"]
+    for w, f in s["fits"].items():
+        L.append(f"| {om[w]} | {f['kin']['p']:.3f} +- {f['kin']['se_p']:.3f} | {f['lin']['p']:.3f} +- {f['lin']['se_p']:.3f} | {f['kin']['q']:.3f} +- {f['kin']['se_q']:.3f} | "
+                 f"{f['lin']['q']:.3f} +- {f['lin']['se_q']:.3f} | {f['kappa']:.3f} +- {f['kappa_se']:.3f} | {f['R_late_range'][0]:.3f}-{f['R_late_range'][1]:.3f} |")
+    L += ["", "### Follow-up F: is the nu_ei = 1e-3 detuned departure a seed effect? (`studies/r2_followup.py`, declared after the main analysis and before its runs)", "",
+          "Seeds multiplied by 0.1 at v_q/v_te = 0.03, nu_ei = 1e-3 (EM, B member):", "", "| case | D = R_cum - 1 at s = 1 | at s = 0.1 | ratio | E = R_late - 1 at s = 1 | at s = 0.1 | ratio | ledger |", "|---|---|---|---|---|---|---|---|"]
+    for k, r in fu.items():
+        if k != "gates":
+            L.append(f"| {k} | {r['D_s1']:+.4f} | {r['D_s0.1']:+.5f} | {r['D_ratio']:.4f} | {r['E_s1']:+.4f} | {r['E_s0.1']:+.5f} | {r['E_ratio']:.4f} | {r['ledger']:.1e} |")
+    L += ["", f"F1 (ratios in [0.005, 0.02], i.e. s^2 = 0.01 within a factor 2) **{'pass' if fu['gates']['F1'] else 'FAIL'}**, F2 ledger **{'pass' if fu['gates']['F2'] else 'FAIL'}**.", "",
+          "**Reading.** (1) Where collisions act and the linear transient has decayed, the kinetic absorption equals the linear drag law: the late rate is within 0.2% of P_ss at nu_ei = 3e-2 for all three frequencies "
+          "and all drives (f_ss = 1.00, P_kin/P_ss 0.996-1.003), and K3 passes in 12/12 of the cases where P_lin is within 10% of P_ss. For the other cases the kinetic rate equals the exact transient-inclusive linear law within 5% "
+          "except the six cases below, but the steady state is not reached inside t = 1000: for nu_ei = 1e-3, 3e-3, 1e-2 the resonant rate is only 0.20, 0.48, 0.89 of P_ss (the amplitude transient has 1/e time 4/nu_ei). "
+          "The sustained law is therefore tested directly for nu_ei = 3e-2 (and 1e-2 detuned), and through the linear ODE for the rest. "
+          "(2) The v_q scaling is quadratic: p = 1.99 +- 0.10 (kinetic) vs 2 (exact), 2.00 +- 0.03, 2.00 +- 0.02 for the detuned frequencies. The nu_ei scaling follows the transient-inclusive linear law, not a pure power: "
+          "q (kinetic, resonant) = -0.51 vs -0.52 (linear) and 0.75 / 0.88 vs 0.79 / 0.90 for 0.9 / 1.1 (detuned rate grows with nu: off-resonant absorption proportional to nu, the McDermott-Witte non-resonant limit, until the beat transient decays). "
+          "(3) Kinetic corrections are small and are seed back-reaction: the resonant late rate is 1.5-4% low at nu_ei = 1e-3 and <= 0.2% low at 3e-2, the detuned late rate is 9-14% high at nu_ei = 1e-3 "
+          "(2.6% at 3e-3, < 0.1% at >= 1e-2). The detuned excess is independent of v_q (1.131/1.141/1.143 at 0.01/0.03/0.05 for omega = 0.9), the unseeded controls agree with the linear law to 3e-8, and the "
+          "seed-scale test scales it as s^2 (ratios 0.0105 and 0.0099; F1 pass): it is the quiver-advected seed modulation acting back on the mean field, as in R1, large only where W_ext is itself tiny. "
+          "The resonant deficit at v_q/v_te = 0.05, nu_ei = 1e-3 (3.7% in the late rate, T_e/T_e(0) = 129) is larger than at 0.01 and 0.03 (1.5%, 1.7%); drive amplitude and heating are not separable here "
+          "(T_e rises with v_q^2), so the data allow a few-percent heating/drive correction but not its attribution. (4) Heating does not change the rate through nu in the model because nu is constant: R_late along the "
+          "run stays within 1% of 1 while T_e/T_e(0) rises from 7 to 70 (v_q 0.03, nu 1e-2, resonant; `path_t_R_Te` in the summary). "
+          "(5) Energy partition at tb: dK_e is 57-95% of W_ext in the resonant runs and 76-96% in the detuned ones (coherent quiver plus heat; the rest is field energy), electron temperature rises by factors 5-231 (v_te beyond 0.3 c for T_e/T_e(0) > 90, "
+          "marked by Wp), ion heating is small (T_i/T_i(0) <= 2.8, dK_i/W_ext <= 1.3e-2) and the e-to-i exchange is Q_i/W_ext = 4e-5 (nu 1e-3) to 1.6e-2 (nu 3e-2, detuned), growing in proportion to nu_ei. "
+          "(6) EM and G agree in W_ext to 2.5e-6, in dK_e to 8.3e-3 and in T_e to 6.6e-3 (CV pass in all 36 cases); the late-rate ratio differs by <= 7e-6; T_i differs by up to 31% and the e-i exchange Q_i by 0.4999 of its EM value (halved), as in H08. "
+          "(7) Not done / not claimed: a cosmological deposition law needs the velocity-dependent Coulomb nu(T_e) (heating then lowers the rate), radiative and Compton cooling, expansion, ionization, "
+          "relativistic electrons (the model is nonrelativistic: T_e/T_e(0) > 90 is beyond v_te = 0.3 c), the k != 0 coupling of a real dark-photon field, and the nu_ee, nu_ii choices (Z = 1 order-of-magnitude values; they do not enter the uniform drag). "
+          "Domain of the law: v_q/v_te <= 0.05, nu_ei in 1e-3..3e-2 omega_pe, omega in {0.9, omega_L, 1.1} omega_pe, t <= 1000 omega_pe^-1, one box (L = 40) and mass ratio, one seed level (5e-4).", ""]
+    return "\n".join(L)
+
+
 def third_round():
     L = ["## Independent dark reference: grid Vlasov-Ampere-Proca (`python studies/dark_grid_reference.py`)", "",
          "`studies/refs/code/slv_proca.py` extends the imported semi-Lagrangian solver with Ampere's law and the "
@@ -2059,6 +2129,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {r1_section()}
 
 {r1nl_section()}
+
+{r2_section()}
 
 {r3_section()}
 

@@ -105,3 +105,16 @@ def test_b10_reference_limits():
     pd = ref.Plasma(vte=0.1, mi=1836.0, tau=10.0, eta=1e-8, OmegaD=1.0)
     rd = ref.growth(pd, 0.05, 0.2, E0, pd.omega(0.05), "R1")[0]
     assert abs(rd / r1 - 1) < 1e-4
+
+
+def test_r2_linear_drag_law_and_case_list():
+    import r2_gates
+    import r2_theory as th
+    assert len(r2_gates.cases()) == 192
+    t = np.linspace(0, 400, 20001)
+    nu, E0 = 0.6, 0.03 * th.vte
+    for om in (th.wL, 0.9):
+        W = th.exact_linear(0.03, nu, om, t)[1]
+        slope = (W[-1] - W[-6001]) / (t[-1] - t[-6001])  # 120 time units: > 15 periods, endpoint ripple at 2 omega is about 1%
+        assert abs(slope / th.p_ss(E0, nu, om) - 1) < 3e-2
+    assert abs(th.p_ss(E0, 1e-2, th.wL) * 2 * th.nu_eff(1e-2) / (th.wL ** 2 * E0 ** 2) - 1) < 1e-3  # resonant limit
