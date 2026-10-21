@@ -26,6 +26,40 @@
 \newcommand{\gpuWinB}{595} % studies/gpures/summary.json
 \newcommand{\gpuWinC}{440} % studies/gpures/summary.json
 \newcommand{\gpuWinD}{751.5} % studies/gpures/summary.json
+\newcommand{\hhsDEEndA}{\ensuremath{1.2\times10^{-3}}} % recomputed from studies/r1nl/runs/pre_vq0.03_Nx32_Nn64_c64 Tx, trailing 200 average, t=1000
+\newcommand{\hhsDEEndB}{\ensuremath{2.3\times10^{-3}}} % recomputed from studies/r1nl/runs/pre_vq0.05_Nx32_Nn64_c64 Tx, trailing 200 average, t=892
+\newcommand{\hhsDEEndC}{\ensuremath{2.5\times10^{-3}}} % recomputed from studies/r1nl/runs/pre_vq0.07_Nx32_Nn64_c64 Tx, trailing 200 average, t=791.5
+\newcommand{\hhsDEVZZA}{\ensuremath{5.0\times10^{-5}}} % recomputed from studies/r1nl/runs/pre_vq0.03_Nx32_Nn64_c64 Tx, trailing 200 average, t=500
+\newcommand{\hhsDEVZZB}{\ensuremath{1.4\times10^{-4}}} % recomputed from studies/r1nl/runs/pre_vq0.05_Nx32_Nn64_c64 Tx, trailing 200 average, t=500
+\newcommand{\hhsDEVZZC}{\ensuremath{2.7\times10^{-4}}} % recomputed from studies/r1nl/runs/pre_vq0.07_Nx32_Nn64_c64 Tx, trailing 200 average, t=500
+\newcommand{\hhsDEmaxA}{2.5} % max over the window of the averaged gain / initial thermal energy
+\newcommand{\hhsDEmaxB}{4.5} % max over the window of the averaged gain / initial thermal energy
+\newcommand{\hhsDEmaxC}{5} % max over the window of the averaged gain / initial thermal energy
+\newcommand{\hhsDErEndA}{2.5} % same, ratio to the initial 1-D electron thermal energy
+\newcommand{\hhsDErEndB}{4.5} % same, ratio to the initial 1-D electron thermal energy
+\newcommand{\hhsDErEndC}{5} % same, ratio to the initial 1-D electron thermal energy
+\newcommand{\hhsDErVZZA}{0.1} % same, ratio to the initial 1-D electron thermal energy
+\newcommand{\hhsDErVZZB}{0.28} % same, ratio to the initial 1-D electron thermal energy
+\newcommand{\hhsDErVZZC}{0.54} % same, ratio to the initial 1-D electron thermal energy
+\newcommand{\hhsEth}{\ensuremath{5.0\times10^{-4}}} % v_te^2/2 with v_te^2 = 1e-3 c^2 (SM Eq. S36; HHS quote 5e-4)
+\newcommand{\hhsFldEndA}{\ensuremath{4.4\times10^{-2}}} % 1/2 Ebar^2 (k=0 mean field), trailing 200 average, t=1000
+\newcommand{\hhsFldEndB}{\ensuremath{9.6\times10^{-2}}} % 1/2 Ebar^2 (k=0 mean field), trailing 200 average, t=892
+\newcommand{\hhsFldEndC}{\ensuremath{1.4\times10^{-1}}} % 1/2 Ebar^2 (k=0 mean field), trailing 200 average, t=791.5
+\newcommand{\hhsFldLinEndA}{\ensuremath{4.6\times10^{-2}}} % same from the exact linear law
+\newcommand{\hhsFldLinEndB}{\ensuremath{9.9\times10^{-2}}} % same from the exact linear law
+\newcommand{\hhsFldLinEndC}{\ensuremath{1.5\times10^{-1}}} % same from the exact linear law
+\newcommand{\hhsFldLinVZZA}{\ensuremath{9.2\times10^{-3}}} % same from the exact linear law
+\newcommand{\hhsFldLinVZZB}{\ensuremath{2.5\times10^{-2}}} % same from the exact linear law
+\newcommand{\hhsFldLinVZZC}{\ensuremath{5.0\times10^{-2}}} % same from the exact linear law
+\newcommand{\hhsFldRatioA}{0.96} % mean-field energy over linear at the window end
+\newcommand{\hhsFldRatioB}{0.97} % mean-field energy over linear at the window end
+\newcommand{\hhsFldRatioC}{0.98} % mean-field energy over linear at the window end
+\newcommand{\hhsFldVZZA}{\ensuremath{9.1\times10^{-3}}} % 1/2 Ebar^2 (k=0 mean field), trailing 200 average, t=500
+\newcommand{\hhsFldVZZB}{\ensuremath{2.5\times10^{-2}}} % 1/2 Ebar^2 (k=0 mean field), trailing 200 average, t=500
+\newcommand{\hhsFldVZZC}{\ensuremath{5.0\times10^{-2}}} % 1/2 Ebar^2 (k=0 mean field), trailing 200 average, t=500
+\newcommand{\hhsWinTA}{1000} % last saved time within the certified window
+\newcommand{\hhsWinTB}{892} % last saved time within the certified window
+\newcommand{\hhsWinTC}{791.5} % last saved time within the certified window
 \newcommand{\lawsonSteps}{5.0} % studies/expint/summary.json cases.64.steps_ratio_500
 \newcommand{\lawsonStepsFour}{0.96} % studies/expint/summary.json cases.4.steps_ratio_500
 \newcommand{\ledgA}{\ensuremath{7\times10^{-12}}} % studies/r1nl/stage1_summary.json vqs.0.03.ledger (max over members)
@@ -62,7 +96,6 @@
 \newcommand{\rnlSplitO}{50.5} % stage2_summary.json N4.u1.t_split_kin
 \newcommand{\rnlSplitOZ}{72} % stage2_summary.json N4.u10.t_split_kin
 \newcommand{\rnlSpread}{\ensuremath{2\times10^{-4}}} % studies/r1nl/stage2_summary.json N1.max_abs_D_by_member
-\newcommand{\rnlTh}{0.24} % studies/r1nl/stage2_summary.json N3.B
 \newcommand{\rnlWDfrac}{47} % stage2_summary.json N4.u1 (percent of U_D0 given up)
 \newcommand{\rnlWext}{381.3} % studies/r1nl/stage2_summary.json N1
 \newcommand{\rnlWlin}{384.0} % studies/r1nl/stage2_summary.json N1

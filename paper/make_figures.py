@@ -111,7 +111,6 @@ num("rnlWlin", st2["N1"]["Wext_lin_over_nTe_at_window"], "{:.1f}", "studies/r1nl
 num("rnlDw", st2["N2"]["bound"], "{:.1e}", "studies/r1nl/stage2_summary.json N2.bound")
 n3 = st2["N3"]["B"]
 num("rnlDKe", n3["dKe"], "{:.0f}", "studies/r1nl/stage2_summary.json N3.B")
-num("rnlTh", n3["dTh_e"], "{:.2f}", "studies/r1nl/stage2_summary.json N3.B")
 num("rnlIonShare", n3["ion_share"] * 100, "{:.2f}", "studies/r1nl/stage2_summary.json N3.B (percent)")
 num("rnlOtsi", n3["t_otsi"], "{:g}", "studies/r1nl/stage2_summary.json N3.B.t_otsi")
 num("rnlOtsiN", st2["N3"]["N"]["t_otsi"], "{:g}", "studies/r1nl/stage2_summary.json N3.N.t_otsi")
@@ -273,6 +272,41 @@ num("cFloorHi", max(sf["runs"][f"c{c}"]["window"] for c in cs), "{:g}", "studies
 ex = J("studies/expint/summary.json")
 num("lawsonSteps", ex["cases"]["64"]["steps_ratio_500"], "{:.1f}", "studies/expint/summary.json cases.64.steps_ratio_500")
 num("lawsonStepsFour", ex["cases"]["4"]["steps_ratio_500"], "{:.2f}", "studies/expint/summary.json cases.4.steps_ratio_500")
+
+# ================================================================================ HHS-definition energies (Fig. 2 of the PRL)
+# HHS plot Delta E / (n_e m_e c^2) (their Fig. 2, SM Eqs. S35-S36): the change of the thermal energy n m v_th^2/2 with v_th^2 the
+# 1-D (x) velocity variance, kinetic energy "with the k=0 component removed" (SM footnote 8), and <E^2>/2, moving average 200/wpe.
+# Same definition here: 1-D electron energy (1/2) m_e (M_xx - M_x^2/n) with the box-mean flow removed (records: Tx), the mean-field energy
+# (1/2) Ebar^2 against the exact linear law, trailing 200/wpe moving average. Units n m_e c^2 (c = wpe = n = m_e = 1).
+def mavg(t, y, w=200.0):
+    out = np.empty_like(y)
+    for i in range(t.size):
+        m = (t > t[i] - w) & (t <= t[i])
+        out[i] = y[m].mean()
+    return out
+
+
+E_TH0 = 0.5 * 1e-3  # initial 1-D electron thermal energy, n m_e c^2 (= 5e-4, SM text)
+num("hhsEth", E_TH0, "{:.1e}", "v_te^2/2 with v_te^2 = 1e-3 c^2 (SM Eq. S36; HHS quote 5e-4)")
+for vq, nm in (("0.03", "A"), ("0.05", "B"), ("0.07", "C")):
+    h = load_run(f"pre_vq{vq}_Nx32_Nn64_c64", ts=("t", "W", "Tx", "Ebar"))
+    win = st1[vq]["window"]
+    sel = h["t"] <= win
+    t = h["t"][sel]
+    dEe = 0.5 * (h["Tx"][sel, 0] - h["Tx"][0, 0])
+    dEm = mavg(t, dEe)
+    Elin, Wlin = lin_W(t, float(vq) * np.sqrt(VT2))
+    Fld = mavg(t, 0.5 * h["Ebar"][sel] ** 2)
+    Fl = mavg(t, 0.5 * Elin ** 2)
+    for tag, tq in (("500", 500.0), ("End", win)):
+        i = int(np.argmin(np.abs(t - tq)))
+        num(f"hhsDE{tag}{nm}", dEm[i], "{:.1e}", f"recomputed from studies/r1nl/runs/pre_vq{vq}_Nx32_Nn64_c64 Tx, trailing 200 average, t={t[i]:g}")
+        num(f"hhsDEr{tag}{nm}", dEm[i] / E_TH0, "{:.2g}", "same, ratio to the initial 1-D electron thermal energy")
+        num(f"hhsFld{tag}{nm}", Fld[i], "{:.1e}", f"1/2 Ebar^2 (k=0 mean field), trailing 200 average, t={t[i]:g}")
+        num(f"hhsFldLin{tag}{nm}", Fl[i], "{:.1e}", "same from the exact linear law")
+    num("hhsWinT" + nm, t[-1], "{:g}", "last saved time within the certified window")
+    num("hhsDEmax" + nm, dEm.max() / E_TH0, "{:.2g}", "max over the window of the averaged gain / initial thermal energy")
+    num("hhsFldRatio" + nm, Fld[-1] / Fl[-1], "{:.2f}", "mean-field energy over linear at the window end")
 
 # ================================================================================================ fig 3 (R1 transfer)
 fig, ax = plt.subplots(1, 3, figsize=(7.2, 2.5))
