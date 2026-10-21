@@ -22,8 +22,14 @@ def main(argv):
     names = sorted({p.name.split(".part")[0] for p in an.RUNS.glob("*.part0.json")})
     for n in names:
         h = an.load(n)
-        np.savez_compressed(rec / f"{n}.npz", t=h["t"], W_ext=h["Wx"], dK_e=h["dKe"], dK_i=h["K_species"][:, 1] - h["K_species"][0, 1],
-                            T_e=h["Te"], T_i=h["Ti"], Q_e_cum=h["Qcum"][:, 0], Q_i_cum=h["Qcum"][:, 1], Ebar=h["Ebar"])
+        f4 = lambda x: np.asarray(x, np.float32)  # noqa: E731  (slim records are float32; the analysis used the full float64 runs)
+        if "_control" not in n:
+            full = n.startswith("G_") or ("Nx32_Nn64" in n)
+            arr = dict(t=f4(h["t"]), W_ext=f4(h["Wx"]), dK_e=f4(h["dKe"]))
+            if full:
+                arr.update(dK_i=f4(h["K_species"][:, 1] - h["K_species"][0, 1]), T_e=f4(h["Te"]), T_i=f4(h["Ti"]),
+                           Q_i_cum=f4(h["Qcum"][:, 1]))
+            np.savez_compressed(rec / f"{n}.npz", **arr)
         parts = [{k: v for k, v in r.items() if k != "failure_reason" or v is not None} for r in h["recs"]]
         (rec / f"{n}.json").write_text(json.dumps(parts, indent=1, default=float) + "\n")
     import matplotlib
