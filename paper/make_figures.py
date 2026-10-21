@@ -111,6 +111,9 @@ num("rnlWlin", st2["N1"]["Wext_lin_over_nTe_at_window"], "{:.1f}", "studies/r1nl
 num("rnlDw", st2["N2"]["bound"], "{:.1e}", "studies/r1nl/stage2_summary.json N2.bound")
 n3 = st2["N3"]["B"]
 num("rnlDKe", n3["dKe"], "{:.0f}", "studies/r1nl/stage2_summary.json N3.B")
+num("rnlCohShare", n3["dKe"] / st2["N1"]["Wext_over_nTe_at_window"]["B"] * 100, "{:.0f}", "studies/r1nl/stage2_summary.json N3.B.dKe / N1.Wext (percent)")
+for _t in (200, 500):
+    num(f"quivAt{_t}", 0.03 * np.sqrt(VT2) * _t / 2, "{:.1f}", f"v_q w_pe t/2 with v_q = 0.03 v_te, v_te^2 = 1e-3 c^2, t = {_t} (units of c)")
 num("rnlIonShare", n3["ion_share"] * 100, "{:.2f}", "studies/r1nl/stage2_summary.json N3.B (percent)")
 num("rnlOtsi", n3["t_otsi"], "{:g}", "studies/r1nl/stage2_summary.json N3.B.t_otsi")
 num("rnlOtsiN", st2["N3"]["N"]["t_otsi"], "{:g}", "studies/r1nl/stage2_summary.json N3.N.t_otsi")
@@ -226,7 +229,7 @@ for basis, col, mk in (("AW", C["r"], "o"), ("SW", C["g"], "s")):
             ax[0].semilogy(*zip(*pts), mk + ls, color=col, ms=3.5, label=f"{basis}, $E_1={E1:g}$")
 ax[0].set_xlabel(r"Hermite order $N_n$")
 ax[0].set_ylabel(r"max Re $\lambda$ (frozen field, $K=5$)")
-ax[0].legend(frameon=False, fontsize=6.5)
+ax[0].legend(frameon=False, fontsize=7)
 panel(ax[0], "(a)")
 labs, tr, cl = [], [], []
 for name, r in gp["runs"].items():
@@ -242,7 +245,7 @@ for vq, col in (("0.1", C["b"]), ("0.05", C["o"])):
 ax[1].set_xlabel(r"Hermite order $N_n$")
 ax[1].set_ylabel(r"time reached $\omega_{pe}t$")
 ax[1].set_xticks([128, 256])
-ax[1].legend(frameon=False, fontsize=6.5, loc="upper right")
+ax[1].legend(frameon=False, fontsize=7, loc="upper right")
 panel(ax[1], "(b)")
 sf = J("studies/rclosure/stagef.json")
 cs = [16, 64, 256]
@@ -327,7 +330,7 @@ for vq in ("0.03", "0.05", "0.07"):
         num("recomputeWext", W[-1] / VT2, "{:.1f}", "recomputed from studies/r1nl/runs/pre_vq0.07_Nx32_Nn64_c64 (check vs rnlWext)")
 ax[0].set_xlabel(r"$\omega_{pe}t$")
 ax[0].set_ylabel(r"$W_{\rm ext}/W_{\rm lin}-1$  [%]")
-ax[0].legend(frameon=False, fontsize=6.5, loc="lower left")
+ax[0].legend(frameon=False, fontsize=7, loc="lower left")
 panel(ax[0], "(a)")
 tt = np.array([100, 200, 300, 400])
 for key, col, lab in (("s1", C["b"], r"$s=1$"), ("s0.1", C["o"], r"$s=0.1$"), ("s0", C["gy"], r"$s=0$")):
@@ -370,7 +373,7 @@ for w, (lab, col, mk) in wk.items():
 ax[0].axhspan(0.95, 1.05, color=C["gy"], alpha=0.15, lw=0)
 ax[0].set_xlabel(r"$\nu_{ei}/\omega_{pe}$")
 ax[0].set_ylabel(r"$P_{\rm kin}/P_{\rm lin}$ (late)")
-ax[0].legend(frameon=False, fontsize=6.5)
+ax[0].legend(frameon=False, fontsize=7)
 panel(ax[0], "(a)")
 for w, (lab, col, mk) in wk.items():
     y = [cases[f"vq0.03_nu{n:g}_w{w}"]["B"]["P_kin_over_pss"] for n in nus]
@@ -379,7 +382,7 @@ for w, (lab, col, mk) in wk.items():
     ax[1].semilogx(nus, yl, "-", color=col, lw=0.9)
 ax[1].set_xlabel(r"$\nu_{ei}/\omega_{pe}$")
 ax[1].set_ylabel(r"$P/P_{\rm ss}$ ($v_q/v_{te}=0.03$)")
-ax[1].text(0.97, 0.97, "markers: kinetic\nlines: exact linear", transform=ax[1].transAxes, fontsize=6.5, ha="right", va="top")
+ax[1].text(0.97, 0.97, "markers: kinetic\nlines: exact linear", transform=ax[1].transAxes, fontsize=7, ha="right", va="top")
 panel(ax[1], "(b)")
 for i, (k, (lab, col, mk)) in enumerate(wk.items()):
     f = fits[k]
@@ -390,16 +393,14 @@ ax[2].set_xticks([0, 1, 2])
 ax[2].set_xticklabels(["res", "0.9", "1.1"])
 ax[2].set_xlabel(r"drive frequency / $\omega_{pe}$")
 ax[2].set_ylabel(r"exponent $p$ in $P\propto (v_q/v_{te})^p$")
-ax[2].text(0.03, 0.04, "filled: kinetic\nopen: linear", transform=ax[2].transAxes, fontsize=6.5)
 panel(ax[2], "(c)")
 for vq, al in vqs.items():
     y = [cases[f"vq{vq}_nu{n:g}_wres"]["report"]["Te_over_Te0"] for n in nus]
     ax[3].loglog(nus, y, "o-", color=C["r"], alpha=al, ms=3.5, lw=0.9, label=f"$v_q/v_{{te}}={vq}$")
 ax[3].axhline(90, color=C["k"], ls="--", lw=0.8)
-ax[3].text(0.0011, 100, r"$v_{te}=0.3c$", fontsize=6.5)
+ax[3].text(0.0011, 100, r"$v_{te}=0.3c$", fontsize=7)
 ax[3].set_xlabel(r"$\nu_{ei}/\omega_{pe}$")
 ax[3].set_ylabel(r"$T_e/T_e(0)$ at $t_b$ (resonant)")
-ax[3].legend(frameon=False, fontsize=6.5)
 panel(ax[3], "(d)")
 fig.tight_layout()
 fig.savefig(FIG / "fig_r2.pdf")
