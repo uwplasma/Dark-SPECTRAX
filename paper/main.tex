@@ -1,0 +1,246 @@
+\documentclass[aps,prd,reprint,floatfix,amsmath,amssymb,nofootinbib,superscriptaddress]{revtex4-2}
+\usepackage{graphicx,booktabs,xcolor,url}
+\usepackage[colorlinks=true,allcolors=blue!50!black]{hyperref}
+\input{numbers.tex}
+\input{tables_gen.tex}
+\newcommand{\todo}[1]{\textbf{[TODO: #1]}}
+\newcommand{\vq}{v_q/v_{te}}
+\newcommand{\nTV}{nT_eV}
+\newcommand{\wpe}{\omega_{pe}}
+\newcommand{\Wext}{W_{\rm ext}}
+\newcommand{\Wlin}{W_{\rm lin}}
+
+\setlength{\emergencystretch}{3em}
+\begin{document}
+\title{Resonant conversion of dark-photon fields in a plasma with a noise-free continuum kinetic method: bounds on nonlinear suppression and the role of collisions}
+\author{Rogerio Jorge}
+\affiliation{[affiliation placeholder]}
+\date{\today}
+
+\begin{abstract}
+Whether the resonant conversion of dark-photon dark matter into plasma oscillations in the early Universe is cut off by nonlinear plasma dynamics has been argued, on the basis of particle-in-cell (PIC) simulations, to invalidate the cosmological constraints derived from it~\cite{HHS2026}. We test the claim in a noise-free setting: a Hermite--Fourier Vlasov solver for the canonical Maxwell--Proca--Vlasov system with kinetic mixing, built on SPECTRAX, in one spatial and three velocity dimensions, nonrelativistic. The method uses a pump-frame velocity basis with exact remaps, a field-scaled closure integrated exactly by a Lawson factor, and Dougherty collisions. We document the numerical limit of the method, a truncation instability of the asymmetrically weighted Hermite basis, which bounds the certified time windows (\winA, \winB\ and \winC\ in units of $\wpe^{-1}$ at $\vq=0.03$, 0.05, 0.07), and the alternative bases we tested and rejected. Inside these windows, at the strongest drive $\vq=0.07$ the energy transfer follows the linear resonant law to \rnlBound\,\% with no resolved frequency detuning (bound \rnlDw\ $\wpe$); a finite dark reservoir and a finite coherence time of the drive also leave the linear prediction unchanged to \rnlResOZ\,\% of the initial reservoir energy and \rnlRbOZZ\,\% of the ensemble work, respectively. The small residual is the back-reaction of the imposed seed fluctuations and scales with the square of their amplitude. With collisions, the kinetic absorption equals the linear Drude law with $\nu_{\rm eff}=(\nu_{ei}/2)(1+m_e/m_i)$: the late rate is within \rtwoPss\,\% of the steady-state power at $\nu_{ei}=3\times10^{-2}\wpe$, and the work scales as $(\vq)^{p}$ with $p=\rtwoPR\pm\rtwoPeR$. These are bounds, not a resolution of the cosmological question: they hold for $\vq\le0.07$, $\wpe t\lesssim 790$ at the strongest drive, in a nonrelativistic one-dimensional model.
+\end{abstract}
+\maketitle
+
+\section{Introduction}
+A dark photon with kinetic mixing $\chi$ with the ordinary photon and a mass $m_{A'}$ is a well-motivated candidate for dark matter~\cite{Fabbrichesi2020}. In the early Universe the dark-photon field oscillates coherently, and when $m_{A'}$ equals the plasma frequency of the ionized medium the field resonantly converts into longitudinal plasma oscillations, depositing energy in the plasma~\cite{DubovskyHC2015,McDermottWitte2020,Witte2020}. Cosmological constraints on dark-photon dark matter have been derived from the resonant transfer of a substantial part of the dark-photon energy density into the plasma, which heats it.
+
+Hook, Huang and Shalaby (HHS) argued that the resonant transfer saturates because of plasma nonlinearities~\cite{HHS2026}. In their account, large-amplitude $k\simeq0$ Langmuir waves, driven by the dark photon, excite higher-$k$ Langmuir and ion-acoustic waves through the ponderomotive force; the resulting density inhomogeneities detune the resonance and limit the deposited energy to roughly the electron thermal energy, which would weaken the constraints by several orders of magnitude. Their evidence comes from relativistic one-dimensional PIC simulations of an electron--ion plasma with a prescribed uniform dark-photon drive.
+
+A PIC calculation carries sampling noise, which seeds the very instabilities that the argument relies on. This paper asks a narrow question and answers it with a different numerical method: in a model with the same physical ingredients, when does the energy transfer from a resonant uniform drive depart from the linear resonant law, and how large is the departure that can be resolved? We use a noise-free continuum kinetic solver whose seeds are deterministic and whose work ledger closes to solver tolerance, so that any departure from the linear law can be attributed. We do not reproduce the HHS simulations: our model is nonrelativistic, the loading is deterministic, and the box and parameters differ in detail (Sec.~\ref{sec:discussion}).
+
+The work consists of a methods part and a bounds part. The methods part (Secs.~\ref{sec:model}--\ref{sec:verify}) describes the model, the Hermite--Fourier discretization, the verification suite, and the failure mode that limits the method. The results part addresses two research questions: (R1) does a finite dark-photon reservoir or a finite coherence time of the drive produce detuning or saturation of the energy transfer at the strongest drives we can certify (Sec.~\ref{sec:r1}); and (R2) with collisions present, does the sustained absorption obey the linear drag law, and what is missing before a cosmological statement (Sec.~\ref{sec:r2})? Failed and amended gates are reported where they affect a claim.
+
+\section{Model}\label{sec:model}
+\subsection{Canonical Maxwell--Proca--Vlasov system}
+Each species $s$ obeys the collisionless Vlasov equation in the combined force field,
+\begin{multline}
+\partial_t f_s+\mathbf v\!\cdot\!\nabla f_s+\frac{q_s}{m_s}\Big[\mathbf E+\eta\mathbf E_D+\mathbf E_{\rm drive}\\+\mathbf v\times(\mathbf B+\eta\mathbf B_D)\Big]\!\cdot\!\nabla_v f_s=0 ,
+\end{multline}
+with ordinary fields $\partial_t\mathbf E=c^2\nabla\times\mathbf B-\mathbf J/\epsilon_0$, $\partial_t\mathbf B=-\nabla\times\mathbf E$ and canonical Proca fields
+\begin{align}
+\partial_t\mathbf E_D&=c^2\nabla\times\mathbf B_D+\Omega_D^2\mathbf A_D-\eta\mathbf J/\epsilon_0,\\
+\partial_t\mathbf B_D&=-\nabla\times\mathbf E_D,\quad
+\partial_t\mathbf A_D=-\mathbf E_D-\nabla\phi_D,\\
+\partial_t\phi_D&=-c^2\nabla\!\cdot\!\mathbf A_D ,
+\end{align}
+with constraints $\nabla\!\cdot\!\mathbf E=\rho/\epsilon_0$ and $\nabla\!\cdot\!\mathbf E_D+\Omega_D^2\phi_D/c^2=\eta\rho/\epsilon_0$. The ordinary current $\mathbf J$ sources both laws; the dark field acts back on the particles with strength $\eta$. Three modes are used: \emph{ordinary} (no dark coupling), \emph{prescribed drive} (a uniform $\mathbf E_{\rm drive}=\mathbf E_0\cos(\omega t+\varphi)$ and an external-work ledger, no dark reservoir; the setting of HHS), and \emph{self-consistent} (evolved Proca fields with a finite energy reservoir).
+
+\subsection{Mixing map}
+For a kinetic mixing $-\tfrac{\chi}{2}F_{\mu\nu}F_D^{\mu\nu}$ and a mass term on the dark field only, removing the mixing by a non-orthogonal shear gives the canonical coupling
+\begin{equation}
+\eta=\frac{\chi}{\sqrt{1-\chi^2}},\qquad m_D=\frac{m_0}{\sqrt{1-\chi^2}},
+\end{equation}
+where $m_0$ is the bare mass and $\Omega_D$ is the dark-photon mass $m_D$ expressed as a frequency. We checked this map against Sec.~1.1 of Ref.~\cite{Fabbrichesi2020} (their $\varepsilon\equiv\chi$): the dark photon couples to the ordinary current with strength $e\varepsilon/\sqrt{1-\varepsilon^2}$. The sign convention differs by $\mathbf A_D\to-\mathbf A_D$, under which the model is symmetric in $\eta$. The model is not the massless ``millicharged'' choice of the same reference.
+
+\subsection{Energy and work ledger}
+In the parent normalization velocities are in units of $c$, $\Omega_0\equiv\Omega_{c,0}$ and the species mass is $m_s=\Omega_0/\Omega_{cs}$, which is required for the energy theorem. With $\langle\cdot\rangle$ the box average the field energies and powers are
+\begin{align}
+U_\gamma&=\tfrac12\Omega_0^2\langle E^2+B^2\rangle,\\
+U_D&=\tfrac12\Omega_0^2\big\langle E_D^2+B_D^2+\Omega_D^2(A_D^2+\phi_D^2)\big\rangle,\\
+P_\gamma&=\Omega_0\langle\mathbf J\!\cdot\!\mathbf E\rangle,\quad
+P_D=\Omega_0\eta\langle\mathbf J\!\cdot\!\mathbf E_D\rangle,\\
+P_{\rm ext}&=\Omega_0\bar{\mathbf J}\!\cdot\!\mathbf E_{\rm drive}.
+\end{align}
+The works $W_\gamma$, $W_D$, $\Wext$ are integrated as extra ODE states with the same Runge--Kutta stages as the fields, so that $K-K_0=W_\gamma+W_D+\Wext$, $U_\gamma-U_{\gamma0}=-W_\gamma$ and $U_D-U_{D0}=-W_D$ hold to solver tolerance. The Proca energy flux is $\epsilon_0c^2\mathbf E_D\times\mathbf B_D+\epsilon_0\Omega_D^2\phi_D\mathbf A_D$; omitting the $\phi_D\mathbf A_D$ term breaks the flux budget (Sec.~\ref{sec:verify}). For a homogeneous plasma under the uniform drive the mean field obeys a driven oscillator at the plasma frequency $\omega_L=\sqrt{1+m_e/m_i}\,\wpe$, whose solution is the \emph{linear resonant law}: $\dot{\bar E}=-\bar J$, $\dot{\bar J}=\omega_L^2(\bar E+E_0\cos\omega t)$, $\dot W=\bar J E_0\cos\omega t$. This law is exact in the homogeneous discrete Hermite system because only Hermite orders 0--1 enter (case H00, agreement to $10^{-9}$ for $\wpe t\le1000$ even at quiver speeds of 15\,$v_{te}$). With fluctuations present it is the baseline against which the transfer is measured, and the departure from it contains the $\langle\delta n\,\delta E\rangle$ back-reaction term of the mean-field identity.
+
+\subsection{Units and the HHS-like set-up}
+All simulations use $c=\wpe=n=1$ for the electrons, $m_i/m_e=1836$, $T_i=T_e$, $v_{te}^2=10^{-3}c^2$, box length $L=40\,c/\wpe$ and a prescribed drive at $\omega=\omega_L$ unless stated. We call $\vq\equiv E_0/(v_{te}\wpe)$ the effective initial force (the quiver speed grows secularly with time at resonance). Energies are quoted in units of $\nTV$. HHS quote $v_q^D/v_{te}=0.03$ and $10^{-3}$ for their resonant runs, $m_i/m_e=1836$, $T_e=T_i=10^{-3}m_ec^2$, $L=40\,c/\wpe$ and 1000 cells (v1 text, Appendix~B); we use the same $v_{te}$, mass ratio, temperature ratio and box length, but not the loading or the relativistic pusher. Runs here are \emph{HHS-inspired}, not reproductions.
+
+\section{Method}\label{sec:method}
+\subsection{Hermite--Fourier discretization}
+The velocity dependence is expanded in Cartesian asymmetrically weighted (AW) Hermite functions with independent orders $(N_n,N_m,N_p)$, widths $\alpha_s$ and centres $u_s$; space is Fourier, with the strict $2/3$ dealiasing mask of the parent (which retains $3|m|<N_x$, so every grid size is alias-free for quadratic products). A single call to the SPECTRAX Hermite--Fourier kernel per right-hand-side evaluation receives the physical force fields $\mathbf E+\eta\mathbf E_D+\mathbf E_{\rm drive}$ and $\mathbf B+\eta\mathbf B_D$, and the current is evaluated once for both Amp\`ere laws. Time integration is Dopri8 with a PID controller (Diffrax). The kinetic-energy ledger closes only when every forced direction has Hermite order at least 3. The parent is SPECTRAX~\cite{SPECTRAX}; the three studies reported here were run at the parent commits recorded in each record (R1: \texttt{3de6b2b}, R1 nonlinear: \texttt{4090fbe}, R2: \texttt{35231ab}), all on the integration branch \texttt{dark-baseline}, which is a set of open parent PRs, not a release.
+
+\subsection{Pump frame and basis remaps}
+With \texttt{frame="pump"} the state carries the centres $u_s$ and widths $\alpha_s$. Each centre follows the total uniform force, $\dot u_s=(q/m)_s(\bar{\mathbf E}+u_s\times\bar{\mathbf B})$, with the box averages including $\eta\mathbf E_D$ and the drive; the parent kernel then uses $\mathbf E-\bar{\mathbf E}$. This is an exact change of variables: the coherent $k=0$ quiver sits in $u_s(t)$ rather than in high Hermite orders. Widths and residual drifts change only between integration segments, through the parent's exact lower-triangular remap (every moment below the truncation is preserved); triggers fire on $|U-u|/a>0.3$ or $|a'/a-1|>0.05$, with caps $|\Delta u|\le a'$, $a/a'\le1.1$, $a'\ge1.1\sigma$.
+
+\subsection{Closures}
+Truncation needs a closure. The parent closure is a hypercollision $\propto n(n-1)(n-2)$ that leaves Hermite orders 0--2 unchanged. We use the field-scaled form of SPECTRAX PR~\#66,
+\begin{multline}
+\nu_s=c\,\Big|\frac{q}{m}\Big|_s\frac{\sqrt{2N_n}\,\max|E-\langle E\rangle|}{a_s}\\\times\frac{n(n-1)(n-2)}{(N_n-1)(N_n-2)(N_n-3)},
+\end{multline}
+with strength $c$ (density, momentum and energy rows untouched; for magnetized runs a Lorentz-force-scaled variant, PR~\#72, is used, not needed here). For $c=64$ the closure rate is the stiff eigenvalue of the system: the Jacobian's spectral radius equals the closure rate $\nu_e$ (real and negative) to the printed precision, so the explicit step is bounded by $5.17/\nu_e$. We therefore integrate the diagonal closure damping exactly with a Lawson integrating factor wrapped around Dopri8 (SPECTRAX PR~\#81; the original Lawson reference is \todo{verify and cite}, exponential integrators for kinetic equations are reviewed in Ref.~\cite{Crouseilles2020}): with $w=e^{r(t-t_0)}y$ and the rate $r$ frozen at the step start the split is an identity, the order is kept, and only the variation of $\nu$ over the step stays explicit. For $c=64$ this reduces the step count by a factor \lawsonSteps\ to $t=500$ with agreement to $5\times10^{-10}$; for $c=4$, where the closure is not stiff, it gives \lawsonStepsFour\ (no gain). An exact Hermite-streaming factor was also built (PR~\#83) and rejected: it gave no step reduction and cost 2.7 times more per step. Table~\ref{tab:failed} lists these and other negative results.
+
+\subsection{Collisions}
+Collisions use the conservative Dougherty (Lenard--Bernstein--Fokker--Planck) operator of Hakim et al.~\cite{Hakim2020} with the multispecies forms of Francisquez et al.~\cite{Francisquez2022}. We use two cross-species conventions: LBO-EM (parent \texttt{dougherty}, the form of Francisquez et al.\ Eqs.~2.18--2.20, momentum rate equal to the Morse rate and a temperature-difference rate equal to twice the Morse rate) and LBO-G with $\beta=0$ (parent PR~\#73, both rates equal to the Morse rates). The collision frequencies are velocity independent, $\nu_{ee}=\nu_{ei}$, $\nu_{ii}=\nu_{ei}\sqrt{m_e/m_i}$, $m_e\nu_{ei}=m_i\nu_{ie}$. Collisions do no net work and conserve mass, momentum and energy in the homogeneous controls to round-off.
+
+\section{Verification and limits}\label{sec:verify}
+\subsection{Verification}
+\begin{table*}[t]
+\caption{Verification summary (records: \texttt{docs/results.md} and the cited JSON files). The ladder, including failed gates, is in \texttt{docs/status.md}.}\label{tab:verify}
+\small
+\tabVerify
+\end{table*}
+% bzeroNruns, bzeroWorst: docs/_static/b00/run.json
+Table~\ref{tab:verify} and Fig.~\ref{fig:verify} summarize the checks. The linear Landau roots of the Maxwell--Proca--Vlasov system (the B00 case, $k\lambda_{De}=0.2$--$0.7$, $\eta=0.3$, $\Omega_D=\wpe$) agree with SciPy Faddeeva roots of $D_L=(Q-\Omega_D^2)(1+\chi)+\eta^2Q\chi$ to $\bzeroWorst$ across \bzeroNruns\ runs, but at $k\lambda_{De}=0.2$ the damping rate ($\sim5\times10^{-5}$) is not resolved inside the Hermite-limited fit window; only the frequency is validated there. The oscillating two-stream instability that sets the high-$k$ cascade is recovered from the Hermite Floquet analysis against the exact kinetic dipole-pump relation (Silin; Nishikawa; \todo{verify and cite the original references}) at \otsiN\ unstable points to \otsiMax\,\%; with fixed ions every rate vanishes, so the instability needs mobile ions. This is known physics in a new regime (resonant pump with a secular excursion and $T_i=T_e$). Further checks, all in the repository: cold coupled oscillators to $10^{-11}$, Proca vacuum and Yukawa limits, the $\eta$-sign symmetry, the exact mean pump, a Weibel and filamentation set against an independent kinetic dispersion relation including Proca coupling (within $10^{-3}$), magnetized rotation and cold electromagnetic eigenmodes (within $10^{-3}$), and Dougherty collisional relaxation against the exact rates (to $10^{-13}$). Independent discretizations: a NumPy semi-Lagrangian grid solver (and its Vlasov--Ampere--Proca extension) agrees with the Hermite echo amplitude to $2\times10^{-5}$; the Dark-JAX-in-Cell PIC code~\cite{DarkJIC} approaches the Hermite Landau fit as cells and particles increase, with a remaining difference of order 1\,\% in damping set by PIC noise (Fig.~\ref{fig:verify}c); this is not a claim of PIC convergence. GPU and CPU agree to \cgpuMax\ on one case only. Gradients of converged dark observables are verified (Table~\ref{tab:verify}); reverse mode through Diffrax's \texttt{RecursiveCheckpointAdjoint} was found wrong (2--15\,\%) for many constant-step saves, and \texttt{DirectAdjoint} is used.
+
+\begin{figure*}[t]
+\includegraphics[width=\linewidth]{figures/fig_verification.pdf}
+\caption{Verification. (a) Relative error of the fitted complex frequency against the independent kinetic root, ordinary and dark ($\eta=0.3$), $N_n=128$, $N_x=8$ (\texttt{docs/\_static/b00/run.json}). (b) Hermite Floquet growth rate against the exact kinetic Silin--Nishikawa relation for the oscillating two-stream instability (\texttt{studies/instab/otsi.json}). (c) RMS difference of $\ln|E_k|$ between Dark-JAX-in-Cell and Hermite on $2\le\wpe t\le12$ for Landau damping, for increasing cells and particles (\texttt{studies/c05/run.json}).}\label{fig:verify}
+\end{figure*}
+
+\subsection{The Hermite truncation instability and the certified windows}
+The method has one limit that matters for the rest of the paper. In a non-uniform field the truncated AW Galerkin operator $-v\partial_x+(q/m)E\partial_v$ is not anti-self-adjoint; its frozen-field spectrum has growing modes in the top third of the Hermite ladder, with a rate that rises with $N_n$ (Fig.~\ref{fig:aw}a; at $K=5$, $N_n=128$, $E_1=10^{-2}$ the largest growth rate is \awEigAW, against $\le\awEigSW$ for the symmetric basis, which is neutral to round-off). This is a numerical instability of the basis, not physics. It is distinct from the physical oscillating two-stream instability, which the Hermite model reproduces and which amplifies finite-$k$ fields strongly at resonance (the Hermite model understates the growth: Nn 32/64/128 agree with each other and end 1.3--4 times below the exact solution). The AW instability is excited by the large-amplitude pump and ends the simulation by loss of positivity or by the step budget.
+
+Certified windows are defined by gates declared before the runs: refinement pairs ($N_x$, $N_n$, closure strength) must agree to 10\,\% in $\Delta K_e$ and $\Wext$, the electron distribution must stay positive ($K_s>0$ and $k=0$ $T_x>0$), the solver must reach the time, and the energy ledger must close. The window is the minimum of these times. It is therefore a lower bound on where the Hermite results can be trusted, not a statement about physics.
+
+\begin{figure*}[t]
+\includegraphics[width=\linewidth]{figures/fig_aw.pdf}
+\caption{The limit of the method. (a) Largest real part of the frozen-field spectrum for the AW basis (grows with $N_n$) and the symmetric-weight basis (round-off), $K=5$ (\texttt{studies/highk/eig.json}). (b) Time reached by AW runs with closure $c=4$ at $\vq=0.1$ and $0.05$ for $N_x=64,128$ and $N_n=128,256$, all ended at the step budget inside the instability: more resolution ends the run sooner (\texttt{studies/gpures/summary.json}). (c) At $\vq=0.1$, $N_x=64$, $N_n=128$ a stronger fixed closure extends the window from 595 to a ceiling of 713--757 (\texttt{studies/rclosure/stagef.json}).}\label{fig:aw}
+\end{figure*}
+
+Alternatives were tested and rejected, all under pre-declared gates (Table~\ref{tab:failed}). Higher resolution on GPU ($N_x\in\{64,128\}$, $N_n\in\{128,256\}$, $\vq=0.1$ and $0.05$) failed the extension gate G1 and ended every run inside the instability at \gpuWinA--\gpuWinB\ ($\vq=0.1$) and \gpuWinC--\gpuWinD\ ($\vq=0.05$): the pairs agree to the end of the shorter run, so this is a failure of the resolution route rather than a disagreement. In a frozen field no closure strength up to 1024 brings the AW growth below $10^{-3}$ at peak field $4\times10^{-3}$ (39/39 points fail), leaving a floor that grows as $K^{0.15}N_n^{0.30}E^{1.26}$, so a resolution-consistent closure strength does not exist for this closure family. A stable Galerkin form of Dai~\cite{Dai2026} is unstable in the AW coordinates in float64 at $N_n\ge64$ (the AW-to-orthonormal change of basis has condition $\sim2^N$) but stable and Silin-accurate in symmetric Hermite functions of width $a/\sqrt2$; the symmetric-weight basis itself, and the anti-symmetric square-root form of Issan et al.~\cite{Issan2024a,Issan2025}, are linearly neutral to round-off and Silin-accurate, but were rejected under their declared nonlinear $\vq=0.1$ gates (symmetric weight: every run blows up at $t=637$--738 and the refinement pair agrees only to 634; square-root form: departure from the grid reference at 391 and 498, earlier than the symmetric weight). Production therefore stays with the AW basis and the closure of PR~\#66, and the windows below are its windows.
+
+\begin{table*}[t]
+\caption{Negative and amended results that bound the claims. ``Declared'' means the gate was committed before the run and not amended.}\label{tab:failed}
+\small
+\begin{tabular}{@{}p{3.0cm}p{5.0cm}p{4.6cm}@{}}\toprule
+Study & Outcome & Consequence\\\midrule
+GPU resolution extension & G1/G4 failed at $\vq=0.1$, 0.05; every run ends at the step budget & no new window; need a stable basis\\
+Closure-strength route & Q1 failed; floor in frozen field & scaled-closure option not built\\
+Stiffness vs instability & stiff eigenvalue is the closure; instability max Re $\lambda=2$--3 is not & integrator is not the limit\\
+Lawson (closure) & D2 failed as declared ($c=4$: no gain) & useful for $c=64$ only\\
+Lawson (streaming) & S4 failed & rejected\\
+Dai / symmetric weight / square-root & gates failed (Sec.~\ref{sec:verify}) & AW + closure stays\\
+R1 coherence v1 & declared variance wrong (realized $\tau$ was $2\times$ nominal) & v2 declared and used\\
+R1 nonlinear F2 & hypothesis ``homogeneous truncation effect'' rejected & deficit is seed back-reaction\\
+R2 theory check T0 & window longer than the record & T0b (follow-up) used\\
+R2 K2 & \rtwoKtwo/\rtwoKtwoN; six failures at $\nu_{ei}=10^{-3}$ detuned & seed effect, F1 passed\\
+H08 G1, G4 & restart chunk length; $T_i$ responds to halved exchange & recorded, not amended\\
+B11 G0, G3, G3b' & mis-specified gates; round-off & recorded; ledger closes to $10^{-17}$\\\bottomrule
+\end{tabular}
+\end{table*}
+
+\section{R1: finite reservoir and finite coherence}\label{sec:r1}
+\subsection{Design}
+Two idealizations of the prescribed-drive calculation are removed. First, in the self-consistent mode the dark photon is a free $k=0$ Proca mode with $\Omega_D=\omega_L$ whose energy reservoir $U_{D0}$ is finite and is depleted by the transfer; we use $u=U_{D0}/(\nTV)=0.1,1,10$ with $\eta$ chosen so that the initial effective force matches the prescribed drive. Second, the dark field has a finite coherence time: the prescribed drive is $E_0\cos(\omega_Lt+\Phi(t))$ with $\Phi$ a phase random walk of independent Gaussian frequency samples, giving a Lorentzian line of half-width $1/\tau_c$ and no phase resets. The comparison is always with the exact linear law for the same drive (and, for the reservoir, the linear coupled oscillator $(\bar E,\bar J,E_D,A_D)$, whose matrix exponential agrees with an ODE solver to $6.6\times10^{-11}$).
+
+\subsection{Certified windows}
+\begin{table*}[t]
+\caption{Certified windows for the strong-drive set-up with closure $c=64$ integrated exactly (\texttt{studies/r1nl/stage1\_summary.json}). Members: $(N_x,N_n)=(32,64),(64,64),(32,128),(64,128)$ and $(32,64)$ at $c=32$. The window is the minimum of refinement-pair times, positivity times, times reached and the cap $T=1000$; the grid column is the masked spectral-grid reference (reported, not part of the window).}\label{tab:windows}
+\tabWindows
+\end{table*}
+Table~\ref{tab:windows} gives the windows: \winA, \winB\ and \winC\ for $\vq=0.03$, 0.05 and 0.07. The windows are set by positivity loss of the $N_x=64$ members, that is, by the AW truncation instability reaching the resolved range, not by disagreement of the refinement pairs. The strongest certified drive is $\vq=0.07$ with window \winC. Drives above that, including $\vq=0.1$, have no window beyond about 760 (Sec.~\ref{sec:verify}).
+
+\subsection{Linear transfer and the seed back-reaction}
+At $\vq=0.07$ the work $\Wext$ follows the exact linear resonant law over the whole window (Fig.~\ref{fig:r1}a): the maximum of $|\Wext/\Wlin-1|$ over four resolutions is \rnlBound\,\%, the four members agree on it to \rnlSpread, and at the window end $\Wext=\rnlWext$ against $\Wlin=\rnlWlin$ (in $\nTV$). The mean-field frequency shift, measured as the slope of the lock-in phase difference, is at most \rnlDw\ $\wpe$ (the declared resolution threshold was $10^{-3}\omega_L$; not resolved). No saturation and no detuning are resolved. The departure rule (a $10\,\%$ departure in the coarsest member confirmed at $5\,\%$ in all refinements) is not met.
+
+The residual deficit is not a drive effect. At the three drives it is the same to three digits (it grows as $-10^{-8}\,t^2$) until the oscillating two-stream stage, ending at \dEndA, \dEndB\ and \dEndC\,\% at the window ends. A seed-scale test at $\vq=0.07$ (the initial density fluctuations multiplied by $s$) shows the deficit scales as $s^2$ (Table~\ref{tab:seed}, Fig.~\ref{fig:r1}b): the ratio of $s=0.1$ to $s=1$ is \fuRatio\ and the unseeded run gives \fuDc\ at $\wpe t=400$. The deficit is therefore the back-reaction of the quiver-advected seed modulation on the mean field (the $\langle\delta n\,\delta E\rangle$ term of the mean-field identity), set by the imposed fluctuation level, not by the pump. A physical fluctuation level different from $5\times10^{-4}$ would rescale it. Our earlier hypothesis that it is a truncation effect of the seedless homogeneous system was tested (follow-up F2) and rejected: the unseeded deficit is only \fuFtwo\ of the seeded one. Only the seed scales $0$, $0.1$ and $1$ at $t\le400$ were run.
+
+\begin{table*}[t]
+\caption{Seed-scale test of the deficit $D=\Wext/\Wlin-1$ at $\vq=0.07$, $N_x=32$, $N_n=64$ (\texttt{studies/r1nl/followup\_summary.json}); the seed amplitudes are multiplied by $s$.}\label{tab:seed}
+\small
+\tabSeed
+\end{table*}
+
+\begin{figure*}[t]
+\includegraphics[width=\linewidth]{figures/fig_r1.pdf}
+\caption{R1. (a) $\Wext/\Wlin-1$ for the $N_x=32$, $N_n=64$ member at the three drives, each to its certified window; the three curves coincide until the oscillating two-stream stage. (b) The deficit at $\vq=0.07$ for seed scales $s=1$, $0.1$, 0 (\texttt{studies/r1nl/followup\_summary.json}). (c) Finite coherence: ensemble ratio $\langle W_{\rm kin}\rangle/\langle W_{\rm lin}\rangle$ with standard error over six realizations for $\tau_c\wpe=30,100,300$ at $\vq=0.01$ (window 1000) and $100,300$ at $\vq=0.07$ (window \winC); band: $\pm10\,\%$ (\texttt{studies/r1/coherence2\_summary.json}, \texttt{studies/r1nl/stage2\_summary.json}).}\label{fig:r1}
+\end{figure*}
+
+\subsection{Energetics and the onset of the oscillating two-stream instability}
+Why the transfer stays linear is energetic. At the window end of $\vq=0.07$, \rnlDKe\ of the $\Wext=\rnlWext\,\nTV$ resides in coherent $k=0$ electron quiver kinetic energy; the thermal gain of the electrons is \rnlTh\,$\nTV$ and the ions receive \rnlIonShare\,\% of $\Wext$. The fluctuating-field amplitude ($\sum_{k\ge1}|E_k|^2$) reaches about \rnlFluct\,$E_0^2$ only when the oscillating two-stream instability turns on, at $\wpe t=\rnlOtsi$ ($N_x=32$) to \rnlOtsiN\ (higher $N_x$ and $N_n$ members; onset defined in the gates, compared within equal $N_x$). After that the run ends by positivity loss. Within the window the instability has not extracted a resolvable fraction of the work. \emph{This is the main limitation of the bound}: it says that no saturation appears \emph{before} the cascade of fluctuations starts, and nothing about what happens after.
+
+\subsection{Finite reservoir}
+In the self-consistent mode (Table~\ref{tab:reservoir}) the dark energy $U_D(t)$ follows the linear coupled-oscillator prediction at all three drives: within \rOneDev\,$U_{D0}$ (maximum over six cases, $u=0.1,1,10$) at $\vq=0.01$ and $0.03$ over the windows 1000 and 940 (\texttt{studies/r1/reservoir\_summary.json}), and within \rnlResO\,\% and \rnlResOZ\,\% of $U_{D0}$ at $\vq=0.07$ for $u=1$ and 10 over the window \winC. The beat times equal $\pi/\eta$ ($\eta=\rnlEtaO$ and $\rnlEtaOZ$ for $u=1,10$). The accumulated work $W_D$ follows the matched prescribed drive until the split time $t_{\rm split}=\rnlSplitO$ and $\rnlSplitOZ$ (equal to the linear values): the reservoir gives up \rnlWDfrac\,\% of its energy for $u=1$ and exchanges energy through beats for $u=10$, with $W_D$ within \rnlResWO\,\% and \rnlResWOZ\,\% of the linear prediction while it is above 20\,\% of its running maximum. Finite reservoir depletion is therefore captured by the linear theory; no nonlinear reservoir response is resolved. The ledger closes to \rnlLedger\ over all \rnlNruns\ stage-1 and stage-2 runs (gate $10^{-6}$).
+\begin{table*}[t]
+\caption{Finite reservoir (self-consistent dark field, $\Omega_D=\omega_L$), $\vq=0.07$ (\texttt{studies/r1nl/stage2\_summary.json}, N4).}\label{tab:reservoir}
+\small
+\begin{tabular}{@{}lcccc@{}}\toprule
+$u=U_{D0}/\nTV$ & $\eta$ & max $|U_D-U_D^{\rm lin}|/U_{D0}$ [\%] & $t_{\rm split}$ & $W_D$ bound [\%]\\\midrule
+1 & \rnlEtaO & \rnlResO & \rnlSplitO & \rnlResWO\\
+10 & \rnlEtaOZ & \rnlResOZ & \rnlSplitOZ & \rnlResWOZ\\\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Finite coherence}
+Figure~\ref{fig:r1}c shows the ensemble ratio of the kinetic to the linear same-drive work. At $\vq=0.01$ (window 1000, v2 definition with $\tau_c$ the field coherence time) the ratios are $\cohRHZ\pm\cohSeHZ$, $\cohROZZ\pm\cohSeOZZ$ and $\cohRHZZ\pm\cohSeHZZ$ for $\tau_c\wpe=30,100,300$; the value at $\tau_c\wpe=100$ is 1.4 standard errors above unity and is consistent with the sampling spread of six realizations. At $\vq=0.07$ the ratios are $\rnlROZZ\pm\rnlRseOZZ$ and $\rnlRHZZ\pm\rnlRseHZZ$ for $\tau_c\wpe=100$, 300, with bounds on the ensemble nonlinear correction (including twice the standard error) of \rnlRbOZZ\,\% and \rnlRbHZZ\,\%; individual realizations deviate more (up to \rnlRmaxOZZ\,\% and \rnlRmaxHZZ\,\% of the peak linear work), with ratios on both sides of unity. The late work rate saturates at about $E_0^2\tau_c\omega_L^2/4$ instead of growing, as in the linear theory. The first (v1) coherence runs realized a phase variance $dt/\tau_c$ rather than the declared $2\,dt/\tau_c$, i.e. a coherence time twice the nominal; the records were kept and relabelled and a corrected v2 was declared and run (Table~\ref{tab:failed}).
+
+\subsection{Scope of R1}
+The bounds hold for one box ($L=40$), one ion mass, $T_i=T_e$, drives up to $\vq=0.07$, windows set by the AW instability, fluctuation seeds of one amplitude ($5\times10^{-4}$), a Lorentzian line only, and reservoir and coherence not combined in one run. Not done: a Gaussian line, reservoir and coherence combined in one run, windows beyond about 790 at 0.07, $\vq>0.07$, seed levels other than $5\times10^{-4}$ (only scales 0, 0.1 and 1 at $t=400$), and inhomogeneous dark fields. The grid reference (masked spectral grid) agrees with the Hermite coarse member until 870 and 863 at $\vq=0.07$ (Table~\ref{tab:windows}).
+
+\section{R2: collisions}\label{sec:r2}
+\subsection{Linear drag law}
+With collisions the uniform relative velocity relaxes at the Morse rate, identical in LBO-EM and LBO-G ($\beta=0$),
+\begin{equation}
+\nu_{\rm eff}=\frac{\nu_{ei}}{2}\Big(1+\frac{m_e}{m_i}\Big),
+\end{equation}
+so the uniform driven cold response obeys $\dot J=\omega_L^2(\bar E+E_D)-\nu_{\rm eff}J$ and the steady absorbed power per volume is
+\begin{align}
+P_{\rm ss}&=\frac{\omega_L^2\,\nu_{\rm eff}\,\omega^2E_0^2}{2\left[(\omega_L^2-\omega^2)^2+\nu_{\rm eff}^2\omega^2\right]},\\
+P_{\rm ss}^{\rm res}&=\frac{\omega_L^2E_0^2}{2\nu_{\rm eff}},
+\end{align}
+with the transient decaying as $\exp(-\nu_{\rm eff}t/2)$ (1/e time $4/\nu_{ei}$). This is the cold Drude response of Dubovsky and Hern\'andez-Chifflet~\cite{DubovskyHC2015}, who write the friction as $-m_e\nu(u_e-u_i)$ with a Spitzer-like $\nu$ and find a shielding suppression $\propto m^2/\omega_p^2$ off resonance; and it matches the non-resonant absorption rate of McDermott and Witte~\cite{McDermottWitte2020}. Their $\nu$ corresponds to $\nu_{\rm eff}$ here. In our model $\nu$ is \emph{constant}: the Spitzer scaling $\nu\propto T_e^{-3/2}$ is absent.
+
+\subsection{Design and gates}
+The set-up is that of R1 (mobile ions, pump frame, $c=64$ with Lawson, $T=1000$) with Dougherty $e$--$e$, $e$--$i$ and $i$--$i$ collisions in both conventions. The grid is $\vq=0.01,0.03,0.05$ by $\nu_{ei}=10^{-3},3\times10^{-3},10^{-2},3\times10^{-2}$ by $\omega=\omega_L,0.9,1.1$ (in $\wpe$): 192 runs in all, including $N_x=64$ and $N_n=128$ refinement members and unseeded controls. Gates were committed before the runs. Every EM case reaches $t=1000$ with refinement pairs agreeing to the end and a refinement spread of the late rate $\le2.2\times10^{-4}$. The nonrelativistic window ($T_e/T_e(0)<90$, i.e. $v_{te}<0.3c$) is shorter only for $\vq=0.05$ resonant. Rates are evaluated at $t_b=996.5$.
+
+\subsection{Kinetic against linear}
+\begin{table*}[t]
+\caption{Late-time absorbed power, kinetic ($N_x=32$, $N_n=64$, LBO-EM) against the exact transient-inclusive linear law, $\vq=0.03$ (\texttt{studies/r2/summary.json}). $f_{\rm ss}=P_{\rm lin}/P_{\rm ss}$; $T_e/T_e(0)$ at $t_b$; K2: kinetic equals linear within 5\,\%.}\label{tab:r2}
+\small
+\tabRtwo
+\end{table*}
+Table~\ref{tab:r2} and Fig.~\ref{fig:r2} give the result. Where collisions act and the linear transient has decayed, the kinetic absorption equals the linear drag law: at $\nu_{ei}=3\times10^{-2}$ the late rate is within \rtwoPss\,\% of $P_{\rm ss}$ for all three frequencies and drives, and gate K3 (steady-state law) passes in \rtwoKthree\ of \rtwoKthreeN\ cases where $P_{\rm lin}$ is within 10\,\% of $P_{\rm ss}$. For the other cases the kinetic rate equals the exact \emph{transient-inclusive} linear law to 5\,\% except in six cases, but the steady state is not reached within $t=1000$: for $\nu_{ei}=10^{-3},3\times10^{-3},10^{-2}$ the resonant rate is only 0.20, 0.48, 0.89 of $P_{\rm ss}$ (the amplitude transient has 1/e time $4/\nu_{ei}$). The sustained law is therefore tested directly at $\nu_{ei}=3\times10^{-2}$ (and $10^{-2}$ detuned), and through the linear ODE for the rest. Gate K2 passes in \rtwoKtwo\ of \rtwoKtwoN\ cases.
+
+The six failures are the detuned $\nu_{ei}=10^{-3}$ cases, where the kinetic late rate is $8$--$14\,\%$ high (mean $+\rtwoDetL\,\%$ at 0.9 and $+\rtwoDetH\,\%$ at 1.1), independent of $\vq$. In the unseeded controls the kinetic and linear laws agree to $3\times10^{-8}$, and a seed-scale follow-up (F, declared after the main analysis and before its runs) shows the departure scales as $s^2$ (ratios \rtwoFuA\ and \rtwoFuB\ for $s=0.1$, against $s^2=0.01$; F1 passed): it is the same seed back-reaction as in R1, large only where $\Wext$ is itself tiny. The resonant late rate is low by $1.5$--$4\,\%$ at $\nu_{ei}=10^{-3}$ (\rtwoResLo\ at the lowest) and by $\le0.2\,\%$ at $3\times10^{-2}$; at $\vq=0.05$ resonant the deficit (3.7\,\%) is larger than at 0.01 and 0.03, but drive amplitude and heating are not separable in these data, so a few-percent heating or drive correction is allowed but not attributed.
+
+\begin{figure*}[t]
+\includegraphics[width=\linewidth]{figures/fig_r2.pdf}
+\caption{R2. (a) Ratio of the kinetic to the exact linear late-time power for $\vq=0.01,0.03,0.05$ (increasing opacity) and three drive frequencies; band: the 5\,\% gate. (b) Late power relative to the steady state $P_{\rm ss}$ at $\vq=0.03$, kinetic (markers) and linear (lines). (c) Fitted exponent $p$ of the drive amplitude, kinetic (filled) and linear (open). (d) Electron heating at $t_b$ for the resonant cases; dashed: $v_{te}=0.3c$, beyond which the nonrelativistic model is outside its validity. All from \texttt{studies/r2/summary.json}.}\label{fig:r2}
+\end{figure*}
+
+\subsection{Deposition law}
+Fitting $\ln P=a+p\ln(\vq)+q\ln\nu_{ei}$ over the 12 cases per frequency (standard errors from the residual scatter, so they include the transient-state curvature) gives for resonant, 0.9 and 1.1: $p=\rtwoPR\pm\rtwoPeR$, $\rtwoPL\pm\rtwoPeL$, $\rtwoPH\pm\rtwoPeH$ (kinetic), against 2 (linear, exact), and $q=\rtwoQR\pm\rtwoQeR$, $\rtwoQL\pm\rtwoQeL$, $\rtwoQH\pm\rtwoQeH$ (kinetic) against $\rtwoQlR$, $\rtwoQlL$, $\rtwoQlH$ (linear). The amplitude scaling is quadratic. The $\nu_{ei}$ scaling follows the transient-inclusive linear law, not a pure power: the detuned rate grows with $\nu$ (off-resonant absorption proportional to $\nu$, until the beat transient decays), and the resonant rate falls with $\nu$ with an exponent near $-1/2$ because the steady state is not reached. The geometric-mean correction of kinetic to linear power is $\kappa=\rtwoKR\pm\rtwoKeR$, $\rtwoKL\pm\rtwoKeL$, $\rtwoKH\pm\rtwoKeH$. The domain of the law is $\vq\le0.05$, $\nu_{ei}\in[10^{-3},3\times10^{-2}]\wpe$, $\omega\in\{0.9,\omega_L,1.1\}\wpe$, $t\le1000$, one box and mass ratio, one seed level.
+
+\subsection{Collision form and heating}
+EM and G ($\beta=0$) agree in $\Wext$ to \rtwoCVwx\ and the late-rate ratio differs by $\le7\times10^{-6}$ (agreement checks pass in \rtwoCV\ of \rtwoCVN\ cases); electron kinetic energy and temperature differ by $\le8\times10^{-3}$. Ion temperature differs by up to 31\,\% and the electron--ion energy exchange is halved, as expected: the absorption is set by the momentum friction, identical in the two forms, while the exchange is the temperature-difference rate. The ion-heating gate of the earlier H08 pilot failed as declared for this reason (Table~\ref{tab:failed}). Electron heating is large: $T_e/T_e(0)$ reaches \rtwoTmax\ (Fig.~\ref{fig:r2}d), beyond $v_{te}=0.3c$ for $T_e/T_e(0)>90$, i.e.\ outside the nonrelativistic model. Heating does not change the rate in this model because $\nu$ is constant ($R_{\rm late}$ stays within 1\,\% of unity while $T_e/T_e(0)$ rises from 7 to 70 at $\vq=0.03$, $\nu_{ei}=10^{-2}$, resonant). Ion heating is small ($T_i/T_i(0)\le2.8$) and the $e\to i$ exchange is $4\times10^{-5}$ to $1.6\times10^{-2}$ of $\Wext$, growing in proportion to $\nu_{ei}$. A declaration defect in the theory self-check T0 (averaging window longer than the record) was recorded; T0b, declared as a follow-up, passes with deviations from $P_{\rm ss}$ of $3\times10^{-5}$.
+
+\subsection{What is needed for a cosmological statement}
+Our collisions fix $\nu$ at a constant. A cosmological deposition law needs (i) the velocity-dependent Coulomb frequency $\nu(T_e)\propto T_e^{-3/2}$, which couples the heating to the absorption and lowers it; (ii) radiative and Compton cooling; (iii) cosmological expansion and ionization history; (iv) relativistic electrons, since $T_e/T_e(0)$ exceeds the nonrelativistic limit; (v) the $k\ne0$ coupling of a real dark-photon field; and (vi) a steady-state measurement at $\nu_{ei}\le10^{-2}$ resonant, which needs $t\gg4/\nu_{ei}$. $\nu_{ee}$ and $\nu_{ii}$ are order-of-magnitude choices that do not enter the uniform drag.
+
+\section{Discussion}\label{sec:discussion}
+\paragraph*{What the results do establish.} Within a one-dimensional, nonrelativistic, deterministic-seed model with the ingredients of HHS, and for the drives and times listed in Table~\ref{tab:windows}, the energy transfer from a uniform resonant drive follows the linear resonant law: $\vq=0.03$ to $\wpe t=1000$, 0.05 to \winB\ and 0.07 to \winC. At the strongest drive the nonlinear correction to $\Wext$ is bounded by \rnlBound\,\%, and the work has reached $\Wext=\rnlWext\,\nTV$ (\wextA, \wextB\ and \wextC\ $\nTV$ at the window ends for 0.03, 0.05, 0.07), almost all of it coherent $k=0$ quiver energy. A finite reservoir and a finite coherence time of $\tau_c\omega_{pe}\ge100$ do not change this. Collisions give the linear Drude law, with the kinetic rate equal to the linear law to a few per cent and to \rtwoPss\,\% at steady state.
+
+\paragraph*{What they do not establish.} (i) The growth of higher-$k$ fluctuations by the strong pump, which in our model is the oscillating two-stream instability (we take this to be the process described in the HHS abstract; that identification is our reading, not something we tested against their simulations), has its onset is at $\wpe t\simeq\rnlOtsi$--\rnlOtsiN\ at $\vq=0.07$, at the end of our window. The windows end by positivity loss at nearly the same times, because the numerical instability of the Hermite basis reaches the resolved range there, so we cannot say whether the transfer would saturate after the cascade develops. The bound is a statement about the interval before it. HHS state that the deposited energy is limited to about the electron thermal energy~\cite{HHS2026}; in our runs about 97\,\% of the transferred energy is still coherent $k=0$ quiver energy at the window end and the thermal gain is \rnlTh\,$\nTV$. Whether their ``deposited energy'' counts the coherent part is not something we can settle from the abstract and the v1 text we read, so we do not claim a contradiction; the claim for times after the cascade is neither confirmed nor refuted here. (ii) The model is nonrelativistic and one-dimensional, with a box $L=40\,c/\wpe$ and the strict $2/3$ mask retaining Fourier modes $k\le9$ at $N_x=32$ and $k\le20$ at $N_x=64$ (in units of $2\pi/L$), against 1000 cells in HHS; the retained modes cover the onset but not a developed spectrum. (iii) The seed amplitude is imposed; at this seed the deficit is \rnlBound\,\%, and a different fluctuation level rescales it. (iv) Drives above $\vq=0.07$ (including $\vq=0.1$) have no window beyond about 760. (v) Our claims are bounds for $\vq\le0.07$ and $t\lesssim790$ at the strongest drive. We make no claim beyond.
+
+\paragraph*{Why a nonlinear detuning could be expected.} The nonlinear trapped-particle timescale of O'Neil~\cite{ONeil1965} is the inverse bounce frequency, $\tau=(m/eEk)^{1/2}$, with linear theory failing after $\tau$; and the ponderomotive coupling between the pump and the plasma is the origin of the modulational and collapse processes of Zakharov~\cite{Zakharov1972}. For the uniform pump ($k=0$ drive) the mean-field law is exact and the trapped timescale is not relevant until finite-$k$ fluctuations grow, which is why the first deviations in our model are the finite-$k$ OTSI.
+
+\section{Conclusions}
+We built and verified a noise-free Hermite--Fourier solver for the canonical Maxwell--Proca--Vlasov system. Its limit is a numerical truncation instability of the asymmetrically weighted Hermite basis, which bounds certified windows to \winA, \winB\ and \winC\ at $\vq=0.03$, 0.05, 0.07; no higher resolution, stronger closure, or alternative basis we tried (Dai, symmetric weight, square-root form) removes it. Inside those windows (R1), the energy transfer follows the linear resonant law to \rnlBound\,\%, with no resolved frequency detuning, finite dark-reservoir depletion and finite coherence follow the linear predictions, and the small deficit is seed back-reaction. With collisions (R2), the absorption is the linear Drude law with $\nu_{\rm eff}=(\nu_{ei}/2)(1+m_e/m_i)$, quadratic in the drive, and independent of the collision form. These are bounds in a restricted model. They do not test nonlinear suppression after the oscillating two-stream cascade develops, relativistic electrons, $k\ne0$ coupling, or a temperature-dependent collision frequency; a stable basis is needed to extend the windows.
+
+\section*{Data and code availability}
+All code, records and the generated results are in the Dark-SPECTRAX repository~\cite{DarkSPECTRAX} (\url{https://github.com/uwplasma/Dark-SPECTRAX}); this manuscript was generated against the repository commit recorded in the \texttt{paper/} directory history. Figures, tables and every number quoted from a record are produced by \texttt{paper/make\_figures.py}, which writes \texttt{paper/numbers.tex} with the record path of each value as a comment. The parent solver is SPECTRAX~\cite{SPECTRAX} at the commits recorded in the JSON files: \texttt{35231ab9} (full hash in \texttt{pyproject.toml} and the R2 records; the pin in \texttt{pyproject.toml}, used for R2), \texttt{4090fbe} (R1 nonlinear) and \texttt{3de6b2b} (R1); this is the \texttt{integration/dark-baseline} branch, which collects open parent PRs, and is not a release. Records: \texttt{studies/r1}, \texttt{studies/r1nl}, \texttt{studies/r2}; gates were committed in \texttt{studies/r1\_common.py}, \texttt{studies/r1nl\_gates.py} and \texttt{studies/r2\_gates.py} before the runs.
+
+\begin{acknowledgments}
+[Acknowledgments placeholder.]
+\end{acknowledgments}
+
+% Numbers typed in the text that are not macros (source: docs/results.md, generated from records by docs/make_results.py):
+%  Landau window / O'Neil / etc. are not quoted. 6.6e-11 matrix exponential vs ODE: R1 section (a); 5.17/nu_e, 5e-10, 2.7x cost: stiffdiag,
+%  expint, stream sections; 1.3-4x Hermite understatement: "Physical: broadband finite-k instability" table; 1024, 39/39, K^0.15 Nn^0.30 E^1.26:
+%  rclosure section; 637-738, 634, 391, 498: SW and antisym sections; 3.7%, 1.5-4%, <=0.2%, 7->70, T_i<=2.8, 4e-5..1.6e-2: R2 reading;
+%  3e-8 unseeded controls, 3e-5 T0b, <=7e-6, 8e-3, 31%: R2 gates and reading; 15 v_te, 1e-9: H00 table; 2e-5 echo, 1e-13 Dougherty, 1e-3 Weibel/B08,
+%  2-15% adjoint, 2e-13/5e-10 AD: B01/B06, B11, B09, B08, C09 sections; 0.20/0.48/0.89 resonant P/Pss: R2 table (f_ss column).
+\bibliography{refs}
+\end{document}

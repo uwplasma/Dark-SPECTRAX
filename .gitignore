@@ -5,3 +5,9 @@ __pycache__/
 artifacts/
 .pytest_cache/
 studies/b09/ckpt/
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*Notes.bib
