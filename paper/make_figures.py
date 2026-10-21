@@ -421,7 +421,7 @@ T.append("\\bottomrule\\end{tabular}}\n")
 # R2 table (B member, EM): omega res, vq=0.03
 T.append("\\newcommand{\\tabRtwo}{%\n\\begin{tabular}{@{}llccccc@{}}\\toprule\n"
          "$\\omega/\\omega_{pe}$ & $\\nu_{ei}/\\omega_{pe}$ & $P_{\\rm lin}/P_{\\rm ss}$ & $P_{\\rm kin}/P_{\\rm ss}$ & "
-         "$P_{\\rm kin}/P_{\\rm lin}$ & $T_e/T_e(0)$ & K2\\\\\\midrule\n")
+         "$P_{\\rm kin}/P_{\\rm lin}$ & $T_e/T_e(0)$ & 5\\,\\% check\\\\\\midrule\n")
 for w, lab in (("res", "res."), ("0.9", "0.9"), ("1.1", "1.1")):
     for n in nus:
         c = cases[f"vq0.03_nu{n:g}_w{w}"]
@@ -432,7 +432,7 @@ for w, lab in (("res", "res."), ("0.9", "0.9"), ("1.1", "1.1")):
         T.append("\\addlinespace\n")
 T.append("\\bottomrule\\end{tabular}}\n")
 # verification table
-T.append("\\newcommand{\\tabVerify}{%\n\\begin{tabular}{@{}p{5.6cm}p{10.4cm}@{}}\\toprule\nCheck & Result (record)\\\\\\midrule\n")
+T.append("\\newcommand{\\tabVerify}{%\n\\begin{tabular}{@{}L{5.6cm}L{10.4cm}@{}}\\toprule\nCheck & Result (record)\\\\\\midrule\n")
 T.append("Linear Landau roots, ordinary and dark, $k\\lambda_{De}=0.2$--$0.7$ & worst relative error " + sci(max(r["rel_error"] for r in b00r))
          + " vs.\\ SciPy Faddeeva roots; ledger defect $\\le$ " + sci(max(r["max_ledger_defect"] for r in b00r), 0) + "\\\\\n")
 T.append("OTSI growth vs.\\ Silin kinetic relation (sideband determinant) & " + f"{len(og)} unstable points, worst difference {max(abs(a / b - 1) for a, b in og) * 100:.1f}\\%\\\\\n")
@@ -441,9 +441,9 @@ T.append("Dark-JAX-in-Cell PIC, Landau $k\\lambda_{De}=0.5$ & rms $\\Delta\\ln|E
          + "from 32 to 128 cells; PIC noise limits agreement to $\\sim$1\\%\\\\\n")
 T.append("GPU vs.\\ CPU, one case ($T=100$) & max relative difference " + sci(c08["max_rel"]) + " (adaptive trajectories)\\\\\n")
 c09 = J("studies/c09/run.json")
-T.append("% C09 numbers: docs/results.md section C09 and docs/status.md C09 row\n")
+T.append("% numbers: studies/c09/run.json\n")
 T.append("AD vs.\\ finite differences & reverse = forward to $2\\times10^{-13}$, analytic to $5\\times10^{-10}$ "
-         "(\\texttt{studies/c09/run.json}, 19 derivatives)\\\\\n")
+         "(19 derivatives)\\\\\n")
 T.append("\\bottomrule\\end{tabular}}\n")
 
 T.append("\\newcommand{\\tabSeed}{%\n\\begin{tabular}{@{}lcccc@{}}\\toprule\n"
