@@ -145,8 +145,8 @@ nonlinear run or the step budget.
 
 ## 9. Result of S1 for the diagonal closure only (2026-10-19, `studies/expint_gates.py`, results.md "Exact integration of the diagonal closure damping")
 
-Built: SPECTRAX `LawsonSolver` (PR #81) exponentiates only the diagonal closure/hypercollision (rate frozen at the step start; order of the
-wrapped tableau kept because `f = -r y + N` is an identity for any `r`); streaming is NOT exponentiated, so D1 (frozen-field one-step maps)
+Built: SPECTRAX `LawsonSolver` (PR #81) exponentiates only the diagonal closure/hypercollision (rate frozen at the step start; `f = -r y + N` is an identity for any `r`; order of the
+wrapped tableau retained for h -> 0 at fixed rate (Lawson 1967), no stiff-order claim when r h >> 1 since the stiff order of Lawson methods drops, to 1 for Lawson-Runge (Hochbruck and Ostermann 2010, Acta Numerica 19, Thm 2.17, Ex. 2.32, Table 2.2); empirical support: agreement with plain Dopri8 records, 5e-10 in H05 c=64); streaming is NOT exponentiated, so D1 (frozen-field one-step maps)
 and the streaming part of S1 remain open. D2 as declared (both c = 4 and c = 64 at least 3x fewer steps) FAILED: c = 64 gives 5.0x (t <= 500)
 and 4.3x (to 740) at equal per-step cost, c = 4 gives 0.96x (the closure is not the stiff mode before t ~ 540). The accuracy, ledger and
 positivity parts of D2 passed (dK_e, W_ext within 5e-10 of the record, ledger 8e-13 to 2e-11, no earlier positivity loss), the window did not

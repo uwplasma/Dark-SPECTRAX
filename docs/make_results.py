@@ -551,8 +551,7 @@ def expint_section():
     L = ["## Exact integration of the diagonal closure damping (Lawson wrapper) (`studies/expint_gates.py`)", "",
          "SPECTRAX `LawsonSolver` (integration/dark-baseline, PR #81) wraps Dopri8: with `w = exp(r (t - t0)) y` and the rate "
          "`r = nu_s s(n)` frozen at the step start, the diagonal closure is integrated exactly and everything else (streaming, force, "
-         "fields, the variation of nu over the step) stays explicit; the order of Dopri8 is kept because the split is an identity for "
-         "any `r` (derivation in `spectrax/_lawson.py`). Opt-in: `darkspectrax.run(..., integrating_factor=True)` (constant `nu col`) or "
+         "fields, the variation of nu over the step) stays explicit; the split is an identity for any `r`; the order of Dopri8 is retained for h -> 0 at fixed rate (Lawson 1967, SIAM J. Numer. Anal. 4, 372-380; the step-start rate is Lawson's re-evaluated-A form), with no stiff-order claim when r h >> 1, because the stiff order of Lawson methods drops (to 1 for Lawson-Runge; Hochbruck and Ostermann 2010, Acta Numerica 19, 209-286, Thm 2.17, Ex. 2.32, Table 2.2); the empirical support is measured agreement with plain Dopri8 records (5e-10 in H05 c=64) (derivation in `spectrax/_lawson.py`). Opt-in: `darkspectrax.run(..., integrating_factor=True)` (constant `nu col`) or "
          "`integrating_factor=rate_fn` with `rate_fn` from `darkspectrax.field_closure(model, c)`; default off is bitwise the earlier path. Fields, dark "
          "fields, work ledger and pump-frame basis have rate zero, rows n <= 2 are untouched. Streaming is not exponentiated. Steps are clipped onto the "
          "saves (the Lawson dense output is accurate only for r h <~ 1). Gates, the platform note and the CPU controls are in the docstring of "
