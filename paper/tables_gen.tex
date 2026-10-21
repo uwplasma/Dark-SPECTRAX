@@ -25,10 +25,10 @@ res. & 0.03 & 1.00 & 0.996 & 0.9979 & 48.1 & pass\\
 1.1 & 0.03 & 1.00 & 1.000 & 1.0000 & 1.38 & pass\\
 \bottomrule\end{tabular}}
 \newcommand{\tabVerify}{%
-\begin{tabular}{@{}p{4.4cm}p{7.2cm}@{}}\toprule
+\begin{tabular}{@{}p{5.6cm}p{10.4cm}@{}}\toprule
 Check & Result (record)\\\midrule
 Linear Landau roots, ordinary and dark, $k\lambda_{De}=0.2$--$0.7$ & worst relative error $1.3\times10^{-4}$ vs.\ SciPy Faddeeva roots; ledger defect $\le$ $3\times10^{-18}$\\
-OTSI growth vs.\ Silin--Nishikawa kinetic relation & 22 unstable points, worst difference 1.3\%\\
+OTSI growth vs.\ Silin kinetic relation (sideband determinant) & 22 unstable points, worst difference 1.3\%\\
 Dark-JAX-in-Cell PIC, Landau $k\lambda_{De}=0.5$ & rms $\Delta\ln|E_k|$ falls 0.22$\to$0.13 from 32 to 128 cells; PIC noise limits agreement to $\sim$1\%\\
 GPU vs.\ CPU, one case ($T=100$) & max relative difference $9.7\times10^{-9}$ (adaptive trajectories)\\
 % C09 numbers: docs/results.md section C09 and docs/status.md C09 row

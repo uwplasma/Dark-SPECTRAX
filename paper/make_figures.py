@@ -197,7 +197,7 @@ g = np.array(og)
 ax[1].loglog(g[:, 1], g[:, 0], "o", color=C["b"], ms=3.5, mfc="none")
 lim = [g.min() * 0.7, g.max() * 1.4]
 ax[1].plot(lim, lim, "-", color=C["k"], lw=0.7)
-ax[1].set_xlabel(r"$\gamma$ kinetic (Silin--Nishikawa)")
+ax[1].set_xlabel(r"$\gamma$ kinetic (Silin)")
 ax[1].set_ylabel(r"$\gamma$ Hermite Floquet")
 panel(ax[1], "(b)")
 pic = c05["pic"]
@@ -322,6 +322,7 @@ for vq in ("0.03", "0.05", "0.07"):
     ax[0].plot(t[m], (W[m] / Wl[m] - 1) * 100, color=Dcol[vq], label=f"$v_q/v_{{te}}={vq}$")
     num("dEnd" + {"0.03": "A", "0.05": "B", "0.07": "C"}[vq], (W[-1] / Wl[-1] - 1) * 100, "{:.2f}", f"recomputed from studies/r1nl/runs/pre_vq{vq}_Nx32_Nn64_c64 at the window end (percent)")
     num("wext" + {"0.03": "A", "0.05": "B", "0.07": "C"}[vq], W[-1] / VT2, "{:.0f}", f"recomputed from studies/r1nl/runs/pre_vq{vq}_Nx32_Nn64_c64 at the window end, units n T_e V")
+    num("quiv" + {"0.03": "A", "0.05": "B", "0.07": "C"}[vq], np.sqrt(2 * W[-1]), "{:.2f}", f"nonrelativistic coherent speed sqrt(2 W_ext/(n m_e)) in units of c at the window end, from pre_vq{vq}_Nx32_Nn64_c64")
     if vq == "0.07":
         num("recomputeWext", W[-1] / VT2, "{:.1f}", "recomputed from studies/r1nl/runs/pre_vq0.07_Nx32_Nn64_c64 (check vs rnlWext)")
 ax[0].set_xlabel(r"$\omega_{pe}t$")
@@ -430,10 +431,10 @@ for w, lab in (("res", "res."), ("0.9", "0.9"), ("1.1", "1.1")):
         T.append("\\addlinespace\n")
 T.append("\\bottomrule\\end{tabular}}\n")
 # verification table
-T.append("\\newcommand{\\tabVerify}{%\n\\begin{tabular}{@{}p{4.4cm}p{7.2cm}@{}}\\toprule\nCheck & Result (record)\\\\\\midrule\n")
+T.append("\\newcommand{\\tabVerify}{%\n\\begin{tabular}{@{}p{5.6cm}p{10.4cm}@{}}\\toprule\nCheck & Result (record)\\\\\\midrule\n")
 T.append("Linear Landau roots, ordinary and dark, $k\\lambda_{De}=0.2$--$0.7$ & worst relative error " + sci(max(r["rel_error"] for r in b00r))
          + " vs.\\ SciPy Faddeeva roots; ledger defect $\\le$ " + sci(max(r["max_ledger_defect"] for r in b00r), 0) + "\\\\\n")
-T.append("OTSI growth vs.\\ Silin--Nishikawa kinetic relation & " + f"{len(og)} unstable points, worst difference {max(abs(a / b - 1) for a, b in og) * 100:.1f}\\%\\\\\n")
+T.append("OTSI growth vs.\\ Silin kinetic relation (sideband determinant) & " + f"{len(og)} unstable points, worst difference {max(abs(a / b - 1) for a, b in og) * 100:.1f}\\%\\\\\n")
 T.append("Dark-JAX-in-Cell PIC, Landau $k\\lambda_{De}=0.5$ & rms $\\Delta\\ln|E_k|$ falls "
          + f"{pic['cells32']['rms_log_amplitude_diff_ordinary_Ek_2_12']:.2f}$\\to${pic['cells128']['rms_log_amplitude_diff_ordinary_Ek_2_12']:.2f} "
          + "from 32 to 128 cells; PIC noise limits agreement to $\\sim$1\\%\\\\\n")
