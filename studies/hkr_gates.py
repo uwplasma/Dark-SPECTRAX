@@ -74,3 +74,15 @@ GATES_V1B = {"V1b_max_abs_over_max": 1e-10}  # max |dK_e - dK_e(nxconv)| over t 
 # |E_1| envelope peaks, rate = slope of log peaks, frequency = pi / mean peak spacing, windows 5 < t < 35 (k lambda_De
 # 0.5) and 3 < t < 10 (1.0); rate 3 %, frequency 1 % as V2. V1 is accepted at max abs/max < 1e-9 (round-off), V1c.
 GATES_V2C = {"windows": {0.5: (5.0, 35.0), 1.0: (3.0, 10.0)}, "V1c_max_abs_over_max": 1e-9}
+
+# --- Declared before any main-run record is analysed (main runs for Nx 64/640 noise were in progress, unanalysed):
+# OTSI onset: first t at which the nonzero-k field energy sum_{k>=1}|E_k|^2 (= 2 U_k) reaches E0^2, E0 = v_q v_te (omega_pe=1);
+#   compared across Nx and seeds.
+# Spectrum: S_n(t) = |E_n|^2 for mode n (k = 2 pi n / 40; k lambda_De = k v_te). Reported: max_t<=T_cert S_n per mode, and
+#   n_hi(Nx) = highest n with max_t S_n >= SPEC_FLOOR * max_t S_1; the fraction of the retained range that is populated is
+#   n_hi / ((Nx-1)//3). If n_hi reaches the mask edge the cutoff cannot be said to be converged for the spectrum.
+# Grid pair comparisons (10 % rule, FLOOR_E): dE_e (200-avg) between Nx pairs on the common certified window, same seed.
+# Hermite lane (nxconv_run.py --vq 0.03 --Nn 64 --field-nu 64 --lawson --tag _li --noise-floor 1e-14, Nx 128/256/512, pump
+#   frame + remaps, deterministic seed): certified window = min(positivity loss t_pos, solver failure t_end, t_res(dE_e vs the
+#   det grid at the same Nx), t of ledger |K - K0 - sum W|/max|W_ext| > 1e-9). Reported vs Nx. The comparison to the grid
+#   is on the same HHS measure computed from the Hermite K and k=0 thermal records (E_e k!=0 = K_e - k=0 part of Th).
