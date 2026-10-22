@@ -55,7 +55,7 @@ def run_summary(r, nx):
             "dE_avg_over_Eth": {str(t0): at(r, t0) for t0 in (100, 200, 300, 500, 700, 1000) if t0 <= r["rec"]["T"] + 1e-9 and t0 <= r["tcert"] + 1e-9},
             "dE_avg_at_tcert": float(r["avg"][int(np.argmin(np.abs(t - r["tcert"])))]),
             "dE_inst_max_over_Eth": float(r["dE"][m].max()),
-            "t_otsi": float(t[on[0]]) if on.size else None,
+            "t_otsi": (float(t[on[0]]) if on.size else None) if 2 * r["Uk"][0] < E0 ** 2 else "initial noise field already above E0^2",
             "max_Uk_over_E0sq": float(r["Uk"][m].max() / E0 ** 2), "wall_s": r["rec"]["wall_time"], "commit": r["rec"]["repository_commit"]}
 
 

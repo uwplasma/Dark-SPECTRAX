@@ -14,19 +14,21 @@
   "Nx64_noise": {
    "case": "h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1",
    "T": 1000.0,
-   "t_cert": 0.0,
+   "t_cert": 163.5,
    "t_fneg": 163.5,
    "t_edge": 292.5,
-   "t_defect": 0.0,
+   "t_defect": 299.5,
    "kl_max_retained": 0.10431317679085905,
    "n_hi": 21,
    "n_mask": 21,
    "kl_hi": 0.10431317679085905,
-   "dE_avg_over_Eth": {},
-   "dE_avg_at_tcert": 0.0,
-   "dE_inst_max_over_Eth": 0.0,
+   "dE_avg_over_Eth": {
+    "100": 0.01216035765818854
+   },
+   "dE_avg_at_tcert": 0.013480169314837122,
+   "dE_inst_max_over_Eth": 0.03871409245545195,
    "t_otsi": 0.0,
-   "max_Uk_over_E0sq": 13.745593516748025,
+   "max_Uk_over_E0sq": 21.356560901047928,
    "wall_s": 360.1588247071486,
    "commit": "f2bc35b"
   }
