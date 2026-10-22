@@ -7,7 +7,7 @@ logs=${1:?}; mkdir -p "$logs"
 run() {  # TAG then relpic_run.py arguments
   tag=$1; shift
   [ -f "$here/records/$tag/record.json" ] && return
-  until mkdir /tmp/spectrax-heavy.lock 2>/dev/null; do sleep 1; done
+  until mkdir /tmp/spectrax-heavy.lock 2>/dev/null; do sleep 0.005; done
   echo $$ > /tmp/spectrax-heavy.lock/owner
   nice -n 5 python "$here/relpic_run.py" --tag "$tag" "$@" > "$logs/$tag.log" 2>&1
   rm -rf /tmp/spectrax-heavy.lock
