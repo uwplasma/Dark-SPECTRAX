@@ -61,3 +61,9 @@ def agree_time(t, a, b, floor, rule=RULE):
     d = np.abs(a - b) > rule * np.maximum(np.maximum(np.abs(a), np.abs(b)), floor)
     i = np.nonzero(d)[0]
     return (float(t[i[0]]), False) if i.size else (float(t[-1]), True)
+
+# --- Follow-up gates, declared after the first V1/V2 evaluation (V1 failed on a relative test at a zero crossing of
+# dK_e: abs diff 1.5e-13 where dK_e = 3.8e-8; V2 at k lambda_De = 1 failed with a peak-counting fit sampled every 0.5):
+GATES_V1B = {"V1b_max_abs_over_max": 1e-10}  # max |dK_e - dK_e(nxconv)| over t <= 100, relative to max |dK_e| there
+# V2b: nonlinear least-squares fit |E_1(t)| = A e^{g t} |cos(w t + p)| on t in [1, tmax] (0.5: tmax 40, 1.0: tmax 8);
+# same tolerances as V2 (rate 3%, frequency 1%).
