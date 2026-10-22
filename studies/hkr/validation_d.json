@@ -1,0 +1,14 @@
+{
+ "V3_kl0.5": {
+  "max_abs_diff_over_E0": 0.0017883083062097324,
+  "volterra_h_diff": 1.1102401869522716e-06,
+  "tmax": 35.0,
+  "pass": true
+ },
+ "V3_kl1": {
+  "max_abs_diff_over_E0": 0.0015784773343802203,
+  "volterra_h_diff": 4.087096368565746e-07,
+  "tmax": 10.0,
+  "pass": true
+ }
+}
