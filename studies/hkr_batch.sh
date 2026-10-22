@@ -11,7 +11,7 @@ grid() { local chunk=$1; shift
     until mkdir /tmp/spectrax-heavy.lock 2>/dev/null; do sleep 2; done; echo $$ > /tmp/spectrax-heavy.lock/owner
     echo "start $(date +%T) : $*" >> $LOG
     nice -n 10 $PY studies/hkr_grid.py "$@" --chunk $chunk --workers ${WORKERS:-2} >> $LOG 2>&1
-    rc=$?; rm -rf /tmp/spectrax-heavy.lock; echo "exit $rc $(date +%T) : $*" >> $LOG
+    rc=$?; rm -rf /tmp/spectrax-heavy.lock; sleep 8; echo "exit $rc $(date +%T) : $*" >> $LOG
     [ $rc -eq 3 ] || return $rc
   done; }
 case "$1" in
