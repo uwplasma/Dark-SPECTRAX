@@ -1,0 +1,14 @@
+{
+ "case": "h_vq0_Nx8_Nv2048_v16_dt0.02_det_landau0.5",
+ "T": 40.0,
+ "finite": true,
+ "wall_time": 1.7307327089365572,
+ "steps": 2000,
+ "t_fneg_1e-3": null,
+ "t_edge_1e-6": null,
+ "t_defect_1e-6": 0.0,
+ "min_f_rel": -1.6310576249629453e-13,
+ "max_energy_defect_over_W": 1.0057699546914591e+289,
+ "repository_commit": "a38fb5e",
+ "command": "python studies/hkr_grid.py --vq 0 --T 40 --Nx 8 --Nv 2048 --vmax 16 --landau 0.5 --seed det --chunk 1e9 --workers 2"
+}

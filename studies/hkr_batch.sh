@@ -19,5 +19,8 @@ case "$1" in
   grid 1e9 --vq 0.03 --T 100 --Nx 64 --Nv 4096 --vmax 32 --seed det
   grid 1e9 --vq 0 --T 40 --Nx 8 --Nv 2048 --vmax 16 --landau 0.5 --seed det
   grid 1e9 --vq 0 --T 8 --Nx 8 --Nv 2048 --vmax 16 --landau 1.0 --seed det ;;
+ validate_c)
+  grid 1e9 --vq 0 --T 35 --Nx 8 --Nv 2048 --vmax 16 --landau 0.5 --seed det --save-every 0.02
+  grid 1e9 --vq 0 --T 10 --Nx 8 --Nv 2048 --vmax 16 --landau 1.0 --seed det --save-every 0.02 ;;
  main) grid ${CHUNK:-40} --vq 0.03 --T ${T:-1000} --Nx $2 --Nv ${4:-2048} --vmax ${5:-16} --seed $3 ;;
 esac

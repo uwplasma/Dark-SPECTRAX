@@ -1,0 +1,13 @@
+start 21:06:04 : --vq 0.03 --T 100 --Nx 64 --Nv 4096 --vmax 32 --seed det
+h_vq0.03_Nx64_Nv4096_v32_dt0.02_det done 56s
+exit 0 21:07:01 : --vq 0.03 --T 100 --Nx 64 --Nv 4096 --vmax 32 --seed det
+start 21:07:01 : --vq 0 --T 40 --Nx 8 --Nv 2048 --vmax 16 --landau 0.5 --seed det
+h_vq0_Nx8_Nv2048_v16_dt0.02_det_landau0.5 done 2s
+exit 0 21:07:03 : --vq 0 --T 40 --Nx 8 --Nv 2048 --vmax 16 --landau 0.5 --seed det
+start 21:07:03 : --vq 0 --T 8 --Nx 8 --Nv 2048 --vmax 16 --landau 1.0 --seed det
+h_vq0_Nx8_Nv2048_v16_dt0.02_det_landau1 done 0s
+exit 0 21:07:03 : --vq 0 --T 8 --Nx 8 --Nv 2048 --vmax 16 --landau 1.0 --seed det
+start 21:07:31 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=40 wall=12
+exit 3 21:07:43 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:07:43 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise

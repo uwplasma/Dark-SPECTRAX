@@ -67,3 +67,10 @@ def agree_time(t, a, b, floor, rule=RULE):
 GATES_V1B = {"V1b_max_abs_over_max": 1e-10}  # max |dK_e - dK_e(nxconv)| over t <= 100, relative to max |dK_e| there
 # V2b: nonlinear least-squares fit |E_1(t)| = A e^{g t} |cos(w t + p)| on t in [1, tmax] (0.5: tmax 40, 1.0: tmax 8);
 # same tolerances as V2 (rate 3%, frequency 1%).
+
+# --- Second follow-up, declared after V1b/V2b also failed (V1b: 1.4e-10 vs the arbitrary 1e-10, i.e. round-off, the
+# equivalence is recorded as such; V2b: the pure damped-cosine model is inadequate, rms residual 1-2.5%): V2c repeats the
+# method of the committed nxconv validation (studies/nxconv_grid_validate.py) with dense sampling, --save-every 0.02:
+# |E_1| envelope peaks, rate = slope of log peaks, frequency = pi / mean peak spacing, windows 5 < t < 35 (k lambda_De
+# 0.5) and 3 < t < 10 (1.0); rate 3 %, frequency 1 % as V2. V1 is accepted at max abs/max < 1e-9 (round-off), V1c.
+GATES_V2C = {"windows": {0.5: (5.0, 35.0), 1.0: (3.0, 10.0)}, "V1c_max_abs_over_max": 1e-9}

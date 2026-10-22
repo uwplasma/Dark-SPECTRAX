@@ -1,0 +1,14 @@
+{
+ "case": "h_vq0.03_Nx64_Nv4096_v32_dt0.02_det",
+ "T": 100.0,
+ "finite": true,
+ "wall_time": 56.46475937496871,
+ "steps": 5000,
+ "t_fneg_1e-3": null,
+ "t_edge_1e-6": null,
+ "t_defect_1e-6": 0.0,
+ "min_f_rel": -3.4785458831832255e-13,
+ "max_energy_defect_over_W": 2.533029591058771e+292,
+ "repository_commit": "a38fb5e",
+ "command": "python studies/hkr_grid.py --vq 0.03 --T 100 --Nx 64 --Nv 4096 --vmax 32 --seed det --chunk 1e9 --workers 2"
+}
