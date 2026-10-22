@@ -1,0 +1,39 @@
+{
+ "repository_commit": "503095cad236c223e7b877dcf085396e5bb231cf",
+ "B": {
+  "B0": {
+   "dev": {
+    "u_e": 5.398795221625055e-15,
+    "Ebar": 4.69946749915083e-15,
+    "W": 3.2974594023342965e-15
+   },
+   "pass": true
+  },
+  "B2": {
+   "frame": "osc",
+   "dt2_ratio_Ebar": 3.9932875012650157,
+   "err_E_richardson": 5.56507951762844e-07,
+   "err_W_richardson": 3.409886508609165e-07,
+   "err_Ue_richardson": 5.164517015243511e-07,
+   "phase_err_rad": 7.268432966611726e-08,
+   "phase_grid": -1.448359134346429,
+   "phase_ode": -1.4483592070307587,
+   "ledger_ratio": 3.263000595389354,
+   "pass": true,
+   "pass_ledger_ratio": true
+  },
+  "B3": {
+   "frame": "lab",
+   "dt2_ratio_Ebar": 3.9932742436036994,
+   "err_E_richardson": 5.565927666089868e-07,
+   "err_W_richardson": 3.409666171174154e-07,
+   "err_Ue_richardson": null,
+   "phase_err_rad": 7.288145753570063e-08,
+   "phase_grid": -1.4483591341493012,
+   "phase_ode": -1.4483592070307587,
+   "ledger_ratio": 3.262973063227814,
+   "pass": true,
+   "pass_ledger_ratio": true
+  }
+ }
+}

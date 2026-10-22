@@ -24,7 +24,7 @@ no B in 1D). f_s(x, u) is a density per du. Charge density from n_s = sum f du, 
 Run: python studies/relgrid.py --vq 0.03 --T 1000 --Nx 32 --Nu 4096 --dt 0.02 --frame osc --umax 32 --xshift mask23 --chunk 200
      -> studies/relgrid/runs/<tag>.{npz,json} (+ <tag>.ckpt.npz while incomplete); rerunning the same command resumes.
 Diagnostics (every --save-every, default 0.5): dK_e, dK_i (relativistic, (gamma-1) m c^2), W_ext, U_k (k != 0 field energy), U_0, energy
-defect K_e + K_i + U_k + U_0 - initial - W_ext, E1D_e = (1/2) m (<M_xx> - <M_x>^2/<n>) (HHS definition: 1-D velocity variance with the
+defect K_e + K_i + U_k + U_0 - initial (kinetic and field) - W_ext, E1D_e = (1/2) m (<M_xx> - <M_x>^2/<n>) (HHS definition: 1-D velocity variance with the
 box-mean flow removed; M_x = int f v du), Ebar (k = 0 field), J0 (k = 0 current), U_e/U_i (frame momentum), <gamma-1>, mass, f positivity.
 """
 import argparse
@@ -168,6 +168,7 @@ class Sim:
         self.Ek[0] = 0.0
         self.K0 = (self.se.kin(fe), self.si.kin(fi))
         self.E1D0 = self.se.e1d(fe)
+        self.U00 = 0.5 * np.sum(np.abs(self.Ek) ** 2)
         self.M0 = (self.se.dens(fe).sum(), self.si.dens(fi).sum())
         self.Wx, self.n = 0.0, 0
         self.fmin_v = self.fmin_x = np.inf
@@ -188,7 +189,7 @@ class Sim:
         J0 = self.cur()[0].real
         fv = self.fmin_v if np.isfinite(self.fmin_v) else fe.min()
         fx = self.fmin_x if np.isfinite(self.fmin_x) else fe.min()
-        self.rec.append([t, dKe, dKi, self.Wx, Ux, U0, dKe + dKi + Ux + U0 - self.Wx, se.e1d(fe) - self.E1D0, Ek[0].real, J0, se.U, si.U,
+        self.rec.append([t, dKe, dKi, self.Wx, Ux, U0, dKe + dKi + Ux + U0 - self.U00 - self.Wx, se.e1d(fe) - self.E1D0, Ek[0].real, J0, se.U, si.U,
                          se.gm1(fe), se.dens(fe).sum() / self.M0[0] - 1, si.dens(self.fi).sum() / self.M0[1] - 1, fv / fmax, fx / fmax,
                          neg, np.abs(fe[:, [0, -1]]).max() / fmax, Ek[1].real, Ek[1].imag])
         self.spec.append(np.abs(Ek[: self.Nx // 2 + 1]) ** 2)
@@ -253,7 +254,7 @@ class Sim:
 
     def save_state(self, path, wall):
         np.savez(path, fe=self.fe, fi=self.fi, Ek=self.Ek, Ue=self.se.U, Ui=self.si.U, Wx=self.Wx, n=self.n, rec=np.array(self.rec),
-                 spec=np.array(self.spec), wall=wall, K0=np.array(self.K0), E1D0=self.E1D0, M0=np.array(self.M0),
+                 spec=np.array(self.spec), wall=wall, K0=np.array(self.K0), E1D0=self.E1D0, U00=self.U00, M0=np.array(self.M0),
                  fmin_v=self.fmin_v, fmin_x=self.fmin_x)
 
     def load_state(self, path):
@@ -262,6 +263,7 @@ class Sim:
         self.se.U, self.si.U, self.Wx, self.n = float(c["Ue"]), float(c["Ui"]), float(c["Wx"]), int(c["n"])
         self.rec, self.spec = list(c["rec"]), list(c["spec"])
         self.K0, self.E1D0, self.M0 = tuple(c["K0"]), float(c["E1D0"]), tuple(c["M0"])
+        self.U00 = float(c["U00"])
         self.fmin_v, self.fmin_x = float(c["fmin_v"]), float(c["fmin_x"])
         return float(c["wall"])
 

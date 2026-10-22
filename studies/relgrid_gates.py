@@ -34,7 +34,12 @@ E   refinement pairs (v_q = 0.03 relativistic det, T = 1000; base Nx 32, Nu 4096
     dE1D_e (HHS energy), W_ext, U_k; the certified window of every production claim is min over the pairs and observables (nxconv rule,
     studies/nxconv_analysis.py). No threshold: windows are reported; claims are restricted to them.
 
-Run: python studies/relgrid_gates.py a|b|c|e   (A and B and C in a few minutes; E reads the production queue records)
+C2  (declared after gate C FAILED because of a script error, not a solver result: C fitted Re E_1, but a real density seed makes E_1 purely
+    imaginary, so Re E_1 was rounding noise and the fit meaningless; gate C itself stays recorded as failed in gates_c.json.) Same thresholds, same
+    runs, fit on Im E_1 (column Ek1_im). Run as `python studies/relgrid_gates.py c2`. (The energy ledger now also subtracts the initial field
+    energy; before this change the ledger carried the constant offset U_k(0), irrelevant to gates A-B where it is 0 or 1e-6 of W.)
+
+Run: python studies/relgrid_gates.py a|b|c|c2|e   (A and B and C in a few minutes; E reads the production queue records)
 """
 import json
 import subprocess
@@ -134,7 +139,7 @@ def fit_damped(t, y, w0, g0):
     return best[1]
 
 
-def gate_c(rec):
+def gate_c(rec, col=19):
     out = {}
     guess = None
     for kl in (0.3, 0.4):
@@ -147,7 +152,7 @@ def gate_c(rec):
         r = np.array(s.rec)
         t = r[:, 0]
         m = t >= 20
-        A, g, w, p = fit_damped(t[m], r[m, 19], rr.real, rr.imag)
+        A, g, w, p = fit_damped(t[m], r[m, col], rr.real, rr.imag)
         out[f"k{kl}"] = {"root_rel": [rr.real, rr.imag], "root_nonrel": [rn.real, rn.imag], "grid": [abs(w), g],
                          "err_omega": float(abs(abs(w) - rr.real) / rr.real), "err_gamma": float(abs(g - rr.imag) / abs(rr.imag)),
                          "closer_to_rel": bool(abs(abs(w) - rr.real) < abs(abs(w) - rn.real)),
@@ -160,6 +165,6 @@ if __name__ == "__main__":
     which = sys.argv[1]
     f = OUTD / f"gates_{which}.json"
     rec = {"repository_commit": sha()}
-    {"a": gate_a, "b": gate_b, "c": gate_c}[which](rec)
+    {"a": gate_a, "b": gate_b, "c": gate_c, "c2": lambda r: gate_c(r, 20)}[which](rec)
     f.write_text(json.dumps(rec, indent=1) + "\n")
     print(json.dumps(rec, indent=1))
