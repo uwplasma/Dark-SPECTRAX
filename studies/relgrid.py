@@ -16,9 +16,12 @@ no B in 1D). f_s(x, u) is a density per du. Charge density from n_s = sum f du, 
   --init maxwell    Maxwellian in u with variance T/m (the nxconv load; T = 1e-3 m c^2 gives u_te = v_te = 0.0316)
          juttner    exp(-gamma m c^2 / T) normalised in u (used for the dispersion gate)
   --noise det       the nxconv deterministic seeds (1e-3 cos k1 x - 1e-4 sin 2k1 x on f_e, 1e-3 cos k1 x on f_i)
-          shot      HHS-like Poisson noise: each Fourier mode k_m (m = 1..Nx/2-1, inside the 2/3 mask) of the density of each species gets a
-                    complex Gaussian amplitude of variance 1/Np (Np = --npc * 1000 total macroparticles, HHS: Nx = 1000 cells), independent
-                    for e and i, seed --seed; the velocity distribution at each x is the local Maxwellian (no phase-space-correlated noise).
+          shot      Poisson-type density noise: each Fourier mode k_m (m = 1..(Nx-1)//3, inside the 2/3 mask) of the density of each species gets a
+                    complex Gaussian amplitude of variance 1/Np, Np = --npc * 1000 (HHS: Nx = 1000 cells), independent for e and i, seed --seed;
+                    the velocity distribution at each x is the local Maxwellian (no phase-space-correlated noise). The initial k != 0 field
+                    energy is U_k(0) ~ 6.5e-4 (205/npc) at these 10 modes (box L = 40): npc = 205 is a white-Poisson load of 2e5 particles and
+                    puts a Langmuir wave of energy ~ E_th (5e-4) in the box (see results: f < 0 within 1 omega_pe^-1, not usable); npc = 2.05e5
+                    gives U_k(0) = 6.5e-7, the value of HHS SM Eq. S37 read as a total energy density.
           none      unseeded (homogeneous)
 
 Run: python studies/relgrid.py --vq 0.03 --T 1000 --Nx 32 --Nu 4096 --dt 0.02 --frame osc --umax 32 --xshift mask23 --chunk 200
@@ -274,7 +277,7 @@ COLS = ["t", "dK_e", "dK_i", "W_ext", "U_k", "U_0", "energy_defect", "dE1D_e", "
 
 def tag_of(a):
     return (f"r_vq{a.vq:g}_Nx{a.Nx}_Nu{a.Nu}_dt{a.dt:g}_{a.frame}_u{a.umax:g}_{'nr' if a.nonrel else 'rel'}_{a.mid}_{a.noise}"
-            + (f"{a.seed}" if a.noise == "shot" else "") + ("" if a.xshift == "spectral" else f"_x{a.xshift}")
+            + (f"{a.seed}n{a.npc:g}" if a.noise == "shot" else "") + ("" if a.xshift == "spectral" else f"_x{a.xshift}")
             + (f"_landau{a.landau:g}" if a.landau is not None else "") + ("" if a.init == "maxwell" else f"_{a.init}"))
 
 
