@@ -8,10 +8,10 @@ mkdir -p studies/hkr
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 grid() { local chunk=$1; shift
   for i in $(seq 1 200); do
-    until mkdir /tmp/spectrax-heavy.lock 2>/dev/null; do sleep 0.02; done; echo $$ > /tmp/spectrax-heavy.lock/owner
+    until mkdir /tmp/spectrax-heavy.lock 2>/dev/null; do sleep 0.005; done; echo $$ > /tmp/spectrax-heavy.lock/owner
     echo "start $(date +%T) : $*" >> $LOG
     nice -n 10 $PY studies/hkr_grid.py "$@" --chunk $chunk --workers ${WORKERS:-2} >> $LOG 2>&1
-    rc=$?; rm -rf /tmp/spectrax-heavy.lock; sleep 1; echo "exit $rc $(date +%T) : $*" >> $LOG
+    rc=$?; rm -rf /tmp/spectrax-heavy.lock; sleep 4; echo "exit $rc $(date +%T) : $*" >> $LOG
     [ $rc -eq 3 ] || return $rc
   done; }
 case "$1" in
