@@ -1,7 +1,7 @@
 """relpic: one PIC run of the HHS (arXiv:2510.13956v1, Fig. 2, App. B) set-up with Dark-JAX-in-Cell.
 
     python studies/relpic/relpic_run.py --tag NAME --cells 1000 --ppc 103 --dt 0.02 --T 1000 \
-        [--ratio 0.03] [--shape 2|5] [--nonrel] [--seed 0] [--chunk 250]
+        [--ratio 0.03] [--shape 2|5] [--nonrel] [--seed 0] [--chunk 200]
 
 Loading, drive and diagnostics are the Dark-JAX-in-Cell `examples/dark_reservoir.py` paper study (`paper_case`):
 quiet start (equal spacing, co-located e/i), m_i/m_e = 1836, T_e = T_i = 1e-3 m_e c^2, L = 40 c/omega_pe, uniform
@@ -54,7 +54,7 @@ def main(argv=None):
     ap.add_argument("--shape", type=int, default=2)
     ap.add_argument("--nonrel", action="store_true")
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--chunk", type=float, default=250.0)
+    ap.add_argument("--chunk", type=float, default=200.0)
     a = ap.parse_args(argv)
     m = load_module(a.nonrel)
     folder = OUT / a.tag
