@@ -86,3 +86,11 @@ GATES_V2C = {"windows": {0.5: (5.0, 35.0), 1.0: (3.0, 10.0)}, "V1c_max_abs_over_
 #   frame + remaps, deterministic seed): certified window = min(positivity loss t_pos, solver failure t_end, t_res(dE_e vs the
 #   det grid at the same Nx), t of ledger |K - K0 - sum W|/max|W_ext| > 1e-9). Reported vs Nx. The comparison to the grid
 #   is on the same HHS measure computed from the Hermite K and k=0 thermal records (E_e k!=0 = K_e - k=0 part of Th).
+
+# --- Third validation gate V3, declared after V2c passed at k lambda_De = 0.5 and FAILED at 1.0 (single-root fit: rate -0.70
+# against -0.85; with only 4 envelope peaks and a second root decaying at a comparable rate the single-root model is not a
+# valid test at k lambda_De = 1, the grid run itself is not yet judged). V3 compares the whole linear response with the exact
+# free-streaming Volterra solution of electrons-only linear Vlasov-Poisson, n(t) = n0 e^{-k^2 v^2 t^2/2} - int_0^t (t-s)
+# e^{-k^2 v^2 (t-s)^2/2} n(s) ds (v = v_te = 1 in lambda_De units, trapezoid dt 0.005, Richardson-checked at 0.0025):
+# max_t |E_grid(t) - E_exact(t)| / |E(0)| <= 2e-3 over t <= 35 (k lambda_De 0.5) and t <= 10 (1.0), the same runs as V2c.
+GATES_V3 = {"tol": 2e-3, "tmax": {0.5: 35.0, 1.0: 10.0}}
