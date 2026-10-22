@@ -162,3 +162,6 @@ physics.md sets the rule: only full-text sources may set a benchmark.
 ## In progress, not results: HHS k-range study (hkr, 2026-10-21)
 
 Paused by the owner. Scripts and gates are committed (`studies/hkr_gates.py`, `hkr_grid.py`, `hkr_analysis.py`, `hkr_batch.sh`, `hkr_hermite.sh`); validation passed (V1c, V2c at k lambda_De 0.5, V3 Volterra at 0.5 and 1.0; V1, V2, V1b, V2b and V2c at k lambda_De 1.0 failed as specified and were followed by new declared gates, see `studies/hkr/validation*.json`). Main grid runs (Nx 64/128/256/512/640/1024, v_q/v_te 0.03) are incomplete: only Nx 64 noise finished (positivity lost at t = 163.5), others are checkpoints. Hermite c = 64 + Lawson at Nx 128 reached t = 960 with no failure. No conclusion about the k-range effect yet.
+### relpic (in progress, not results)
+
+Independent relativistic PIC reproduction of HHS Fig. 2 with Dark-JAX-in-Cell (parent relativistic Boris already exists, so no Dark-JAX-in-Cell PR). Gates declared in `studies/relpic/gates.py` (commit before any run); single-particle gates S1-S3 pass (`single_particle.json`); production batch (`batch.sh`) paused at R_s0 t = 1800 of 2000 with no finished record. No physics results yet.
