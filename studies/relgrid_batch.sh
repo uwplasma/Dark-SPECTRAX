@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.." || exit 1
 PY=${PY:-python3}
 chunked() {  # chunked <relgrid.py args...>
   while true; do
-    until mkdir /tmp/spectrax-heavy.lock 2>/dev/null; do sleep 2; done
+    until mkdir /tmp/spectrax-heavy.lock 2>/dev/null; do sleep 0.01; done
     echo $$ > /tmp/spectrax-heavy.lock/owner
     nice -n 10 $PY studies/relgrid.py "$@" --chunk 300 --workers 2
     rc=$?
