@@ -1,0 +1,36 @@
+{
+ "gates": {
+  "V1_max_rel_dKe": 1e-06,
+  "V2_rate_rel": 0.03,
+  "V2_freq_rel": 0.01,
+  "C_fneg": -0.001,
+  "C_edge": 1e-06,
+  "C_defect": 1e-06,
+  "Q1_ratio": 2.0,
+  "Q1_hhs": 25.0,
+  "Q1_t": 500.0
+ },
+ "runs": {
+  "Nx64_noise": {
+   "case": "h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1",
+   "T": 1000.0,
+   "t_cert": 0.0,
+   "t_fneg": 163.5,
+   "t_edge": 292.5,
+   "t_defect": 0.0,
+   "kl_max_retained": 0.10431317679085905,
+   "n_hi": 21,
+   "n_mask": 21,
+   "kl_hi": 0.10431317679085905,
+   "dE_avg_over_Eth": {},
+   "dE_avg_at_tcert": 0.0,
+   "dE_inst_max_over_Eth": 0.0,
+   "t_otsi": 0.0,
+   "max_Uk_over_E0sq": 13.745593516748025,
+   "wall_s": 360.1588247071486,
+   "commit": "f2bc35b"
+  }
+ },
+ "pairs": {},
+ "q1": {}
+}
