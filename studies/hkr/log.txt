@@ -11,3 +11,79 @@ start 21:07:31 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
 h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=40 wall=12
 exit 3 21:07:43 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
 start 21:07:43 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=80 wall=23
+exit 3 21:07:54 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:07:54 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=120 wall=35
+exit 3 21:08:07 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:08:07 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=160 wall=47
+exit 3 21:08:19 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:08:19 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=200 wall=60
+exit 3 21:08:32 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:08:32 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=240 wall=73
+exit 3 21:08:46 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:08:46 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=280 wall=85
+exit 3 21:08:58 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:08:58 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=320 wall=98
+exit 3 21:09:11 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:09:11 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=360 wall=110
+exit 3 21:09:24 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:09:24 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=400 wall=123
+exit 3 21:09:37 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:09:37 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=440 wall=136
+exit 3 21:09:50 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:09:50 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=480 wall=148
+exit 3 21:10:02 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:10:02 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=520 wall=159
+exit 3 21:10:14 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:10:14 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=560 wall=171
+exit 3 21:10:26 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:10:26 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=600 wall=184
+exit 3 21:10:39 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:10:39 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=640 wall=197
+exit 3 21:10:52 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:10:52 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=680 wall=211
+exit 3 21:11:07 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:11:07 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=720 wall=231
+exit 3 21:11:27 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:11:27 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=760 wall=254
+exit 3 21:11:51 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:11:51 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=800 wall=280
+exit 3 21:12:18 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:12:18 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=840 wall=302
+exit 3 21:12:41 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:12:41 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=880 wall=318
+exit 3 21:12:56 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:12:56 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=920 wall=332
+exit 3 21:13:11 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:13:11 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 checkpoint t=960 wall=346
+exit 3 21:13:25 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+start 21:13:25 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1 done 360s
+exit 0 21:13:40 : --vq 0.03 --T 1000 --Nx 64 --Nv 2048 --vmax 16 --seed noise
+CHAIN done 64 noise 21:13:40
+start 21:13:40 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed noise
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_noise1 checkpoint t=40 wall=163
+exit 3 21:16:23 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed noise
+start 21:16:23 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed noise

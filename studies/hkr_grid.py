@@ -105,7 +105,7 @@ def main(argv=None):
     w = np.sqrt(1 + 1 / mi)
     E0 = a.vq * vte
     tag = f"h_vq{a.vq:g}_Nx{a.Nx}_Nv{a.Nv}_v{a.vmax:g}_dt{a.dt:g}_{a.seed}" + (f"{a.rng}" if a.seed == "noise" else "") + (
-        f"_landau{a.landau:g}" if a.landau is not None else "")
+        f"_landau{a.landau:g}" if a.landau is not None else "") + ("_fine" if a.save_every < 0.1 else "")
     OUT.mkdir(parents=True, exist_ok=True)
     ck = OUT / f"{tag}.ckpt.npz"
     nsteps, every = int(round(a.T / a.dt)), max(1, int(round(a.save_every / a.dt)))
