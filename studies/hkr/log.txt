@@ -97,3 +97,5 @@ start 21:20:06 : --vq 0 --T 10 --Nx 8 --Nv 2048 --vmax 16 --landau 1.0 --seed de
 h_vq0_Nx8_Nv2048_v16_dt0.02_det_landau1_fine done 1s
 exit 0 21:20:06 : --vq 0 --T 10 --Nx 8 --Nv 2048 --vmax 16 --landau 1.0 --seed det --save-every 0.02
 start 21:20:07 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=40 wall=134
+exit 3 21:22:29 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
