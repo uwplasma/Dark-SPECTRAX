@@ -67,6 +67,24 @@ def pair(a, b, tmax):
     return {"t_agree_dE": ta, "to_end": ok}
 
 
+def hermite(nx):
+    import nxconv_analysis as NA
+    h = NA.herm(f"vq0.03_Nx{nx}_Nn64_c64_nf1e-14_li")
+    if h is None:
+        return None
+    t = h["t"]
+    dE = 0.5 * (h["Tx"][:, 0] - h["Tx"][0, 0]) / G.E_TH
+    led = np.abs(h["K_species"].sum(1) - h["K_species"][0].sum() - h["W"].sum(1))
+    wmax = np.maximum.accumulate(np.abs(h["Wx"]))
+    il = np.nonzero(led / np.maximum(wmax, 1e-300) > 1e-9)[0]
+    bad = np.nonzero((h["K_species"] <= 0).any(1) | (h["Tx"] <= 0).any(1))[0]
+    last = h["recs"][-1]
+    return dict(t=t, dE=dE, avg=G.trailing(t, dE), Ek2=h["Ek2"], t_pos=float(t[bad[0]]) if bad.size else None,
+                t_ledger=float(t[il[0]]) if il.size else None, status=last["status"], t_end=float(t[-1]),
+                steps=int(sum(r["steps"] for r in h["recs"])), rejected=int(sum(r["rejected"] for r in h["recs"])),
+                wall=float(sum(r["compile_time"] + r["run_time"] for r in h["recs"])), reason=last["failure_reason"])
+
+
 def main():
     out = {"gates": {k: v for k, v in G.GATES.items()}, "runs": {}, "pairs": {}, "q1": {}}
     runs = {}
@@ -99,6 +117,30 @@ def main():
             out["q1"][f"{seed}_Nx{nx}_over_Nx64"] = {"t": tt, "dE_hi": ra, "dE_64": rb, "ratio": ra / rb if rb else None,
                                                      "cutoff_matters": bool(rb and ra / rb >= G.GATES["Q1_ratio"]),
                                                      "hhs_reached": bool(ra >= G.GATES["Q1_hhs"])}
+    hs = {}
+    for nx in (128, 256, 512):
+        h = hermite(nx)
+        if h is None:
+            continue
+        g = runs.get((nx, "det"))
+        e = {"t_end": h["t_end"], "status": h["status"], "t_pos": h["t_pos"], "t_ledger_1e-9": h["t_ledger"],
+             "steps": h["steps"], "rejected": h["rejected"], "wall_s": h["wall"], "failure": str(h["reason"])[:80],
+             "kl_max_retained": float(2 * np.pi / 40 * ((nx - 1) // 3) * VTE),
+             "dE_avg_over_Eth": {str(t0): at(h, t0) for t0 in (100, 200, 300, 500, 700, 1000) if t0 <= h["t_end"] + 1e-9}}
+        if g is not None:
+            n = min(len(g["t"]), len(h["t"]))
+            same = np.allclose(g["t"][:n], h["t"][:n])
+            e["grid_t_cert"] = g["tcert"]
+            if same:
+                ta, ok = G.agree_time(h["t"][:n], h["avg"][:n], g["avg"][:n], G.FLOOR_E)
+                e["t_res_vs_grid"] = ta
+                e["t_res_to_end"] = ok
+                cand = [x for x in (h["t_pos"], h["t_ledger"], ta if not ok else None, h["t_end"] if h["status"] != "success" or h["t_end"] < 1000 - 1e-9 else None) if x is not None]
+                e["t_cert_hermite"] = min(cand)
+            else:
+                e["t_res_vs_grid"] = "time axes differ"
+        hs[f"Nx{nx}"] = e
+    out["hermite"] = hs
     (D / "hkr/summary_grid.json").write_text(json.dumps(out, indent=1, default=float) + "\n")
     print(json.dumps(out, indent=1, default=float))
 
