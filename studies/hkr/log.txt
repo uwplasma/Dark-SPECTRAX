@@ -111,3 +111,111 @@ exit 3 21:37:10 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
 start 21:37:22 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
 h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=120 wall=450
 exit 3 21:39:48 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+start 22:03:29 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=160 wall=575
+start 22:05:35 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+exit 3 22:05:39 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=40 wall=23
+start 22:05:58 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+exit 3 22:06:02 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=200 wall=686
+start 22:07:49 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+exit 3 22:07:53 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=80 wall=51
+exit 3 22:08:21 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+start 22:08:30 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=120 wall=75
+exit 3 22:08:58 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+start 22:09:04 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+start 22:10:20 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=160 wall=104
+exit 3 22:10:54 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=240 wall=799
+start 22:10:58 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+exit 3 22:11:02 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=200 wall=132
+exit 3 22:11:29 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+start 22:11:37 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=240 wall=158
+exit 3 22:12:07 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+start 22:12:17 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+start 22:13:58 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=280 wall=906
+exit 3 22:14:08 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+start 22:14:15 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=280 wall=182
+exit 3 22:14:26 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+start 22:14:34 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=320 wall=206
+exit 3 22:15:02 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+start 22:15:11 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=360 wall=229
+exit 3 22:15:38 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+start 22:15:47 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=320 wall=1010
+exit 3 22:16:04 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=400 wall=253
+start 22:16:11 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+exit 3 22:16:15 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=360 wall=1116
+start 22:17:58 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+exit 3 22:18:02 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=440 wall=279
+exit 3 22:18:28 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+start 22:18:40 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=480 wall=308
+start 22:19:09 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+exit 3 22:19:13 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=400 wall=1229
+exit 3 22:21:06 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+start 22:21:18 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=440 wall=1343
+start 22:23:12 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+exit 3 22:23:16 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=520 wall=333
+start 22:23:37 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+exit 3 22:23:41 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=480 wall=1475
+start 22:25:50 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+exit 3 22:25:54 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=560 wall=367
+start 22:26:24 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+exit 3 22:26:28 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=520 wall=1608
+exit 3 22:28:41 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+start 22:28:55 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=560 wall=1719
+exit 3 22:30:51 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+start 22:31:03 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=600 wall=392
+start 22:31:28 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+exit 3 22:31:33 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=600 wall=1827
+exit 3 22:33:21 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+start 22:33:33 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=640 wall=417
+exit 3 22:34:02 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+start 22:34:14 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=680 wall=442
+start 22:34:39 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+exit 3 22:34:43 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=640 wall=1935
+start 22:36:28 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+exit 3 22:36:32 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=720 wall=465
+exit 3 22:36:54 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+start 22:37:08 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=760 wall=489
+start 22:37:32 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+exit 3 22:37:36 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=680 wall=2043
+exit 3 22:39:24 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+start 22:39:43 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=800 wall=513
+start 22:40:07 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+exit 3 22:40:12 : --vq 0.03 --T 1000 --Nx 128 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=720 wall=2152
+exit 3 22:42:00 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+start 22:42:22 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=760 wall=2261
+exit 3 22:44:15 : --vq 0.03 --T 1000 --Nx 640 --Nv 2048 --vmax 16 --seed det

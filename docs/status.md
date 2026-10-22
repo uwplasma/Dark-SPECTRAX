@@ -158,3 +158,7 @@ physics.md sets the rule: only full-text sources may set a benchmark.
 7. C09 done (2026-10-15). Open: gradient of a fitted Landau damping rate, through `run_adaptive` remaps, Diffrax checkpoint defect reported upstream as [diffrax#788](https://github.com/patrick-kidger/diffrax/issues/788). C08 CPU/GPU done for one case (see C08 row).
 8. **Collisions (B11/H08/R2)**: B11 done 2026-10-16 with the parent Dougherty operator (#71). Next: collisional
    Landau damping vs a kinetic root, H08 HHS run with collisions, R2.
+
+## In progress, not results: HHS k-range study (hkr, 2026-10-21)
+
+Paused by the owner. Scripts and gates are committed (`studies/hkr_gates.py`, `hkr_grid.py`, `hkr_analysis.py`, `hkr_batch.sh`, `hkr_hermite.sh`); validation passed (V1c, V2c at k lambda_De 0.5, V3 Volterra at 0.5 and 1.0; V1, V2, V1b, V2b and V2c at k lambda_De 1.0 failed as specified and were followed by new declared gates, see `studies/hkr/validation*.json`). Main grid runs (Nx 64/128/256/512/640/1024, v_q/v_te 0.03) are incomplete: only Nx 64 noise finished (positivity lost at t = 163.5), others are checkpoints. Hermite c = 64 + Lawson at Nx 128 reached t = 960 with no failure. No conclusion about the k-range effect yet.

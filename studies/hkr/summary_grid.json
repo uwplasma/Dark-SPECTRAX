@@ -27,12 +27,32 @@
    },
    "dE_avg_at_tcert": 0.013480169314837122,
    "dE_inst_max_over_Eth": 0.03871409245545195,
-   "t_otsi": 0.0,
+   "t_otsi": "initial noise field already above E0^2",
    "max_Uk_over_E0sq": 21.356560901047928,
    "wall_s": 360.1588247071486,
    "commit": "f2bc35b"
   }
  },
  "pairs": {},
- "q1": {}
+ "q1": {},
+ "hermite": {
+  "Nx128": {
+   "t_end": 960.0,
+   "status": "success",
+   "t_pos": null,
+   "t_ledger_1e-9": null,
+   "steps": 26692,
+   "rejected": 10288,
+   "wall_s": 172.16589332965668,
+   "failure": "None",
+   "kl_max_retained": 0.2086263535817181,
+   "dE_avg_over_Eth": {
+    "100": 9.708170052380602e-05,
+    "200": 0.0011686623223240225,
+    "300": 0.008572637404652169,
+    "500": 0.10005750694384126,
+    "700": 0.47376682515176016
+   }
+  }
+ }
 }
