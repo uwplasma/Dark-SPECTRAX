@@ -1,0 +1,26 @@
+{
+ "results": {
+  "S1_momentum_rel_err": 2.314693707281236e-14,
+  "S1_position_rel_err_200": 4.014842788616956e-07,
+  "S1_position_ratio": 4.000003074838949,
+  "S2_norm_drift_200": 1.4432899320127035e-15,
+  "S2_radius_rel_err_200": 0.00012327863042363034,
+  "S2_norm_drift_400": 1.1102230246251565e-15,
+  "S2_radius_rel_err_400": 3.083681075058986e-05,
+  "S2_phase_err_200": 0.0005166947865635727,
+  "S2_phase_ratio": 3.999555949178858,
+  "S3_drift_rel_err": 0.00016580335830973923,
+  "S3_drift_ratio": 3.7083341632352465
+ },
+ "pass_": {
+  "S1_momentum_rel_err": true,
+  "S1_position_rel_err_200": true,
+  "S1_position_ratio": true,
+  "S2_norm_drift_400": true,
+  "S2_phase_err_200": true,
+  "S2_phase_ratio": true,
+  "S2_radius_rel_err_200": true,
+  "S3_drift_rel_err": true,
+  "S3_drift_ratio": true
+ }
+}
