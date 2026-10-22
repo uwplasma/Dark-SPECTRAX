@@ -19,7 +19,14 @@ B="--Nx 32 --Nu 4096 --dt 0.02 --frame osc --umax 32 --xshift mask23"
 # (6.5e-6), relativistic and nonrelativistic with the same seed. Weak drive: deterministic seeds and the HHS-scaled load (Np A0^2 fixed:
 # npc = 1.845e8, U_k(0) ~ 7e-10), T = 3000. Gate D (ledger <= 1e-4 W) FAILED for the first production run (2.3e-4); follow-up D2, declared
 # here before the dt pair is run: in the dt 0.02 / 0.01 pair of stage2 the max ledger defect ratio is in [3, 5] and the dt = 0.01 value <= 1e-4 W.
+# stage1c (declared before running): the npc 2.05e5 relativistic run (U_k(0) = 6.9e-7) develops f < 0 from t = 407 (first f < -1e-3), edge contact at 700 and a
+# broken ledger by 800, with U_e = 0.05-0.2 (electron-ion drift 1.5-6 v_te): the cascade reaches the mask. Nx 64 (noise modes 1..21) and 128 (modes 1..42)
+# test whether the window extends with k range, same seed (the draw is different because the number of modes differs).
 case $1 in
+stage1c)
+  chunked --vq 0.03 --T 1000 --Nx 64 --Nu 4096 --dt 0.02 --frame osc --umax 32 --xshift mask23 --noise shot --seed 1 --npc 205000
+  chunked --vq 0.03 --T 1000 --Nx 128 --Nu 4096 --dt 0.02 --frame osc --umax 32 --xshift mask23 --noise shot --seed 1 --npc 205000
+  ;;
 stage1b)
   chunked --vq 0.03 --T 1000 $B --noise shot --seed 1 --npc 205000
   chunked --vq 0.03 --T 1000 $B --noise shot --seed 1 --npc 205000 --nonrel
