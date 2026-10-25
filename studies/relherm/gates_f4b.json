@@ -1,0 +1,9 @@
+{
+ "finite": true,
+ "ledger_max": 1.6319643851567863e-06,
+ "max_abs_K_minus_K0": 0.23909678254441685,
+ "ledger_rel": 6.825538879234468e-06,
+ "max_abs_D_over_max_dK": 0.007323005239207897,
+ "peak_mean_current_Jy": 0.5880294578355949,
+ "pass": true
+}
