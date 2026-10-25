@@ -131,3 +131,41 @@ def run(S, y0, u0, drive, Bext, T, dt, nsave, evolve_fields=True, probe=None):
         y, o = chunk(y, j)
         outs.append(o)
     return y, outs
+
+
+def hyper_spectrum(N):
+    """SPECTRAX precompute_collisions on both axes: n(n-1)(n-2)/((N-1)(N-2)(N-3)) summed over nx and ny."""
+    i = jnp.arange(N, dtype=float)
+    h = i * (i - 1) * (i - 2) / ((N - 1) * (N - 2) * (N - 3))
+    return h[:, None] + h[None, :]
+
+
+def make_rhs_closure(S, u0, drive, Bext, nu):
+    base = make_rhs(S, u0, drive, Bext, True)
+    col = hyper_spectrum(S.N)
+
+    def rhs(t, y):
+        C, Ex, Ey, Bz, W, D = y
+        dC, dEx, dEy, dBz, dW = base(t, (C, Ex, Ey, Bz, W))
+        loss = -nu * col[None, :, :, None] * C
+        dD = sum(S.m[s] * S.ax[s] * S.ay[s] * jnp.real(S.kin(s, u0, loss[s])[0, 0, 0]) for s in range(S.Ns))
+        return (dC + loss, dEx, dEy, dBz, dW, dD)
+    return rhs
+
+
+def run_closure(S, y0, u0, drive, Bext, T, dt, nsave, nu):
+    from relherm import rk4
+    rhs = make_rhs_closure(S, u0, drive, Bext, nu)
+    per = int(round(T / dt)) // nsave
+
+    @jax.jit
+    def chunk(y, j):
+        y, _ = jax.lax.scan(lambda y, i: (rk4(rhs, y, i * dt, dt), None), y, j * per + jnp.arange(per))
+        Jx, Jy = current_k(S, y[0], u0)
+        return y, (jnp.real(Jx[0]), jnp.real(Jy[0]), kinetic_energy(S, y[0], u0), field_energy(y[1], y[2], y[3]), y[4], y[5])
+
+    outs, y = [], y0
+    for j in range(nsave):
+        y, o = chunk(y, j)
+        outs.append(o)
+    return y, outs

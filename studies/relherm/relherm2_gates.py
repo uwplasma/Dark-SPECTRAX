@@ -7,6 +7,11 @@
      rotates by angle (q/m) Bz0 t / gamma(u0), tensor 100x100 Gauss-Hermite quadrature of the initial Maxwellian):
      max abs error <= 1e-5. The nonrelativistic (rigid rotation by (q/m)Bz0 t) answer must differ by > 1e-3 (discrimination).
  f3  magnetic work zero: max_t |K - K0| / K0 <= 1e-6 in the f2 run (K with gamma - 1).
+ f4  (FAILED when run: NaN at t about 8; the frozen-field linearisation of the truncated AW operator has max Re(lambda) = 4.7 (rel) vs 4.9 (nonrel)
+     at N=24, E1=0.3, the known truncation instability, not specific to relativity.)
+ f4b declared after f4 failed: same run as f4 with the SPECTRAX hypercollision spectrum, rate nu = 10 on both axes (acts on n >= 3),
+     and the energy removed by the closure D = int sum m a [Gamma (-nu col C)]_00 dt integrated as an extra state:
+     finite run to T = 30 and max|K - K0 + U - U0 - W_ext - D| <= 1e-5 max|K - K0|; reports max|D|/max|K - K0|.
  f4  energy ledger K - K0 + U - U0 - W_ext, U = (Ex^2 + Ey^2 + Bz^2)/2, 1D2V electron-ion run with uniform Ey drive
      E0 cos(3 t), E0 = 1.5 (quiver u about 0.5), density seed 1e-3 at k = 3, Lx = 2 pi / 3, Nx = 16, N = 24, dt = 0.01, T = 30:
      max |ledger| <= 1e-5 max|K - K0|; also reports the peak mean electron speed.
@@ -149,7 +154,37 @@ def gate_f4():
     out("f4", d)
 
 
+def gate_f4b():
+    N, Nx, Lx = 24, 16, 2 * np.pi / 3
+    T, dt, nu = 30.0, 0.01, 10.0
+    MI = 1836.0
+    ae, ai = 0.2, 0.1 * np.sqrt(2) / np.sqrt(MI)
+    S = R2.Setup2(N, Nx, Lx, [-1.0, 1.0], [1.0, MI], [ae, ai], [ae, ai], inv_c2=1.0)
+    C0 = np.zeros((2, N, N, S.nk), complex)
+    for s, (a, sig) in enumerate(((ae, 0.1), (ai, 0.1 / np.sqrt(MI)))):
+        f = lambda u, sig=sig: np.exp(-u ** 2 / (2 * sig ** 2)) / np.sqrt(2 * np.pi * sig ** 2)
+        c = R.project(f, a, 0.0, N, nq=4096, span=12.0)
+        C0[s, :, :, 0] = np.outer(c, c)
+    C0[0, :, :, 1] = 1e-3 / 2 * C0[0, :, :, 0]
+    k1 = 2 * np.pi / Lx
+    Ex = np.zeros(S.nk, complex); Ex[1] = -1j * (-1.0 * ae * ae * C0[0, 0, 0, 1]) / k1
+    z = jnp.zeros(S.nk, complex)
+    y0 = (jnp.asarray(C0), jnp.asarray(Ex), z, z, jnp.zeros(()), jnp.zeros(()))
+    u0 = jnp.zeros((2, 2))
+    K0 = float(R2.kinetic_energy(S, y0[0], u0)); U0 = float(R2.field_energy(y0[1], y0[2], y0[3]))
+    E0 = 1.5
+    y, outs = R2.run_closure(S, y0, u0, lambda t: E0 * jnp.cos(3.0 * t), 0.0, T, dt, 60, nu)
+    K = np.array([float(o[2]) for o in outs]); U = np.array([float(o[3]) for o in outs]); W = np.array([float(o[4]) for o in outs])
+    D = np.array([float(o[5]) for o in outs]); Jy = np.array([float(o[1]) for o in outs])
+    led = K - K0 + (U - U0) - W - D
+    d = {"finite": bool(np.all(np.isfinite(K))), "ledger_max": float(np.max(np.abs(led))), "max_abs_K_minus_K0": float(np.max(np.abs(K - K0))),
+         "ledger_rel": float(np.max(np.abs(led)) / np.max(np.abs(K - K0))), "max_abs_D_over_max_dK": float(np.max(np.abs(D)) / np.max(np.abs(K - K0))),
+         "peak_mean_current_Jy": float(np.max(np.abs(Jy)))}
+    d["pass"] = bool(d["finite"] and d["ledger_rel"] <= 1e-5)
+    out("f4b", d)
+
+
 if __name__ == "__main__":
     w = sys.argv[1]
     spx = sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, "..", "..", "..", "rh-spx")
-    {"f1": lambda: gate_f1(spx), "f2": gate_f2f3, "f4": gate_f4}[w]()
+    {"f1": lambda: gate_f1(spx), "f2": gate_f2f3, "f4": gate_f4, "f4b": gate_f4b}[w]()

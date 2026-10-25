@@ -1,0 +1,7 @@
+{
+ "N": 32,
+ "max_abs_err_v": 1.709412594114168e-10,
+ "rigid_rotation_vs_exact": 0.15398944353625044,
+ "max_abs_v": 0.2821379956142691,
+ "pass": true
+}
