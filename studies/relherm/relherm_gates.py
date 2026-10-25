@@ -82,7 +82,7 @@ def gate_a(spx):
     ref = _model.Hermite_Fourier_system(Ckj, C, F, kx, ky, kz, k2, col, *tabs, Lx, 1.0, 1.0, 0.0, 0.0, alpha, us,
                                         jnp.array([qm]), jnp.array([1.0]), N, 1, 1, 1, mask23=mask)
     ref = np.asarray(ref).reshape(N, nkx)
-    Jref = np.asarray(_model.plasma_current(jnp.array([1.0]), alpha, us, Ckj, N, 1, 1, 1))[0].reshape(-1)
+    Jref = np.asarray(_model.plasma_current(jnp.array([qm]), alpha, us, Ckj, N, 1, 1, 1))[0].reshape(-1)
     res = {}
     for name, ic2 in (("a1", 0.0), ("a2", 1e-8)):
         S = R.Setup(N, Nx, Lx, [qm], [1.0], [a], inv_c2=ic2)
