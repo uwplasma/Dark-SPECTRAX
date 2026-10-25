@@ -1492,6 +1492,27 @@ The wrong value depends on `max_steps` (same solve, 6020 vs 20000), which points
 
 Not covered: gradients through the pump-frame remap and `run_adaptive`, through a fitted damping rate of a Landau mode, nonlinear-regime objectives, and GPU.
 
+## H04: relativistic 1D1V grid, HHS-like test (`studies/relgrid.py`, `relgrid_gates.py`, `relgrid_analysis.py`)
+
+- Record: `studies/relgrid/summary.json`, repository `a5aab9f`. Relativistic x-u Vlasov-Ampere, v_q/v_te 0.03, E_th = 5e-4 n m c^2, trailing 200/omega_pe average. Gates A, B, C2 pass; D fails for all runs but dt 0.01; D2 fails (ratio 8.0 not in [3,5]).
+
+| run | dE1D_e/E_th at 200 / 500 / 1000 | Ebar energy / linear at 1000 | t(W 10% off linear) | first f<-1e-3 | edge>1e-6 | ledger>1e-4 |
+|---|---|---|---|---|---|---|
+| rel_det_vq0.03 | -0.00324 / 0.0177 / 0.0559 | 0.0407 | 392 | - | - | 507 |
+| rel_shot_vq0.03_npc205_Nx32 | 0.862 / 31.4 / 74.6 | 0.0193 | 214 | 0.5 | 61 | 75.5 |
+| rel_shot_vq0.03_npc2.05e4_Nx32 | 0.00553 / 0.203 / 49.9 | 0.14 | 389.5 | 240.5 | 504.5 | 513.5 |
+| nonrel_shot_vq0.03_npc2.05e4_Nx32 | 0.01 / 0.413 / 209 | 0.119 | 866.5 | 240 | 453.5 | 494.5 |
+| rel_shot_vq0.03_npc2.05e5_Nx32 | -0.0034 / -0.0185 / 15.2 | 0.302 | 392.5 | 407.5 | 678.5 | 507 |
+| nonrel_shot_vq0.03_npc2.05e5_Nx32 | 0.001 / 0.0445 / 99.5 | 0.258 | 769.5 | 394 | 591 | 606.5 |
+| rel_shot_vq0.03_npc2.05e5_Nx64 | -0.00379 / 5.36 / 51 | 0.0078 | 386 | 278 | 373.5 | 384 |
+| rel_shot_vq0.03_npc2.05e5_Nx128 | -0.0037 / 10 / 29.9 | 0.0136 | 367 | 246 | 346.5 | 356 |
+| rel_det_vq0.001 | 2.17e-05 / 7.57e-05 / 0.0022 | 0.924 | 1309.5 | - | - | 1492.5 |
+| rel_shot_vq0.001 | -4.15e-06 / -5.96e-05 / -0.00029 | 0.956 | 1413.5 | 2719 | - | 1470.5 |
+| nonrel_det_vq0.001 | 2.67e-05 / 0.000136 / 0.00256 | 0.966 | - | - | - | 1727.5 |
+| nonrel_shot_vq0.001 | 7.74e-07 / 7.98e-07 / 1.4e-06 | 1 | - | 2592.5 | 2854.5 | 1727.5 |
+
+- Result: with relativistic dynamics the mean-field resonance switches off at t ~ 370-390 (nonrelativistic shot runs: 770-870), matching HHS timing. The k != 0 energy reaches ~50 E_th by t = 1000 (Nx 64 shot 51, Nx 32 npc 2.05e4 50) but only after f < 0 (t 240-280), box-edge contact (t 350-500) and a broken ledger (t 350-510); within validity (t < ~350) dE1D_e/E_th < 0.01. Nx 128 gives 30. Not a valid reproduction of the 50 E_th; refinement windows (gate E) all agree to T = 1000 for the deterministic run.
+
 ## Phase-space movies: resolution of the reconstructed f (`python studies/figures.py phase --Nx 64 --field-nu 1`)
 
 Question: how long do fixed-basis Hermite runs resolve f(x, v) itself (not only the field) once trapping starts?

@@ -766,7 +766,7 @@ def c09_rows(r):
 
 def relgrid_section():
     import json as _j
-    f = ROOT / "studies" / "relgrid" / "summary.json"
+    f = root / "studies" / "relgrid" / "summary.json"
     if not f.exists():
         return ""
     S = _j.loads(f.read_text())
