@@ -57,7 +57,7 @@ def spx_args(spx, N, Nx, Lx, a, u0, q_over_m):
     n = jnp.arange(N)[None, None, None, :, None, None, None]
     p = jnp.zeros((1, 1, 1, 1, 1, 1, 1))
     tabs = (jnp.sqrt(n + 1.0), jnp.sqrt(n * 1.0), jnp.sqrt(p + 1.0), jnp.sqrt(p), jnp.sqrt(p + 1.0), jnp.sqrt(p))
-    mask = jnp.asarray(_simulation.twothirds_mask(Ny, Nx, Nz))
+    mask = jnp.asarray(_simulation._twothirds_mask(Ny, Nx, Nz))
     return _model, tabs, kx, ky, kz, k2, mask, Ny, Nz
 
 
