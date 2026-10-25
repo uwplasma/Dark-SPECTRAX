@@ -1,0 +1,9 @@
+{
+ "ledger_max": 6.54696452606629e-09,
+ "max_abs_K_minus_K0": 0.8156889805925888,
+ "ledger_rel": 8.02630007495013e-09,
+ "max_abs_u0_e": 1.5152413815473078,
+ "max_gamma_minus_1_centre": 0.8154769192565887,
+ "max_v_over_c_centre": 0.8346244259430062,
+ "pass": true
+}
