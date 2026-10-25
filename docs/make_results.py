@@ -1278,6 +1278,80 @@ def grid_note(refs):
     return head + "; ".join(out) + (". " if out else "") + f"B02 growth differences are at most {g:.1e}."
 
 
+def hhsref_section():
+    """HHS reference studies: relativistic PIC (relpic) and k-range grids (hkr); numbers read from the summaries."""
+    rp = json.loads((root / "studies/relpic/summary.json").read_text())
+    hr = json.loads((root / "studies/hkr/summary_grid.json").read_text())
+    eth = 5e-4
+    ts = rp["times"]
+    L = ["## What produces HHS's k != 0 electron energy? Relativistic PIC (relpic) and k-range grids (hkr)", "",
+         "Both studies ran their gates as declared in `studies/relpic/gates.py` and `studies/hkr_gates.py` (committed before "
+         "the runs; not amended). Runs used the pins in force when they were made: JAX-in-Cell `2d693cb` with "
+         "Dark-JAX-in-Cell `d547579` (relpic) and SPECTRAX `35231ab` (hkr Hermite runs); the grid chains use NumPy/SciPy only. "
+         "The later parent re-pin does not enter these records.", "",
+         "### relpic: relativistic Boris PIC at v_q/v_te = 0.03 (1000 cells, 103 ppc, dt 0.02, T up to 2000)", "",
+         "Trailing-200 mean of the electron thermal-energy increase dW_th in units of E_th = 5e-4 n m c^2 L "
+         "(seed mean +- standard deviation, 3 seeds for R and N).", "",
+         "| t | relativistic R | Newtonian N | R/N | separation (seed s.e.) | HHS Fig. 2 (digitized) / R |", "|---|---|---|---|---|---|"]
+    g8 = {r["t"]: r for r in rp["G8_relativistic_vs_newtonian"]}
+    hh = {r["t"]: r for r in rp["HHS_fig2_digitized"]}
+    for i, t in enumerate(ts):
+        r, n = rp["observables"]["R"]["dW_th"][i], rp["observables"]["N"]["dW_th"][i]
+        if r is None or n is None:
+            continue
+        row = g8.get(t)
+        h = hh.get(t)
+        cells = (f"{row['ratio_R_over_N']:.2f} | {row['sigmas']:.1f} sigma" if row else "- | -")
+        hcell = f"{1 / h['ratio']:.2f}" if h and h["ratio"] == h["ratio"] and h["ratio"] else "-"
+        L.append(f"| {t:g} | {r[0] / eth:.1f} +- {(r[1] or 0) / eth:.1f} | {n[0] / eth:.1f} +- {(n[1] or 0) / eth:.1f} | "
+                 f"{cells} | {hcell} |")
+    wek = {k: max(float(__import__('numpy').load(root / f"studies/relpic/records/{k}/history.npz")["nonzero_electric"].max()) / eth
+                  for k in ks) for k, ks in (("R", ("R_s0", "R_s1", "R_s2")), ("N", ("N_s0", "N_s1", "N_s2")))}
+    L += ["", f"Peak k != 0 electric energy W_Ek over all seeds: {wek['R']:.1f} E_th (R), {wek['N']:.1f} E_th (N). "
+          "In these runs the k != 0 field energy is thus a few E_th at most; the thermal "
+          f"increase is {rp['observables']['R']['dW_th'][4][0] / eth:.0f} E_th (R) and "
+          f"{rp['observables']['N']['dW_th'][4][0] / eth:.0f} E_th (N) at t = 1000.", "",
+         "Gates:", ""]
+    rows = [f"- G1 energy defect and G2 constraints: " + ("pass" if all(v["ok_G1"] and v["ok_G2"] for v in rp["ledger"].values()) else "FAIL")
+            + f" for all {len(rp['ledger'])} runs (max defect {max(v['energy_defect'] for v in rp['ledger'].values()):.3f}, gate 0.05);",
+            f"- G3 early drive response: {'pass' if rp['G3_early']['ok'] else 'FAIL'} (max {max(rp['G3_early']['values'].values()):.4f});"]
+    for k, v in rp["refinement"].items():
+        rows.append(f"- {k}: {'pass' if v['ok'] else 'FAIL'} at t = " + ", ".join(f"{r['t']:g} ({'ok' if r['ok'] else 'fail'})" for r in v["rows"]) + ";")
+    rows += [f"- G8 relativistic detuning resolved at every time (>= 3 s.e.): {all(r['resolved'] for r in rp['G8_relativistic_vs_newtonian'])};",
+             f"- G9 no-drive control: {'pass' if rp['G9_noise_floor']['ok'] else 'FAIL'} (dW_th(1000) = {rp['G9_noise_floor']['no_drive']:.1e}, driven {rp['G9_noise_floor']['driven']:.1e});",
+             "- G10 Hermite (Nx 32, Nn 64, c 4 record) vs Newtonian PIC: " + ("pass" if rp["G10_hermite_vs_newtonian_pic"]["ok"] else "FAIL")
+             + " (Hermite " + ", ".join(f"{r['hermite'] / eth:.2f}" for r in rp["G10_hermite_vs_newtonian_pic"]["rows"])
+             + " E_th against PIC " + ", ".join(f"{r['pic_N'] / eth:.0f}" for r in rp["G10_hermite_vs_newtonian_pic"]["rows"]) + " at t = 400, 600, 800, 1000)."]
+    L += rows
+    L += ["", "Reading: the relativistic pusher separates from the Newtonian one by 2.6x in dW_th at late time (resolved to >= 3 sigma at "
+          "every checked time), and the digitized HHS Fig. 2 thermal-energy curve (about 25 E_th at t = 1000) lies 8-15% above R and a factor 2.3 below N "
+          "(digitization uncertainty not quantified). The ~50 E_th that the question refers to is not reproduced by R in dW_th or W_Ek; "
+          "N reaches 56 E_th in dW_th, but N is not the HHS physics. G4 (ppc 412 at t = 1000: +19% over the R mean) and G5 (dx 0.02 at "
+          "t = 400, 600: +19%, +18%) fail the declared 15% / 2 sigma tolerance, so the absolute level is converged only to about 20%. The Nx 32 Hermite record is 1-2 orders of magnitude below the PIC "
+          "(G10 fails): the Hermite model with k lambda_De <= 0.045 does not reproduce the PIC thermal energy.", "",
+          "### hkr: Fourier range of the grid Vlasov reference (v_q/v_te = 0.03, Nv 2048, vmax 16 v_te, dt 0.02)", "",
+          "| run | k lambda_De max | certified to t | dE_e avg at cert. (E_th) | peak instantaneous dE_e (E_th) |", "|---|---|---|---|---|"]
+    for k, v in hr["runs"].items():
+        L.append(f"| {k} | {v['kl_max_retained']:.2f} | {v['t_cert']:g} | {v['dE_avg_at_tcert']:.3g} | {v['dE_inst_max_over_Eth']:.3g} |")
+    d1 = hr["runs"]["Nx1024_det"]["dE_avg_over_Eth"]
+    L += ["", "Deterministic seed, 200-averaged dE_e (E_th) at t = 100, 300, 500, 700, 1000, Nx 1024: "
+          + ", ".join(f"{d1[t]:.3g}" for t in ("100", "300", "500", "700", "1000")) + "; Nx 256, 640 and 1024 agree "
+          + f"(first departure at {hr['pairs']['det_Nx256_vs_640']['t_agree_dE']:g} and {hr['pairs']['det_Nx640_vs_1024']['t_agree_dE']:g}, i.e. their whole common certified windows). "
+          "Shot-noise seed (Np = 1e7): positivity is lost at t = 69-163 for every Nx, with dE_e = 0.013 E_th at that point; the Nx 1024 / Nx 64 ratio is "
+          + f"{hr['q1']['noise_Nx1024_over_Nx64']['ratio']:.2f} (gate: cutoff matters if >= 2; HHS reached if >= 25 E_th: no).", "",
+         "Hermite (c = 64, Lawson, noise floor 1e-14) against the same-Nx grid:", "",
+         "| Nx | k lambda_De max | last t | status | agreement with grid to t |", "|---|---|---|---|---|"]
+    for k, v in hr["hermite"].items():
+        L.append(f"| {k[2:]} | {v['kl_max_retained']:.2f} | {v['t_end']:g} | {v['status']}"
+                 + (f" ({v['failure'][:48]})" if v['status'] != 'success' else " (chunk 880-920 stopped after 3 h wall)") + f" | {v.get('t_res_vs_grid', '-')} |")
+    L += ["", "Reading: in the nonrelativistic grid reference, extending the Fourier cutoff from k lambda_De 0.10 to 1.69 changes nothing "
+          "measurable; the deterministic energy reaches only ~2.3 E_th by t = 1000, and the shot-noise runs end by positivity loss at "
+          "~0.013 E_th. Neither route gives ~50 E_th. Hermite Nx 128 and 256 stay on the grid to within the 10% rule until they "
+          "fail near t = 900-975; Nx 512 follows the grid to t = 880 but its ledger flag (1e-9) first trips at t = 83."]
+    return "\n".join(L)
+
+
+
 def extra_sections():
     L = ["## B02/B03: two-stream and bump-on-tail growth, ordinary and dark", "",
          f"Input: `{inst['command']}`; repository `{inst['repository_commit']}`. Electrostatic inputs mapped with "
@@ -2131,6 +2205,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
   longitudinal branch ($\\omega\\approx\\sqrt{{k^2c^2+\\Omega_D^2}}$) is weakly excited and only included in the fit.
 
 {extra_sections()}
+
+{hhsref_section()}
 
 {nonlinear_and_hhs()}
 

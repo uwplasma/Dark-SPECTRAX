@@ -102,6 +102,72 @@ Independent D_L roots agree with the Dark-JAX-in-Cell roots to 4e-14.
 
 The PIC values move toward the Hermite values under joint cell/particle refinement and the amplitude difference roughly halves from 32 to 128 cells, but the 128-cell PIC fits still differ from the Hermite fits by about 1-2% in damping. The maxima rule with a 1% seed is itself biased by about 1% relative to the linear root (Hermite rows); compare like with like. Not a claim of PIC convergence.
 
+## What produces HHS's k != 0 electron energy? Relativistic PIC (relpic) and k-range grids (hkr)
+
+Both studies ran their gates as declared in `studies/relpic/gates.py` and `studies/hkr_gates.py` (committed before the runs; not amended). Runs used the pins in force when they were made: JAX-in-Cell `2d693cb` with Dark-JAX-in-Cell `d547579` (relpic) and SPECTRAX `35231ab` (hkr Hermite runs); the grid chains use NumPy/SciPy only. The later parent re-pin does not enter these records.
+
+### relpic: relativistic Boris PIC at v_q/v_te = 0.03 (1000 cells, 103 ppc, dt 0.02, T up to 2000)
+
+Trailing-200 mean of the electron thermal-energy increase dW_th in units of E_th = 5e-4 n m c^2 L (seed mean +- standard deviation, 3 seeds for R and N).
+
+| t | relativistic R | Newtonian N | R/N | separation (seed s.e.) | HHS Fig. 2 (digitized) / R |
+|---|---|---|---|---|---|
+| 200 | 0.2 +- 0.0 | 0.2 +- 0.0 | - | - | 1.03 |
+| 400 | 7.3 +- 0.1 | 7.6 +- 0.2 | 0.96 | 3.2 sigma | 1.15 |
+| 600 | 16.1 +- 0.5 | 22.3 +- 1.0 | - | - | 1.11 |
+| 800 | 20.0 +- 0.3 | 46.9 +- 2.8 | 0.43 | 16.2 sigma | 1.12 |
+| 1000 | 21.5 +- 0.6 | 55.9 +- 5.6 | - | - | 1.14 |
+| 1200 | 22.3 +- 1.2 | 58.9 +- 8.4 | 0.38 | 7.5 sigma | 1.12 |
+| 1400 | 22.9 +- 1.4 | 60.1 +- 8.4 | - | - | - |
+| 1600 | 23.3 +- 1.3 | 61.1 +- 8.2 | 0.38 | 7.9 sigma | - |
+| 1800 | 23.8 +- 1.4 | 62.3 +- 7.6 | - | - | 1.10 |
+| 2000 | 24.3 +- 1.6 | 63.8 +- 7.0 | 0.38 | 9.5 sigma | 1.08 |
+
+Peak k != 0 electric energy W_Ek over all seeds: 4.1 E_th (R), 5.0 E_th (N). In these runs the k != 0 field energy is thus a few E_th at most; the thermal increase is 22 E_th (R) and 56 E_th (N) at t = 1000.
+
+Gates:
+
+- G1 energy defect and G2 constraints: pass for all 12 runs (max defect 0.009, gate 0.05);
+- G3 early drive response: pass (max 0.0027);
+- G4_ppc412: FAIL at t = 400 (ok), 600 (ok), 800 (ok), 1000 (fail);
+- G5_dx2000: FAIL at t = 400 (fail), 600 (fail), 800 (ok), 1000 (ok);
+- G6_dt0.01: pass at t = 400 (ok), 600 (ok), 800 (ok), 1000 (ok);
+- G7_quintic_s0: pass at t = 400 (ok), 600 (ok), 800 (ok), 1000 (ok);
+- G7_quintic_s1: pass at t = 400 (ok), 600 (ok), 800 (ok), 1000 (ok);
+- G8 relativistic detuning resolved at every time (>= 3 s.e.): True;
+- G9 no-drive control: pass (dW_th(1000) = -5.7e-07, driven 1.1e-02);
+- G10 Hermite (Nx 32, Nn 64, c 4 record) vs Newtonian PIC: FAIL (Hermite 0.03, 0.23, 0.87, 2.40 E_th against PIC 8, 22, 47, 56 at t = 400, 600, 800, 1000).
+
+Reading: the relativistic pusher separates from the Newtonian one by 2.6x in dW_th at late time (resolved to >= 3 sigma at every checked time), and the digitized HHS Fig. 2 thermal-energy curve (about 25 E_th at t = 1000) lies 8-15% above R and a factor 2.3 below N (digitization uncertainty not quantified). The ~50 E_th that the question refers to is not reproduced by R in dW_th or W_Ek; N reaches 56 E_th in dW_th, but N is not the HHS physics. G4 (ppc 412 at t = 1000: +19% over the R mean) and G5 (dx 0.02 at t = 400, 600: +19%, +18%) fail the declared 15% / 2 sigma tolerance, so the absolute level is converged only to about 20%. The Nx 32 Hermite record is 1-2 orders of magnitude below the PIC (G10 fails): the Hermite model with k lambda_De <= 0.045 does not reproduce the PIC thermal energy.
+
+### hkr: Fourier range of the grid Vlasov reference (v_q/v_te = 0.03, Nv 2048, vmax 16 v_te, dt 0.02)
+
+| run | k lambda_De max | certified to t | dE_e avg at cert. (E_th) | peak instantaneous dE_e (E_th) |
+|---|---|---|---|---|
+| Nx128_det | 0.21 | 882 | 1.32 | 4.1 |
+| Nx256_det | 0.42 | 965.5 | 1.99 | 5.99 |
+| Nx512_det | 0.84 | 996.5 | 2.3 | 7.12 |
+| Nx640_det | 1.06 | 993.5 | 2.28 | 6.87 |
+| Nx1024_det | 1.69 | 1000 | 2.34 | 7.07 |
+| Nx64_noise | 0.10 | 163.5 | 0.0135 | 0.0387 |
+| Nx128_noise | 0.21 | 122 | 0.0131 | 0.0277 |
+| Nx256_noise | 0.42 | 69 | 0.0126 | 0.0252 |
+| Nx512_noise | 0.84 | 82 | 0.0127 | 0.0252 |
+| Nx640_noise | 1.06 | 87.5 | 0.0129 | 0.0253 |
+| Nx1024_noise | 1.69 | 103.5 | 0.0131 | 0.0267 |
+
+Deterministic seed, 200-averaged dE_e (E_th) at t = 100, 300, 500, 700, 1000, Nx 1024: 9.71e-05, 0.00857, 0.1, 0.473, 2.34; Nx 256, 640 and 1024 agree (first departure at 965.5 and 993.5, i.e. their whole common certified windows). Shot-noise seed (Np = 1e7): positivity is lost at t = 69-163 for every Nx, with dE_e = 0.013 E_th at that point; the Nx 1024 / Nx 64 ratio is 1.08 (gate: cutoff matters if >= 2; HHS reached if >= 25 E_th: no).
+
+Hermite (c = 64, Lawson, noise floor 1e-14) against the same-Nx grid:
+
+| Nx | k lambda_De max | last t | status | agreement with grid to t |
+|---|---|---|---|---|
+| 128 | 0.21 | 976.5 | failure (segment 0: diffrax._solution.RESULTS<The maximum) | 975.0 |
+| 256 | 0.42 | 900 | failure (segment 0: positivity lost at t = 898) | 900.0 |
+| 512 | 0.84 | 880 | success (chunk 880-920 stopped after 3 h wall) | 880.0 |
+
+Reading: in the nonrelativistic grid reference, extending the Fourier cutoff from k lambda_De 0.10 to 1.69 changes nothing measurable; the deterministic energy reaches only ~2.3 E_th by t = 1000, and the shot-noise runs end by positivity loss at ~0.013 E_th. Neither route gives ~50 E_th. Hermite Nx 128 and 256 stay on the grid to within the 10% rule until they fail near t = 900-975; Nx 512 follows the grid to t = 880 but its ledger flag (1e-9) first trips at t = 83.
+
 ## B01/B06: nonlinear Landau and echo, ordinary and dark (`python studies/b01_b06.py`)
 
 k = 0.3, eps = 0.05 (B01) and k1 = 1, k2 = 1.5 kick at tau = 10, echo at k3 = 0.5 (B06), electrostatic units, beta = 0.1. Dark: eta = 0.3, Omega_D = omega_pe. Ordinary runs are compared with the imported grid solver; there is no independent dark reference. nu is the parent numerical hypercollision coefficient.
