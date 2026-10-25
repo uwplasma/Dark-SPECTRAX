@@ -33,7 +33,7 @@ from spectrax import uniform_acceleration as _parent_uniform_acceleration
 
 jax.config.update("jax_enable_x64", True)
 
-PARENT_COMMIT = "35231ab997d14f54a777397a7f76679f4c4aaf9e"  # SPECTRAX integration/dark-baseline, not a release
+PARENT_COMMIT = "a6a560bafd42e0f2c957d2b080b7ac786c14b81e"  # SPECTRAX integration/dark-baseline-2, not a release
 MODES = ("ordinary", "prescribed_drive", "self_consistent")
 FRAMES = ("fixed", "pump")
 COLLISION_MODELS = ("none", "dougherty", "dougherty_g")

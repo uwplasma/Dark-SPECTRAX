@@ -9,6 +9,52 @@ review; every recommendation is for the owner to act on.
 - Tests are local runs. Where GitHub CI is cited, it is Python 3.11/3.12 plus codecov on the new head.
 - Heads in the table are as of 2026-10-03. The PR branches were updated on 2026-10-07 and their current heads differ (`gh pr list -R uwplasma/SPECTRAX`); the integration branch `f33dfda` is built from these branches.
 
+## Resync of 2026-10-24 (current pin)
+
+SPECTRAX main is now `b668d87`: the owner merged #46, #48, #12, #13 and #50. Every remaining open PR of ours was updated by
+merging `origin/main` (and, in stacks, its parent) into its head, with ordinary pushes and no history rewrite, and a new parent
+branch `integration/dark-baseline-2` was built from `b668d87`. Dark-SPECTRAX is pinned to it:
+`a6a560bafd42e0f2c957d2b080b7ac786c14b81e`. The earlier branch `integration/dark-baseline` (`35231ab`) is untouched.
+
+Merged since the previous review: #46, #48, #12, #13, #50 (all in main `b668d87`).
+Note: #48 sets `requires-python >=3.11`, so main no longer supports Python 3.10.
+
+| PR | Head, old → new | Conflicts with main | Local tests on the new head |
+|---|---|---|---|
+| #9 | e4355ee → 7979f97 | `_simulation.py` (output dict) | 41 passed |
+| #55 | eaec43c → 1b48a7e | `_simulation.py` (initial state now a pytree; mask re-applied before the reshape) | 97 passed |
+| #44 | e931983 → 97d9605 | none | 25 passed |
+| #18 | a9a145b → a2367ed | tests (kept both sides) | 32 passed |
+| #51 | fc10b11 → cd59474 | none | 30 passed |
+| #21 | 3a64507 → 3d07157 | README, pyproject, `_simulation.py`, tests | 38 passed; still conflicts with #18 (two midpoint implementations) |
+| #34 | 5c4a70f → b9d8fe3 | none | 19 passed |
+| #62 | 445ba0c → 7c0c692 | tests (kept both sides) | 21 passed |
+| #63 | 71faa7e → 7948bdb | none | 22 passed |
+| #64 | 5996a67 → c26b154 | none | 22 passed |
+| #65 | 8420322 → e8a66e2 | README (kept the TOML-first text, moved `dtmin`, `max_steps`, `throw` into its example) | 22 passed |
+| adaptive/base | 287c9e9 → f259f03 | none | 149 passed |
+| #56 | 2a5c4c7 → 63efe6b | none | 154 passed |
+| #57 | 75477e8 → 140b3c0 | none | 158 passed |
+| #58 | f722430 → dbeb008 | none | 170 passed |
+| #59 | 38b08a8 → 842b72c | none | 179 passed |
+| #60 | c63a8a2 → f94b118 | none | 184 passed |
+| #61 | dd6fc97 → 5e900c2 | none | 191 passed |
+| #66 | 08944c9 → 5f7cb98 | none | 187 passed |
+| #71 | afe685a → a7f583d | none | 198 passed |
+| #73 | 3de6b2b → a724a08 | none | 223 passed, 1 xfailed |
+| #72 | 7d868a2 → 951aa44 | none | 188 passed |
+| #68 | b9f729f → c5d2824 | none | 26 passed, 1 xfailed |
+| #69 | 551e6d7 → d709ce8 | none | 21 passed |
+| #70 | 5a53018 → 4edb3ed | none | 42 passed |
+| #82 | 26fd219 → d78e87d | `_simulation.py` (Lawson rate now follows the `(Ck, Fk)` state) | 29 passed |
+| #83 | 9630d72 → 6c62840 | none against #82 (the streaming factor now uses the pytree layout) | 36 passed |
+
+`integration/dark-baseline-2` (`a6a560b`) is main `b668d87` plus #9, #55, #18, #44, #51, #34, #62-#65, adaptive/base and #56-#61,
+#66, #71, #72, #68, #69, #70, the Francisquez commit `3de6b2b` of #73 (cherry-picked: the head of #73 carries the old integration
+history) and #82, #83. #21 is not included (it replaces #18's midpoint solver). The full suite gives 240 passed, 1 xfailed.
+Dark-SPECTRAX: 85 passed; `examples/landau.toml` and the H05 pump case (v_q/v_te = 0.03, Nn = 32, nu = 0, t <= 100) reproduce the
+recorded results bitwise (`dK_e`, `dK_i`, `W_ext`, and the Landau `run.npz` arrays differ by exactly 0.0 from a run at `35231ab`).
+
 ## Open pull requests
 
 | PR | Target | Old → new head | Depends on | Scope after cleanup | Tests and evidence | Recommendation |
@@ -42,7 +88,7 @@ An unmerged integration commit containing #48, #46, #13, #12, #9 and #55 exists 
 
 ## What Dark-SPECTRAX needs upstream
 
-Dark-SPECTRAX is pinned to the SPECTRAX integration branch `integration/dark-baseline`
+Dark-SPECTRAX is pinned to the SPECTRAX integration branch `integration/dark-baseline-2` (`a6a560b`, see the resync above). The text below describes the earlier branch `integration/dark-baseline`
 (`f33dfda`: main `bf41830` plus the unmerged PRs #48, #46, #13, #12, #9, #55, #50, #44, #18, #51, merged in that order,
 then the moving-Hermite-basis stack #56-#60, the lane-A filter #61, the field-scaled closure #66 and the species-TOML usability stack #62-#65), not a release.
 Earlier pins: `9d0982d` (first ten PRs), `c0910a1` (+ #56-#60), `16400f8` (+ #61, #66), `26605e5` (+ #62-#65, on main `ab87385`); the side branches `integration/highk` and
