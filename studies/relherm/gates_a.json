@@ -1,0 +1,12 @@
+{
+ "a1": {
+  "rhs_rel_err": 4.3641406695611303e-16,
+  "current_rel_err": 7.283564135334614e-16,
+  "pass": true
+ },
+ "a2": {
+  "rhs_rel_err": 1.035570166705584e-08,
+  "current_rel_err": 5.017429363930673e-09,
+  "pass": true
+ }
+}

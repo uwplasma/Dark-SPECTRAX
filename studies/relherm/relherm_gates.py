@@ -14,6 +14,14 @@ GATES (rejection criteria: a or b failing rejects the method)
      |Re dw| <= 2e-4, |Im dw| <= 1.5e-3, and |w - w_rel| < |w - w_nonrel|.
  d   energy ledger  K - K0 + dU - W_ext  with K = sum m a [G C]_0 (gamma - 1), nonlinear pump-frame run, vq = 0.3, T = 200, dt = 0.01,
      N = 24, Nx = 16, density seed 1e-3 at k = 2 pi/40: |ledger| <= 1e-5 * W_ext(T).
+ c2  (declared after gate c FAILED: the truncated Hermite operator has a real, undamped discrete spectrum, so its eigenvalues
+     cannot reproduce a Landau root; the control with the nonrelativistic model fails the same way.) Compare the response function instead,
+     eps_N(w) = (-i w - M_EE(w)) / (-i w), M_EE(w) = M[E,s] (-i w - M[s,s])^-1 M[s,E] (Schur complement of the linearised matrix),
+     at w = Re(w_root_rel) + i s, s = 0.1, 0.2, k lambda_D = 0.2, 0.3, N = 128: the model is accepted if max|eps_N^rel - eps_ref^rel| <= 1e-4,
+     the control max|eps_N^nonrel - eps_ref^nonrel| <= 1e-4, and |eps_N^rel - eps_ref^nonrel| >= 5e-4 at every point (discrimination).
+ d2  (declared after gate d passed at a moderate quiver, u0_end = 0.13: relativistic detuning stops the resonant drive) ledger at a large
+     nonresonant quiver: w = 3, vq = 100 (u amplitude about 1), T = 100, dt = 0.01, N = 24, Nx = 16, same seed:
+     max_t |ledger| <= 1e-5 * max_t |K - K0|; also reports max |u0| and max gamma-1.
  e   cost: ms per RHS (jit, CPU), N = 32, 64, 128, Nx = 32, 2 species; ratio relativistic / spectrax RHS reported (no pass/fail).
 """
 import json, os, sys, time
@@ -174,6 +182,76 @@ def gate_c():
     out("c", res)
 
 
+def gate_c2():
+    N = 128
+    res = {"N": N}
+    allok = True
+    for kld in (0.2, 0.3):
+        k = kld / VTE
+        wr = G.langmuir_root(k, rel=True)
+        row = {}
+        eref = {}
+        for rel_ in (True, False):
+            ic2 = 1.0 if rel_ else 0.0
+            S = R.Setup(N, 4, 2 * np.pi / k, Q, M, A, inv_c2=ic2)
+            thetas = [VTE ** 2, VTE ** 2 / MI]
+            C0 = [np.asarray(project_species(th, A[s], N, rel_)) for s, th in enumerate(thetas)]
+            u0 = jnp.zeros(2)
+            Mx = np.zeros((2 * N + 1, 2 * N + 1), complex)
+            for s in range(2):
+                V = np.asarray(S.V(u0, s))
+                sl = slice(s * N, (s + 1) * N)
+                Mx[sl, sl] = -1j * k * V
+                low = np.concatenate([[0.0], C0[s][:-1]])
+                Mx[sl, 2 * N] = (Q[s] / M[s]) * np.asarray(S.sq2n) / A[s] * low
+                Mx[2 * N, sl] = -Q[s] * A[s] * V[0]
+            for sI in (0.1, 0.2):
+                w = wr.real + 1j * sI
+                Mss = Mx[:2 * N, :2 * N]
+                MEE = Mx[2 * N, :2 * N] @ np.linalg.solve(-1j * w * np.eye(2 * N) - Mss, Mx[:2 * N, 2 * N])
+                row[("rel" if rel_ else "nonrel", sI)] = (-1j * w - MEE) / (-1j * w)
+        for sI in (0.1, 0.2):
+            w = wr.real + 1j * sI
+            er, en = G.eps_langmuir(w, k, rel=True), G.eps_langmuir(w, k, rel=False)
+            e_rel, e_nr = row[("rel", sI)], row[("nonrel", sI)]
+            d = {"w": [w.real, w.imag], "err_rel": float(abs(e_rel - er)), "err_control": float(abs(e_nr - en)),
+                 "discrimination": float(abs(e_rel - en)), "eps_ref_rel": [er.real, er.imag], "eps_N_rel": [e_rel.real, e_rel.imag]}
+            d["pass"] = bool(d["err_rel"] <= 1e-4 and d["err_control"] <= 1e-4 and d["discrimination"] >= 5e-4)
+            allok = allok and d["pass"]
+            res["kld%g_s%g" % (kld, sI)] = d
+    res["pass"] = bool(allok)
+    out("c2", res)
+
+
+def gate_d2():
+    N, Nx, Lx = 24, 16, 40.0
+    vq, T, dt, w = 100.0, 100.0, 0.01, 3.0
+    S = R.Setup(N, Nx, Lx, Q, M, A, inv_c2=1.0)
+    nk = S.nk
+    C0 = np.zeros((2, N, nk), complex)
+    k1 = 2 * np.pi / Lx
+    for s in range(2):
+        C0[s, 0, 0] = 1.0 / A[s]
+    C0[0, 0, 1] = 1e-3 / (2 * A[0])
+    Ek = np.zeros(nk, complex)
+    Ek[1] = -1j * (-1.0 * A[0] * C0[0, 0, 1]) / k1
+    E0 = vq * VTE
+    drive = lambda t: E0 * jnp.cos(w * t)
+    y0 = (jnp.asarray(C0), jnp.asarray(Ek), jnp.zeros(2), jnp.zeros(()))
+    K0 = float(R.kinetic_energy(S, y0[0], y0[2]))
+    U0 = float(R.field_energy(y0[1]))
+    y, outs = R.run(S, y0, drive, True, T, dt, 100)
+    K = np.array([float(o[2]) for o in outs]); U = np.array([float(o[3]) for o in outs]); W = np.array([float(o[1]) for o in outs])
+    u0 = np.array([np.asarray(o[4]) for o in outs])
+    led = K - K0 + (U - U0) - W
+    umax = float(np.max(np.abs(u0[:, 0])))
+    d = {"ledger_max": float(np.max(np.abs(led))), "max_abs_K_minus_K0": float(np.max(np.abs(K - K0))),
+         "ledger_rel": float(np.max(np.abs(led)) / np.max(np.abs(K - K0))), "max_abs_u0_e": umax,
+         "max_gamma_minus_1_centre": float(np.sqrt(1 + umax ** 2) - 1), "max_v_over_c_centre": float(umax / np.sqrt(1 + umax ** 2))}
+    d["pass"] = bool(d["ledger_rel"] <= 1e-5)
+    out("d2", d)
+
+
 def gate_d():
     N, Nx, Lx = 24, 16, 40.0
     vq, T, dt = 0.3, 200.0, 0.01
@@ -253,4 +331,6 @@ if __name__ == "__main__":
     elif which == "b2": oscillator(0.01, 300.0, 0.01, 48, False, "b2")
     elif which == "c": gate_c()
     elif which == "d": gate_d()
+    elif which == "c2": gate_c2()
+    elif which == "d2": gate_d2()
     elif which == "e": gate_e(spx)
