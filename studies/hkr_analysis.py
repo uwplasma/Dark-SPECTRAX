@@ -89,13 +89,13 @@ def main():
     out = {"gates": {k: v for k, v in G.GATES.items()}, "runs": {}, "pairs": {}, "q1": {}}
     runs = {}
     for seed in ("det", "noise"):
-        for nx in (64, 256, 640, 1024):
+        for nx in (64, 128, 256, 512, 640, 1024):  # 128/512 are same-Nx references for the Hermite lane only
             r = load_grid(nx, seed)
             if r is not None:
                 runs[(nx, seed)] = r
                 out["runs"][f"Nx{nx}_{seed}"] = run_summary(r, nx)
     for seed in ("det", "noise"):
-        nxs = sorted(nx for (nx, s) in runs if s == seed)
+        nxs = sorted(nx for (nx, s) in runs if s == seed and nx in (64, 256, 640, 1024))
         for lo, hi in zip(nxs[:-1], nxs[1:]):
             a, b = runs[(lo, seed)], runs[(hi, seed)]
             out["pairs"][f"{seed}_Nx{lo}_vs_{hi}"] = pair(a, b, min(a["tcert"], b["tcert"]))
@@ -110,7 +110,7 @@ def main():
         if ref is None:
             continue
         for (nx, s), r in runs.items():
-            if s != seed or nx == 64:
+            if s != seed or nx in (64, 128, 512):
                 continue
             tt = min(G.GATES["Q1_t"], r["tcert"], ref["tcert"])
             ra, rb = at(r, tt), at(ref, tt)

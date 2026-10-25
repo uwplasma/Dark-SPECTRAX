@@ -1,0 +1,405 @@
+start 23:11:40 : 256 det 1000
+start 23:11:40 : 640 det 1000
+start 23:11:40 : 640 noise 400
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=40 wall=233
+exit 3 23:15:34 : 256 det 1000
+start 23:15:34 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=80 wall=489
+exit 3 23:19:51 : 256 det 1000
+start 23:19:51 : 256 det 1000
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_noise1 checkpoint t=120 wall=968
+exit 3 23:22:29 : 640 noise 400
+start 23:22:29 : 640 noise 400
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=800 wall=2965
+exit 3 23:23:25 : 640 det 1000
+start 23:23:25 : 640 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=120 wall=767
+exit 3 23:24:30 : 256 det 1000
+start 23:24:30 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=160 wall=1140
+exit 3 23:30:46 : 256 det 1000
+start 23:30:46 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=200 wall=1380
+exit 3 23:34:49 : 256 det 1000
+start 23:34:49 : 256 det 1000
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_noise1 checkpoint t=160 wall=1829
+exit 3 23:36:53 : 640 noise 400
+start 23:36:53 : 640 noise 400
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=840 wall=3832
+exit 3 23:37:57 : 640 det 1000
+start 23:37:57 : 640 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=240 wall=1666
+exit 3 23:39:36 : 256 det 1000
+start 23:39:36 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=280 wall=1949
+exit 3 23:44:23 : 256 det 1000
+start 23:44:23 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=320 wall=2177
+exit 3 23:48:12 : 256 det 1000
+start 23:48:12 : 256 det 1000
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_noise1 checkpoint t=200 wall=2515
+exit 3 23:48:24 : 640 noise 400
+start 23:48:24 : 640 noise 400
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=880 wall=4505
+exit 3 23:49:12 : 640 det 1000
+start 23:49:12 : 640 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=360 wall=2393
+exit 3 23:51:47 : 256 det 1000
+start 23:51:47 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=400 wall=2677
+exit 3 23:56:34 : 256 det 1000
+start 23:56:34 : 256 det 1000
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_noise1 checkpoint t=240 wall=3158
+exit 3 23:59:08 : 640 noise 400
+start 23:59:08 : 640 noise 400
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=920 wall=5206
+exit 3 00:00:54 : 640 det 1000
+start 00:00:54 : 640 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=440 wall=2974
+exit 3 00:01:31 : 256 det 1000
+start 00:01:31 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=480 wall=3361
+exit 3 00:08:07 : 256 det 1000
+start 00:08:07 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=520 wall=3712
+exit 3 00:14:02 : 256 det 1000
+start 00:14:02 : 256 det 1000
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_noise1 checkpoint t=280 wall=4127
+exit 3 00:15:17 : 640 noise 400
+start 00:15:17 : 640 noise 400
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det checkpoint t=960 wall=6164
+exit 3 00:16:59 : 640 det 1000
+start 00:16:59 : 640 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=560 wall=4052
+exit 3 00:19:46 : 256 det 1000
+start 00:19:46 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=600 wall=4408
+exit 3 00:25:43 : 256 det 1000
+start 00:25:43 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=640 wall=4819
+exit 3 00:32:35 : 256 det 1000
+start 00:32:35 : 256 det 1000
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_noise1 checkpoint t=320 wall=5234
+exit 3 00:33:49 : 640 noise 400
+start 00:33:50 : 640 noise 400
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_det done 7247s
+exit 0 00:35:06 : 640 det 1000
+start 00:35:06 : 1024 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=680 wall=5175
+exit 3 00:38:33 : 256 det 1000
+start 00:38:33 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=720 wall=5448
+exit 3 00:43:07 : 256 det 1000
+start 00:43:07 : 256 det 1000
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_noise1 checkpoint t=360 wall=5957
+exit 3 00:45:57 : 640 noise 400
+start 00:45:57 : 640 noise 400
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=760 wall=5732
+exit 3 00:47:52 : 256 det 1000
+start 00:47:52 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=800 wall=5971
+exit 3 00:51:52 : 256 det 1000
+start 00:51:52 : 256 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=40 wall=1167
+exit 3 00:54:34 : 1024 det 1000
+start 00:54:34 : 1024 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=840 wall=6224
+exit 3 00:56:06 : 256 det 1000
+start 00:56:06 : 256 det 1000
+h_vq0.03_Nx640_Nv2048_v16_dt0.02_noise1 done 6617s
+exit 0 00:56:58 : 640 noise 400
+start 00:56:58 : 512 noise 400
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=880 wall=6473
+exit 3 01:00:16 : 256 det 1000
+start 01:00:16 : 256 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=920 wall=6711
+exit 3 01:04:14 : 256 det 1000
+start 01:04:14 : 256 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_noise1 checkpoint t=40 wall=472
+exit 3 01:04:50 : 512 noise 400
+start 01:04:50 : 512 noise 400
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det checkpoint t=960 wall=6933
+exit 3 01:07:57 : 256 det 1000
+start 01:07:57 : 256 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=80 wall=2173
+exit 3 01:11:21 : 1024 det 1000
+start 01:11:21 : 1024 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_det done 7141s
+exit 0 01:11:26 : 256 det 1000
+start 01:11:26 : 128 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_noise1 checkpoint t=80 wall=898
+exit 3 01:11:57 : 512 noise 400
+start 01:11:57 : 512 noise 400
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=840 wall=650
+exit 3 01:13:43 : 128 det 1000
+start 01:13:43 : 128 det 1000
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=880 wall=790
+exit 3 01:16:04 : 128 det 1000
+start 01:16:04 : 128 det 1000
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=920 wall=933
+exit 3 01:18:29 : 128 det 1000
+start 01:18:29 : 128 det 1000
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det checkpoint t=960 wall=1057
+exit 3 01:20:33 : 128 det 1000
+start 01:20:33 : 128 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_noise1 checkpoint t=120 wall=1431
+exit 3 01:20:50 : 512 noise 400
+start 01:20:50 : 512 noise 400
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_det done 1198s
+exit 0 01:22:58 : 128 det 1000
+start 01:22:58 : 512 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=120 wall=3233
+exit 3 01:29:02 : 1024 det 1000
+start 01:29:02 : 1024 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_noise1 checkpoint t=160 wall=1979
+exit 3 01:29:59 : 512 noise 400
+start 01:29:59 : 512 noise 400
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=40 wall=507
+exit 3 01:31:26 : 512 det 1000
+start 01:31:26 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_noise1 checkpoint t=200 wall=2430
+exit 3 01:37:31 : 512 noise 400
+start 01:37:31 : 512 noise 400
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=80 wall=927
+exit 3 01:38:28 : 512 det 1000
+start 01:38:28 : 512 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=160 wall=4092
+exit 3 01:43:22 : 1024 det 1000
+start 01:43:22 : 1024 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_noise1 checkpoint t=240 wall=2806
+exit 3 01:43:47 : 512 noise 400
+start 01:43:47 : 512 noise 400
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=120 wall=1298
+exit 3 01:44:40 : 512 det 1000
+start 01:44:40 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_noise1 checkpoint t=280 wall=3149
+exit 3 01:49:30 : 512 noise 400
+start 01:49:30 : 512 noise 400
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=160 wall=1634
+exit 3 01:50:16 : 512 det 1000
+start 01:50:16 : 512 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=200 wall=4817
+exit 3 01:55:27 : 1024 det 1000
+start 01:55:27 : 1024 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_noise1 checkpoint t=320 wall=3531
+exit 3 01:55:53 : 512 noise 400
+start 01:55:53 : 512 noise 400
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=200 wall=1995
+exit 3 01:56:18 : 512 det 1000
+start 01:56:18 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_noise1 checkpoint t=360 wall=3883
+exit 3 02:01:45 : 512 noise 400
+start 02:01:45 : 512 noise 400
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=240 wall=2343
+exit 3 02:02:06 : 512 det 1000
+start 02:02:06 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_noise1 done 4223s
+exit 0 02:07:26 : 512 noise 400
+start 02:07:26 : 128 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=240 wall=5541
+exit 3 02:07:31 : 1024 det 1000
+start 02:07:31 : 1024 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=280 wall=2684
+exit 3 02:07:47 : 512 det 1000
+start 02:07:47 : 512 det 1000
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1 checkpoint t=40 wall=86
+exit 3 02:08:52 : 128 noise 400
+start 02:08:52 : 128 noise 400
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1 checkpoint t=80 wall=170
+exit 3 02:10:17 : 128 noise 400
+start 02:10:17 : 128 noise 400
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1 checkpoint t=120 wall=252
+exit 3 02:11:39 : 128 noise 400
+start 02:11:39 : 128 noise 400
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1 checkpoint t=160 wall=335
+exit 3 02:13:03 : 128 noise 400
+start 02:13:03 : 128 noise 400
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=320 wall=3031
+exit 3 02:13:35 : 512 det 1000
+start 02:13:35 : 512 det 1000
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1 checkpoint t=200 wall=429
+exit 3 02:14:37 : 128 noise 400
+start 02:14:37 : 128 noise 400
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1 checkpoint t=240 wall=522
+exit 3 02:16:10 : 128 noise 400
+start 02:16:10 : 128 noise 400
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1 checkpoint t=280 wall=606
+exit 3 02:17:35 : 128 noise 400
+start 02:17:35 : 128 noise 400
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1 checkpoint t=320 wall=685
+exit 3 02:18:54 : 128 noise 400
+start 02:18:54 : 128 noise 400
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=360 wall=3366
+exit 3 02:19:10 : 512 det 1000
+start 02:19:10 : 512 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=280 wall=6261
+exit 3 02:19:32 : 1024 det 1000
+start 02:19:32 : 1024 det 1000
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1 checkpoint t=360 wall=764
+exit 3 02:20:13 : 128 noise 400
+start 02:20:13 : 128 noise 400
+h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1 done 852s
+exit 0 02:21:42 : 128 noise 400
+LANE_DONE 02:21:42
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=400 wall=3704
+exit 3 02:24:49 : 512 det 1000
+start 02:24:49 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=440 wall=4020
+exit 3 02:30:05 : 512 det 1000
+start 02:30:05 : 512 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=320 wall=6934
+exit 3 02:30:45 : 1024 det 1000
+start 02:30:45 : 1024 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=480 wall=4343
+exit 3 02:35:28 : 512 det 1000
+start 02:35:28 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=520 wall=4662
+exit 3 02:40:48 : 512 det 1000
+start 02:40:48 : 512 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=360 wall=7632
+exit 3 02:42:24 : 1024 det 1000
+start 02:42:24 : 1024 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=560 wall=4995
+exit 3 02:46:22 : 512 det 1000
+start 02:46:22 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=600 wall=5322
+exit 3 02:51:49 : 512 det 1000
+start 02:51:49 : 512 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=400 wall=8327
+exit 3 02:54:00 : 1024 det 1000
+start 02:54:00 : 1024 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=640 wall=5643
+exit 3 02:57:10 : 512 det 1000
+start 02:57:10 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=680 wall=5972
+exit 3 03:02:40 : 512 det 1000
+start 03:02:40 : 512 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=440 wall=9005
+exit 3 03:05:18 : 1024 det 1000
+start 03:05:18 : 1024 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=720 wall=6302
+exit 3 03:08:10 : 512 det 1000
+start 03:08:10 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=760 wall=6629
+exit 3 03:13:38 : 512 det 1000
+start 03:13:38 : 512 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=480 wall=9699
+exit 3 03:16:52 : 1024 det 1000
+start 03:16:52 : 1024 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=800 wall=6964
+exit 3 03:19:14 : 512 det 1000
+start 03:19:14 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=840 wall=7311
+exit 3 03:25:01 : 512 det 1000
+start 03:25:01 : 512 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=520 wall=10391
+exit 3 03:28:25 : 1024 det 1000
+start 03:28:25 : 1024 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=880 wall=7687
+exit 3 03:31:18 : 512 det 1000
+start 03:31:18 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=920 wall=8048
+exit 3 03:37:19 : 512 det 1000
+start 03:37:19 : 512 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=560 wall=11105
+exit 3 03:40:20 : 1024 det 1000
+start 03:40:20 : 1024 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det checkpoint t=960 wall=8432
+exit 3 03:43:43 : 512 det 1000
+start 03:43:43 : 512 det 1000
+h_vq0.03_Nx512_Nv2048_v16_dt0.02_det done 8777s
+exit 0 03:49:29 : 512 det 1000
+start 03:49:29 : 256 noise 400
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_noise1 checkpoint t=40 wall=161
+exit 3 03:52:10 : 256 noise 400
+start 03:52:10 : 256 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=600 wall=11828
+exit 3 03:52:22 : 1024 det 1000
+start 03:52:22 : 1024 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_noise1 checkpoint t=80 wall=327
+exit 3 03:54:57 : 256 noise 400
+start 03:54:57 : 256 noise 400
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_noise1 checkpoint t=120 wall=491
+exit 3 03:57:42 : 256 noise 400
+start 03:57:42 : 256 noise 400
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_noise1 checkpoint t=160 wall=676
+exit 3 04:00:47 : 256 noise 400
+start 04:00:47 : 256 noise 400
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_noise1 checkpoint t=200 wall=842
+exit 3 04:03:33 : 256 noise 400
+start 04:03:33 : 256 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=640 wall=12538
+exit 3 04:04:13 : 1024 det 1000
+start 04:04:13 : 1024 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_noise1 checkpoint t=240 wall=999
+exit 3 04:06:11 : 256 noise 400
+start 04:06:11 : 256 noise 400
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_noise1 checkpoint t=280 wall=1170
+exit 3 04:09:03 : 256 noise 400
+start 04:09:03 : 256 noise 400
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_noise1 checkpoint t=320 wall=1347
+exit 3 04:12:00 : 256 noise 400
+start 04:12:00 : 256 noise 400
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_noise1 checkpoint t=360 wall=1488
+exit 3 04:14:21 : 256 noise 400
+start 04:14:21 : 256 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=680 wall=13184
+exit 3 04:15:00 : 1024 det 1000
+start 04:15:00 : 1024 det 1000
+h_vq0.03_Nx256_Nv2048_v16_dt0.02_noise1 done 1624s
+exit 0 04:16:38 : 256 noise 400
+LANE_DONE 04:16:38
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=720 wall=13802
+exit 3 04:25:19 : 1024 det 1000
+start 04:25:19 : 1024 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=760 wall=14394
+exit 3 04:35:10 : 1024 det 1000
+start 04:35:10 : 1024 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=800 wall=15021
+exit 3 04:45:38 : 1024 det 1000
+start 04:45:38 : 1024 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=840 wall=15609
+exit 3 04:55:26 : 1024 det 1000
+start 04:55:26 : 1024 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=880 wall=16181
+exit 3 05:04:59 : 1024 det 1000
+start 05:04:59 : 1024 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=920 wall=16742
+exit 3 05:14:20 : 1024 det 1000
+start 05:14:20 : 1024 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det checkpoint t=960 wall=17275
+exit 3 05:23:13 : 1024 det 1000
+start 05:23:13 : 1024 det 1000
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det done 17819s
+exit 0 05:32:19 : 1024 det 1000
+start 05:32:19 : 1024 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_noise1 checkpoint t=40 wall=569
+exit 3 05:41:49 : 1024 noise 400
+start 05:41:49 : 1024 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_noise1 checkpoint t=80 wall=1116
+exit 3 05:50:56 : 1024 noise 400
+start 05:50:56 : 1024 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_noise1 checkpoint t=120 wall=1663
+exit 3 06:00:03 : 1024 noise 400
+start 06:00:03 : 1024 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_noise1 checkpoint t=160 wall=2199
+exit 3 06:08:59 : 1024 noise 400
+start 06:08:59 : 1024 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_noise1 checkpoint t=200 wall=2748
+exit 3 06:18:09 : 1024 noise 400
+start 06:18:09 : 1024 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_noise1 checkpoint t=240 wall=3291
+exit 3 06:27:12 : 1024 noise 400
+start 06:27:12 : 1024 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_noise1 checkpoint t=280 wall=3859
+exit 3 06:36:40 : 1024 noise 400
+start 06:36:40 : 1024 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_noise1 checkpoint t=320 wall=4359
+exit 3 06:45:01 : 1024 noise 400
+start 06:45:01 : 1024 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_noise1 checkpoint t=360 wall=4862
+exit 3 06:53:24 : 1024 noise 400
+start 06:53:24 : 1024 noise 400
+h_vq0.03_Nx1024_Nv2048_v16_dt0.02_noise1 done 5316s
+exit 0 07:00:59 : 1024 noise 400
+LANE_DONE 07:00:59

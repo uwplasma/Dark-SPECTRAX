@@ -11,6 +11,132 @@
   "Q1_t": 500.0
  },
  "runs": {
+  "Nx128_det": {
+   "case": "h_vq0.03_Nx128_Nv2048_v16_dt0.02_det",
+   "T": 1000.0,
+   "t_cert": 882.0,
+   "t_fneg": 882.0,
+   "t_edge": 899.5,
+   "t_defect": 926.0,
+   "kl_max_retained": 0.2086263535817181,
+   "n_hi": 40,
+   "n_mask": 42,
+   "kl_hi": 0.198691765315922,
+   "dE_avg_over_Eth": {
+    "100": 9.706741073884041e-05,
+    "200": 0.0011683144021871416,
+    "300": 0.008569078303962797,
+    "500": 0.09999850367740874,
+    "700": 0.4725965504238046
+   },
+   "dE_avg_at_tcert": 1.3242934724964164,
+   "dE_inst_max_over_Eth": 4.102564281282792,
+   "t_otsi": 107.0,
+   "max_Uk_over_E0sq": 2241.5012349095377,
+   "wall_s": 1198.4941127706843,
+   "commit": "3c52422"
+  },
+  "Nx256_det": {
+   "case": "h_vq0.03_Nx256_Nv2048_v16_dt0.02_det",
+   "T": 1000.0,
+   "t_cert": 965.5,
+   "t_fneg": 965.5,
+   "t_edge": 968.5,
+   "t_defect": 998.0,
+   "kl_max_retained": 0.4222200012963343,
+   "n_hi": 69,
+   "n_mask": 85,
+   "kl_hi": 0.3427432951699655,
+   "dE_avg_over_Eth": {
+    "100": 9.706742505991584e-05,
+    "200": 0.001168314430783751,
+    "300": 0.00856907836107008,
+    "500": 0.09999850379025149,
+    "700": 0.4725965505383929
+   },
+   "dE_avg_at_tcert": 1.9866330516712953,
+   "dE_inst_max_over_Eth": 5.990391025645039,
+   "t_otsi": 107.0,
+   "max_Uk_over_E0sq": 3325.5571151297436,
+   "wall_s": 7141.466062655061,
+   "commit": "3c52422"
+  },
+  "Nx512_det": {
+   "case": "h_vq0.03_Nx512_Nv2048_v16_dt0.02_det",
+   "T": 1000.0,
+   "t_cert": 996.5,
+   "t_fneg": 999.5,
+   "t_edge": 996.5,
+   "t_defect": null,
+   "kl_max_retained": 0.8444400025926686,
+   "n_hi": 69,
+   "n_mask": 170,
+   "kl_hi": 0.3427432951699655,
+   "dE_avg_over_Eth": {
+    "100": 9.706742503329087e-05,
+    "200": 0.0011683144307496566,
+    "300": 0.008569078361011636,
+    "500": 0.09999850378974345,
+    "700": 0.4725965505324447
+   },
+   "dE_avg_at_tcert": 2.304588718444358,
+   "dE_inst_max_over_Eth": 7.119962982338695,
+   "t_otsi": 107.0,
+   "max_Uk_over_E0sq": 3962.957135972361,
+   "wall_s": 8777.34189345187,
+   "commit": "3c52422"
+  },
+  "Nx640_det": {
+   "case": "h_vq0.03_Nx640_Nv2048_v16_dt0.02_det",
+   "T": 1000.0,
+   "t_cert": 993.5,
+   "t_fneg": 998.5,
+   "t_edge": 993.5,
+   "t_defect": null,
+   "kl_max_retained": 1.0580336503072847,
+   "n_hi": 71,
+   "n_mask": 213,
+   "kl_hi": 0.3526778834357615,
+   "dE_avg_over_Eth": {
+    "100": 9.706741092282358e-05,
+    "200": 0.001168314402565628,
+    "300": 0.008569078304752275,
+    "500": 0.0999985036791816,
+    "700": 0.4725965504333335
+   },
+   "dE_avg_at_tcert": 2.275371920238618,
+   "dE_inst_max_over_Eth": 6.871115345783824,
+   "t_otsi": 107.0,
+   "max_Uk_over_E0sq": 3909.9047716604873,
+   "wall_s": 7247.497430174903,
+   "commit": "3c52422"
+  },
+  "Nx1024_det": {
+   "case": "h_vq0.03_Nx1024_Nv2048_v16_dt0.02_det",
+   "T": 1000.0,
+   "t_cert": 1000.0,
+   "t_fneg": null,
+   "t_edge": null,
+   "t_defect": null,
+   "kl_max_retained": 1.693847299318235,
+   "n_hi": 70,
+   "n_mask": 341,
+   "kl_hi": 0.3477105893028635,
+   "dE_avg_over_Eth": {
+    "100": 9.706742503175465e-05,
+    "200": 0.0011683144307420483,
+    "300": 0.00856907836098834,
+    "500": 0.09999850378957871,
+    "700": 0.4725965505317521,
+    "1000": 2.3433869394211126
+   },
+   "dE_avg_at_tcert": 2.3433869394211126,
+   "dE_inst_max_over_Eth": 7.0731621679222805,
+   "t_otsi": 107.0,
+   "max_Uk_over_E0sq": 3928.652231792647,
+   "wall_s": 17819.45278776507,
+   "commit": "3c52422"
+  },
   "Nx64_noise": {
    "case": "h_vq0.03_Nx64_Nv2048_v16_dt0.02_noise1",
    "T": 1000.0,
@@ -31,20 +157,182 @@
    "max_Uk_over_E0sq": 21.356560901047928,
    "wall_s": 360.1588247071486,
    "commit": "f2bc35b"
+  },
+  "Nx128_noise": {
+   "case": "h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1",
+   "T": 400.0,
+   "t_cert": 122.0,
+   "t_fneg": 122.0,
+   "t_edge": 237.5,
+   "t_defect": 257.0,
+   "kl_max_retained": 0.2086263535817181,
+   "n_hi": 42,
+   "n_mask": 42,
+   "kl_hi": 0.2086263535817181,
+   "dE_avg_over_Eth": {
+    "100": 0.012692045097770074
+   },
+   "dE_avg_at_tcert": 0.013138969378832181,
+   "dE_inst_max_over_Eth": 0.027729180854500202,
+   "t_otsi": "initial noise field already above E0^2",
+   "max_Uk_over_E0sq": 15.182515797420708,
+   "wall_s": 852.1072324459965,
+   "commit": "3c52422"
+  },
+  "Nx256_noise": {
+   "case": "h_vq0.03_Nx256_Nv2048_v16_dt0.02_noise1",
+   "T": 400.0,
+   "t_cert": 69.0,
+   "t_fneg": 69.0,
+   "t_edge": 230.0,
+   "t_defect": 247.5,
+   "kl_max_retained": 0.4222200012963343,
+   "n_hi": 85,
+   "n_mask": 85,
+   "kl_hi": 0.4222200012963343,
+   "dE_avg_over_Eth": {},
+   "dE_avg_at_tcert": 0.012591445822593174,
+   "dE_inst_max_over_Eth": 0.025153889869395166,
+   "t_otsi": "initial noise field already above E0^2",
+   "max_Uk_over_E0sq": 14.05269609563606,
+   "wall_s": 1624.0889969190175,
+   "commit": "3c52422"
+  },
+  "Nx512_noise": {
+   "case": "h_vq0.03_Nx512_Nv2048_v16_dt0.02_noise1",
+   "T": 400.0,
+   "t_cert": 82.0,
+   "t_fneg": 82.0,
+   "t_edge": 224.5,
+   "t_defect": 257.5,
+   "kl_max_retained": 0.8444400025926686,
+   "n_hi": 170,
+   "n_mask": 170,
+   "kl_hi": 0.8444400025926686,
+   "dE_avg_over_Eth": {},
+   "dE_avg_at_tcert": 0.012740699888971974,
+   "dE_inst_max_over_Eth": 0.02523124457490429,
+   "t_otsi": "initial noise field already above E0^2",
+   "max_Uk_over_E0sq": 14.097175023190102,
+   "wall_s": 4222.905266666057,
+   "commit": "3c52422"
+  },
+  "Nx640_noise": {
+   "case": "h_vq0.03_Nx640_Nv2048_v16_dt0.02_noise1",
+   "T": 400.0,
+   "t_cert": 87.5,
+   "t_fneg": 87.5,
+   "t_edge": 230.5,
+   "t_defect": 260.0,
+   "kl_max_retained": 1.0580336503072847,
+   "n_hi": 213,
+   "n_mask": 213,
+   "kl_hi": 1.0580336503072847,
+   "dE_avg_over_Eth": {},
+   "dE_avg_at_tcert": 0.012908489418107105,
+   "dE_inst_max_over_Eth": 0.025253191868132747,
+   "t_otsi": "initial noise field already above E0^2",
+   "max_Uk_over_E0sq": 14.110419118638545,
+   "wall_s": 6616.612191449967,
+   "commit": "3c52422"
+  },
+  "Nx1024_noise": {
+   "case": "h_vq0.03_Nx1024_Nv2048_v16_dt0.02_noise1",
+   "T": 400.0,
+   "t_cert": 103.5,
+   "t_fneg": 103.5,
+   "t_edge": 134.5,
+   "t_defect": 186.5,
+   "kl_max_retained": 1.693847299318235,
+   "n_hi": 341,
+   "n_mask": 341,
+   "kl_hi": 1.693847299318235,
+   "dE_avg_over_Eth": {
+    "100": 0.013107568833164345
+   },
+   "dE_avg_at_tcert": 0.013126003264162519,
+   "dE_inst_max_over_Eth": 0.02666641459481622,
+   "t_otsi": "initial noise field already above E0^2",
+   "max_Uk_over_E0sq": 14.381916731366623,
+   "wall_s": 5316.286927244975,
+   "commit": "3c52422"
   }
  },
- "pairs": {},
- "q1": {},
+ "pairs": {
+  "det_Nx256_vs_640": {
+   "t_agree_dE": 965.5,
+   "to_end": true,
+   "common_tcert": 965.5
+  },
+  "det_Nx640_vs_1024": {
+   "t_agree_dE": 993.5,
+   "to_end": true,
+   "common_tcert": 993.5
+  },
+  "noise_Nx64_vs_256": {
+   "t_agree_dE": 69.0,
+   "to_end": true,
+   "common_tcert": 69.0
+  },
+  "noise_Nx256_vs_640": {
+   "t_agree_dE": 69.0,
+   "to_end": true,
+   "common_tcert": 69.0
+  },
+  "noise_Nx640_vs_1024": {
+   "t_agree_dE": 87.5,
+   "to_end": true,
+   "common_tcert": 87.5
+  },
+  "Nx256_det_vs_noise": {
+   "t_agree_dE": 0.5,
+   "to_end": false
+  },
+  "Nx640_det_vs_noise": {
+   "t_agree_dE": 0.5,
+   "to_end": false
+  },
+  "Nx1024_det_vs_noise": {
+   "t_agree_dE": 0.5,
+   "to_end": false
+  }
+ },
+ "q1": {
+  "noise_Nx256_over_Nx64": {
+   "t": 69.0,
+   "dE_hi": 0.012591445822593174,
+   "dE_64": 0.012104700353128986,
+   "ratio": 1.0402112778725967,
+   "cutoff_matters": false,
+   "hhs_reached": false
+  },
+  "noise_Nx640_over_Nx64": {
+   "t": 87.5,
+   "dE_hi": 0.012908489418107105,
+   "dE_64": 0.01213156028164305,
+   "ratio": 1.0640419796322218,
+   "cutoff_matters": false,
+   "hhs_reached": false
+  },
+  "noise_Nx1024_over_Nx64": {
+   "t": 103.5,
+   "dE_hi": 0.013126003264162519,
+   "dE_64": 0.012133343922359553,
+   "ratio": 1.081812511716055,
+   "cutoff_matters": false,
+   "hhs_reached": false
+  }
+ },
  "hermite": {
   "Nx128": {
-   "t_end": 960.0,
-   "status": "success",
-   "t_pos": null,
+   "t_end": 976.5,
+   "status": "failure",
+   "t_pos": 970.5,
    "t_ledger_1e-9": null,
-   "steps": 26692,
-   "rejected": 10288,
-   "wall_s": 172.16589332965668,
-   "failure": "None",
+   "steps": 226692,
+   "rejected": 11154,
+   "wall_s": 6505.874616153655,
+   "failure": "segment 0: diffrax._solution.RESULTS<The maximum number of solver steps was reac",
    "kl_max_retained": 0.2086263535817181,
    "dE_avg_over_Eth": {
     "100": 9.708170052380602e-05,
@@ -52,7 +340,55 @@
     "300": 0.008572637404652169,
     "500": 0.10005750694384126,
     "700": 0.47376682515176016
-   }
+   },
+   "grid_t_cert": 882.0,
+   "t_res_vs_grid": 975.0,
+   "t_res_to_end": false,
+   "t_cert_hermite": 970.5
+  },
+  "Nx256": {
+   "t_end": 900.0,
+   "status": "failure",
+   "t_pos": 898.0,
+   "t_ledger_1e-9": null,
+   "steps": 25753,
+   "rejected": 9518,
+   "wall_s": 2439.1219982420153,
+   "failure": "segment 0: positivity lost at t = 898",
+   "kl_max_retained": 0.4222200012963343,
+   "dE_avg_over_Eth": {
+    "100": 9.708170053858893e-05,
+    "200": 0.0011686623226178031,
+    "300": 0.008572637406784217,
+    "500": 0.10005750695712401,
+    "700": 0.4737668281889797
+   },
+   "grid_t_cert": 965.5,
+   "t_res_vs_grid": 900.0,
+   "t_res_to_end": false,
+   "t_cert_hermite": 898.0
+  },
+  "Nx512": {
+   "t_end": 880.0,
+   "status": "success",
+   "t_pos": null,
+   "t_ledger_1e-9": 83.0,
+   "steps": 20358,
+   "rejected": 8092,
+   "wall_s": 2948.72954282703,
+   "failure": "None",
+   "kl_max_retained": 0.8444400025926686,
+   "dE_avg_over_Eth": {
+    "100": 9.708170055620911e-05,
+    "200": 0.0011686623231953216,
+    "300": 0.008572637410351627,
+    "500": 0.1000575069817438,
+    "700": 0.47376682840847034
+   },
+   "grid_t_cert": 996.5,
+   "t_res_vs_grid": 880.0,
+   "t_res_to_end": true,
+   "t_cert_hermite": 83.0
   }
  }
 }

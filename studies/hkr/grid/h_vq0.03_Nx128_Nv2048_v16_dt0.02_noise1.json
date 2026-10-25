@@ -1,0 +1,14 @@
+{
+ "case": "h_vq0.03_Nx128_Nv2048_v16_dt0.02_noise1",
+ "T": 400.0,
+ "finite": true,
+ "wall_time": 852.1072324459965,
+ "steps": 20000,
+ "t_fneg_1e-3": 122.0,
+ "t_edge_1e-6": 237.5,
+ "t_defect_1e-6": 0.0,
+ "min_f_rel": -0.871526578528529,
+ "max_energy_defect_over_W": 1.256053241373461e+295,
+ "repository_commit": "3c52422",
+ "command": "python studies/hkr_grid.py --vq 0.03 --T 400 --Nx 128 --Nv 2048 --vmax 16 --seed noise --chunk 40 --workers 1"
+}
