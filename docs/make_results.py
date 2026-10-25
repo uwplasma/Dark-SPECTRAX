@@ -764,6 +764,31 @@ def c09_rows(r):
     return [(n, p, d) for n, o in objs for p, d in o["derivatives"].items()]
 
 
+def relgrid_section():
+    import json as _j
+    f = ROOT / "studies" / "relgrid" / "summary.json"
+    if not f.exists():
+        return ""
+    S = _j.loads(f.read_text())
+    C = S["cases"]
+    L = ["## H04: relativistic 1D1V grid, HHS-like test (`studies/relgrid.py`, `relgrid_gates.py`, `relgrid_analysis.py`)", "",
+         f"- Record: `studies/relgrid/summary.json`, repository `{S['repository_commit'][:7]}`. Relativistic x-u Vlasov-Ampere, v_q/v_te 0.03, "
+         "E_th = 5e-4 n m c^2, trailing 200/omega_pe average. Gates A, B, C2 pass; D fails for all runs but dt 0.01; D2 fails (ratio 8.0 not in [3,5]).",
+         "", "| run | dE1D_e/E_th at 200 / 500 / 1000 | Ebar energy / linear at 1000 | t(W 10% off linear) | first f<-1e-3 | edge>1e-6 | ledger>1e-4 |",
+         "|---|---|---|---|---|---|---|"]
+    for k, v in C.items():
+        d = v["dE1D_over_Eth"]
+        g = lambda x: "-" if x is None else f"{x:g}"
+        L.append(f"| {k} | {d.get('200', 0):.3g} / {d.get('500', 0):.3g} / {d.get('1000', float('nan')):.3g} | "
+                 f"{v['Ebar_energy_over_linear'].get('1000', float('nan')):.3g} | {g(v['t_W_10pc_from_linear'])} | {g(v['t_fneg_1e-3'])} | "
+                 f"{g(v['t_edge_1e-6'])} | {g(v['t_ledger_1e-4'])} |")
+    L += ["", "- Result: with relativistic dynamics the mean-field resonance switches off at t ~ 370-390 (nonrelativistic shot runs: 770-870), matching HHS "
+          "timing. The k != 0 energy reaches ~50 E_th by t = 1000 (Nx 64 shot 51, Nx 32 npc 2.05e4 50) but only after f < 0 (t 240-280), box-edge contact "
+          "(t 350-500) and a broken ledger (t 350-510); within validity (t < ~350) dE1D_e/E_th < 0.01. Nx 128 gives 30. Not a valid reproduction of the 50 E_th; "
+          "refinement windows (gate E) all agree to T = 1000 for the deterministic run."]
+    return "\n".join(L)
+
+
 def c09_section():
     r = c09_records()
     a, b, c = r["a_omega"], r["b_dark_work"], r["c_landau"]
@@ -2160,6 +2185,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {antisym_section()}
 
 {c09_section()}
+
+{relgrid_section()}
 
 {phase_space()}
 

@@ -80,6 +80,10 @@ def quantities(r, vq, w=X.OMEGA):
     out["mass_drift"] = float(max(np.abs(r["mass_e"]).max(), np.abs(r["mass_i"]).max()))
     out["edge"] = float(r["edge"].max())
     neg = np.nonzero(np.minimum(r["fmin_v"], r["fmin_x"]) < -1e-3)[0]
+    led = np.abs(r["energy_defect"]) / max(np.abs(r["W_ext"]).max(), 1e-300)
+    for nm, bad in (("t_edge_1e-6", r["edge"] > 1e-6), ("t_ledger_1e-4", led > 1e-4)):
+        i = np.nonzero(bad)[0]
+        out[nm] = float(t[i[0]]) if i.size else None
     out["t_fneg_1e-3"] = float(t[neg[0]]) if neg.size else None
     # time at which the mean-field amplitude (demodulated) peaks and first departure from the linear law by 10 percent
     d10 = np.nonzero((t > 50) & (np.abs(r["W_ext"] - yl[3]) > 0.1 * np.abs(yl[3])))[0]
@@ -89,12 +93,17 @@ def quantities(r, vq, w=X.OMEGA):
 
 CASES = {  # label -> (tag stem suffixes)
     "rel_det_vq0.03": ("r_vq0.03_Nx32_Nu4096_dt0.02_osc_u32_rel_taylor_det_xmask23", 0.03),
-    "rel_shot_vq0.03": ("r_vq0.03_Nx32_Nu4096_dt0.02_osc_u32_rel_taylor_shot1_xmask23", 0.03),
-    "nonrel_shot_vq0.03": ("r_vq0.03_Nx32_Nu4096_dt0.02_osc_u32_nr_taylor_shot1_xmask23", 0.03),
+    "rel_shot_vq0.03_npc205_Nx32": ("r_vq0.03_Nx32_Nu4096_dt0.02_osc_u32_rel_taylor_shot1n205_xmask23", 0.03),
+    "rel_shot_vq0.03_npc2.05e4_Nx32": ("r_vq0.03_Nx32_Nu4096_dt0.02_osc_u32_rel_taylor_shot1n20500_xmask23", 0.03),
+    "nonrel_shot_vq0.03_npc2.05e4_Nx32": ("r_vq0.03_Nx32_Nu4096_dt0.02_osc_u32_nr_taylor_shot1n20500_xmask23", 0.03),
+    "rel_shot_vq0.03_npc2.05e5_Nx32": ("r_vq0.03_Nx32_Nu4096_dt0.02_osc_u32_rel_taylor_shot1n205000_xmask23", 0.03),
+    "nonrel_shot_vq0.03_npc2.05e5_Nx32": ("r_vq0.03_Nx32_Nu4096_dt0.02_osc_u32_nr_taylor_shot1n205000_xmask23", 0.03),
+    "rel_shot_vq0.03_npc2.05e5_Nx64": ("r_vq0.03_Nx64_Nu4096_dt0.02_osc_u32_rel_taylor_shot1n205000_xmask23", 0.03),
+    "rel_shot_vq0.03_npc2.05e5_Nx128": ("r_vq0.03_Nx128_Nu4096_dt0.02_osc_u32_rel_taylor_shot1n205000_xmask23", 0.03),
     "rel_det_vq0.001": ("r_vq0.001_Nx32_Nu4096_dt0.02_osc_u32_rel_taylor_det_xmask23", 1e-3),
-    "rel_shot_vq0.001": ("r_vq0.001_Nx32_Nu4096_dt0.02_osc_u32_rel_taylor_shot1_xmask23", 1e-3),
+    "rel_shot_vq0.001": ("r_vq0.001_Nx32_Nu4096_dt0.02_osc_u32_rel_taylor_shot1n1.845e+08_xmask23", 1e-3),
     "nonrel_det_vq0.001": ("r_vq0.001_Nx32_Nu4096_dt0.02_osc_u32_nr_taylor_det_xmask23", 1e-3),
-    "nonrel_shot_vq0.001": ("r_vq0.001_Nx32_Nu4096_dt0.02_osc_u32_nr_taylor_shot1_xmask23", 1e-3),
+    "nonrel_shot_vq0.001": ("r_vq0.001_Nx32_Nu4096_dt0.02_osc_u32_nr_taylor_shot1n1.845e+08_xmask23", 1e-3),
 }
 REFINE = {  # gate E (v_q = 0.03 relativistic det, T = 1000)
     "Nx64": "r_vq0.03_Nx64_Nu4096_dt0.02_osc_u32_rel_taylor_det_xmask23",
@@ -147,4 +156,4 @@ if __name__ == "__main__":
     (HERE / "relgrid" / "summary.json").write_text(json.dumps(out, indent=1) + "\n")
     print(json.dumps({k: v for k, v in out.items() if k in ("refine", "refine_window_min", "gate_D")}, indent=1))
     for lab, v in out["cases"].items():
-        print(lab, "T", v["T"], "dE1D/Eth", v["dE1D_over_Eth"], "Ebar/lin", v["Ebar_energy_over_linear"], "t10", v["t_W_10pc_from_linear"], "ledger", v["energy_ledger"])
+        print(lab, "T", v["T"], "dE1D/Eth", v["dE1D_over_Eth"], "Ebar/lin", v["Ebar_energy_over_linear"], "t10", v["t_W_10pc_from_linear"], "ledger", v["energy_ledger"], "fneg", v["t_fneg_1e-3"], "edge", v["t_edge_1e-6"], "ledg", v["t_ledger_1e-4"])

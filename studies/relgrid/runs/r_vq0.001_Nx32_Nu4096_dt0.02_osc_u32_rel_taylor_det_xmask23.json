@@ -1,0 +1,16 @@
+{
+ "case": "r_vq0.001_Nx32_Nu4096_dt0.02_osc_u32_rel_taylor_det_xmask23",
+ "T": 3000.0,
+ "finite": true,
+ "wall_time": 5482.225610665017,
+ "steps": 150000,
+ "t_fneg_1e-3": null,
+ "min_f_rel": -3.171194414493786e-05,
+ "max_negfrac": 3.871296597141987e-06,
+ "max_edge": 4.447655998870976e-12,
+ "max_energy_defect_over_W": 0.0006400737108341012,
+ "max_mass_drift": 2.5979218776228663e-14,
+ "max_U_e": 0.03267344985919845,
+ "repository_commit": "",
+ "command": "python studies/relgrid.py --vq 0.001 --T 3000 --Nx 32 --Nu 4096 --dt 0.02 --frame osc --umax 32 --xshift mask23 --chunk 300 --workers 4"
+}
