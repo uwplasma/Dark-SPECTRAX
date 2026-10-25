@@ -29,7 +29,7 @@ def load(tag):
 
 def trailing(t, y, at):
     """Mean of y over (at - 200, at]."""
-    m = (t > at - WIN) & (t <= at + 1e-9)
+    m = (t > at - WIN) & (t <= at + 1e-6)
     return float(np.mean(y[m])) if m.any() else float("nan")
 
 
@@ -110,7 +110,7 @@ def main():
                         ("rms_e", lambda h, at: trailing(h["t"], h["rms"][:, 0], at))):
             vals = []
             for at in times:
-                v = np.array([fn(r, at) for r in runs if r["t"][-1] >= at - 1e-9])
+                v = np.array([fn(r, at) for r in runs if r["t"][-1] >= at - 1e-6])
                 vals.append((float(v.mean()), float(v.std(ddof=1)) if len(v) > 1 else None, len(v)) if len(v) else None)
             row[key] = vals
         obs[name] = row
@@ -141,8 +141,8 @@ def main():
     g8 = []
     if len(Rr) >= 2 and len(Nr) >= 2:
         for at in g["G8_times"]:
-            a = np.array([dW(r, at) for r in Rr if r["t"][-1] >= at - 1e-9])
-            b_ = np.array([dW(r, at) for r in Nr if r["t"][-1] >= at - 1e-9])
+            a = np.array([dW(r, at) for r in Rr if r["t"][-1] >= at - 1e-6])
+            b_ = np.array([dW(r, at) for r in Nr if r["t"][-1] >= at - 1e-6])
             if len(a) < 2 or len(b_) < 2:
                 continue
             se = np.sqrt(a.var(ddof=1) / len(a) + b_.var(ddof=1) / len(b_))
@@ -178,7 +178,7 @@ def main():
             if sel.sum() < 2 or not Rr:
                 continue
             hhs = float(np.mean(rms[sel] ** 2 / 2) - 5e-4)
-            mine = float(np.mean([dW(r, at) for r in Rr if r["t"][-1] >= at - 1e-9]))
+            mine = float(np.mean([dW(r, at) for r in Rr if r["t"][-1] >= at - 1e-6]))
             rows.append(dict(t=float(at), hhs_digitized_dW_th=hhs, relpic_R=mine, ratio=mine / hhs if hhs else None))
         out["HHS_fig2_digitized"] = rows
     (HERE / "summary.json").write_text(json.dumps(out, indent=1, default=float))
