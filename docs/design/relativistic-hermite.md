@@ -1,7 +1,7 @@
 # Relativistic momentum-space Hermite model: design and 1D1V prototype
 
 Status: prototype passes its declared gates (records `studies/relherm/gates_*.json`, code `studies/relherm/relherm.py`,
-gates `studies/relherm/relherm_gates.py`). Not yet in SPECTRAX; the PR plan is in section 8.
+gates `studies/relherm/relherm_gates.py`). Not merged into SPECTRAX main: opened as uwplasma/SPECTRAX #88 (section 8), included in the pinned integration branch; the Lawson streaming it builds on (#83) is also still open.
 
 ## 1. Why this is small
 
@@ -63,7 +63,7 @@ The impact of relativity is already large in the homogeneous problem: $W_{ext}(T
 * Juno, Hakim, Philippov et al., "Modeling of Relativistic Plasmas with a Conservative Discontinuous Galerkin Method", arXiv:2602.17487 (in `papers_dark/arxiv`): states that for spectral and finite-element conservative methods "there exists no obvious basis choice when we add relativity", because the invariants involve non-polynomial velocity integrals; their DG solution uses a velocity-space mapping. Our construction does not make the invariants polynomial; it makes them quadrature-exact in the retained space and measures the remainder ($\epsilon$, section 4).
 * Hermite spectral Vlasov (nonrelativistic): Holloway 1996, Schumer-Holloway 1998, Delzanno 2015, Camporeale et al. arXiv:1311.2098 / 1312.4991, Koshkarov et al. 2004.12010, Pagliantini et al. 2110.11511, Issan et al. 2412.07073 (already read for the AW design). The search for "relativistic Vlasov Hermite spectral / Juttner basis / Gauss-Hermite in momentum" returned no prior relativistic Hermite Vlasov solver (arXiv searches 2026-10-24; not exhaustive). Vencels et al. (Hermite in 3V with the Vlasov-Poisson/Maxwell code), Roytershteyn and Delzanno are cited in 2602.17487 as nonrelativistic spectral work.
 
-## 8. SPECTRAX PR (opened: uwplasma/SPECTRAX #88, based on b668d87, CI green 3.11 and 3.12, not merged)
+## 8. SPECTRAX PR (opened: uwplasma/SPECTRAX #88, now merged with main 32f7d81, not merged into main)
 
 1D2V results (`studies/relherm/relherm2*.py`, `gates_f*.json`): f1 limit vs SPECTRAX 1.3e-15 PASS; f2 relativistic gyration 1.7e-10 PASS; f3 magnetic work 3e-15 PASS; f4 FAILED (NaN: truncation instability of the AW operator, frozen-field growth 4.7 relativistic vs 4.9 nonrelativistic); f4b with hypercollision and the closure loss in the ledger 6.8e-6 PASS (mean speed 0.59c). Original plan text follows.
 

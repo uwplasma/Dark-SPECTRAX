@@ -9,7 +9,19 @@ review; every recommendation is for the owner to act on.
 - Tests are local runs. Where GitHub CI is cited, it is Python 3.11/3.12 plus codecov on the new head.
 - Heads in the table are as of 2026-10-03. The PR branches were updated on 2026-10-07 and their current heads differ (`gh pr list -R uwplasma/SPECTRAX`); the integration branch `f33dfda` is built from these branches.
 
-## Resync of 2026-10-24 (current pin)
+## Resync of 2026-10-25 (current pin)
+
+SPECTRAX main is now `32f7d81`: the owner merged #86 (Python 3.10 support again; this supersedes the `requires-python >=3.11` note below).
+#88 (opt-in relativistic Hermite model, `inv_c2`) was added: its head `feature/relativistic-hermite` was updated by merging
+`origin/main` (ordinary push, `ee5f051`; no conflicts) and has no Python >=3.11-only syntax (no `tomllib`, `ExceptionGroup`, `Self`, `StrEnum`).
+`integration/dark-baseline-2` was extended by merging `origin/main` (one conflict in `tests/test_simulation_runs.py`, both sides kept) and then
+#88 (conflicts in `_model.py` and `_simulation.py`: `inv_c2` was threaded through next to `F0`, `frame`, `collision_model` and `integrating_factor`;
+the relativistic branch ignores `F0` and the Dougherty term, so those combinations are not covered by #88's tests). New pin: `8d4d8d2ebb6b6faebef3a867bc1c275c291227bf`.
+Full suite on the merged branch (Python 3.12): 247 passed, 1 xfailed. On Python 3.10 (jax 0.6.2) the #88 tests pass, but
+`test_perturbation_removes_every_background_density_and_keeps_mean_current[4]` segfaults inside XLA compilation; it does the same on a clean
+`origin/main` checkout, so it is not caused by #88.
+
+## Resync of 2026-10-24 (previous pin `a6a560b`)
 
 SPECTRAX main is now `b668d87`: the owner merged #46, #48, #12, #13 and #50. Every remaining open PR of ours was updated by
 merging `origin/main` (and, in stacks, its parent) into its head, with ordinary pushes and no history rewrite, and a new parent
@@ -88,7 +100,7 @@ An unmerged integration commit containing #48, #46, #13, #12, #9 and #55 exists 
 
 ## What Dark-SPECTRAX needs upstream
 
-Dark-SPECTRAX is pinned to the SPECTRAX integration branch `integration/dark-baseline-2` (`a6a560b`, see the resync above). The text below describes the earlier branch `integration/dark-baseline`
+Dark-SPECTRAX is pinned to the SPECTRAX integration branch `integration/dark-baseline-2` (`8d4d8d2`, see the resync above). The text below describes the earlier branch `integration/dark-baseline`
 (`f33dfda`: main `bf41830` plus the unmerged PRs #48, #46, #13, #12, #9, #55, #50, #44, #18, #51, merged in that order,
 then the moving-Hermite-basis stack #56-#60, the lane-A filter #61, the field-scaled closure #66 and the species-TOML usability stack #62-#65), not a release.
 Earlier pins: `9d0982d` (first ten PRs), `c0910a1` (+ #56-#60), `16400f8` (+ #61, #66), `26605e5` (+ #62-#65, on main `ab87385`); the side branches `integration/highk` and

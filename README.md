@@ -35,12 +35,12 @@ python -m pip install -e ".[test]"
 python -m darkspectrax examples/landau.toml --out artifacts/landau
 ```
 
-The parent is pinned to SPECTRAX commit `a6a560bafd42e0f2c957d2b080b7ac786c14b81e`: the SPECTRAX integration branch
-`integration/dark-baseline-2` of unmerged PRs (main `b668d87`, which already contains #48, #46, #13, #12 and #50, plus #9, #55, #44, #18, #51,
+The parent is pinned to SPECTRAX commit `8d4d8d2ebb6b6faebef3a867bc1c275c291227bf`: the SPECTRAX integration branch
+`integration/dark-baseline-2` of unmerged PRs (main `32f7d81`, which already contains #48, #46, #13, #12, #50 and #86 (Python 3.10 support), plus #9, #55, #44, #18, #51,
 the moving-Hermite-basis stack #56-#60, the lane-A filter #61, the field-scaled closure #66 and the
 species-TOML usability stack #62-#65, then the public mask/weights names #70, separate rtol/atol and
 the per-component error floor #69, the fixed-step adjoint regression test #68, the conservative Dougherty collision operator #71 with its
-Francisquez LBO-G cross-species moments #73, the magnetic field-scaled closure #72, and the Lawson integrating-factor wrappers #82 and #83), not a release.
+Francisquez LBO-G cross-species moments #73, the magnetic field-scaled closure #72, and the Lawson integrating-factor wrappers #82 and #83, and the opt-in relativistic Hermite model #88), not a release.
 The earlier pin `35231ab` (`integration/dark-baseline`) is kept on GitHub; the same inputs reproduce bitwise on both pins (see `docs/upstream-review.md`).
 `--out` receives `run.json` (provenance, solver statistics, ledger and Gauss maxima) and `run.npz`;
 `--resume previous/run.npz` continues from a saved final state.

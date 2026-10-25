@@ -12,8 +12,8 @@ license = {file = "LICENSE"}
 authors = [{name = "UWPlasma, UW-Madison group", email = "rogerio.jorge@wisc.edu"}]
 dependencies = [
   # Exact parent commit: SPECTRAX integration branch integration/dark-baseline-2
-  # (main b668d87 + unmerged PRs #9 #55 #44 #18 #51 #56-#60 #61 #66 #62-#65 #68-#73 #82 #83), not a release. Its own dependency list omits these:
-  "spectrax @ git+https://github.com/uwplasma/SPECTRAX.git@a6a560bafd42e0f2c957d2b080b7ac786c14b81e",
+  # (main 32f7d81 + unmerged PRs #9 #55 #44 #18 #51 #56-#60 #61 #66 #62-#65 #68-#73 #82 #83 #88), not a release. Its own dependency list omits these:
+  "spectrax @ git+https://github.com/uwplasma/SPECTRAX.git@8d4d8d2ebb6b6faebef3a867bc1c275c291227bf",
   "jax",
   "diffrax",
   "orthax",
