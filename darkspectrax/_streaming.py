@@ -37,6 +37,9 @@ def streaming(rate=None):
 
 def streaming_factor_fn(model: Model, rate=None):
     """``factor_fn(t, y, args) -> StreamingFactor`` for :class:`spectrax.LawsonSolver` on the Dark dict state."""
+    if model.inv_c2 > 0:
+        raise ValueError("exact Hermite streaming is the nonrelativistic ladder; with inv_c2 > 0 use the closure-only "
+                         "integrating factor (field_closure rate) and explicit streaming")
     Ns, Np, Nm, Nn = model.Ns, model.Np, model.Nm, model.Nn
     shape = (Ns, Np, Nm, Nn, *model.shape)
     ck_shape = (Ns * Nn * Nm * Np, *model.shape)

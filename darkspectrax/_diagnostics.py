@@ -12,7 +12,7 @@ import numpy as np
 
 from ._model import Model, basis_of, hermite_index, inner
 
-__all__ = ["moments", "energies", "gauss_residuals", "charge_density", "fit_modes"]
+__all__ = ["moments", "speed_moments", "energies", "gauss_residuals", "charge_density", "fit_modes"]
 
 
 def _coef(model, Ck, s, n, m, p):
@@ -58,6 +58,25 @@ def moments(model: Model, Ck, basis=None):
     return jnp.stack(ns), jnp.stack(Ms), jnp.stack(M2s)
 
 
+def speed_moments(model: Model, Ck, basis=None):
+    """Box means (k = 0) per species of ``n``, ``<v_x>`` and ``<v_x^2>`` with ``v = u / sqrt(1 + inv_c2 u^2)``
+    (``inv_c2 = 0``: the ordinary velocity moments), from the nodal Galerkin matrices of SPECTRAX ``speed_apply``.
+    Returns arrays of shape ``(Ns,)`` (densities, density-weighted mean velocity ``int v f``, ``int v^2 f``); 1D1V (Nm = Np = 1)."""
+    from spectrax._relativistic import _apply_nodal, hermite_nodes
+
+    u, a = basis_of(model, None if basis is None else {"B": basis})
+    Ns, Nn = model.Ns, model.Nn
+    C = Ck.reshape(Ns, 1, 1, Nn, *Ck.shape[-3:])
+    ux = u.reshape(Ns, 3)[:, 0][:, None, None, None] + a.reshape(Ns, 3)[:, 0][:, None, None, None] * jnp.asarray(
+        hermite_nodes(Nn)[0])[None, None, None, :]
+    g = jnp.sqrt(1.0 + model.inv_c2 * ux ** 2)
+    vol = a.reshape(Ns, 3).prod(axis=1)
+    out = []
+    for f in (jnp.ones_like(ux), ux / g, (ux / g) ** 2):
+        out.append(vol * jnp.real(_apply_nodal(C, f, Nn, 1, 1, Ns)[:, 0, 0, 0, 0, 0, 0]))
+    return tuple(out)
+
+
 def charge_density(model: Model, Ck, basis=None):
     """Fourier coefficients of rho = sum_s q_s n_s + rho_background."""
     n, _, _ = moments(model, Ck, basis)
@@ -70,6 +89,11 @@ def energies(model: Model, y):
     om0 = model.Omega_cs[0]
     _, _, M2 = moments(model, y["Ck"], y.get("B"))
     K_s = 0.5 * jnp.asarray(model.masses) * jnp.real(jnp.trace(M2[..., 0, 0, 0], axis1=1, axis2=2))
+    if model.inv_c2 > 0:  # relativistic kinetic energy m c^2 (gamma - 1), c = 1 (Gauss-Hermite nodal Galerkin matrix)
+        from spectrax._relativistic import relativistic_kinetic_energy
+        u, a = basis_of(model, y)
+        K_s = relativistic_kinetic_energy(y["Ck"], a, u, jnp.asarray(model.masses), model.inv_c2,
+                                          model.Nn, model.Nm, model.Np, model.Ns)
     Fk, Dk, Nx = y["Fk"], y["Dk"], model.Nx
     U_gamma = 0.5 * om0 ** 2 * inner(Nx, Fk, Fk)
     U_D = 0.5 * om0 ** 2 * (inner(Nx, Dk[:6], Dk[:6])

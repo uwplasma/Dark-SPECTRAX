@@ -33,7 +33,7 @@ from spectrax import uniform_acceleration as _parent_uniform_acceleration
 
 jax.config.update("jax_enable_x64", True)
 
-PARENT_COMMIT = "a6a560bafd42e0f2c957d2b080b7ac786c14b81e"  # SPECTRAX integration/dark-baseline-2, not a release
+PARENT_COMMIT = "6a6606ba642f7aaad7be89a010f178ca3680e58d"  # SPECTRAX integration/dark-baseline-2, not a release
 MODES = ("ordinary", "prescribed_drive", "self_consistent")
 FRAMES = ("fixed", "pump")
 COLLISION_MODELS = ("none", "dougherty", "dougherty_g")
@@ -85,6 +85,7 @@ class Model:
     frame: str = "fixed"
     collision_model: str = "none"
     nu_dougherty: object = 0.0
+    inv_c2: float = 0.0  # 1/c^2 in code units (velocities in c: 1.0 is physical); 0 = nonrelativistic (bitwise the old path)
     beta: float = 0.0  # LBO-G cross-species parameter (collision_model "dougherty_g" only; parent #73)
     _p: dict = field(default=None, repr=False)
 
@@ -95,6 +96,10 @@ class Model:
             raise ValueError(f"frame must be one of {FRAMES}, got {self.frame!r}")
         if self.collision_model not in COLLISION_MODELS:
             raise ValueError(f"collision_model must be one of {COLLISION_MODELS}, got {self.collision_model!r}")
+        if self.inv_c2 < 0:
+            raise ValueError("inv_c2 = 1/c^2 must be >= 0")
+        if self.inv_c2 > 0 and self.collision_model != "none":
+            raise ValueError("the relativistic model (inv_c2 > 0) has no relativistic Dougherty operator: collision_model='none'")
         if np.ndim(self.nu_dougherty) not in (0, 2):
             raise ValueError("nu_dougherty is a scalar or an Ns x Ns matrix")
         Ns = len(self.qs)
@@ -198,13 +203,13 @@ def rhs(t, y, model: Model):
         Ck, C, F, p["kx_grid"], p["ky_grid"], p["kz_grid"], p["k2_grid"], p["collision_matrix"],
         p["sqrt_n_plus"], p["sqrt_n_minus"], p["sqrt_m_plus"], p["sqrt_m_minus"],
         p["sqrt_p_plus"], p["sqrt_p_minus"], p["Lx"], p["Ly"], p["Lz"], p["nu"], p["D"],
-        a_s, u_s, p["qs"], p["Omega_cs"], Nn, Nm, Np, Ns, mask23=mask, F0=F0)
+        a_s, u_s, p["qs"], p["Omega_cs"], Nn, Nm, Np, Ns, mask23=mask, F0=F0, inv_c2=m.inv_c2)
     if m.collision_model in ("dougherty", "dougherty_g"):  # parent #71 LBO-EM / #73 LBO-G (beta), exact in the moving basis
         nu_D = np.asarray(m.nu_dougherty, float)
         nu_D = np.eye(Ns) * nu_D if nu_D.ndim == 0 else nu_D
         dCk = dCk + _parent_dougherty(C.reshape(Ns, Np, Nm, Nn, Ny, Nx, Nz), nu_D, a_s, u_s, p["Omega_cs"],
                                       Nn, Nm, Np, Ns, mask, beta=m.beta if m.collision_model == "dougherty_g" else None)
-    J = _parent_current(p["qs"], a_s, u_s, Ck, Nn, Nm, Np, Ns)
+    J = _parent_current(p["qs"], a_s, u_s, Ck, Nn, Nm, Np, Ns, inv_c2=m.inv_c2)
 
     dE = 1j * _cross(nabla, Fk[3:]) - J / om0
     dB = -1j * _cross(nabla, Fk[:3])
