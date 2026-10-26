@@ -6,7 +6,7 @@ export PYTHONPATH="${SPECTRAX_SRC:?}:$PWD" JAX_PLATFORMS=cpu XLA_FLAGS="--xla_cp
 NX=$1; NN=$2; C=$3
 mkdir -p studies/relhhs
 for i in $(seq 1 30); do
-  out=$(nice -n 10 python studies/relhhs_run.py --Nx $NX --Nn $NN --field-nu $C --T 1000 --chunk 100 2>&1)
+  out=$(nice -n 10 ${PYTHON:-python} studies/relhhs_run.py --Nx $NX --Nn $NN --field-nu $C --T 1000 --chunk 100 2>&1)
   echo "$out" | tail -c 600 >> studies/relhhs/log_Nx${NX}_Nn${NN}_c${C}.txt
   echo "$out" | grep -q '"status": "success"' || break
   echo "$out" | grep -q '"t_end": 1000.0' && break
