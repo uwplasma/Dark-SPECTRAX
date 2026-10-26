@@ -1,0 +1,36 @@
+{
+ "repository_commit": "d8d15c4e0abc370769d2dd9d9191b6e0b9b8b9bd",
+ "thresholds": {
+  "G1_err": 1e-06,
+  "G1_phase": 1e-06,
+  "G1_discrim": 0.1,
+  "G1_T": 500.0,
+  "G2_rule": 0.1,
+  "G2_t": 400.0,
+  "G3_fneg": -0.001,
+  "G3_t": 400.0,
+  "G4_ledger": 0.0001,
+  "G4_t": 400.0
+ },
+ "runs": {
+  "rel_vq0.03_Nx8_Nn64_c64_hom": {
+   "T": 500.0,
+   "Ebar_rel_err": 1.7092692886513054e-09,
+   "W_ext_rel_err": 5.520632439171459e-10,
+   "phase_err_rad": 1.585664544112575e-09,
+   "status": "success",
+   "pass": true
+  },
+  "rel_vq0.03_Nx8_Nn128_c64_hom": {
+   "T": 500.0,
+   "Ebar_rel_err": 2.4607959033699627e-09,
+   "W_ext_rel_err": 7.834759608680224e-10,
+   "phase_err_rad": 2.2697821400186058e-09,
+   "status": "success",
+   "pass": true
+  }
+ },
+ "nonrel_vs_rel_W_ext": 0.37956464891716535,
+ "discrimination_pass": true,
+ "pass": true
+}
