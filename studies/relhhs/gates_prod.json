@@ -1,0 +1,231 @@
+{
+ "repository_commit": "f76d087c232fdaa3d282b82dfd074e3f32a37baa",
+ "thresholds": {
+  "G1_err": 1e-06,
+  "G1_phase": 1e-06,
+  "G1_discrim": 0.1,
+  "G1_T": 500.0,
+  "G2_rule": 0.1,
+  "G2_t": 400.0,
+  "G3_fneg": -0.001,
+  "G3_t": 400.0,
+  "G4_ledger": 0.0001,
+  "G4_t": 400.0
+ },
+ "runs": {
+  "(32, 64, 16)": {
+   "T": 1000.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_fneg": null,
+   "t_ledger": null,
+   "max_ledger_t400": 4.510665561824908e-09,
+   "t_posstop": null,
+   "t_fail": null,
+   "t_cert": 1000.0
+  },
+  "(32, 64, 64)": {
+   "T": 1000.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_fneg": null,
+   "t_ledger": null,
+   "max_ledger_t400": 1.785266358152225e-08,
+   "t_posstop": null,
+   "t_fail": null,
+   "t_cert": 1000.0
+  },
+  "(32, 128, 16)": {
+   "T": 1000.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_fneg": null,
+   "t_ledger": null,
+   "max_ledger_t400": 7.774396482679019e-10,
+   "t_posstop": null,
+   "t_fail": null,
+   "t_cert": 1000.0
+  },
+  "(32, 128, 64)": {
+   "T": 1000.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_fneg": null,
+   "t_ledger": null,
+   "max_ledger_t400": 3.0588330935401694e-09,
+   "t_posstop": null,
+   "t_fail": null,
+   "t_cert": 1000.0
+  },
+  "(64, 64, 16)": {
+   "T": 1000.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_fneg": null,
+   "t_ledger": null,
+   "max_ledger_t400": 4.519904813234811e-09,
+   "t_posstop": null,
+   "t_fail": null,
+   "t_cert": 1000.0
+  },
+  "(64, 64, 64)": {
+   "T": 1000.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_fneg": null,
+   "t_ledger": null,
+   "max_ledger_t400": 1.785825743073554e-08,
+   "t_posstop": null,
+   "t_fail": null,
+   "t_cert": 1000.0
+  },
+  "(64, 128, 16)": {
+   "T": 1000.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_fneg": null,
+   "t_ledger": null,
+   "max_ledger_t400": 7.850540055578289e-10,
+   "t_posstop": null,
+   "t_fail": null,
+   "t_cert": 1000.0
+  },
+  "(64, 128, 64)": {
+   "T": 1000.0,
+   "status": "success",
+   "failure_reason": null,
+   "t_fneg": null,
+   "t_ledger": null,
+   "max_ledger_t400": 3.0645459998447424e-09,
+   "t_posstop": null,
+   "t_fail": null,
+   "t_cert": 1000.0
+  }
+ },
+ "pairs": {
+  "Nx:(32, 64, 16)->(64, 64, 16)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  },
+  "Nx:(32, 64, 64)->(64, 64, 64)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  },
+  "Nx:(32, 128, 16)->(64, 128, 16)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  },
+  "Nx:(32, 128, 64)->(64, 128, 64)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  },
+  "Nn:(32, 64, 16)->(32, 128, 16)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  },
+  "Nn:(32, 64, 64)->(32, 128, 64)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  },
+  "Nn:(64, 64, 16)->(64, 128, 16)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  },
+  "Nn:(64, 64, 64)->(64, 128, 64)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  },
+  "c:(32, 64, 16)->(32, 64, 64)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  },
+  "c:(32, 128, 16)->(32, 128, 64)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  },
+  "c:(64, 64, 16)->(64, 64, 64)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  },
+  "c:(64, 128, 16)->(64, 128, 64)": {
+   "dK_e": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   },
+   "W_ext": {
+    "t_disagree": null,
+    "t_common": 1000.0
+   }
+  }
+ },
+ "n_runs": 8,
+ "G2_pass": true,
+ "G3_pass": true,
+ "G4_pass": true
+}

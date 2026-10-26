@@ -25,7 +25,18 @@ Certified window of a run: t_cert = min(T, first f_e < -1e-3 max, positivity sto
 Measurements (no thresholds): collapse time = first t > 50 with |W_ext - W_lin| > 0.1 |W_lin|, W_lin the nonrelativistic homogeneous ODE (as relgrid_analysis);
 E1D_e = (1/2) m (<v^2> - <v>^2/n) (v = u/gamma) change over E_th = 5e-4, trailing 200 omega_pe^-1 average (HHS measure), and dK_e / E_th, against relpic and relgrid.
 
-Run: python studies/relhhs_gates.py g1 | prod
+Run: python studies/relhhs_gates.py g1 | prod | f1 | f2
+
+FOLLOW-UP, declared after G1-G4 (all PASSED, every run certified to T = 1000; the deterministic runs show collapse at t = 392.5 and dE1D_e = 0.056 E_th at
+1000, the relgrid values) and BEFORE any run below. No threshold of G1-G4 changes. The deterministic runs have no noise, so they cannot reproduce the PIC
+dW_th (the PIC value is noise-seeded); and the certified window never ended, so the horizon is open.
+F1  horizon: continue the base runs (Nx 32, Nn 64, c 64) and (Nx 64, Nn 128, c 64) to T = 2000 (same command with --T 2000; resumes the committed parts).
+    Certified horizon of a run = min(T, first f_e/f_max < -1e-3, positivity stop, ledger > 1e-4 of max W_ext, first 10% disagreement of dK_e / W_ext between the
+    two runs). PASS iff both reach T = 2000 with the horizon at 2000.
+F2  shot-noise seeds (relgrid recipe, independent e and i, seed 0, modes 1..(Nx-1)//3 taken from a shared 21-mode draw), T = 1000, c = 64, for Np = 1000 npc with
+    npc = 103 (the relpic ppc) and 2.05e5 (the relgrid load), Hermite (Nx 32, Nn 64) and (Nx 64, Nn 128). Per run the certified horizon is defined as in F1
+    (the pair is the two Hermite resolutions of the same npc). PASS iff all four runs have horizon >= 400 (G3/G4 window). The measurement is dE1D_e (200-average)
+    / E_th at the horizon and at 1000 where certified, against relpic R (7.3 / 16.1 / 20.0 / 21.5 at t = 400 / 600 / 800 / 1000) and the relgrid shot runs.
 """
 import json
 import subprocess
@@ -167,5 +178,47 @@ def prod():
         print(k, v)
 
 
+def horizon(r, other=None):
+    t = r["t"]
+    led = np.abs(r["ledger"]) / max(np.abs(r["W_ext"]).max(), 1e-300)
+    c = {"T": float(t[-1]), "t_fneg": first_t(t, r["fmin"] / r["fmax"] < G["G3_fneg"]), "t_ledger": first_t(t, led > G["G4_ledger"]),
+         "t_fail": float(t[-1]) if r["status"] == "failure" else None}
+    if other is not None:
+        for obs in ("dK_e", "W_ext"):
+            c["t_pair_" + obs] = agree_t(r, other, obs)[0]
+    c["horizon"] = float(min(v for v in c.values() if v is not None))
+    return c
+
+
+def f1():
+    out = {"repository_commit": sha(), "runs": {}}
+    A, B = load(case(32, 64, 64)), load(case(64, 128, 64))
+    for nm, r, o in (("(32, 64, 64)", A, B), ("(64, 128, 64)", B, A)):
+        out["runs"][nm] = horizon(r, o)
+    out["pass"] = bool(all(v["horizon"] >= 2000.0 - 1e-9 for v in out["runs"].values()))
+    (OUTD / "gates_f1.json").write_text(json.dumps(out, indent=1) + "\n")
+    print(json.dumps(out, indent=1))
+
+
+def f2():
+    out = {"repository_commit": sha(), "runs": {}}
+    for npc in ("103", "205000"):
+        tag = f"_shot{npc}s0"
+        A, B = load(case(32, 64, 64) + tag), load(case(64, 128, 64) + tag)
+        if A is None or B is None:
+            continue
+        for nm, r, o in (("Nx32_Nn64", A, B), ("Nx64_Nn128", B, A)):
+            h = horizon(r, o)
+            t = r["t"]
+            import relgrid_analysis as RA
+            dE = RA.mavg(t, r["dE1D_e"]) / E_TH
+            h["dE1D_over_Eth_at_horizon"] = float(dE[int(np.argmin(np.abs(t - h["horizon"])))])
+            h["dE1D_over_Eth"] = {str(q): float(dE[int(np.argmin(np.abs(t - q)))]) for q in (200, 400, 600, 800, 1000) if q <= t[-1]}
+            out["runs"][f"npc{npc}_{nm}"] = h
+    out["pass"] = bool(len(out["runs"]) == 4 and all(v["horizon"] >= 400.0 for v in out["runs"].values()))
+    (OUTD / "gates_f2.json").write_text(json.dumps(out, indent=1) + "\n")
+    print(json.dumps(out, indent=1))
+
+
 if __name__ == "__main__":
-    {"g1": g1, "prod": prod}[sys.argv[1]]()
+    {"g1": g1, "prod": prod, "f1": f1, "f2": f2}[sys.argv[1]]()

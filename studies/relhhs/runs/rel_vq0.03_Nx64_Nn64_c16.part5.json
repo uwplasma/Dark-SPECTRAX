@@ -1,0 +1,23 @@
+{
+ "case": "rel_vq0.03_Nx64_Nn64_c16",
+ "part": 5,
+ "t_start": 500.0,
+ "t_end": 600.0,
+ "status": "success",
+ "failure_reason": null,
+ "events": 3,
+ "steps": 1563,
+ "rejected": 534,
+ "compile_time": 8.945457575027831,
+ "run_time": 58.97592477995204,
+ "wall_time": 113.71337895898614,
+ "inv_c2": 1.0,
+ "Nx": 64,
+ "Nn": 64,
+ "field_nu": 16.0,
+ "vq": 0.03,
+ "real": 0,
+ "repository_commit": "f76d087c232fdaa3d282b82dfd074e3f32a37baa",
+ "parent_commit": "6a6606ba642f7aaad7be89a010f178ca3680e58d",
+ "command": "python studies/relhhs_run.py --Nx 64 --Nn 64 --field-nu 16 --T 1000 --chunk 100"
+}

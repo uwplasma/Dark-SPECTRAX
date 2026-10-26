@@ -789,6 +789,43 @@ def relgrid_section():
     return "\n".join(L)
 
 
+def relhhs_section():
+    """Relativistic Hermite (Dark-SPECTRAX inv_c2) on the HHS resonant set-up; numbers read from studies/relhhs/*.json."""
+    d = root / "studies" / "relhhs"
+    if not (d / "summary.json").exists():
+        return ""
+    S, P = json.loads((d / "summary.json").read_text()), json.loads((d / "gates_prod.json").read_text())
+    G1 = json.loads((d / "gates_g1.json").read_text())
+    ref = S["references"]
+    g = lambda x: "-" if x is None else f"{x:g}"
+    f3 = lambda x: "-" if x is None else f"{x:.3g}"
+    L = ["## Relativistic Hermite on the HHS resonance (`studies/relhhs_gates.py`, `relhhs_run.py`, `relhhs_analysis.py`)", "",
+         f"- Records: `studies/relhhs/`, repository `{S['repository_commit'][:7]}`; Dark-SPECTRAX `inv_c2 = 1` (velocities in c, T = 1e-3 m_e c^2), SPECTRAX #88 plus its "
+         "pump-frame `F0` support (parent `6a6606b`). Set-up of the relgrid and relpic studies: v_q/v_te 0.03, m_i/m_e 1836, L = 40 c/omega_pe, pump frame, "
+         "field-scaled closure c exact in the Lawson factor (streaming explicit), deterministic seeds, T = 1000. Gates declared before the runs and not amended.",
+         f"- G1 (relativistic homogeneous limit vs the exact kinetic ODE, T = 500): " + "; ".join(
+             f"{k.split('_')[3]}: Ebar {v['Ebar_rel_err']:.2g}, W_ext {v['W_ext_rel_err']:.2g}, phase {v['phase_err_rad']:.2g} rad" for k, v in G1["runs"].items())
+         + f"; nonrelativistic ODE misses W_ext by {G1['nonrel_vs_rel_W_ext']:.2f} (discrimination). Pass: {G1['pass']}.",
+         f"- G2 (12 refinement pairs, agree to t = 400 on dK_e and W_ext): {'PASS' if P['G2_pass'] else 'FAIL'}; G3 (positivity to t = 400): "
+         f"{'PASS' if P['G3_pass'] else 'FAIL'}; G4 (ledger with (gamma-1) m c^2 <= 1e-4 of W_ext to t = 400): {'PASS' if P['G4_pass'] else 'FAIL'}.", "",
+         "| Nx, Nn, c | end (status) | t(W 10% off linear) | dE1D_e/E_th at 400 / 500 / 1000 | Ebar energy / linear at 500 / 1000 | max top-third Hermite fraction | f<-1e-3 | ledger>1e-4 | certified to |",
+         "|---|---|---|---|---|---|---|---|---|"]
+    for k, v in S["runs"].items():
+        p = P["runs"].get(k, {})
+        e, b = v["dE1D_e_over_Eth"], v["Ebar_energy_over_linear"]
+        L.append(f"| {k.strip('()')} | {v['T']:g} ({v['status']}) | {g(v['t_collapse_W_10pc'])} | {f3(e['400'])} / {f3(e['500'])} / {f3(e['1000'])} | "
+                 f"{f3(b['500'])} / {f3(b['1000'])} | {v['max_top_frac_e']:.2g} | {g(p.get('t_fneg'))} | {g(p.get('t_ledger'))} | {g(v['t_cert'])} |")
+    rg = ref["relgrid"]
+    L += ["", "Reference values from the committed records: relgrid (grid) " + "; ".join(
+        f"{k}: collapse {g(v['t_W_10pc_from_linear'])}, dE1D/E_th at 500 / 1000 = {f3(v['dE1D_over_Eth'].get('500'))} / {f3(v['dE1D_over_Eth'].get('1000'))}, first f<-1e-3 {g(v['t_fneg'])}, ledger>1e-4 {g(v['t_ledger'])}"
+        for k, v in rg.items()) + ". relpic (dW_th/E_th): " + "; ".join(
+        f"{k}: " + ", ".join(f"t={t}: {x:.3g}" for t, x in v.items() if t in ("400", "600", "800", "1000")) for k, v in ref["relpic_dW_th_over_Eth"].items())
+    L.append("HHS Fig. 2 digitized dW_th/E_th: " + ", ".join(f"t={t}: {x:.3g}" for t, x in ref["hhs_digitized_dW_th_over_Eth"].items() if t in ("400", "600", "800", "1000")) + ".")
+    if (d / "verdict.md").exists():
+        L += ["", (d / "verdict.md").read_text().strip()]
+    return "\n".join(L)
+
+
 def c09_section():
     r = c09_records()
     a, b, c = r["a_omega"], r["b_dark_work"], r["c_landau"]
@@ -2263,6 +2300,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {c09_section()}
 
 {relgrid_section()}
+
+{relhhs_section()}
 
 {phase_space()}
 

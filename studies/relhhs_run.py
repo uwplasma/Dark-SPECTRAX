@@ -55,6 +55,17 @@ def f_extrema(m, Ck, B):
     return np.array(mn), np.array(mx)
 
 
+def shot_seeds(npc, seed, nm):
+    """Perturbations (species, (m, 0, 0), a_m): the relgrid shot-noise recipe with draws shared across Nx (21 modes drawn, nm used)."""
+    rng = np.random.default_rng(seed)
+    Np = npc * 1000.0
+    out = []
+    for s in (0, 1):
+        a = (rng.standard_normal(21) + 1j * rng.standard_normal(21)) * np.sqrt(0.5 / Np)
+        out += [(s, (m, 0, 0), a[m - 1]) for m in range(1, nm + 1)]
+    return out
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--vq", type=float, default=0.03)
@@ -68,10 +79,14 @@ def main(argv=None):
     ap.add_argument("--max-steps", type=int, default=200_000)
     ap.add_argument("--tag", default="")
     ap.add_argument("--real", type=int, default=0, help="seed realization of lane_c_run (-1: unseeded homogeneous control)")
+    ap.add_argument("--shot-npc", type=float, default=0.0,
+                    help="white shot-noise density seeds instead of the deterministic ones (relgrid recipe: modes 1..(Nx-1)//3, complex Gaussian a_m with "
+                         "<|a_m|^2> = 1/Np, Np = 1000 npc, e and i independent; the draws are made for 21 modes and the first (Nx-1)//3 used)")
+    ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv)
     out_dir = Path(a.out) if a.out else OUT
-    case = f"rel_vq{a.vq:g}_Nx{a.Nx}_Nn{a.Nn}_c{a.field_nu:g}" + ("" if a.inv_c2 == 1.0 else f"_ic{a.inv_c2:g}") + a.tag
+    case = f"rel_vq{a.vq:g}_Nx{a.Nx}_Nn{a.Nn}_c{a.field_nu:g}" + ("" if a.inv_c2 == 1.0 else f"_ic{a.inv_c2:g}") + (f"_shot{a.shot_npc:g}s{a.seed}" if a.shot_npc > 0 else "") + a.tag
     out_dir.mkdir(parents=True, exist_ok=True)
     parts = sorted(out_dir.glob(f"{case}.part*.npz"), key=lambda p: int(p.suffixes[-2][5:]))
     m = dataclasses.replace(lane_model(a.vq, a.Nn, a.Nx), inv_c2=a.inv_c2)
@@ -86,7 +101,7 @@ def main(argv=None):
               "W": jnp.asarray(last["y_W"]), "B": jnp.asarray(last["y_B"])}
     else:
         t0 = 0.0
-        y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], seeds(a.real)))
+        y0 = ds.consistent_fields(m, ds.maxwellian(m, [1.0, 1.0], shot_seeds(a.shot_npc, a.seed, (a.Nx - 1) // 3) if a.shot_npc > 0 else seeds(a.real)))
     ipart = len(parts)
     t1 = min(a.T, t0 + max(SEG, SEG * (a.chunk // SEG)))
     stats, run0 = [], _sim.run
@@ -127,7 +142,7 @@ def main(argv=None):
     rec = {"case": case, "part": ipart, "t_start": t0, "t_end": t_end, "status": status, "failure_reason": out["failure_reason"],
            "events": len(out["events"]), "steps": int(st[:, 0].sum()), "rejected": int(st[:, 1].sum()),
            "compile_time": float(st[:, 2].sum()), "run_time": float(st[:, 3].sum()), "wall_time": wall,
-           "inv_c2": a.inv_c2, "Nx": a.Nx, "Nn": a.Nn, "field_nu": a.field_nu, "vq": a.vq, "real": a.real,
+           "inv_c2": a.inv_c2, "Nx": a.Nx, "Nn": a.Nn, "field_nu": a.field_nu, "vq": a.vq, "real": a.real, "shot_npc": a.shot_npc, "seed": a.seed,
            "repository_commit": _sim._git_sha(), "parent_commit": ds.PARENT_COMMIT,
            "command": "python studies/relhhs_run.py " + " ".join(sys.argv[1:])}
     stem = out_dir / f"{case}.part{ipart}"
