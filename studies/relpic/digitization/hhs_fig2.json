@@ -1,0 +1,14 @@
+{
+ "source": "PRL 137, 071004 (2026), Fig. 2 upper panel, page 3, rendered at 600 dpi (vector figure)",
+ "method": "axis calibration from detected grid lines (decades 180.5 px, t 302.7 px per 1000); dotted initial thermal energy line reads 5.02e-4 (nominal 5e-4); black solid line centre traced at columns near the given t",
+ "E_th": 0.0005,
+ "black_solid_k_neq_0_electron_energy_change_over_Eth": {
+  "500": null,
+  "1000": 50.1,
+  "1500": 52.1,
+  "2000": 52.7,
+  "2500": 56.9,
+  "3000": 65.5
+ },
+ "note": "t=500 column hit the vertical/steep section; not used. Line-width uncertainty ~3 percent. Previous relpic reading ~25 E_th was wrong."
+}
