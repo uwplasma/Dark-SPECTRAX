@@ -61,7 +61,7 @@ def moments(model: Model, Ck, basis=None):
 def speed_moments(model: Model, Ck, basis=None):
     """Box means (k = 0) per species of ``n``, ``<v_x>`` and ``<v_x^2>`` with ``v = u / sqrt(1 + inv_c2 u^2)``
     (``inv_c2 = 0``: the ordinary velocity moments), from the nodal Galerkin matrices of SPECTRAX ``speed_apply``.
-    Returns arrays of shape ``(Ns,)`` (densities, density-weighted mean velocity ``int v f``, ``int v^2 f``); 1D1V (Nm = Np = 1)."""
+    Returns arrays of shape ``(Ns,)`` (densities, ``int v f``, ``int v^2 f``); 1D1V (Nm = Np = 1)."""
     from spectrax._relativistic import _apply_nodal, hermite_nodes
 
     u, a = basis_of(model, None if basis is None else {"B": basis})

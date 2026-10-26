@@ -1,5 +1,4 @@
 """Relativistic Hermite model through Dark-SPECTRAX: inv_c2 = 0 is the old path, ledger and speed moments vs quadrature."""
-import jax.numpy as jnp
 import numpy as np
 import pytest
 
@@ -34,7 +33,7 @@ def test_small_inv_c2_close_to_nonrelativistic():
 
 
 def test_pump_frame_does_not_double_count_the_drive():
-    """Relativistic pump frame: the kinetic rhs of the k = 0 state under a uniform drive is the basis-centre rate only (no Hermite force)."""
+    """Relativistic pump frame: the k = 0 kinetic rhs under a uniform drive is the basis-centre rate only (no Hermite force)."""
     m = _model(1.0)
     y = _state(m)
     out = ds.rhs(0.0, y, m)
