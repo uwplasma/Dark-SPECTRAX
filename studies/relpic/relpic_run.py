@@ -54,9 +54,25 @@ def main(argv=None):
     ap.add_argument("--shape", type=int, default=2)
     ap.add_argument("--nonrel", action="store_true")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--mirror", action="store_true",
+                    help="quiet-velocity loading: velocities drawn in mirrored pairs (v, -v) on adjacent quiet-start positions")
     ap.add_argument("--chunk", type=float, default=200.0)
     a = ap.parse_args(argv)
     m = load_module(a.nonrel)
+    if a.mirror:
+        original_rng = np.random.default_rng
+
+        def mirrored_rng(seed):
+            gen = original_rng(seed)
+
+            class Mirror:
+                def normal(self, *args, **kw):
+                    x = gen.normal(*args, **kw)
+                    x[1::2] = -x[:-1:2]
+                    return x
+            return Mirror()
+
+        np.random.default_rng = mirrored_rng
     folder = OUT / a.tag
     folder.mkdir(parents=True, exist_ok=True)
     t0 = time.perf_counter()
