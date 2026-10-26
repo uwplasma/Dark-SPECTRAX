@@ -1,0 +1,24 @@
+{
+ "repository_commit": "0873d10fe67c9b8b4571494fad211f43ae6eb042",
+ "runs": {
+  "(32, 64, 64)": {
+   "T": 2000.0,
+   "t_fneg": 1528.0,
+   "t_ledger": 1855.5,
+   "t_fail": null,
+   "t_pair_dK_e": null,
+   "t_pair_W_ext": null,
+   "horizon": 1528.0
+  },
+  "(64, 128, 64)": {
+   "T": 1800.0,
+   "t_fneg": 1584.5,
+   "t_ledger": null,
+   "t_fail": null,
+   "t_pair_dK_e": null,
+   "t_pair_W_ext": null,
+   "horizon": 1584.5
+  }
+ },
+ "pass": false
+}

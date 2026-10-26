@@ -179,6 +179,7 @@ def prod():
 
 
 def horizon(r, other=None):
+    """other may be None (no partner record): the pair terms are then absent."""
     t = r["t"]
     led = np.abs(r["ledger"]) / max(np.abs(r["W_ext"]).max(), 1e-300)
     c = {"T": float(t[-1]), "t_fneg": first_t(t, r["fmin"] / r["fmax"] < G["G3_fneg"]), "t_ledger": first_t(t, led > G["G4_ledger"]),
@@ -205,9 +206,11 @@ def f2():
     for npc in ("103", "205000"):
         tag = f"_shot{npc}s0"
         A, B = load(case(32, 64, 64) + tag), load(case(64, 128, 64) + tag)
-        if A is None or B is None:
-            continue
+        if B is None:  # the Nx 64 run never completed a chunk (killed after 70 min in the first one): record it, no pair
+            out["runs"][f"npc{npc}_Nx64_Nn128"] = {"horizon": None, "note": "no record: killed in the first 100-unit chunk"}
         for nm, r, o in (("Nx32_Nn64", A, B), ("Nx64_Nn128", B, A)):
+            if r is None:
+                continue
             h = horizon(r, o)
             t = r["t"]
             import relgrid_analysis as RA
@@ -215,7 +218,7 @@ def f2():
             h["dE1D_over_Eth_at_horizon"] = float(dE[int(np.argmin(np.abs(t - h["horizon"])))])
             h["dE1D_over_Eth"] = {str(q): float(dE[int(np.argmin(np.abs(t - q)))]) for q in (200, 400, 600, 800, 1000) if q <= t[-1]}
             out["runs"][f"npc{npc}_{nm}"] = h
-    out["pass"] = bool(len(out["runs"]) == 4 and all(v["horizon"] >= 400.0 for v in out["runs"].values()))
+    out["pass"] = bool(len(out["runs"]) == 4 and all(v["horizon"] is not None and v["horizon"] >= 400.0 for v in out["runs"].values()))
     (OUTD / "gates_f2.json").write_text(json.dumps(out, indent=1) + "\n")
     print(json.dumps(out, indent=1))
 

@@ -819,10 +819,24 @@ def relhhs_section():
     L += ["", "Reference values from the committed records: relgrid (grid) " + "; ".join(
         f"{k}: collapse {g(v['t_W_10pc_from_linear'])}, dE1D/E_th at 500 / 1000 = {f3(v['dE1D_over_Eth'].get('500'))} / {f3(v['dE1D_over_Eth'].get('1000'))}, first f<-1e-3 {g(v['t_fneg'])}, ledger>1e-4 {g(v['t_ledger'])}"
         for k, v in rg.items()) + ". relpic (dW_th/E_th): " + "; ".join(
-        f"{k}: " + ", ".join(f"t={t}: {x:.3g}" for t, x in v.items() if t in ("400", "600", "800", "1000")) for k, v in ref["relpic_dW_th_over_Eth"].items())
+        f"{k}: " + ", ".join(f"t={t}: {x:.3g}" for t, x in v.items() if t in ("400", "600", "800", "1000")) for k, v in ref["relpic_dW_th_over_Eth"].items())]
     L.append("HHS Fig. 2 digitized dW_th/E_th: " + ", ".join(f"t={t}: {x:.3g}" for t, x in ref["hhs_digitized_dW_th_over_Eth"].items() if t in ("400", "600", "800", "1000")) + ".")
-    if (d / "verdict.md").exists():
-        L += ["", (d / "verdict.md").read_text().strip()]
+    F1, F2 = json.loads((d / "gates_f1.json").read_text()), json.loads((d / "gates_f2.json").read_text())
+    h1 = {k: v for k, v in F1["runs"].items()}
+    L += ["", "Follow-ups declared after G1-G4 and before their runs (same file): **F1** horizon to T = 2000 of the base runs: "
+          + "; ".join(f"{k}: reached {v['T']:g}, first f_e < -1e-3 max at {g(v['t_fneg'])}, ledger > 1e-4 at {g(v['t_ledger'])}, horizon {g(v['horizon'])}" for k, v in h1.items())
+          + f" (the Nx 64 run was stopped at {h1['(64, 128, 64)']['T']:g}, after its horizon was fixed); no pair disagreement. F1 {'PASS' if F1['pass'] else 'FAIL'} (declared: horizon 2000). "
+          "**F2** relgrid-recipe shot-noise seeds (seed 0, c = 64): "
+          + "; ".join(f"{k}: " + ("no record (killed after 70 min in the first chunk)" if v["horizon"] is None else
+                                  f"horizon {g(v['horizon'])} (f<-1e-3 {g(v.get('t_fneg'))}, ledger>1e-4 {g(v.get('t_ledger'))}, positivity stop {g(v.get('t_fail'))})") for k, v in F2["runs"].items())
+          + f". F2 {'PASS' if F2['pass'] else 'FAIL'} (declared: all four horizons >= 400).", "",
+          "- Reading: the relativistic Hermite model reproduces the relativistic grid (relgrid) in every deterministic observable it shares with it: W_ext 10% off the linear law at "
+          "t = 392.5 (grid 392), mean-field energy over linear 0.855 / 0.041 at 500 / 1000 (grid 0.854 / 0.041), dE1D_e = 0.056 E_th at 1000 (grid 0.056), all 8 runs identical to the "
+          "plotted accuracy, and it stays certified (f_e >= -1e-3 max, ledger <= 1e-4, 12 pairs within 10%) to t = 1528-1585, i.e. past the grid's own validity (t < ~350 for the shot runs). "
+          "The ledger of the nonlinear runs closes to 1e-7 of W_ext; the homogeneous limit to 1e-9. The deterministic Hermite runs never approach the PIC thermal gain: dE1D_e stays below "
+          "0.7 E_th up to T = 2000, against relpic R 21.5 E_th at 1000. The PIC (and the shot grid) gain is noise-seeded, and the noise-seeded Hermite runs lose f_e >= 0 at t = 0.5 (npc 103), "
+          "265-367 (npc 2.05e5) as the grid does (246-278), before any gain: the Hermite model does not reach the PIC regime either. The relativistic collapse is therefore a deterministic, "
+          "certified property of the model (detuning of the uniform resonance); the 21.5-50 E_th gain remains unreproduced by any certified deterministic model here."]
     return "\n".join(L)
 
 

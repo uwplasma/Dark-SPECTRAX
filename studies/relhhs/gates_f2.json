@@ -1,0 +1,47 @@
+{
+ "repository_commit": "0873d10fe67c9b8b4571494fad211f43ae6eb042",
+ "runs": {
+  "npc103_Nx64_Nn128": {
+   "horizon": null,
+   "note": "no record: killed in the first 100-unit chunk"
+  },
+  "npc103_Nx32_Nn64": {
+   "T": 160.0,
+   "t_fneg": 0.5,
+   "t_ledger": 10.5,
+   "t_fail": 160.0,
+   "horizon": 0.5,
+   "dE1D_over_Eth_at_horizon": 0.26739607995631787,
+   "dE1D_over_Eth": {}
+  },
+  "npc205000_Nx32_Nn64": {
+   "T": 660.0,
+   "t_fneg": 366.5,
+   "t_ledger": 606.5,
+   "t_fail": 660.0,
+   "t_pair_dK_e": 374.0,
+   "t_pair_W_ext": null,
+   "horizon": 366.5,
+   "dE1D_over_Eth_at_horizon": -0.015545282363696147,
+   "dE1D_over_Eth": {
+    "200": -0.003422411400834885,
+    "400": -0.01615286220241956,
+    "600": 0.6900150334437459
+   }
+  },
+  "npc205000_Nx64_Nn128": {
+   "T": 380.0,
+   "t_fneg": 265.0,
+   "t_ledger": 377.0,
+   "t_fail": 380.0,
+   "t_pair_dK_e": 380.0,
+   "t_pair_W_ext": null,
+   "horizon": 265.0,
+   "dE1D_over_Eth_at_horizon": -0.00650198829595567,
+   "dE1D_over_Eth": {
+    "200": -0.003185171714750924
+   }
+  }
+ },
+ "pass": false
+}
