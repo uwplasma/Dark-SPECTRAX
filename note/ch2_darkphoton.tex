@@ -1,0 +1,158 @@
+\chapter{The dark photon as a field coupled to a plasma}\label{ch:darkphoton}
+
+The introduction posed the problem in words; this chapter turns it into equations. It collects what is needed from field theory and electrodynamics to write down the equations that Dark-SPECTRAX solves. It starts from the kinetic-mixing Lagrangian, removes the mixing by a field redefinition, studies the resulting massive vector field in vacuum, couples it to a plasma, and proves the energy theorem that the code uses as a check on every run. It ends with the resonance between the dark photon and the plasma oscillation, the Landau--Zener description of a resonance crossed in a density gradient, and a short account of how the cosmological bounds are built. Units are $\hbar=c=\epsilon_0=1$ in the field-theory sections; the plasma sections restore $c$ and $\epsilon_0$ where they matter.
+
+\section{Kinetic mixing and the canonical form}\label{sec:mixing}
+
+A dark photon is a vector field $A'_\mu$ of an extra $U(1)$ gauge group under which no Standard Model particle is charged. Two abelian field strengths $F_{\mu\nu}=\partial_\mu A_\nu-\partial_\nu A_\mu$ and $F'_{\mu\nu}$ can be contracted with each other, and the resulting operator is gauge invariant and renormalizable. Holdom noted that integrating out heavy particles charged under both groups generates it at loop level~\citep{Holdom1986}, and the idea of a second, hidden photon is older. The Lagrangian, with the metric signature $(+,-,-,-)$ and a Standard Model current $J^\mu$ coupled to the photon, is
+\begin{equation}
+\mathcal L=-\tfrac14F_{\mu\nu}F^{\mu\nu}-\tfrac14F'_{\mu\nu}F'^{\mu\nu}-\tfrac{\chi}{2}F_{\mu\nu}F'^{\mu\nu}+\tfrac12m_0^2A'_\mu A'^\mu-J^\mu A_\mu .
+\label{eq:Lmix}
+\end{equation}
+The dimensionless number $\chi$ is the kinetic mixing and $m_0$ the bare mass of the dark photon, which may arise from a Higgs or a St\"uckelberg mechanism; the review of Ref.~\citep{Fabbrichesi2020} describes both. No mass term for $A_\mu$ is allowed, because the photon stays massless in vacuum.
+
+The kinetic terms of Eq.~\eqref{eq:Lmix} are not canonical, since the quadratic form $F^2+F'^2+2\chi FF'$ has off-diagonal entries. We remove them by a linear change of variables that is not an orthogonal rotation. Write
+\begin{equation}
+A_\mu=\tilde A_\mu+\frac{\chi}{s}\tilde A'_\mu,\qquad A'_\mu=-\frac{1}{s}\tilde A'_\mu,\qquad s\equiv\sqrt{1-\chi^2}.
+\end{equation}
+Then $F=\tilde F+(\chi/s)\tilde F'$ and $F'=-\tilde F'/s$, and the three quadratic terms combine as
+\begin{align}
+F^2+F'^2+2\chi FF'&=\tilde F^2+\frac{2\chi}{s}\tilde F\tilde F'+\frac{\chi^2}{s^2}\tilde F'^2+\frac{1}{s^2}\tilde F'^2-\frac{2\chi}{s}\tilde F\tilde F'-\frac{2\chi^2}{s^2}\tilde F'^2\nonumber\\
+&=\tilde F^2+\frac{1+\chi^2-2\chi^2}{s^2}\tilde F'^2=\tilde F^2+\tilde F'^2 ,
+\end{align}
+so the cross term has cancelled and both fields are canonical. The mass term becomes $\tfrac12(m_0^2/s^2)\tilde A'_\mu\tilde A'^\mu$, so the physical mass of the dark photon is
+\begin{equation}
+m_D=\frac{m_0}{\sqrt{1-\chi^2}} ,\label{eq:mD}
+\end{equation}
+and the current couples as $-J^\mu A_\mu=-J^\mu(\tilde A_\mu+\eta\tilde A'_\mu)$ with
+\begin{equation}
+\eta=\frac{\chi}{\sqrt{1-\chi^2}} .\label{eq:eta}
+\end{equation}
+Dropping the tildes, the theory is that of an ordinary massless photon with its usual coupling, plus a massive vector field $A'_\mu$ that couples to every charge with $\eta$ times the electromagnetic strength. This is the form used in the Dark-SPECTRAX model~\citep{DarkSPECTRAX} and in the review of Fabbrichesi, Gabrielli and Lanfranchi, whose Sec.~1.1 gives the coupling $e\varepsilon/\sqrt{1-\varepsilon^2}$ for $\varepsilon=\chi$~\citep{Fabbrichesi2020}. We checked Eqs.~\eqref{eq:mD} and~\eqref{eq:eta} against that reference; the sign of $\eta$ depends on the sign convention for $A'_\mu$, and the model is symmetric under $\eta\to-\eta$, $\AD\to-\AD$. The case in which the dark field has no mass and the coupling is a fractional charge is a different model (``millicharged'') and is not used here. For $\chi\ll1$, which covers every cosmologically interesting case, $\eta\simeq\chi$ and $m_D\simeq m_0$ to relative corrections of order $\chi^2$.
+
+A different basis is common in the cosmology literature~\citep{Mirizzi2009,Redondo2009,Arias2012}. There one keeps $A'$ as the field that does not couple to $J$ (the sterile state) and moves the mixing into the mass matrix, which then has an off-diagonal element $\chi m_0^2$ at leading order in $\chi$. The two descriptions are related by the shear above together with the identification of the photon propagating state in a medium. In the basis used here the mass matrix is already diagonal in vacuum, and the medium enters through the plasma current that couples the two fields, as it does in the simulations. Conversion happens where the effective mass of the photon-like excitation in the medium, which is the plasma frequency $\wpe$ for longitudinal oscillations, crosses $m_D$.
+
+\section{The massive vector field}\label{sec:proca}
+
+For the dark photon alone, with $j^\mu$ standing for whatever current is coupled to it, the Lagrangian $-\tfrac14F'^2+\tfrac12m_D^2A'^2-j\cdot A'$ gives, by varying $A'_\nu$, the Proca equation
+\begin{equation}
+\partial_\mu F'^{\mu\nu}+m_D^2A'^\nu=j^\nu .\label{eq:proca}
+\end{equation}
+We write $A'^\mu=(\phi_D,\AD)$, $\ED=-\nabla\phi_D-\partial_t\AD$ and $\BD=\nabla\times\AD$, so that $F'^{i0}=E_D^i$ and $F'^{ij}=-\epsilon^{ijk}B_D^k$. The $\nu=0$ component of Eq.~\eqref{eq:proca} reads $\partial_iF'^{i0}+m_D^2\phi_D=j^0$, that is
+\begin{equation}
+\nabla\!\cdot\!\ED+\OmD^2\phi_D=\rho_j ,\label{eq:gaussD}
+\end{equation}
+and the spatial components $\partial_0F'^{0i}+\partial_jF'^{ji}+m_D^2A'^i=j^i$ become
+\begin{equation}
+\partial_t\ED=\nabla\times\BD+\OmD^2\AD-\bJ_j ,\qquad \partial_t\BD=-\nabla\times\ED ,\label{eq:ampD}
+\end{equation}
+where the second equation is the Bianchi identity and $\OmD\equiv m_D$ is the dark-photon mass written as a frequency, the notation of the rest of the note. Compared with Maxwell's equations there are two changes. Gauss's law acquires a term $\OmD^2\phi_D$, and Amp\`ere's law acquires a term $\OmD^2\AD$. Both break gauge invariance, so the potentials are physical fields.
+
+Taking the four-divergence of Eq.~\eqref{eq:proca} makes the first term vanish identically, because $F'^{\mu\nu}$ is antisymmetric, and leaves $m_D^2\partial_\nu A'^\nu=\partial_\nu j^\nu$. For a conserved source this is the Lorenz condition,
+\begin{equation}
+\partial_t\phi_D+\nabla\!\cdot\!\AD=0 ,\label{eq:lorenz}
+\end{equation}
+which in the Maxwell case is a gauge choice and here is a consequence of the equations. It is the evolution equation for $\phi_D$ that the code integrates (in units with $c$ restored it reads $\partial_t\phi_D=-c^2\nabla\!\cdot\!\AD$), so $\phi_D$ is a dynamical variable and Eq.~\eqref{eq:gaussD} is a constraint that is preserved by the flow. To check this, take the time derivative of $\nabla\!\cdot\!\ED+\OmD^2\phi_D$ with Eqs.~\eqref{eq:ampD} and~\eqref{eq:lorenz}: the curl term drops out, $\OmD^2\nabla\!\cdot\!\AD$ cancels against $\OmD^2\partial_t\phi_D$, and what remains is $-\nabla\!\cdot\!\bJ_j=\partial_t\rho_j$ by charge conservation.
+
+Substituting $\ED$ and $\BD$ in terms of the potentials and using the Lorenz condition gives a Klein--Gordon equation for each component, $(\partial_t^2-\nabla^2+\OmD^2)A'^\nu=j^\nu$. In vacuum a plane wave $\ee^{\ii(\bk\cdot\bx-\omega t)}$ has the dispersion relation
+\begin{equation}
+\omega^2=k^2c^2+\OmD^2 .\label{eq:dispD}
+\end{equation}
+The four components of $A'^\mu$ are restricted by the Lorenz condition $k_\mu\varepsilon^\mu=0$ to three independent polarization vectors, in contrast to the two of a massless photon. Two are transverse, with $\phi_D=0$ and $\AD\perp\bk$; they carry $\ED=\ii\omega\AD$ and $\BD=\ii\bk\times\AD\neq0$. The third is longitudinal. In the rest frame of the mode it is $\varepsilon^\mu=(0,\hat{\mathbf n})$ for any direction $\hat{\mathbf n}$, and boosted to momentum $\bk$ it becomes $\varepsilon_L^\mu=(k,\omega\hat{\bk})/\OmD$, with $k=|\bk|$. It is normalized, $\varepsilon_L\cdot\varepsilon_L=(k^2-\omega^2)/\OmD^2=-1$, and satisfies the Lorenz condition because $\omega k-\omega k=0$. For this mode $\phi_D=ka/\OmD$ and $\AD=\omega a\hat{\bk}/\OmD$ with $a$ the amplitude, so $\phi_D$ is nonzero and equal to $(k/\omega)A_{D}$; there is no magnetic field, but there is an electric field,
+\begin{equation}
+\ED=\ii\omega\AD-\ii\bk\phi_D=\ii\,\frac{\omega^2-k^2}{\omega}\,\AD=\ii\,\frac{\OmD^2}{\omega}\,\AD .\label{eq:ELong}
+\end{equation}
+This longitudinal electric field is what couples the dark photon to charge-density oscillations of a plasma. Its coupling to a conserved current is easy to evaluate: $j_\mu\varepsilon_L^\mu=(k\rho_j-\omega\hat{\bk}\cdot\bJ_j)/\OmD$, and with $\omega\rho_j=\bk\cdot\bJ_j$ this equals $-\OmD\rho_j/k$. The amplitude to excite the longitudinal mode from a charge density is therefore proportional to $\OmD$ and vanishes in the massless limit, where $\varepsilon_L^\mu\to k^\mu/\OmD$ is a pure gauge, as it should.
+
+The dark-photon dark matter of cosmology is the $k\to0$ limit, where the three polarizations are degenerate with $\omega=\OmD$. A coherent homogeneous field then has $\phi_D=0$, $\AD=\mathbf a\cos(\OmD t)$ and $\ED=\OmD\mathbf a\sin(\OmD t)$. The vector $\mathbf a$ sets the polarization; its orientation is random in the Universe, which is the reason why a homogeneous drive in one dimension is a legitimate idealization of the longitudinal-resonance problem. The energy density $\tfrac12(E_D^2+\OmD^2A_D^2)=\tfrac12\OmD^2a^2$ is constant. Identifying it with the dark-matter density at the redshift of interest gives the electric field amplitude that the plasma sees,
+\begin{equation}
+E_{D,0}=\OmD a=\sqrt{2\rho_{\rm DM}} ,\qquad E_0=\eta E_{D,0},\label{eq:E0}
+\end{equation}
+in Heaviside--Lorentz units, where the second equation is the amplitude of the force field $\eta\ED$ acting on a charge. The prescribed-drive mode of Dark-SPECTRAX uses $E_0\cos(\omega t+\varphi)$ for $\eta\ED$ and adds no reservoir; the self-consistent mode evolves $\ED$ itself and lets the reservoir deplete.
+
+\section{Coupling to a plasma}\label{sec:coupling}
+
+A particle of charge $q$ and mass $m$ in the full theory sees both fields. In the canonical form of Sec.~\ref{sec:mixing} the Lorentz force is $q[\bE+\eta\ED+\bv\times(\bB+\eta\BD)]$, and the current of all species $\bJ=\sum_sq_s\int\bv f_s\,\dd^3v$ is the source of the ordinary field with unit strength and of the dark field with strength $\eta$. Collecting the pieces, the plasma obeys the Vlasov equation
+\begin{equation}
+\pd{f_s}{t}+\bv\cdot\nabla f_s+\frac{q_s}{m_s}\Big[\bE+\eta\ED+\Edrive+\bv\times(\bB+\eta\BD)\Big]\cdot\pd{f_s}{\bv}=0 ,\label{eq:vlasovD}
+\end{equation}
+where $\Edrive$ is the optional prescribed uniform drive. The ordinary fields obey $\partial_t\bE=c^2\nabla\times\bB-\bJ/\epsilon_0$, $\partial_t\bB=-\nabla\times\bE$, with $\nabla\!\cdot\!\bE=\rho/\epsilon_0$. The dark fields obey Eqs.~\eqref{eq:gaussD}--\eqref{eq:lorenz} with the source $\eta(\rho,\bJ)$,
+\begin{align}
+\partial_t\ED&=c^2\nabla\times\BD+\OmD^2\AD-\eta\bJ/\epsilon_0, & \partial_t\BD&=-\nabla\times\ED,\label{eq:darkMaxwell}\\
+\partial_t\AD&=-\ED-\nabla\phiD, & \partial_t\phiD&=-c^2\nabla\!\cdot\!\AD, \label{eq:darkPotentials}
+\end{align}
+and the constraint $\nabla\!\cdot\!\ED+\OmD^2\phiD/c^2=\eta\rho/\epsilon_0$. These are Eqs.~(1)--(3) of the paper. The plasma enters through the same current in both laws. The difference between the two fields is that in a conducting medium an ordinary electric field is reduced by the currents it drives, while the dark field has its own restoring term $\OmD^2\AD$, so a homogeneous dark field oscillating at $\OmD$ is not removed by the medium and acts on the charges as a drive of strength $\eta\ED$.
+
+The simplest consequence is obtained for a homogeneous cold plasma, where all fields are uniform ($k=0$) and the electrons respond with $\dot{\bJ}=\wpe^2\epsilon_0(\bE+\eta\ED)$. We neglect the ions, whose response adds the small correction $\wL^2=\wpe^2(1+m_e/m_i)$ in what follows. With time dependence $\ee^{-\ii\omega t}$ the equations $\dot\bE=-\bJ/\epsilon_0$, $\dot\bJ=\epsilon_0\wpe^2(\bE+\eta\ED)$, $\dot\ED=\OmD^2\AD-\eta\bJ/\epsilon_0$ and $\dot\AD=-\ED$ give $\bJ=\ii\omega\epsilon_0\bE$, so
+\begin{equation}
+(\omega^2-\wpe^2)\bE=\wpe^2\eta\ED ,\qquad (\omega^2-\OmD^2)\ED=\eta\omega^2\bE ,
+\end{equation}
+where the second follows from $-\ii\omega\ED=\OmD^2\AD-\ii\omega\eta\bE$ and $\AD=-\ii\ED/\omega$. Eliminating the fields, the homogeneous roots satisfy
+\begin{equation}
+(\omega^2-\wpe^2)(\omega^2-\OmD^2)=\eta^2\wpe^2\omega^2 .\label{eq:hom}
+\end{equation}
+This is the avoided crossing of two oscillators. When $\wpe=\OmD$ set $x=\omega^2-\OmD^2$; then $x^2=\eta^2\OmD^2(\OmD^2+x)$ and for small $\eta$ the roots are $\omega_\pm\simeq\OmD(1\pm\eta/2)$. The two normal modes are equal superpositions of a plasma oscillation and a dark-photon oscillation, split by $\Delta\omega=\eta\OmD$. A dark field that begins as a pure dark oscillation therefore returns to its initial state, after having given its energy to the plasma, with the beat period $2\pi/(\eta\OmD)$. The repository reproduces this with a finite reservoir (the energy partition and the beat are in the conversion figure of the README and in the reservoir runs of the paper), and it is the reason why the prescribed drive, which has no reservoir, is meaningful only for times short compared with this period.
+
+Finite wave number changes little for the transverse waves in a cold plasma, and it is worth seeing why. For $\bE,\ED\perp\bk$ and a cold electron response $\bJ=\ii(\epsilon_0\wpe^2/\omega)(\bE+\eta\ED)$, the wave equation of the ordinary field, $(k^2c^2-\omega^2)\bE=\ii\omega\bJ/\epsilon_0$, gives $(\omega^2-k^2c^2-\wpe^2)\bE=\eta\wpe^2\ED$. The transverse dark field obeys the Proca wave equation with source $\eta\bJ$, so $(\omega^2-k^2c^2-\OmD^2)\ED=\eta\wpe^2(\bE+\eta\ED)$. With $X=\omega^2-k^2c^2$ the determinant of the two equations is
+\begin{equation}
+X^2-\big[\wpe^2(1+\eta^2)+\OmD^2\big]X+\wpe^2\OmD^2=0 ,\label{eq:transverse}
+\end{equation}
+a quadratic in $X$ alone. The transverse branches are those of Eq.~\eqref{eq:hom} with $\omega^2$ replaced by $\omega^2-k^2c^2$: at every $k$ the pair of waves has the dispersion $\omega^2=k^2c^2+M_\pm^2$, where the effective masses $M_\pm^2$ are the two roots of Eq.~\eqref{eq:transverse}, which at $\wpe=\OmD$ are $M_\pm\simeq\OmD(1\pm\eta/2)$. The transverse problem is therefore a Lorentz-invariant avoided crossing, and the Landau--Zener formula of Sec.~\ref{sec:resonance} applies to the transverse conversion in a density gradient with the sweep rate evaluated at fixed $k$. The repository reproduces the finite-$k$ cold branches (test A04) to $2\times10^{-5}$ and $10^{-4}$ for the longitudinal and transverse cases.
+
+For the longitudinal waves in a warm plasma the same elimination can be done in general. For $\bE=E\hat{\bk}$, $\bJ=\ii\omega\epsilon_0E$ from Amp\`ere's law, and in the dark sector the equations $-\ii\omega\ED=\OmD^2\AD-\eta\bJ/\epsilon_0$, $-\ii\omega\AD=-\ED-\ii k\phiD$, $-\ii\omega\phiD=-\ii kc^2\AD$ imply $\phiD=kc^2\AD/\omega$ and $\AD=-\ii\omega\ED/Q$ with $Q=\omega^2-k^2c^2$, so that
+\begin{equation}
+\ED=\frac{\eta Q}{Q-\OmD^2}\,E .
+\end{equation}
+This is the longitudinal dark field required by the plasma charge density, enhanced by $Q/(Q-\OmD^2)$ near the dark-photon pole. The kinetic response of the plasma to the total force field is $\bJ=-\ii\omega\epsilon_0\chi_e(E+\eta E_D)$, with $\chi_e$ the susceptibility of Chapter~\ref{ch:plasma}, and equating the two expressions for $\bJ$ gives $(1+\chi_e)E+\eta\chi_eE_D=0$, that is
+\begin{equation}
+D_L(k,\omega)\equiv(Q-\OmD^2)(1+\chi_e)+\eta^2Q\chi_e=0 .\label{eq:DL}
+\end{equation}
+It is the ordinary dispersion relation $\epsilon=1+\chi_e=0$ with an extra term proportional to $\eta^2$ and a pole at the dark-photon dispersion curve $Q=\OmD^2$, and the roots of $D_L$ are what the linear benchmark B00 compares with the Hermite solver. To first order in $\eta^2$ the root of $\epsilon=0$ is displaced by $\delta\omega=-\eta^2\chi_eQ/[(Q-\OmD^2)\,\partial_\omega\epsilon]$. For a Langmuir wave, $\chi_e\simeq-\wpe^2/\omega^2$ and $\partial_\omega\epsilon\simeq2\wpe^2/\omega^3$, so
+\begin{equation}
+\frac{\delta\omega}{\omega}\simeq\frac{\eta^2}{2}\,\frac{Q}{Q-\OmD^2} ,
+\end{equation}
+real and positive when $\omega^2-k^2c^2>\OmD^2$, and of order $\eta^2$ away from the pole. The corresponding shift of the damping rate comes from the imaginary part of $\chi_e$ in the same formula. The repository measures shifts of $+2.7\%$ in frequency and $-9.3\%$ in the damping rate at $\eta=0.3$ in the Landau-damping benchmark, and $-23.6\%$ in the damping at $k\lDe=0.3$ (README and docs/status.md); the sign pattern, a larger frequency and a smaller damping, is that of the formula above.
+
+The tests that fix the sign and normalization of the coupling are the cold branches of Eq.~\eqref{eq:hom}, which Dark-SPECTRAX reproduces to $10^{-11}$ (test A03 of the status ladder), and the static Yukawa solution of $\phiD$ around a point charge, $\phi_{D,k}=\eta\rho_k/[k^2+\OmD^2]$ (A05), which follows from Eq.~\eqref{eq:gaussD} with $\ED=-\ii\bk\phiD$ and $\partial_t=0$.
+
+\section{Energy and Poynting-like flux}\label{sec:energy}
+
+The dark sector has a local conservation law whose form is not obvious from the Maxwell analogy, and getting it wrong gives a budget that silently fails to close. Set $c=\epsilon_0=1$. Define the energy density of the dark field
+\begin{equation}
+u_D=\tfrac12\big[E_D^2+B_D^2+\OmD^2(A_D^2+\phi_D^2)\big] .\label{eq:uD}
+\end{equation}
+Its time derivative is $\ED\cdot\partial_t\ED+\BD\cdot\partial_t\BD+\OmD^2(\AD\cdot\partial_t\AD+\phiD\partial_t\phiD)$. Insert Eqs.~\eqref{eq:darkMaxwell}--\eqref{eq:darkPotentials}. The curl terms combine through the vector identity $\ED\cdot\nabla\times\BD-\BD\cdot\nabla\times\ED=-\nabla\!\cdot\!(\ED\times\BD)$. The $\OmD^2$ terms give $\OmD^2\ED\cdot\AD+\OmD^2\AD\cdot(-\ED-\nabla\phiD)-\OmD^2\phiD\nabla\!\cdot\!\AD$; the $\ED\cdot\AD$ pieces cancel, leaving $-\OmD^2(\AD\cdot\nabla\phiD+\phiD\nabla\!\cdot\!\AD)=-\OmD^2\nabla\!\cdot\!(\phiD\AD)$. The source term is $-\eta\bJ\cdot\ED$. Collecting,
+\begin{equation}
+\pd{u_D}{t}+\nabla\!\cdot\!\mathbf S_D=-\eta\,\bJ\cdot\ED ,\qquad \mathbf S_D=\ED\times\BD+\OmD^2\phiD\AD .\label{eq:poyntingD}
+\end{equation}
+With $c$ and $\epsilon_0$ restored, the flux is $\epsilon_0c^2\ED\times\BD+\epsilon_0\OmD^2\phiD\AD$ and the energy density has $\phiD^2/c^2$ in place of $\phiD^2$. The first term is the Poynting vector. The second is new, and is the reason why we derive the theorem rather than quote it. It arises because the massive field carries momentum in its scalar potential: for the longitudinal mode, $\phiD\AD$ is the product of the two nonzero potentials and is not zero on average. Omitting $\phiD\AD$ from the flux, which is the natural thing to do if one thinks of the dark field as a copy of the electromagnetic field, breaks the flux budget; the Dark-SPECTRAX energy diagnostics include it and the test A02 (Proca vacuum) and A03 verify the closure.
+
+The ordinary field satisfies the same law with $\OmD=0$ and the source $-\bJ\cdot\bE$. For a closed or periodic domain the fluxes integrate to zero, and adding the kinetic energy $K=\sum_s\int\tfrac12m_sv^2f_s$, whose rate is $\dot K=\int\bJ\cdot(\bE+\eta\ED)\dd^3x$ from Eq.~\eqref{eq:vlasovD}, we obtain
+\begin{equation}
+\frac{\dd}{\dd t}\big(K+U_\gamma+U_D\big)=\int\Edrive\cdot\bJ\,\dd^3x ,\label{eq:theorem}
+\end{equation}
+where $U_\gamma=\int\tfrac12(E^2+B^2)$ and $U_D=\int u_D$. The right-hand side is the external work $\Wext$ done by the prescribed drive and vanishes in the ordinary and self-consistent modes. Dark-SPECTRAX integrates the three works $W_\gamma=\int\!\!\int\bJ\cdot\bE$, $W_D=\eta\int\!\!\int\bJ\cdot\ED$ and $\Wext$ as extra variables of the ODE, with the same Runge--Kutta stages as the fields, so that $K-K_0=W_\gamma+W_D+\Wext$, $U_\gamma-U_{\gamma0}=-W_\gamma$ and $U_D-U_{D0}=-W_D$ hold to solver tolerance. The parent normalization needs one precaution: the theorem holds only if $m_s\Omega_{cs}=\Omega_0$ for every species in the units of the parent solver, which the model enforces by defining the masses from the cyclotron frequencies (Sec.~\ref{sec:architecture}). The three identities are the internal ledger checks reported in the paper; they are statements about the code, and a run that fails them is rejected before any physics is read from it.
+
+\section{Resonant conversion and Landau--Zener passage}\label{sec:resonance}
+
+The physical question of the paper is what happens when the dark photon oscillates at the plasma frequency. For a homogeneous plasma driven at $\omega=\wL$ by a uniform $E_0\cos\omega t$, the mean field and the current obey the driven oscillator $\dot{\bar E}=-\bar J$, $\dot{\bar J}=\wL^2(\bar E+E_0\cos\omega t)$ (units $\epsilon_0=1$), the \emph{linear resonant law}. Eliminating $\bar J$ gives $\ddot{\bar E}+\wL^2\bar E=-\wL^2E_0\cos\omega t$, and at $\omega=\wL$ the solution that starts from rest is
+\begin{equation}
+\bar E=-\tfrac12\,\wL E_0\,t\,\sin\wL t ,\qquad \bar J=\tfrac12E_0\wL\,(\sin\wL t+\wL t\cos\wL t) ,
+\end{equation}
+as one checks by substituting in the equation. The amplitude grows linearly in time, the work done by the drive on the plasma grows as $\Wext=\int\bar JE_0\cos\wL t\,\dd t\simeq\wL^2E_0^2t^2/8$, and the energy is shared equally between the mean field and the electron kinetic energy. It is this $t^2$ growth that makes resonant conversion potentially effective, and the claim of HHS and the question of the paper are about when and why it stops (Ch.~\ref{ch:intro}).
+
+In the Universe the plasma frequency is not constant. After recombination the electron density falls with expansion as $a^{-3}$, so $\wpe\propto a^{-3/2}$ changes monotonically while $\OmD$ is fixed, and there is a moment at which the two cross. Close to the crossing the two normal modes are described by the coupled amplitude equations of a two-level system. Write the plasma and dark oscillations as slowly varying complex amplitudes $a_p$ and $a_D$ multiplying $\ee^{-\ii\OmD t}$, and approximate $\wpe(t)\simeq\OmD+\dot\wpe(t-t_*)$ near the crossing time $t_*$. Equation~\eqref{eq:hom} says that the normal-mode splitting at the crossing is $\eta\OmD$, so the two-level Hamiltonian is
+\begin{equation}
+\ii\frac{\dd}{\dd t}\begin{pmatrix}a_p\\a_D\end{pmatrix}=\begin{pmatrix}\dot\wpe(t-t_*)&\eta\OmD/2\\ \eta\OmD/2&0\end{pmatrix}\begin{pmatrix}a_p\\a_D\end{pmatrix} .
+\end{equation}
+This is the Landau--Zener problem~\citep{Landau1932,Zener1932}. If the system starts in the dark state far before the crossing and the crossing is traversed at constant sweep rate, the probability that it stays in the diabatic (dark) state is $P_{\rm D}=\exp[-2\pi g^2/|\dot\wpe|]$ with $g=\eta\OmD/2$ the off-diagonal element, so the converted fraction is
+\begin{equation}
+P_{\rm conv}=1-\exp\!\Big[-\frac{\pi\eta^2\OmD^2}{2|\dot\wpe|}\Big] .\label{eq:LZ}
+\end{equation}
+With $\wpe\propto a^{-3/2}$ and Hubble rate $H$, one has $|\dot\wpe|=\tfrac32H\wpe=\tfrac32H\OmD$ at the crossing, so the exponent is $\pi\eta^2\OmD/(3H)$: conversion is adiabatic, and nearly complete, when the mixing is large enough that $\eta^2\OmD\gtrsim H$, and is suppressed by $\eta^2\OmD/H$ otherwise. This is the same combination that appears in the standard treatments of photon--dark-photon conversion~\citep{Mirizzi2009,DubovskyHC2015}, which is why the Landau--Zener form is the template for the cosmological bound. The one-line derivation hides the assumptions that make the actual plasma problem harder: the plasma is thermal, so the longitudinal oscillation is Landau damped at finite $k$, collisions broaden the resonance, and the vector DM field is not exactly at $k=0$. What the two-level picture does give is the energy that enters the plasma if conversion is linear: a fraction $P_{\rm conv}$ of $\rho_{\rm DM}$, which then thermalizes and heats the electron--ion fluid. The paper by HHS argues that the picture of linear conversion fails once the amplitude of the converted Langmuir wave approaches the thermal energy of the plasma~\citep{HHS2026}, and our paper checks this with kinetic simulations at fixed drive; the Landau--Zener formula is the linear baseline against which nonlinear suppression is measured.
+
+\section{Cosmological setting and observational bounds}\label{sec:cosmo}
+
+The cosmological interest in a light dark photon rests on three facts. First, a vector field with a small mass can be cold dark matter without having been in thermal equilibrium, if a mechanism displaces it from zero in the early Universe. Nelson and Scholtz discuss a misalignment mechanism for the dark photon, and Arias et al.\ examine the conditions under which the displaced field behaves as cold dark matter and give the allowed parameter ranges~\citep{NelsonScholtz2011,Arias2012}. Second, the couplings of such a field to Standard Model particles are naturally small, because $\chi$ is generated radiatively~\citep{Holdom1986}. Third, the field couples to the plasma, which gives access to a range of probes of $(m_D,\chi)$. These include direct detection of absorbed dark matter~\citep{Pospelov2008}, distortions of the cosmic-microwave-background blackbody spectrum from heating or from photon--dark-photon oscillations~\citep{Mirizzi2009,Fixsen1996}, the heating of gas in the Milky Way and in dwarf galaxies~\citep{DubovskyHC2015}, and the thermal history of the intergalactic medium~\citep{McDermottWitte2020,Witte2020}. The compilation of Caputo, Millar, O'Hare and Vitagliano collects these limits in one place~\citep{CaputoHandbook2021}, and the effect of density inhomogeneities on the resonance, which is a statistical statement about the distribution of $\wpe$ along a line of sight, is studied in Ref.~\citep{CaputoInhom2020}.
+
+Many of these bounds depend on the energy deposited when the resonance is crossed. In the cosmological bound the heat per unit volume released by conversion at the crossing is $P_{\rm conv}\rho_{\rm DM}$, and the bound follows from requiring that this heating not distort the electron temperature history or the spectrum more than allowed by data. The structure of the argument is therefore: the amplitude of the longitudinal wave grows by the linear mechanism; the wave is damped, by Landau damping at finite $k$ or by collisions, and the energy goes into the electrons; the heating is compared with a limit. Hook, Huang and Shalaby concentrate on the middle step. Their claim is that the linear growth stops before the Landau-Zener result is reached, because the large-amplitude $k=0$ Langmuir wave drives a parametric instability that scatters it to short-wavelength waves, and that the energy deposited is then at most of order the electron thermal energy at the time of conversion; this would weaken the constraints, as they state, by factors from about $3\times10^3$ to $10^7$ over ten orders of magnitude in mass~\citep{HHS2026}. We do not evaluate the cosmological consequences in this note; we do evaluate the plasma physics of the middle step with the tools described in the chapters that follow. The drive strength that enters the simulations is the dimensionless ratio $\vq=E_0/(\vte\wpe)$ of Eq.~\eqref{eq:E0} to the thermal speed, and HHS use $\vq=0.03$ and $10^{-3}$ as their resonant cases. For comparison with Landau--Zener, note that the prescribed drive implements $P_{\rm conv}\to1$ at all times: the plasma always sees the full drive amplitude, and there is no reservoir that depletes.

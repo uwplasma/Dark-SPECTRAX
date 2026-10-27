@@ -1,0 +1,41 @@
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.6cm]{geometry}
+\usepackage{amsmath,amssymb,bm,graphicx,booktabs,array,xcolor,url}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[colorlinks=true,allcolors=blue!50!black]{hyperref}
+\usepackage{microtype}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\DeclareRobustCommand{\_}{\leavevmode\kern.06em\vbox{\hrule width.3em}\penalty\exhyphenpenalty\hskip0pt\relax}
+\setlength{\emergencystretch}{3em}
+\input{macros.tex}
+\title{Dark-photon conversion in plasma:\\ an explanatory note on the Dark-SPECTRAX study}
+\author{Rog\'erio Jorge}
+\date{\today}
+\begin{document}
+\maketitle
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
+This note is the long companion to the paper on relativistic detuning, electron heating and the reach of continuum kinetic methods in resonant dark-photon conversion in a plasma. The paper reports results in a few pages. The note explains what the paper takes for granted: the field theory of the dark photon, the kinetic theory against which the numerical results are judged, the numerical methods, the way they are assembled in Dark-SPECTRAX, and the studies themselves with their failures.
+
+The first four chapters set up the physics and the methods and can be read independently of the rest. Chapters 5 to 7 describe the model and its implementation, the verification ladder and the limits of the nonrelativistic Hermite solver. Chapters 8 to 10 take up the claim of Hook, Huang and Shalaby, the nonrelativistic studies and the relativistic ones, and Chapter 11 collects what is settled and what is open. Appendix A lists the repositories, pins and records so that every number can be traced. Quantities are quoted from the repository records and from the paper; where a derivation was done for the note itself, the text says so. Units are $c=\omega_{pe}=n=1$ unless stated otherwise.
+\tableofcontents
+\clearpage
+\input{ch1_intro}
+\input{ch2_darkphoton}
+\input{ch3_plasma}
+\input{ch4_numerics}
+\input{ch5_model}
+\input{ch6_verification}
+\input{ch7_limits}
+\input{ch8_hhs}
+\input{ch9_nonrel}
+\input{ch10_rel}
+\input{ch11_discussion}
+\appendix
+\input{appA_repro}
+\bibliographystyle{unsrtnat}
+\bibliography{refs}
+\addcontentsline{toc}{chapter}{Bibliography}
+\end{document}
