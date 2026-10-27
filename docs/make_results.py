@@ -1329,6 +1329,60 @@ def grid_note(refs):
     return head + "; ".join(out) + (". " if out else "") + f"B02 growth differences are at most {g:.1e}."
 
 
+def picconv_section():
+    """picconv: convergence of the relativistic PIC dW_th (conv_gates.py, conv_followup_gates.py); numbers read from conv_summary.json."""
+    d = json.loads((root / "studies/relpic/conv_summary.json").read_text())
+    o, g, x = d["observables"], d["gates"], d["extrapolation"]
+
+    def cell(k, t="1000"):
+        v = o[k][t]["dW_th"]
+        if v["mean"] is None:
+            return "-"
+        return f"{v['mean']:.1f}" + (f" +- {v['std']:.1f} (n={v['n']})" if v["std"] is not None else "")
+
+    L = ["## Convergence of the relativistic PIC heating (picconv)", "",
+         "Declared in `studies/relpic/conv_gates.py` (and the noise follow-up `conv_followup_gates.py`) before the runs; "
+         "records in `studies/relpic/records`, evaluated by `conv_analysis.py`. dW_th in E_th = 5e-4 (trailing 200 mean, "
+         "mean +- seed std). Reference: HHS Fig. 2 re-digitized from the vector figure at 600 dpi "
+         f"(`studies/relpic/digitization/hhs_fig2.json`): black solid 'electron energy change (k != 0)' = {d['HHS']['t1000']} E_th at t = 1000 "
+         f"and {d['HHS']['t2000']} at 2000 (about 3% line width); the earlier reading of about 25 E_th was wrong.", "",
+         "| run | dW_th(1000) | W_Ek mean | W_E0 mean | peak W_Ek | peak W_E0 |", "|---|---|---|---|---|---|"]
+    for k, name in (("R103", "ppc 103 (R, 3 seeds)"), ("P206", "ppc 206"), ("F412", "ppc 412 (5 seeds)"), ("P824", "ppc 824"),
+                    ("P1648", "ppc 1648"), ("X2", "dx 0.02, ppc 103"), ("X1", "dx 0.01, ppc 103"), ("Q412", "quintic, ppc 412"),
+                    ("Q103", "quintic, ppc 103 (2 seeds)"), ("D", "dt 0.01, ppc 103"), ("N103", "Newtonian ppc 103 (3 seeds)"),
+                    ("N412", "Newtonian ppc 412 (2 seeds)")):
+        L.append(f"| {name} | {cell(k)} | {o[k]['1000']['W_Ek']['mean']:.2f} | {o[k]['1000']['W_E0']['mean']:.2f} | "
+                 f"{o[k]['peak_W_Ek']:.1f} | {o[k]['peak_W_E0']:.1f} |")
+    L += ["", f"At t = 2000: ppc 103 {cell('R103', '2000')}, ppc 412 {cell('F412', '2000')}, Newtonian ppc 103 {cell('N103', '2000')}, "
+          f"Newtonian ppc 412 {cell('N412', '2000')}. Field energies (columns W_Ek, W_E0) are trailing means over the last 200 "
+          "in E_th; the mean-field and k != 0 field energies are at most a few to about 10 E_th at their peaks and about 1 E_th or less "
+          "at t = 1000.", "", "| gate | refined | reference | difference | tolerance | outcome |", "|---|---|---|---|---|---|"]
+    for k, v in g.items():
+        if "a" in v:
+            L.append(f"| {k} | {v['a']:.2f} | {v['b']:.2f} | {v['diff']:+.2f} | {v['tol']:.2f} | {'pass' if v['ok'] else 'FAIL'} |")
+    c5 = x.get("C5")
+    L += [""]
+    if c5:
+        L += [f"Declared extrapolation C5 (ppc p = 1 and 0.5 fits and dx^2 fit, multiplied onto the ppc 412 mean): "
+              f"W_inf = {c5['W_inf']:.1f} +- {c5['uncertainty']:.1f} E_th at t = 1000 (factors {c5['factor_ppc']:.3f} ppc, "
+              f"{c5['factor_dx']:.3f} dx). The ppc fits alone give {x['ppc_p1.0']['W_inf']:.1f} (p = 1) and {x['ppc_p0.5']['W_inf']:.1f} (p = 0.5); "
+              f"the dx fit alone gives {x['dx_p2']['W_inf']:.1f}. The multiplicative combination treats the two resolution shifts as independent; "
+              "the ppc ladder (412, 824, 1648: 24.6, 25.0, 24.9) and the dx ladder (0.02, 0.01: 24.1, 24.3) each plateau near 24-25 E_th "
+              "and the combined point (ppc >= 412 and dx <= 0.02) was not run, so the product may overcount: the plateau reading is "
+              "about 25 E_th, the declared extrapolation 30 +- 4 is an upper estimate.", ""]
+    for k in ("C6_vs_HHS_t1000", "C6_newtonian_t1000", "C6_newtonian_t2000", "C7_ratio_RoverN_t1000", "C7_ratio_RoverN_t2000"):
+        pass
+    L += [f"C6 outcome: relativistic W_inf / HHS(50.1) = {x['C6_vs_HHS_t1000']['ratio']:.2f} (fail, tolerance 10%); the plateau value "
+          f"~25 gives 0.50. Newtonian ppc 412: {x['C6_newtonian_t1000']['N412']:.1f} at t = 1000 ({x['C6_newtonian_t1000']['ratio']:.2f} of HHS) and "
+          f"{x['C6_newtonian_t2000']['N412']:.1f} at 2000 ({x['C6_newtonian_t2000']['ratio']:.2f}): also outside 10%. "
+          f"C7: relativistic / Newtonian = {x['C7_ratio_RoverN_t1000']['ratio']:.2f} at t = 1000 and {x['C7_ratio_RoverN_t2000']['ratio']:.2f} at 2000.", "",
+          "Noise follow-up (mirrored (v, -v) velocity loading, same ppc): dW_th(1000) = 21.9, 22.6 (ppc 103, seeds 0, 1; random loading "
+          f"{cell('R103')}) and 23.4 (ppc 206; random loading 23.7). Suppressing the low-k velocity noise does not change the heating, "
+          "and the heating rises with ppc instead of falling as 1/ppc: no sign of a shot-noise-limited value in these runs "
+          "(this knob cancels the long-wavelength current noise only, not the density noise at the cell scale)."]
+    return "\n".join(L)
+
+
 def hhsref_section():
     """HHS reference studies: relativistic PIC (relpic) and k-range grids (hkr); numbers read from the summaries."""
     rp = json.loads((root / "studies/relpic/summary.json").read_text())
@@ -2258,6 +2312,8 @@ Fit-window sensitivity (relative error versus the window start; early windows in
 {extra_sections()}
 
 {hhsref_section()}
+
+{picconv_section()}
 
 {nonlinear_and_hhs()}
 

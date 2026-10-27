@@ -168,6 +168,41 @@ Hermite (c = 64, Lawson, noise floor 1e-14) against the same-Nx grid:
 
 Reading: in the nonrelativistic grid reference, extending the Fourier cutoff from k lambda_De 0.10 to 1.69 changes nothing measurable; the deterministic energy reaches only ~2.3 E_th by t = 1000, and the shot-noise runs end by positivity loss at ~0.013 E_th. Neither route gives ~50 E_th. Hermite Nx 128 and 256 stay on the grid to within the 10% rule until they fail near t = 900-975; Nx 512 follows the grid to t = 880 but its ledger flag (1e-9) first trips at t = 83.
 
+## Convergence of the relativistic PIC heating (picconv)
+
+Declared in `studies/relpic/conv_gates.py` (and the noise follow-up `conv_followup_gates.py`) before the runs; records in `studies/relpic/records`, evaluated by `conv_analysis.py`. dW_th in E_th = 5e-4 (trailing 200 mean, mean +- seed std). Reference: HHS Fig. 2 re-digitized from the vector figure at 600 dpi (`studies/relpic/digitization/hhs_fig2.json`): black solid 'electron energy change (k != 0)' = 50.1 E_th at t = 1000 and 52.7 at 2000 (about 3% line width); the earlier reading of about 25 E_th was wrong.
+
+| run | dW_th(1000) | W_Ek mean | W_E0 mean | peak W_Ek | peak W_E0 |
+|---|---|---|---|---|---|
+| ppc 103 (R, 3 seeds) | 21.5 +- 0.6 (n=3) | 0.22 | 0.04 | 3.0 | 8.4 |
+| ppc 206 | 23.7 | 1.21 | 0.10 | 2.5 | 8.9 |
+| ppc 412 (5 seeds) | 24.6 +- 2.0 (n=5) | 1.02 | 0.25 | 4.2 | 10.6 |
+| ppc 824 | 25.0 | 1.34 | 0.23 | 2.4 | 11.2 |
+| ppc 1648 | 24.9 | 1.81 | 0.13 | 3.9 | 12.6 |
+| dx 0.02, ppc 103 | 24.1 | 0.85 | 0.08 | 1.6 | 9.3 |
+| dx 0.01, ppc 103 | 24.3 | 0.72 | 0.18 | 4.5 | 10.7 |
+| quintic, ppc 412 | 25.7 | 1.30 | 0.20 | 5.8 | 9.6 |
+| quintic, ppc 103 (2 seeds) | 21.2 +- 0.3 (n=2) | 0.17 | 0.04 | 2.7 | 8.9 |
+| dt 0.01, ppc 103 | 21.1 | 0.21 | 0.01 | 3.2 | 7.9 |
+| Newtonian ppc 103 (3 seeds) | 55.9 +- 5.6 (n=3) | 1.04 | 0.37 | 4.4 | 15.7 |
+| Newtonian ppc 412 (2 seeds) | 62.7 +- 9.4 (n=2) | 1.02 | 0.30 | 7.1 | 17.4 |
+
+At t = 2000: ppc 103 24.3 +- 1.6 (n=3), ppc 412 28.0 +- 3.7 (n=5), Newtonian ppc 103 63.8 +- 7.0 (n=3), Newtonian ppc 412 68.9 +- 7.3 (n=2). Field energies (columns W_Ek, W_E0) are trailing means over the last 200 in E_th; the mean-field and k != 0 field energies are at most a few to about 10 E_th at their peaks and about 1 E_th or less at t = 1000.
+
+| gate | refined | reference | difference | tolerance | outcome |
+|---|---|---|---|---|---|
+| C1a_412_to_824 | 24.95 | 24.60 | +0.35 | 5.71 | pass |
+| C1b_824_to_1648 | 24.92 | 24.95 | -0.03 | 5.71 | pass |
+| C2_dx_0.02_to_0.01 | 24.32 | 24.12 | +0.20 | 1.73 | pass |
+| C3_shape_Q412 | 25.70 | 24.60 | +1.09 | 5.71 | pass |
+| C4_dt_D | 21.07 | 21.51 | -0.43 | 1.73 | pass |
+
+Declared extrapolation C5 (ppc p = 1 and 0.5 fits and dx^2 fit, multiplied onto the ppc 412 mean): W_inf = 30.1 +- 3.8 E_th at t = 1000 (factors 1.067 ppc, 1.145 dx). The ppc fits alone give 25.4 (p = 1) and 26.5 (p = 0.5); the dx fit alone gives 24.7. The multiplicative combination treats the two resolution shifts as independent; the ppc ladder (412, 824, 1648: 24.6, 25.0, 24.9) and the dx ladder (0.02, 0.01: 24.1, 24.3) each plateau near 24-25 E_th and the combined point (ppc >= 412 and dx <= 0.02) was not run, so the product may overcount: the plateau reading is about 25 E_th, the declared extrapolation 30 +- 4 is an upper estimate.
+
+C6 outcome: relativistic W_inf / HHS(50.1) = 0.60 (fail, tolerance 10%); the plateau value ~25 gives 0.50. Newtonian ppc 412: 62.7 at t = 1000 (1.25 of HHS) and 68.9 at 2000 (1.31): also outside 10%. C7: relativistic / Newtonian = 0.39 at t = 1000 and 0.41 at 2000.
+
+Noise follow-up (mirrored (v, -v) velocity loading, same ppc): dW_th(1000) = 21.9, 22.6 (ppc 103, seeds 0, 1; random loading 21.5 +- 0.6 (n=3)) and 23.4 (ppc 206; random loading 23.7). Suppressing the low-k velocity noise does not change the heating, and the heating rises with ppc instead of falling as 1/ppc: no sign of a shot-noise-limited value in these runs (this knob cancels the long-wavelength current noise only, not the density noise at the cell scale).
+
 ## B01/B06: nonlinear Landau and echo, ordinary and dark (`python studies/b01_b06.py`)
 
 k = 0.3, eps = 0.05 (B01) and k1 = 1, k2 = 1.5 kick at tau = 10, echo at k3 = 0.5 (B06), electrostatic units, beta = 0.1. Dark: eta = 0.3, Omega_D = omega_pe. Ordinary runs are compared with the imported grid solver; there is no independent dark reference. nu is the parent numerical hypercollision coefficient.
