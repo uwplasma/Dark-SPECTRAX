@@ -11,3 +11,11 @@ paper/*.out
 paper/*.bbl
 paper/*.blg
 paper/*Notes.bib
+note/*.aux
+note/*.log
+note/*.out
+note/*.bbl
+note/*.blg
+note/*.toc
+note/wrap_*
+note/noteC.pdf
