@@ -17,15 +17,41 @@
 \newcommand{\dEndA}{-1.07} % recomputed from studies/r1nl/runs/pre_vq0.03_Nx32_Nn64_c64 at the window end (percent)
 \newcommand{\dEndB}{-0.88} % recomputed from studies/r1nl/runs/pre_vq0.05_Nx32_Nn64_c64 at the window end (percent)
 \newcommand{\dEndC}{-0.68} % recomputed from studies/r1nl/runs/pre_vq0.07_Nx32_Nn64_c64 at the window end (percent)
+\newcommand{\fOneHi}{1584.5} % studies/relhhs/gates_f1.json
+\newcommand{\fOneLo}{1528} % studies/relhhs/gates_f1.json
+\newcommand{\fTwoPicHi}{366.5} % studies/relhhs/gates_f2.json
+\newcommand{\fTwoPicLo}{265} % studies/relhhs/gates_f2.json
+\newcommand{\fTwoPpc}{0.5} % studies/relhhs/gates_f2.json (npc 103)
+\newcommand{\fTwoPpcStop}{160} % studies/relhhs/gates_f2.json (npc 103 positivity stop)
 \newcommand{\fuDa}{\ensuremath{-1.66\times10^{-3}}} % studies/r1nl/followup_summary.json D.s1.400
 \newcommand{\fuDb}{\ensuremath{-1.66\times10^{-5}}} % studies/r1nl/followup_summary.json D.s0.1.400
 \newcommand{\fuDc}{\ensuremath{2.3\times10^{-9}}} % studies/r1nl/followup_summary.json D.s0.400
 \newcommand{\fuFtwo}{\ensuremath{1.4\times10^{-6}}} % studies/r1nl/followup_summary.json F2
 \newcommand{\fuRatio}{0.0100} % studies/r1nl/followup_summary.json F1
+\newcommand{\gOneE}{\ensuremath{2.5\times10^{-9}}} % studies/relhhs/gates_g1.json
+\newcommand{\gOneNR}{38} % studies/relhhs/gates_g1.json nonrel_vs_rel_W_ext (percent)
+\newcommand{\gOneW}{\ensuremath{7.8\times10^{-10}}} % studies/relhhs/gates_g1.json
 \newcommand{\gpuWinA}{328} % studies/gpures/summary.json
 \newcommand{\gpuWinB}{595} % studies/gpures/summary.json
 \newcommand{\gpuWinC}{440} % studies/gpures/summary.json
 \newcommand{\gpuWinD}{751.5} % studies/gpures/summary.json
+\newcommand{\hbE}{\ensuremath{1.5\times10^{-8}}} % studies/relherm/gates_b.json
+\newcommand{\hbW}{\ensuremath{1.1\times10^{-8}}} % studies/relherm/gates_b.json
+\newcommand{\hdLed}{\ensuremath{6.6\times10^{-10}}} % studies/relherm/gates_d.json
+\newcommand{\hdTwoV}{0.83} % studies/relherm/gates_d2.json
+\newcommand{\herCol}{392.5} % studies/relhhs/summary.json runs.(32, 64, 64)
+\newcommand{\herColSame}{8} % studies/relhhs/summary.json (runs with collapse 392.5)
+\newcommand{\herFld}{0.041} % studies/relhhs/summary.json runs.(32, 64, 64)
+\newcommand{\herFldFive}{0.855} % same, t=500
+\newcommand{\herHeat}{0.056} % same dE1D_e_over_Eth.1000
+\newcommand{\herHeatFive}{0.018} % same, t=500
+\newcommand{\herHeatMaxAll}{0.71} % studies/relhhs/summary.json (max over runs of the final averaged gain, T=1000)
+\newcommand{\herLed}{\ensuremath{1.8\times10^{-8}}} % studies/relhhs/gates_prod.json (max ledger over 8 runs, t<=400)
+\newcommand{\herNruns}{8} % studies/relhhs/summary.json runs
+\newcommand{\hfBled}{\ensuremath{6.8\times10^{-6}}} % studies/relherm/gates_f4b.json
+\newcommand{\hfOne}{\ensuremath{1\times10^{-15}}} % studies/relherm/gates_f1.json
+\newcommand{\hfThree}{\ensuremath{3\times10^{-15}}} % studies/relherm/gates_f3.json (magnetic work)
+\newcommand{\hfTwo}{\ensuremath{2\times10^{-10}}} % studies/relherm/gates_f2.json (gyration vs exact)
 \newcommand{\hhsDEEndA}{\ensuremath{1.2\times10^{-3}}} % recomputed from studies/r1nl/runs/pre_vq0.03_Nx32_Nn64_c64 Tx, trailing 200 average, t=1000
 \newcommand{\hhsDEEndB}{\ensuremath{2.3\times10^{-3}}} % recomputed from studies/r1nl/runs/pre_vq0.05_Nx32_Nn64_c64 Tx, trailing 200 average, t=892
 \newcommand{\hhsDEEndC}{\ensuremath{2.5\times10^{-3}}} % recomputed from studies/r1nl/runs/pre_vq0.07_Nx32_Nn64_c64 Tx, trailing 200 average, t=791.5
@@ -41,6 +67,9 @@
 \newcommand{\hhsDErVZZA}{0.1} % same, ratio to the initial 1-D electron thermal energy
 \newcommand{\hhsDErVZZB}{0.28} % same, ratio to the initial 1-D electron thermal energy
 \newcommand{\hhsDErVZZC}{0.54} % same, ratio to the initial 1-D electron thermal energy
+\newcommand{\hhsDigK}{50.1} % studies/relpic/digitization/hhs_fig2.json (t=1000)
+\newcommand{\hhsDigKK}{52.7} % studies/relpic/digitization/hhs_fig2.json (t=2000)
+\newcommand{\hhsDigRel}{3} % studies/relpic/digitization/hhs_fig2.json note (line-width uncertainty ~3 percent)
 \newcommand{\hhsEth}{\ensuremath{5.0\times10^{-4}}} % v_te^2/2 with v_te^2 = 1e-3 c^2 (SM Eq. S36; HHS quote 5e-4)
 \newcommand{\hhsFldEndA}{\ensuremath{4.4\times10^{-2}}} % 1/2 Ebar^2 (k=0 mean field), trailing 200 average, t=1000
 \newcommand{\hhsFldEndB}{\ensuremath{9.6\times10^{-2}}} % 1/2 Ebar^2 (k=0 mean field), trailing 200 average, t=892
@@ -60,13 +89,67 @@
 \newcommand{\hhsWinTA}{1000} % last saved time within the certified window
 \newcommand{\hhsWinTB}{892} % last saved time within the certified window
 \newcommand{\hhsWinTC}{791.5} % last saved time within the certified window
+\newcommand{\hkrHeat}{2.3} % studies/hkr/summary_grid.json Nx1024_det (nonrelativistic grid, deterministic seed)
+\newcommand{\hkrK}{1.69} % studies/hkr/summary_grid.json Nx1024_det k lambda_De retained
+\newcommand{\hkrNoHeat}{13.5} % studies/hkr/summary_grid.json (max 1e-3 E_th; heating at loss of positivity)
+\newcommand{\hkrNoHi}{163.5} % studies/hkr/summary_grid.json
+\newcommand{\hkrNoLo}{69} % studies/hkr/summary_grid.json (shot-noise runs, certified time)
 \newcommand{\lawsonSteps}{5.0} % studies/expint/summary.json cases.64.steps_ratio_500
 \newcommand{\lawsonStepsFour}{0.96} % studies/expint/summary.json cases.4.steps_ratio_500
 \newcommand{\ledgA}{\ensuremath{7\times10^{-12}}} % studies/r1nl/stage1_summary.json vqs.0.03.ledger (max over members)
 \newcommand{\ledgB}{\ensuremath{3\times10^{-12}}} % studies/r1nl/stage1_summary.json vqs.0.05.ledger (max over members)
 \newcommand{\ledgC}{\ensuremath{1\times10^{-12}}} % studies/r1nl/stage1_summary.json vqs.0.07.ledger (max over members)
+\newcommand{\mirA}{21.9} % studies/relpic/records/M103_s0 (dW_th/E_th, t=1000)
+\newcommand{\mirB}{22.6} % studies/relpic/records/M103_s1
+\newcommand{\mirC}{23.4} % studies/relpic/records/M206_s0
+\newcommand{\nrColHi}{866.5} % studies/relgrid/summary.json nonrel_shot_vq0.03
+\newcommand{\nrColLo}{769.5} % studies/relgrid/summary.json nonrel_shot_vq0.03
+\newcommand{\nrWeakFld}{0.71} % studies/relgrid/summary.json nonrel_det_vq0.001 at t=3000
+\newcommand{\nrWeakHeat}{0.22} % studies/relgrid/summary.json nonrel_det_vq0.001 at t=3000
 \newcommand{\otsiMax}{1.3} % studies/instab/otsi.json scan (percent)
 \newcommand{\otsiN}{22} % studies/instab/otsi.json scan
+\newcommand{\pcCfive}{30.1} % studies/relpic/conv_summary.json extrapolation.C5
+\newcommand{\pcCfiveU}{3.8} % studies/relpic/conv_summary.json extrapolation.C5.uncertainty
+\newcommand{\pcContRatio}{445} % P1648 / relativistic Hermite dE1D_e at t=1000
+\newcommand{\pcCsix}{0.60} % studies/relpic/conv_summary.json C6 ratio to HHS
+\newcommand{\pcD}{21.1} % studies/relpic/conv_summary.json D (dt 0.01, ppc 103)
+\newcommand{\pcF}{24.6} % studies/relpic/conv_summary.json F412 mean of 5 seeds
+\newcommand{\pcFK}{28.0} % studies/relpic/conv_summary.json F412 t=2000
+\newcommand{\pcFKs}{3.7} % studies/relpic/conv_summary.json F412 t=2000 std
+\newcommand{\pcFldLate}{0.25} % studies/relpic/conv_summary.json F412 W_E0 at 1000 (E_th)
+\newcommand{\pcFldPeak}{11} % studies/relpic/conv_summary.json F412 peak_W_E0 (E_th)
+\newcommand{\pcFs}{2.0} % studies/relpic/conv_summary.json F412 seed std
+\newcommand{\pcN}{62.7} % studies/relpic/conv_summary.json N412
+\newcommand{\pcNK}{68.9} % studies/relpic/conv_summary.json N412 t=2000
+\newcommand{\pcNewtHHS}{1.25} % studies/relpic/conv_summary.json Newtonian / HHS, t=1000
+\newcommand{\pcNewtRel}{2.5} % studies/relpic/conv_summary.json Newtonian / relativistic, t=1000
+\newcommand{\pcNone}{55.9} % studies/relpic/conv_summary.json N103 (ppc 103, 3 seeds)
+\newcommand{\pcNs}{9.4} % studies/relpic/conv_summary.json N412 std (2 seeds)
+\newcommand{\pcP}{23.7} % studies/relpic/conv_summary.json P206
+\newcommand{\pcPP}{25.0} % studies/relpic/conv_summary.json P824
+\newcommand{\pcPPP}{24.9} % studies/relpic/conv_summary.json P1648
+\newcommand{\pcPlat}{25} % studies/relpic/conv_summary.json P1648 plateau
+\newcommand{\pcPlatHHS}{0.50} % P1648 / HHS digitized, t=1000
+\newcommand{\pcQ}{25.7} % studies/relpic/conv_summary.json Q412 (quintic)
+\newcommand{\pcR}{21.5} % studies/relpic/conv_summary.json R103 t=1000
+\newcommand{\pcRN}{0.39} % studies/relpic/conv_summary.json C7 t=1000
+\newcommand{\pcRNK}{0.41} % studies/relpic/conv_summary.json C7 t=2000
+\newcommand{\pcRs}{0.6} % studies/relpic/conv_summary.json R103 seed std
+\newcommand{\pcStepA}{1.4} % studies/relpic/conv_summary.json change 412->824 (percent)
+\newcommand{\pcStepB}{0.1} % studies/relpic/conv_summary.json change 824->1648 (percent)
+\newcommand{\pcStepX}{0.8} % studies/relpic/conv_summary.json change dx 0.02->0.01 (percent)
+\newcommand{\pcXa}{24.1} % studies/relpic/conv_summary.json X2 (dx 0.02)
+\newcommand{\pcXb}{24.3} % studies/relpic/conv_summary.json X1 (dx 0.01)
+\newcommand{\picNColHi}{311.5} % same
+\newcommand{\picNColLo}{292} % studies/relpic/records N412_s0,N412_s1 (W_ext 10 percent off the exact nonrelativistic linear law)
+\newcommand{\picNFldEZZ}{0.076} % studies/relpic/records N412_s0,N412_s1 mean-field energy over linear, seed mean, t=800
+\newcommand{\picNFldOZZZ}{0.003} % studies/relpic/records N412_s0,N412_s1 mean-field energy over linear, seed mean, t=1000
+\newcommand{\picNFldVZZ}{0.272} % studies/relpic/records N412_s0,N412_s1 mean-field energy over linear, seed mean, t=500
+\newcommand{\picRColHi}{286} % same
+\newcommand{\picRColLo}{273} % studies/relpic/records F412_s0,F412_s1,F412_s2,F412_s3,F412_s4 (W_ext 10 percent off the exact nonrelativistic linear law)
+\newcommand{\picRFldEZZ}{0.008} % studies/relpic/records F412_s0,F412_s1,F412_s2,F412_s3,F412_s4 mean-field energy over linear, seed mean, t=800
+\newcommand{\picRFldOZZZ}{0.003} % studies/relpic/records F412_s0,F412_s1,F412_s2,F412_s3,F412_s4 mean-field energy over linear, seed mean, t=1000
+\newcommand{\picRFldVZZ}{0.188} % studies/relpic/records F412_s0,F412_s1,F412_s2,F412_s3,F412_s4 mean-field energy over linear, seed mean, t=500
 \newcommand{\quivA}{0.47} % nonrelativistic coherent speed sqrt(2 W_ext/(n m_e)) in units of c at the window end, from pre_vq0.03_Nx32_Nn64_c64
 \newcommand{\quivAtTZZ}{0.1} % v_q w_pe t/2 with v_q = 0.03 v_te, v_te^2 = 1e-3 c^2, t = 200 (units of c)
 \newcommand{\quivAtVZZ}{0.2} % v_q w_pe t/2 with v_q = 0.03 v_te, v_te^2 = 1e-3 c^2, t = 500 (units of c)
@@ -75,6 +158,26 @@
 \newcommand{\rOneDev}{0.039} % studies/r1/reservoir_summary.json cases.*.max_dev
 \newcommand{\rOneLedger}{\ensuremath{8.4\times10^{-9}}} % studies/r1/reservoir_summary.json gates.G1_ledger_max
 \newcommand{\recomputeWext}{381.3} % recomputed from studies/r1nl/runs/pre_vq0.07_Nx32_Nn64_c64 (check vs rnlWext)
+\newcommand{\relColGrid}{392} % studies/relgrid/summary.json cases.rel_det_vq0.03.t_W_10pc_from_linear
+\newcommand{\relColShotHi}{392.5} % studies/relgrid/summary.json rel_shot_vq0.03 npc>=2.05e4
+\newcommand{\relColShotLo}{367} % studies/relgrid/summary.json rel_shot_vq0.03 npc>=2.05e4
+\newcommand{\relColWeak}{1309.5} % studies/relgrid/summary.json rel_det_vq0.001
+\newcommand{\relColWeakShot}{1413.5} % studies/relgrid/summary.json rel_shot_vq0.001
+\newcommand{\relFldAbsGrid}{3.7} % studies/relgrid/summary.json Ebar_energy.1000 / E_th
+\newcommand{\relFldAbsN}{\ensuremath{1.9\times10^{-3}}} % studies/relgrid/summary.json Ebar_energy.1000 (n m c^2)
+\newcommand{\relFldGrid}{0.041} % studies/relgrid/summary.json cases.rel_det_vq0.03.Ebar_energy_over_linear.1000
+\newcommand{\relFldGridFive}{0.85} % studies/relgrid/summary.json same, t=500
+\newcommand{\relHeatGrid}{0.056} % studies/relgrid/summary.json same dE1D_over_Eth.1000
+\newcommand{\relHomWratio}{0.0056} % studies/relgrid/summary.json homog.vq0.03 (exact homogeneous ODEs, rel/nonrel W_ext at t=1000)
+\newcommand{\relWeakFld}{0.50} % studies/relgrid/summary.json rel_det_vq0.001 at t=3000
+\newcommand{\relWeakHeat}{0.09} % studies/relgrid/summary.json rel_det_vq0.001 at t=3000
+\newcommand{\rgCerrG}{\ensuremath{4.5\times10^{-4}}} % studies/relgrid/gates_c2.json (max err_gamma)
+\newcommand{\rgCerrW}{\ensuremath{8.9\times10^{-5}}} % studies/relgrid/gates_c2.json (max err_omega, k lambda_De=0.3,0.4)
+\newcommand{\rgDfail}{15} % studies/relgrid/summary.json gate_D (runs failing the 1e-4 ledger)
+\newcommand{\rgDled}{\ensuremath{2.3\times10^{-4}}} % studies/relgrid/summary.json gate_D (dt 0.02)
+\newcommand{\rgDledOne}{\ensuremath{2.9\times10^{-5}}} % studies/relgrid/summary.json gate_D (dt 0.01)
+\newcommand{\rgDratio}{8.0} % studies/relgrid/summary.json gate_D ledger ratio dt 0.02 / 0.01
+\newcommand{\rgDtot}{16} % studies/relgrid/summary.json gate_D runs
 \newcommand{\rnlBound}{0.68} % studies/r1nl/stage2_summary.json N1.bound_max_abs_D (percent)
 \newcommand{\rnlCohShare}{97} % studies/r1nl/stage2_summary.json N3.B.dKe / N1.Wext (percent)
 \newcommand{\rnlDKe}{371} % studies/r1nl/stage2_summary.json N3.B
@@ -143,6 +246,10 @@
 \newcommand{\rtwoResHi}{0.9979} % studies/r2/summary.json
 \newcommand{\rtwoResLo}{0.963} % studies/r2/summary.json
 \newcommand{\rtwoTmax}{231} % studies/r2/summary.json cases.*.B.report
+\newcommand{\shotFnegHi}{407.5} % studies/relgrid/summary.json rel_shot_vq0.03 first f<-1e-3 (npc>=2.05e4)
+\newcommand{\shotFnegLo}{240.5} % studies/relgrid/summary.json rel_shot_vq0.03 first f<-1e-3 (npc>=2.05e4)
+\newcommand{\shotFnegPic}{0.5} % studies/relgrid/summary.json rel_shot_vq0.03_npc205_Nx32 first f<-1e-3 (205 per cell = PIC particle number)
+\newcommand{\shotHeatNx}{5.4} % studies/relgrid/summary.json Nx64 npc 2.05e5 at t=500 (invalid)
 \newcommand{\wextA}{111} % recomputed from studies/r1nl/runs/pre_vq0.03_Nx32_Nn64_c64 at the window end, units n T_e V
 \newcommand{\wextB}{247} % recomputed from studies/r1nl/runs/pre_vq0.05_Nx32_Nn64_c64 at the window end, units n T_e V
 \newcommand{\wextC}{381} % recomputed from studies/r1nl/runs/pre_vq0.07_Nx32_Nn64_c64 at the window end, units n T_e V

@@ -41,3 +41,16 @@ seed scale $s$ & $D(100)$ & $D(200)$ & $D(300)$ & $D(400)$\\\midrule
 0.1 & $-1.03\times10^{-6}$ & $-4.15\times10^{-6}$ & $-9.36\times10^{-6}$ & $-1.66\times10^{-5}$\\
 0 (unseeded) & $1.00\times10^{-10}$ & $8.58\times10^{-10}$ & $1.58\times10^{-9}$ & $2.27\times10^{-9}$\\
 \bottomrule\end{tabular}}
+\newcommand{\tabRel}{%
+\begin{tabular}{@{}L{3.6cm}cccc@{}}\toprule
+model & collapse time & $\bar E^2/2$ over linear, $t=1000$ & $\Delta E_e/E_{\rm th}$, $t=1000$ & valid to\\\midrule
+Hermite, nonrel.\ ($N_x=32,N_n=64$) & none ($\le1000$) & \hhsFldRatioA & \hhsDErEndA & \winA\\
+grid, nonrel., shot noise$^{\dagger}$ & \nrColLo--\nrColHi & 0.12--0.26 & 99--209 & 240--394\\
+grid, rel., deterministic & \relColGrid & \relFldGrid & \relHeatGrid & 1000\\
+Hermite, rel., deterministic & \herCol & \herFld & \herHeat & \fOneLo--\fOneHi\\
+grid, rel., shot noise$^{\dagger}$ & \relColShotLo--\relColShotHi & 0.008--0.30 & 15--51 & \shotFnegLo--\shotFnegHi\\
+\addlinespace
+PIC, rel.\ (ppc 412) & \picRColLo--\picRColHi & \picRFldOZZZ & \pcF & ---\\
+PIC, Newtonian (ppc 412) & \picNColLo--\picNColHi & \picNFldOZZZ & \pcN & ---\\
+HHS (digitized) & loss of resonance $\sim800$ & --- & \hhsDigK & ---\\
+\bottomrule\end{tabular}}

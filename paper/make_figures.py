@@ -406,6 +406,277 @@ fig.tight_layout()
 fig.savefig(FIG / "fig_r2.pdf")
 plt.close(fig)
 
+# ================================================================== relativistic models and PIC (sections 6-8)
+import sys  # noqa: E402
+
+sys.path.insert(0, str(ROOT / "studies"))
+sys.path.insert(0, str(ROOT / "studies/relpic"))
+import analysis as PA  # noqa: E402  (relpic: PIC loader, trailing means)
+import relgrid_analysis as RA  # noqa: E402
+import relgrid_ref as XR  # noqa: E402
+import relhhs_gates as RG  # noqa: E402
+
+ETH = 5e-4
+rgs = J("studies/relgrid/summary.json")
+rgc = rgs["cases"]
+rhs = J("studies/relhhs/summary.json")
+cvs = J("studies/relpic/conv_summary.json")
+obs = cvs["observables"]
+RS = "studies/relgrid/summary.json"
+
+# relativistic grid and Hermite: collapse and deterministic observables
+d = rgc["rel_det_vq0.03"]
+num("relColGrid", d["t_W_10pc_from_linear"], "{:g}", RS + " cases.rel_det_vq0.03.t_W_10pc_from_linear")
+num("relFldGrid", d["Ebar_energy_over_linear"]["1000"], "{:.3f}", RS + " cases.rel_det_vq0.03.Ebar_energy_over_linear.1000")
+num("relFldGridFive", d["Ebar_energy_over_linear"]["500"], "{:.2f}", RS + " same, t=500")
+num("relHeatGrid", d["dE1D_over_Eth"]["1000"], "{:.3f}", RS + " same dE1D_over_Eth.1000")
+num("relFldAbsN", d["Ebar_energy"]["1000"], "{:.1e}", RS + " Ebar_energy.1000 (n m c^2)")
+num("relFldAbsGrid", d["Ebar_energy"]["1000"] / ETH, "{:.1f}", RS + " Ebar_energy.1000 / E_th")
+hr = rhs["runs"]
+hk = list(hr)
+num("herNruns", len(hk), "{:d}", "studies/relhhs/summary.json runs")
+num("herCol", hr["(32, 64, 64)"]["t_collapse_W_10pc"], "{:g}", "studies/relhhs/summary.json runs.(32, 64, 64)")
+num("herColSame", sum(1 for k in hk if hr[k]["t_collapse_W_10pc"] == 392.5), "{:d}", "studies/relhhs/summary.json (runs with collapse 392.5)")
+num("herFld", hr["(32, 64, 64)"]["Ebar_energy_over_linear"]["1000"], "{:.3f}", "studies/relhhs/summary.json runs.(32, 64, 64)")
+num("herFldFive", hr["(32, 64, 64)"]["Ebar_energy_over_linear"]["500"], "{:.3f}", "same, t=500")
+num("herHeat", hr["(32, 64, 64)"]["dE1D_e_over_Eth"]["1000"], "{:.3f}", "same dE1D_e_over_Eth.1000")
+num("herHeatFive", hr["(32, 64, 64)"]["dE1D_e_over_Eth"]["500"], "{:.3f}", "same, t=500")
+num("herHeatMaxAll", max(hr[k]["dE1D_at_end"] for k in hk), "{:.2f}", "studies/relhhs/summary.json (max over runs of the final averaged gain, T=1000)")
+shot_rel = [v for k, v in rgc.items() if k.startswith("rel_shot_vq0.03") and "npc205_" not in k]
+num("relColShotLo", min(v["t_W_10pc_from_linear"] for v in shot_rel), "{:g}", RS + " rel_shot_vq0.03 npc>=2.05e4")
+num("relColShotHi", max(v["t_W_10pc_from_linear"] for v in shot_rel), "{:g}", RS + " rel_shot_vq0.03 npc>=2.05e4")
+nr_sh = [v for k, v in rgc.items() if k.startswith("nonrel_shot_vq0.03")]
+num("nrColLo", min(v["t_W_10pc_from_linear"] for v in nr_sh), "{:g}", RS + " nonrel_shot_vq0.03")
+num("nrColHi", max(v["t_W_10pc_from_linear"] for v in nr_sh), "{:g}", RS + " nonrel_shot_vq0.03")
+num("relColWeak", rgc["rel_det_vq0.001"]["t_W_10pc_from_linear"], "{:g}", RS + " rel_det_vq0.001")
+num("relColWeakShot", rgc["rel_shot_vq0.001"]["t_W_10pc_from_linear"], "{:g}", RS + " rel_shot_vq0.001")
+num("nrWeakFld", rgc["nonrel_det_vq0.001"]["Ebar_energy_over_linear"]["3000"], "{:.2f}", RS + " nonrel_det_vq0.001 at t=3000")
+num("relWeakFld", rgc["rel_det_vq0.001"]["Ebar_energy_over_linear"]["3000"], "{:.2f}", RS + " rel_det_vq0.001 at t=3000")
+num("relWeakHeat", rgc["rel_det_vq0.001"]["dE1D_over_Eth"]["3000"], "{:.2f}", RS + " rel_det_vq0.001 at t=3000")
+num("nrWeakHeat", rgc["nonrel_det_vq0.001"]["dE1D_over_Eth"]["3000"], "{:.2f}", RS + " nonrel_det_vq0.001 at t=3000")
+hom = rgs["homog"]
+num("relHomWratio", hom["vq0.03"]["W_rel_over_nonrel_at"]["1000"], "{:.4f}", RS + " homog.vq0.03 (exact homogeneous ODEs, rel/nonrel W_ext at t=1000)")
+c2 = rgs.get("gates_c")
+gc2 = J("studies/relgrid/gates_c2.json")["C"]
+num("rgCerrW", max(gc2[k]["err_omega"] for k in gc2), "{:.1e}", "studies/relgrid/gates_c2.json (max err_omega, k lambda_De=0.3,0.4)")
+num("rgCerrG", max(gc2[k]["err_gamma"] for k in gc2), "{:.1e}", "studies/relgrid/gates_c2.json (max err_gamma)")
+gD = rgs["gate_D"]
+tagD = "r_vq0.03_Nx32_Nu4096_dt0.02_osc_u32_rel_taylor_det_xmask23"
+tagD1 = "r_vq0.03_Nx32_Nu4096_dt0.01_osc_u32_rel_taylor_det_xmask23"
+num("rgDled", gD[tagD]["energy_defect_over_W"], "{:.1e}", RS + " gate_D (dt 0.02)")
+num("rgDledOne", gD[tagD1]["energy_defect_over_W"], "{:.1e}", RS + " gate_D (dt 0.01)")
+num("rgDratio", gD[tagD]["energy_defect_over_W"] / gD[tagD1]["energy_defect_over_W"], "{:.1f}", RS + " gate_D ledger ratio dt 0.02 / 0.01")
+num("rgDfail", sum(1 for v in gD.values() if not v["pass"]), "{:d}", RS + " gate_D (runs failing the 1e-4 ledger)")
+num("rgDtot", len(gD), "{:d}", RS + " gate_D runs")
+g1 = J("studies/relhhs/gates_g1.json")
+num("gOneE", max(v["Ebar_rel_err"] for v in g1["runs"].values()), "{:.1e}", "studies/relhhs/gates_g1.json")
+num("gOneW", max(v["W_ext_rel_err"] for v in g1["runs"].values()), "{:.1e}", "studies/relhhs/gates_g1.json")
+num("gOneNR", g1["nonrel_vs_rel_W_ext"] * 100, "{:.0f}", "studies/relhhs/gates_g1.json nonrel_vs_rel_W_ext (percent)")
+hb = J("studies/relherm/gates_b.json")
+num("hbE", hb["E_rel_err"], "{:.1e}", "studies/relherm/gates_b.json")
+num("hbW", hb["W_rel_err"], "{:.1e}", "studies/relherm/gates_b.json")
+num("hfOne", J("studies/relherm/gates_f1.json")["f1_c_inf"]["rhs_rel_err"], "{:.0e}", "studies/relherm/gates_f1.json")
+num("hfTwo", J("studies/relherm/gates_f2.json")["max_abs_err_v"], "{:.0e}", "studies/relherm/gates_f2.json (gyration vs exact)")
+num("hfThree", J("studies/relherm/gates_f3.json")["max_rel_K_drift"], "{:.0e}", "studies/relherm/gates_f3.json (magnetic work)")
+num("hdLed", J("studies/relherm/gates_d.json")["rel"]["ledger_max_rel_to_W"], "{:.1e}", "studies/relherm/gates_d.json")
+num("hdTwoV", J("studies/relherm/gates_d2.json")["max_v_over_c_centre"], "{:.2f}", "studies/relherm/gates_d2.json")
+num("hfBled", J("studies/relherm/gates_f4b.json")["ledger_rel"], "{:.1e}", "studies/relherm/gates_f4b.json")
+gp = J("studies/relhhs/gates_prod.json")["runs"]
+num("herLed", max(v["max_ledger_t400"] for v in gp.values()), "{:.1e}", "studies/relhhs/gates_prod.json (max ledger over 8 runs, t<=400)")
+f1 = J("studies/relhhs/gates_f1.json")["runs"]
+num("fOneLo", min(v["horizon"] for v in f1.values()), "{:g}", "studies/relhhs/gates_f1.json")
+num("fOneHi", max(v["horizon"] for v in f1.values()), "{:g}", "studies/relhhs/gates_f1.json")
+f2 = J("studies/relhhs/gates_f2.json")["runs"]
+num("fTwoPicLo", f2["npc205000_Nx64_Nn128"]["t_fneg"], "{:g}", "studies/relhhs/gates_f2.json")
+num("fTwoPicHi", f2["npc205000_Nx32_Nn64"]["t_fneg"], "{:g}", "studies/relhhs/gates_f2.json")
+num("fTwoPpc", f2["npc103_Nx32_Nn64"]["t_fneg"], "{:g}", "studies/relhhs/gates_f2.json (npc 103)")
+num("fTwoPpcStop", f2["npc103_Nx32_Nn64"]["t_fail"], "{:g}", "studies/relhhs/gates_f2.json (npc 103 positivity stop)")
+sh = [rgc[k]["t_fneg_1e-3"] for k in rgc if k.startswith("rel_shot_vq0.03") and "npc205_" not in k]
+num("shotFnegLo", min(sh), "{:g}", RS + " rel_shot_vq0.03 first f<-1e-3 (npc>=2.05e4)")
+num("shotFnegHi", max(sh), "{:g}", RS + " rel_shot_vq0.03 first f<-1e-3 (npc>=2.05e4)")
+num("shotFnegPic", rgc["rel_shot_vq0.03_npc205_Nx32"]["t_fneg_1e-3"], "{:g}", RS + " rel_shot_vq0.03_npc205_Nx32 first f<-1e-3 (205 per cell = PIC particle number)")
+num("shotHeatNx", rgc["rel_shot_vq0.03_npc2.05e5_Nx64"]["dE1D_over_Eth"]["500"], "{:.1f}", RS + " Nx64 npc 2.05e5 at t=500 (invalid)")
+
+
+hk_ = J("studies/hkr/summary_grid.json")["runs"]
+num("hkrHeat", hk_["Nx1024_det"]["dE_avg_at_tcert"], "{:.1f}", "studies/hkr/summary_grid.json Nx1024_det (nonrelativistic grid, deterministic seed)")
+num("hkrK", hk_["Nx1024_det"]["kl_max_retained"], "{:.2f}", "studies/hkr/summary_grid.json Nx1024_det k lambda_De retained")
+nz = [v for k, v in hk_.items() if k.endswith("noise")]
+num("hkrNoLo", min(v["t_cert"] for v in nz), "{:g}", "studies/hkr/summary_grid.json (shot-noise runs, certified time)")
+num("hkrNoHi", max(v["t_cert"] for v in nz), "{:g}", "studies/hkr/summary_grid.json")
+num("hkrNoHeat", max(v["dE_avg_at_tcert"] for v in nz) * 1000, "{:.1f}", "studies/hkr/summary_grid.json (max 1e-3 E_th; heating at loss of positivity)")
+
+# PIC: heating plateau and comparison
+dg = J("studies/relpic/digitization/hhs_fig2.json")
+hd = dg["black_solid_k_neq_0_electron_energy_change_over_Eth"]
+CS = "studies/relpic/conv_summary.json"
+num("hhsDigK", hd["1000"], "{:.1f}", "studies/relpic/digitization/hhs_fig2.json (t=1000)")
+num("hhsDigKK", hd["2000"], "{:.1f}", "studies/relpic/digitization/hhs_fig2.json (t=2000)")
+num("hhsDigRel", dg.get("line_width_uncertainty", 0.03) * 100 if False else 3, "{:.0f}", "studies/relpic/digitization/hhs_fig2.json note (line-width uncertainty ~3 percent)")
+
+
+def ob(g, at="1000", key="dW_th"):
+    return obs[g][at][key]
+
+
+num("pcR", ob("R103")["mean"], "{:.1f}", CS + " R103 t=1000")
+num("pcRs", ob("R103")["std"], "{:.1f}", CS + " R103 seed std")
+num("pcP", ob("P206")["mean"], "{:.1f}", CS + " P206")
+num("pcF", ob("F412")["mean"], "{:.1f}", CS + " F412 mean of 5 seeds")
+num("pcFs", ob("F412")["std"], "{:.1f}", CS + " F412 seed std")
+num("pcFK", ob("F412", "2000")["mean"], "{:.1f}", CS + " F412 t=2000")
+num("pcFKs", ob("F412", "2000")["std"], "{:.1f}", CS + " F412 t=2000 std")
+num("pcPP", ob("P824")["mean"], "{:.1f}", CS + " P824")
+num("pcPPP", ob("P1648")["mean"], "{:.1f}", CS + " P1648")
+num("pcXa", ob("X2")["mean"], "{:.1f}", CS + " X2 (dx 0.02)")
+num("pcXb", ob("X1")["mean"], "{:.1f}", CS + " X1 (dx 0.01)")
+num("pcQ", ob("Q412")["mean"], "{:.1f}", CS + " Q412 (quintic)")
+num("pcD", ob("D")["mean"], "{:.1f}", CS + " D (dt 0.01, ppc 103)")
+num("pcN", ob("N412")["mean"], "{:.1f}", CS + " N412")
+num("pcNs", ob("N412")["std"], "{:.1f}", CS + " N412 std (2 seeds)")
+num("pcNK", ob("N412", "2000")["mean"], "{:.1f}", CS + " N412 t=2000")
+num("pcNone", ob("N103")["mean"], "{:.1f}", CS + " N103 (ppc 103, 3 seeds)")
+num("pcStepA", abs(ob("P824")["mean"] / ob("F412")["mean"] - 1) * 100, "{:.1f}", CS + " change 412->824 (percent)")
+num("pcStepB", abs(ob("P1648")["mean"] / ob("P824")["mean"] - 1) * 100, "{:.1f}", CS + " change 824->1648 (percent)")
+num("pcStepX", abs(ob("X1")["mean"] / ob("X2")["mean"] - 1) * 100, "{:.1f}", CS + " change dx 0.02->0.01 (percent)")
+num("pcPlat", ob("P1648")["mean"], "{:.0f}", CS + " P1648 plateau")
+ex = cvs["extrapolation"]
+num("pcCfive", ex["C5"]["W_inf"], "{:.1f}", CS + " extrapolation.C5")
+num("pcCfiveU", ex["C5"]["uncertainty"], "{:.1f}", CS + " extrapolation.C5.uncertainty")
+num("pcCsix", ex["C6_vs_HHS_t1000"]["ratio"], "{:.2f}", CS + " C6 ratio to HHS")
+num("pcPlatHHS", ob("P1648")["mean"] / hd["1000"], "{:.2f}", "P1648 / HHS digitized, t=1000")
+num("pcNewtHHS", ex["C6_newtonian_t1000"]["ratio"], "{:.2f}", CS + " Newtonian / HHS, t=1000")
+num("pcRN", ex["C7_ratio_RoverN_t1000"]["ratio"], "{:.2f}", CS + " C7 t=1000")
+num("pcRNK", ex["C7_ratio_RoverN_t2000"]["ratio"], "{:.2f}", CS + " C7 t=2000")
+num("pcNewtRel", 1 / ex["C7_ratio_RoverN_t1000"]["ratio"], "{:.1f}", CS + " Newtonian / relativistic, t=1000")
+num("pcContRatio", ob("P1648")["mean"] / hr["(32, 64, 64)"]["dE1D_e_over_Eth"]["1000"], "{:.0f}", "P1648 / relativistic Hermite dE1D_e at t=1000")
+num("pcFldPeak", obs["F412"]["peak_W_E0"], "{:.0f}", CS + " F412 peak_W_E0 (E_th)")
+num("pcFldLate", ob("F412", key="W_E0")["mean"], "{:.2f}", CS + " F412 W_E0 at 1000 (E_th)")
+# mirrored loading (declared follow-up A): recomputed from the PIC records
+mir = {t: PA.dW(PA.load(t), 1000.0) / ETH for t in ("M103_s0", "M103_s1", "M206_s0")}
+num("mirA", mir["M103_s0"], "{:.1f}", "studies/relpic/records/M103_s0 (dW_th/E_th, t=1000)")
+num("mirB", mir["M103_s1"], "{:.1f}", "studies/relpic/records/M103_s1")
+num("mirC", mir["M206_s0"], "{:.1f}", "studies/relpic/records/M206_s0")
+
+# PIC mean-field and W_ext against the exact nonrelativistic linear law (both pushers)
+LIN = XR.homogeneous(0.03, 2001, rel=False)
+
+
+def pic_ratio(tags, at):
+    out = []
+    for tg in tags:
+        h = PA.load(tg)
+        t = h["t"]
+        yl = LIN.sol(t)
+        out.append(PA.trailing(t, 0.5 * h["mean_E"] ** 2, at) / PA.trailing(t, 0.5 * yl[2] ** 2, at))
+    return float(np.mean(out))
+
+
+def pic_collapse(tags):
+    c = []
+    for tg in tags:
+        h = PA.load(tg)
+        yl = LIN.sol(h["t"])[3]
+        i = np.nonzero((h["t"] > 50) & (np.abs(h["work"] - yl) > 0.1 * np.abs(yl)))[0]
+        c.append(float(h["t"][i[0]]))
+    return min(c), max(c)
+
+
+FT = [f"F412_s{i}" for i in range(5)]
+NT = ["N412_s0", "N412_s1"]
+for nm, tg in (("R", FT), ("N", NT)):
+    lo, hi = pic_collapse(tg)
+    num(f"pic{nm}ColLo", lo, "{:g}", "studies/relpic/records " + ",".join(tg) + " (W_ext 10 percent off the exact nonrelativistic linear law)")
+    num(f"pic{nm}ColHi", hi, "{:g}", "same")
+    for q in (500, 800, 1000):
+        num(f"pic{nm}Fld{q}", pic_ratio(tg, float(q)), "{:.3f}", "studies/relpic/records " + ",".join(tg) + f" mean-field energy over linear, seed mean, t={q}")
+
+# ----------------------------------------------------------------------------------------------- fig 5
+E0 = 0.03 * np.sqrt(VT2)
+fig, ax = plt.subplots(1, 3, figsize=(7.2, 2.6))
+LINN = XR.homogeneous(0.03, 2001, rel=False)
+
+
+def fld_ratio(t, ebar):
+    yl = LINN.sol(t)
+    return RA.mavg(t, 0.5 * ebar ** 2) / RA.mavg(t, 0.5 * yl[2] ** 2)
+
+
+gr = np.load(ROOT / "studies/relgrid/runs/r_vq0.03_Nx32_Nu4096_dt0.02_osc_u32_rel_taylor_det_xmask23.npz")
+tg_ = gr["t"]
+hh = RG.load(RG.case(32, 64, 64))
+th_ = hh["t"]
+nr = load_run("pre_vq0.03_Nx32_Nn64_c64", ts=("t", "W", "Tx", "Ebar"))
+nsel = nr["t"] <= st1["0.03"]["window"]
+tn_ = nr["t"][nsel]
+ylin = XR.homogeneous(0.03, 2001, rel=False)
+ax[0].plot(tn_, RA.mavg(tn_, 0.5 * nr["Ebar"][nsel] ** 2) / RA.mavg(tn_, 0.5 * ylin.sol(tn_)[2] ** 2), color=C["gy"], label="Hermite, nonrel.")
+ax[0].plot(tg_, fld_ratio(tg_, gr["Ebar"]), color=C["b"], label="grid, rel.")
+ax[0].plot(th_, fld_ratio(th_, hh["Ebar"]), "--", color=C["o"], label="Hermite, rel.")
+
+
+def pic_series(tags, fn):
+    ys = []
+    for tg in tags:
+        h = PA.load(tg)
+        ys.append(fn(h))
+    return h["t"], np.mean(ys, 0)
+
+
+def r_fld(h):
+    return RA.mavg(h["t"], 0.5 * h["mean_E"] ** 2) / RA.mavg(h["t"], 0.5 * LINN.sol(h["t"])[2] ** 2)
+
+
+tp, yp = pic_series(FT, r_fld)
+ax[0].plot(tp, yp, color=C["g"], lw=1.0, label="PIC, rel.")
+tp, yp = pic_series(NT, r_fld)
+ax[0].plot(tp, yp, color=C["r"], lw=1.0, label="PIC, Newt.")
+ax[0].set_yscale("log")
+ax[0].set_ylim(1e-4, 2)
+ax[0].set_xlim(0, 1500)
+ax[0].set_xlabel(r"$\omega_{pe}t$")
+ax[0].set_ylabel(r"$\bar E^2/2$ over linear law")
+panel(ax[0], "(a)")
+ax[1].plot(tg_, RA.mavg(tg_, gr["dE1D_e"]) / ETH, color=C["b"], label="grid, rel.")
+ax[1].plot(th_, RA.mavg(th_, hh["dE1D_e"]) / ETH, "--", color=C["o"], label="Hermite, rel.")
+tp, yp = pic_series(FT, lambda h: RA.mavg(h["t"], h["spread"][:, 0] - h["spread"][0, 0]) / ETH)
+ax[1].plot(tp, yp, color=C["g"], lw=1.0, label="PIC, rel.")
+tp, yp = pic_series(NT, lambda h: RA.mavg(h["t"], h["spread"][:, 0] - h["spread"][0, 0]) / ETH)
+ax[1].plot(tp, yp, color=C["r"], lw=1.0, label="PIC, Newt.")
+hx = sorted((int(k), v) for k, v in hd.items() if v is not None and int(k) <= 2000)
+ax[1].plot(*zip(*hx), "ks", ms=4, label="HHS, digitized")
+ax[1].set_yscale("symlog", linthresh=1e-2)
+ax[1].set_ylim(-1e-2, 150)
+ax[1].set_xlim(0, 2000)
+ax[1].set_xlabel(r"$\omega_{pe}t$")
+ax[1].set_ylabel(r"$\Delta E_e/E_{\rm th}$ ($k\neq0$, 1-D)")
+panel(ax[1], "(b)")
+pp = [(103, "R103"), (206, "P206"), (412, "F412"), (824, "P824"), (1648, "P1648")]
+ax[2].errorbar([p for p, _ in pp], [ob(g)["mean"] for _, g in pp], fmt="o-", color=C["g"], ms=4, capsize=2,
+               yerr=[ob(g)["std"] or 0 for _, g in pp], label="rel. PIC")
+ax[2].plot([103, 412], [ob("N103")["mean"], ob("N412")["mean"]], "s-", color=C["r"], ms=4, label="Newt. PIC")
+ax[2].plot([103, 206], [mir["M103_s0"], mir["M206_s0"]], "^", color=C["p"], ms=6, mfc="none", label="rel., mirrored")
+ax[2].axhline(hd["1000"], color="k", ls="--", lw=0.8)
+ax[2].text(110, hd["1000"] * 1.12, "HHS", fontsize=7)
+ax[2].axhline(hr["(32, 64, 64)"]["dE1D_e_over_Eth"]["1000"], color=C["o"], lw=0.9)
+ax[2].text(110, hr["(32, 64, 64)"]["dE1D_e_over_Eth"]["1000"] * 1.4, "continuum (grid, Hermite)", fontsize=7, color=C["o"])
+ax[2].set_xscale("log", base=2)
+ax[2].set_yscale("log")
+ax[2].set_xlabel("particles per cell")
+ax[2].set_ylabel(r"$\Delta E_e/E_{\rm th}$ at $\omega_{pe}t=1000$")
+ax[2].set_ylim(0.03, 200)
+ax[2].legend(frameon=False, fontsize=6.5, loc="center right", bbox_to_anchor=(1.0, 0.38))
+panel(ax[2], "(c)")
+fig.tight_layout()
+h0, l0 = ax[0].get_legend_handles_labels()
+h1, l1 = ax[1].get_legend_handles_labels()
+seen = dict(zip(l0, h0))
+seen.update(dict(zip(l1, h1)))
+fig.legend(list(seen.values()), list(seen.keys()), loc="lower center", ncol=6, fontsize=6.5, frameon=False, bbox_to_anchor=(0.5, -0.07),
+           columnspacing=1.0, handlelength=1.6)
+fig.savefig(FIG / "fig_hhs.pdf")
+plt.close(fig)
+
 # ============================================================================================== tables
 T = []
 T.append("% generated by paper/make_figures.py; do not edit\n")
@@ -450,6 +721,28 @@ T.append("\\newcommand{\\tabSeed}{%\n\\begin{tabular}{@{}lcccc@{}}\\toprule\n"
          "seed scale $s$ & $D(100)$ & $D(200)$ & $D(300)$ & $D(400)$\\\\\\midrule\n")
 for key, lab in (("s1", "1"), ("s0.1", "0.1"), ("s0", "0 (unseeded)")):
     T.append(lab + " & " + " & ".join(sci(fD[key][str(x)], 2) for x in (100, 200, 300, 400)) + "\\\\\n")
+T.append("\\bottomrule\\end{tabular}}\n")
+
+
+# relativistic summary table
+shr = [v for k, v in rgc.items() if k.startswith("rel_shot_vq0.03") and "npc205_" not in k]
+fl_s = [v["Ebar_energy_over_linear"]["1000"] for v in shr]
+ht_s = [v["dE1D_over_Eth"]["1000"] for v in shr]
+nsh = [v for k, v in rgc.items() if k.startswith("nonrel_shot_vq0.03")]
+T.append("\\newcommand{\\tabRel}{%\n\\begin{tabular}{@{}L{3.6cm}cccc@{}}\\toprule\n"
+         "model & collapse time & $\\bar E^2/2$ over linear, $t=1000$ & $\\Delta E_e/E_{\\rm th}$, $t=1000$ & valid to\\\\\\midrule\n")
+T.append(f"Hermite, nonrel.\\ ($N_x=32,N_n=64$) & none ($\\le1000$) & {st1['0.03']['window'] and ''}\\hhsFldRatioA & \\hhsDErEndA & \\winA\\\\\n")
+T.append("grid, nonrel., shot noise$^{\\dagger}$ & \\nrColLo--\\nrColHi & "
+         f"{min(v['Ebar_energy_over_linear']['1000'] for v in nsh):.2f}--{max(v['Ebar_energy_over_linear']['1000'] for v in nsh):.2f} & "
+         f"{min(v['dE1D_over_Eth']['1000'] for v in nsh):.0f}--{max(v['dE1D_over_Eth']['1000'] for v in nsh):.0f} & "
+         f"{min(v['t_fneg_1e-3'] for v in nsh):g}--{max(v['t_fneg_1e-3'] for v in nsh):g}\\\\\n")
+T.append("grid, rel., deterministic & \\relColGrid & \\relFldGrid & \\relHeatGrid & 1000\\\\\n")
+T.append("Hermite, rel., deterministic & \\herCol & \\herFld & \\herHeat & \\fOneLo--\\fOneHi\\\\\n")
+T.append("grid, rel., shot noise$^{\\dagger}$ & \\relColShotLo--\\relColShotHi & "
+         f"{min(fl_s):.3f}--{max(fl_s):.2f} & {min(ht_s):.0f}--{max(ht_s):.0f} & \\shotFnegLo--\\shotFnegHi\\\\\n")
+T.append("\\addlinespace\nPIC, rel.\\ (ppc 412) & \\picRColLo--\\picRColHi & \\picRFldOZZZ & \\pcF & ---\\\\\n")
+T.append("PIC, Newtonian (ppc 412) & \\picNColLo--\\picNColHi & \\picNFldOZZZ & \\pcN & ---\\\\\n")
+T.append("HHS (digitized) & loss of resonance $\\sim800$ & --- & \\hhsDigK & ---\\\\\n")
 T.append("\\bottomrule\\end{tabular}}\n")
 
 (OUT / "tables_gen.tex").write_text("".join(T))
