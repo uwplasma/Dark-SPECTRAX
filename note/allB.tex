@@ -1,0 +1,16 @@
+\documentclass[11pt,a4paper]{report}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,bm,graphicx,booktabs,hyperref,array}
+\usepackage[numbers,sort&compress]{natbib}
+\IfFileExists{macros.tex}{\input{macros.tex}}{}
+\input{macrosB_fallback.tex}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\setlength{\emergencystretch}{4em}
+\begin{document}
+\setcounter{chapter}{4}
+\input{ch5_model}
+\input{ch6_verification}
+\input{ch7_limits}
+\bibliographystyle{unsrtnat}
+\bibliography{refs_B}
+\end{document}

@@ -1,0 +1,248 @@
+\chapter{The Dark-SPECTRAX model}\label{ch:model}
+
+This chapter writes down the model that Dark-SPECTRAX solves and derives, from the Vlasov equation, every piece of the discretization that the later chapters rely on. The aim is that a reader who has the SPECTRAX equations and a pencil can reconstruct each expression that the code evaluates, and can see where the code departs from the textbook Hermite--Fourier scheme. Where a statement is an observation rather than a derivation, it is tied to a record or a section of \texttt{docs/results.md}. The Hermite--Fourier kernel itself, the Fourier transform in $x$ and the Diffrax time stepping belong to SPECTRAX and are not rederived beyond what the moment equations need.
+
+\section{The Maxwell--Proca--Vlasov system}\label{sec:mpv}
+
+A dark photon is a vector field $A'_\mu$ with a mass and a kinetic mixing $\chi$ with the ordinary photon. Following the common convention~\cite{Fabbrichesi2020} the Lagrangian density is
+\begin{equation}
+\mathcal L=-\tfrac14F_{\mu\nu}F^{\mu\nu}-\tfrac14F'_{\mu\nu}F'^{\mu\nu}-\tfrac{\chi}{2}F_{\mu\nu}F'^{\mu\nu}+\tfrac12m_0^2A'_\mu A'^\mu-J^\mu A_\mu ,
+\label{eq:lag}
+\end{equation}
+where $J^\mu$ is the plasma four-current, which couples to the ordinary photon only, and the bare mass $m_0$ sits on the dark field only. The mixing term is removed by a non-orthogonal change of variables. We put $s=\sqrt{1-\chi^2}$ and write $A'=A_D/s$, $A=a-\chi A_D/s$. Then
+\begin{align}
+&-\tfrac14\Big(F_a-\tfrac{\chi}{s}F_D\Big)^2-\tfrac{1}{4s^2}F_D^2-\tfrac{\chi}{2s}\Big(F_a-\tfrac{\chi}{s}F_D\Big)F_D\nonumber\\
+&\quad=-\tfrac14F_a^2+F_D^2\,\frac{-\chi^2-1+2\chi^2}{4s^2}
+=-\tfrac14F_a^2-\tfrac14F_D^2 ,
+\end{align}
+the cross terms $\pm\chi F_aF_D/(2s)$ cancel, the mass term becomes $\tfrac12(m_0^2/s^2)A_D^2$, and the source term becomes $-J\cdot a+(\chi/s)J\cdot A_D$. The two fields are therefore canonical and decoupled in the kinetic term, the dark field has mass $m_D=m_0/\sqrt{1-\chi^2}$ and couples to the plasma current with strength
+\begin{equation}
+\eta=\frac{\chi}{\sqrt{1-\chi^2}} .
+\label{eq:eta}
+\end{equation}
+The overall sign of $\eta$ is a convention (it flips with $A_D\to-A_D$) and the model is symmetric under it, a property that the test ladder checks (A06). The map agrees with Sec.~1.1 of Ref.~\cite{Fabbrichesi2020}, with their $\varepsilon$ equal to our $\chi$. It is not the massless millicharged choice made in the same reference, which would put the mass on a rotated combination of the fields. From here on we drop the subscript on $a$, call the ordinary field $(\mathbf E,\mathbf B)$ and the canonical dark field $(\ED,\BD,\AD,\phiD)$, and write $\OmD$ for $m_D$ expressed as a frequency.
+
+The Euler--Lagrange equations of the dark sector are the Proca equations $\partial_\mu F_D^{\mu\nu}+\OmD^2A_D^\nu=-\eta J^\nu$. Taking the four-divergence and using current conservation gives the Lorenz condition $\partial_\nu A_D^\nu=0$, which in three-vector form reads $\partial_t\phiD=-c^2\nabla\!\cdot\!\AD$. With $\ED=-\partial_t\AD-\nabla\phiD$ and $\BD=\nabla\times\AD$ the system we evolve is, besides the ordinary Maxwell equations $\partial_t\EE=c^2\nabla\times\BB-\JJ/\epsilon_0$ and $\partial_t\BB=-\nabla\times\EE$,
+\begin{align}
+\partial_t\ED&=c^2\nabla\times\BD+\OmD^2\AD-\eta\,\JJ/\epsilon_0,\nonumber\\
+\partial_t\BD&=-\nabla\times\ED,\qquad
+\partial_t\AD=-\ED-\nabla\phiD,\qquad
+\partial_t\phiD=-c^2\nabla\!\cdot\!\AD ,
+\label{eq:proca}
+\end{align}
+with the constraints $\nabla\!\cdot\!\EE=\rho/\epsilon_0$ and $\nabla\!\cdot\!\ED+\OmD^2\phiD/c^2=\eta\rho/\epsilon_0$. The second constraint is preserved by the evolution: the divergence of the first line of Eq.~\eqref{eq:proca} is $\partial_t\nabla\!\cdot\!\ED=\OmD^2\nabla\!\cdot\!\AD-\eta\nabla\!\cdot\!\JJ/\epsilon_0$, and the Lorenz condition together with continuity turns this into $\partial_t(\nabla\!\cdot\!\ED+\OmD^2\phiD/c^2-\eta\rho/\epsilon_0)=0$. The ordinary current $\JJ$ sources both Ampère laws, and the dark field acts back on the particles with strength $\eta$. Each species $s$ of charge $q_s$ and mass $m_s$ obeys the Vlasov equation in the combined force field,
+\begin{equation}
+\partial_tf_s+\vv\!\cdot\!\nabla f_s+\frac{q_s}{m_s}\Big[\EE+\eta\ED+\EE_{\rm drive}+\vv\times(\BB+\eta\BD)\Big]\!\cdot\!\nabla_vf_s=0 .
+\label{eq:vlasov}
+\end{equation}
+Three modes are available. In the \emph{ordinary} mode the dark sector is absent. In the \emph{prescribed drive} mode a uniform $\EE_{\rm drive}=\EE_0\cos(\omega t+\varphi)$ acts on the plasma, with no dark reservoir and an external-work ledger; this is the setting of Hook, Huang and Shalaby~\cite{HHS2026}. In the \emph{self-consistent} mode the Proca fields evolve and their energy reservoir is finite.
+
+Two consequences of Eqs.~\eqref{eq:proca} are used so often that they deserve a derivation. The first is the cold homogeneous dispersion relation. For $k=0$ let $J$ denote the current in units that absorb $\epsilon_0$ and the normalization introduced in Sec.~\ref{sec:units-parent}, and let $\omega_L$ be the plasma frequency of all species. Then $\dot E=-J$, $\dot J=\omega_L^2(E+\eta E_D)$, $\dot E_D=\OmD^2A_D-\eta J$, $\dot A_D=-E_D$. Eliminating $J$ and $A_D$ gives $\ddot E=-\omega_L^2(E+\eta E_D)$ and $\ddot E_D=-\OmD^2E_D-\eta\omega_L^2(E+\eta E_D)$, and for $e^{-\ii\omega t}$ the two relations $(\omega^2-\omega_L^2)E=\eta\omega_L^2E_D$ and $(\omega^2-\OmD^2-\eta^2\omega_L^2)E_D=\eta\omega_L^2E$ combine to
+\begin{equation}
+(\omega^2-\omega_L^2)(\omega^2-\OmD^2)-\eta^2\omega_L^2\omega^2=0 .
+\label{eq:coldroots}
+\end{equation}
+The mixing therefore splits the plasma and Proca oscillations by an avoided crossing at $\omega_L=\OmD$ whose width is set by $\eta\omega_L$. The second consequence is the longitudinal kinetic dispersion relation. For a mode with wavenumber $k$ the Lorenz condition gives $\phiD=c^2k\,A_{D\parallel}/\omega$, and the longitudinal part of $\partial_t\AD=-\ED-\nabla\phiD$ becomes $A_{D\parallel}=-\ii\omega E_D/Q$ with $Q=\omega^2-c^2k^2$. Using $\dot E=-J/\epsilon_0$ in the first line of Eq.~\eqref{eq:proca} yields $-\ii\omega(E_D-\eta E)=\OmD^2A_{D\parallel}$, hence
+\begin{equation}
+E_D=\frac{\eta Q}{Q-\OmD^2}\,E .
+\label{eq:EDratio}
+\end{equation}
+The particles then feel the force field $E+\eta E_D=gE$ with $g=1+\eta^2Q/(Q-\OmD^2)$. If the plasma responds with the susceptibility $\chi_{\rm kin}(\omega,k)$ (so that the self field satisfies $E=-\chi_{\rm kin}gE$), the dispersion relation is $1+\chi_{\rm kin}g=0$, or after multiplication by $Q-\OmD^2$,
+\begin{equation}
+D_L(\omega,k)=(Q-\OmD^2)(1+\chi_{\rm kin})+\eta^2Q\chi_{\rm kin}=0 .
+\label{eq:DL}
+\end{equation}
+For a Maxwellian species $\chi_{\rm kin}$ is the usual combination of plasma dispersion functions, evaluated with the Faddeeva function of SciPy; the elimination assumes $\omega\neq0$ and $Q\neq0$. Equation~\eqref{eq:DL} is the independent reference for the Landau tests of Chapter~\ref{ch:verification}.
+
+\section{Units and the parent normalization}\label{sec:units-parent}
+
+SPECTRAX uses velocities in units of $c$, so that the curl coefficient is unity. A species of charge number $q_s$ and cyclotron frequency $\Omega_{cs}$ in a reference field receives the acceleration $q_s\Omega_{cs}(\EE+\vv\times\BB)$ in these units, and Ampère's law reads $\partial_t\EE=\nabla\times\BB-\JJ/\Omega_0$ with $\Omega_0=\Omega_{c,0}$ the first species' frequency and $\JJ=\sum_sq_s\int\vv f_s\,\dd^3v$. The kinetic energy $K=\sum_s\tfrac12m_s\int v^2f_s$ obeys $\dot K=\sum_sm_sq_s\Omega_{cs}\avg{\vv\!\cdot\!\EE f_s}$. This is $\Omega_0\avg{\JJ\!\cdot\!\EE}$ only if $m_s\Omega_{cs}=\Omega_0$ for every species, and the field energy $U_\gamma=\tfrac12\Omega_0^2\avg{E^2+B^2}$ then satisfies $\dot U_\gamma=-\Omega_0\avg{\JJ\!\cdot\!\EE}$. Dark-SPECTRAX therefore defines the species masses as $m_s=\Omega_0/\Omega_{cs}$, with the first species of unit mass; the plasma frequency becomes $\omega_L^2=\sum_sq_s^2n_s\Omega_{cs}/\Omega_0$. The parent code does not need this relation for its own evolution, but the energy theorem does, and without it the ledger of Sec.~\ref{sec:ledger} cannot close.
+
+In the HHS-like set-up used throughout the later chapters, $c=\wpe=n=1$ for the electrons, the ion-to-electron mass ratio is $m_i/m_e=1836$ and the temperatures are equal, with $\vte^2=10^{-3}c^2$ and a periodic box $L=40\,c/\wpe$. The drive amplitude is quoted through $\vq\equiv E_0/(\vte\wpe)$, which is the force-equivalent velocity amplitude per plasma period. A Maxwellian $f\propto\exp(-v^2/2\vte^2)$ equals $\exp(-\xi^2)$ with $\xi=v/a$ only for $a=\sqrt2\,\vte$, which fixes the electron width $\alpha_e=\sqrt{2\times10^{-3}}\simeq0.0447$ and, for equal temperatures, the ion width $\alpha_i=\alpha_e\sqrt{m_e/m_i}\simeq1.04\times10^{-3}$. The fundamental wavenumber is $k_1=2\pi/40=0.157\,\wpe/c$, so that $k_1\lambda_{De}=k_1\vte/\wpe=0.005$. With the strict $2/3$ dealiasing mask, which retains modes with $3|m|<N_x$, a grid of $N_x=32$ reaches $m=10$ and $k\lambda_{De}=0.05$, while $N_x=1024$ reaches $m=341$ and $k\lambda_{De}=1.69$, the value reported for the long-wavelength study of Chapter~\ref{ch:verification}. For comparison the PIC runs of HHS have 1000 cells of $0.04\,c/\wpe$, whose Nyquist wavenumber corresponds to $k\lambda_{De}\simeq2.5$. Energies are quoted in units of $nT_eV$ or of $E_{\rm th}=\tfrac12 nm\vte^2=5\times10^{-4}nmc^2$.
+
+The mixing parameters enter through $(\eta,\OmD)$ and are chosen large in the verification runs ($\eta=0.3$, $\OmD=\wpe$ unless stated) so that the shifts are visible; physical values of $\chi$ are many orders of magnitude smaller, and nothing in the discretization depends on the size of $\eta$.
+
+\section{The Hermite--Fourier expansion with a shifted and scaled basis}\label{sec:hermite}
+
+\subsection{Moment equations}
+
+We start with one velocity dimension, which contains every structural feature, and then say how the three-dimensional case differs. Let $\xi=(v-u)/a$ with a centre $u$ and a width $a$ that may depend on species, and define the asymmetrically weighted (AW) Hermite functions and the polynomial test functions
+\begin{equation}
+\psi_n(\xi)=\frac{H_n(\xi)e^{-\xi^2}}{\sqrt{2^nn!}},\qquad \varphi_n(\xi)=\frac{H_n(\xi)}{\sqrt{2^nn!}},\qquad
+\int\psi_n\varphi_m\,\dd\xi=\sqrt\pi\,\delta_{nm}.
+\label{eq:awfun}
+\end{equation}
+The distribution is $f(x,v,t)=\sum_{n=0}^{N-1}C_n(x,t)\psi_n(\xi)/\sqrt\pi$, so that $C_n=a^{-1}\!\int f\varphi_n\,\dd v$ and the density is $\int f\,\dd v=aC_0$. The basis is called asymmetric because the weight $e^{-\xi^2}$ multiplies the trial functions only: the test functions are bare polynomials. It is thus a Petrov--Galerkin scheme. The functions are not orthonormal in the usual $L^2$ sense, but the moments of $f$ of order $\le n$ are given exactly by the coefficients $C_m$, $m\le n$, which is what makes mass, momentum and energy easy to preserve.
+
+Hermite's recurrence and derivative rules in the normalization of Eq.~\eqref{eq:awfun} are
+\begin{gather}
+\xi\varphi_n=\sqrt{\tfrac{n+1}{2}}\,\varphi_{n+1}+\sqrt{\tfrac n2}\,\varphi_{n-1},\nonumber\\
+\frac{\dd\varphi_n}{\dd\xi}=\sqrt{2n}\,\varphi_{n-1},\qquad
+\frac{\dd\psi_n}{\dd\xi}=-\sqrt{2(n+1)}\,\psi_{n+1}.
+\label{eq:hermrules}
+\end{gather}
+Multiplying the one-dimensional electrostatic Vlasov equation by $a^{-1}\varphi_n$ and integrating over $v$, the streaming term uses $v\varphi_n=u\varphi_n+a\xi\varphi_n$, and the force term is integrated by parts, $-\int(qE/m)\,\partial_vf\,\varphi_n\,\dd v=(qE/m)\int f\,\partial_v\varphi_n\,\dd v$ with $\partial_v\varphi_n=a^{-1}\sqrt{2n}\,\varphi_{n-1}$. The result is the moment hierarchy
+\begin{multline}
+\partial_tC_n+\partial_x\Big[uC_n+a\sqrt{\tfrac{n+1}{2}}\,C_{n+1}+a\sqrt{\tfrac n2}\,C_{n-1}\Big]
+=\frac{q}{m}\frac{\sqrt{2n}}{a}\,E\,C_{n-1}.
+\label{eq:hier}
+\end{multline}
+Streaming is a tridiagonal ladder in $n$ with a diagonal shift by the centre, and the force term is strictly lower triangular, a lowering of the Hermite index in the direction of $\partial_v$. The row $n=0$ has no force term, so the charge is conserved to round-off; the row $n=1$ is the momentum equation and $n=2$ the energy equation. In Fourier space with $\partial_x\to\ii k$ the force term becomes a convolution in $k$, which is evaluated by padded products and masked by the $2/3$ rule.
+
+The bookkeeping quantities follow from the lowest rows. The current of a species is $J=qa\,(uC_0+aC_1/\sqrt2)$. With $v^2=u^2+2ua\xi+a^2\xi^2$ and $\xi^2\varphi_0=\varphi_0/2+\varphi_2/\sqrt2$, the second velocity moment is
+\begin{equation}
+\int v^2f\,\dd v=a\Big[\big(u^2+\tfrac{a^2}{2}\big)C_0+\sqrt2\,ua\,C_1+\tfrac{a^2}{\sqrt2}\,C_2\Big],
+\label{eq:v2moment}
+\end{equation}
+which is a quadratic form in $(u,C_0,C_1,C_2)$. Three consequences follow. First, the kinetic energy is quadratic in the state, a property used for the ledger. Second, the force acting on index $n$ feeds index $n+1$, so a forced direction needs at least Hermite indices $0,1,2$ retained for the work done by the field to reach the energy row. In three dimensions this is the empirical condition recorded in \texttt{docs/physics.md}: with only two indices in $y$ and $z$ a run with $E_z\neq0$ shows ledger defects of $5\times10^{-7}$ to $2\times10^{-4}$, and with three they fall to solver tolerance. Third, a Maxwellian with temperature $T$ and drift $u$ is a single mode, $C_n=C_0\delta_{n0}$, if $a=\sqrt{2T/m}$, which is why the free-streaming Hermite front of the ordinary benchmarks starts from a single coefficient. For a basis of different width the Maxwellian has all even coefficients, and the recurrence time of Sec.~\ref{sec:recurrence} changes.
+
+\subsection{Three velocity dimensions and the magnetic force}
+
+In three dimensions the basis is the tensor product of the three one-dimensional bases with independent orders $(N_n,N_m,N_p)$, widths $\alpha_s$ and centres $\mathbf u_s$ per species. The streaming term couples $x$ only, $\ii k_x$ times the ladder of the $x$ index. The electric force is the sum of three lowering operators, each acting on its own index. The magnetic force $(\vv\times\BB)\!\cdot\!\nabla_vf$ is divergence free in velocity, $\nabla_v\!\cdot\!(f\,\vv\times\BB)=(\vv\times\BB)\!\cdot\!\nabla_vf$, so after integration by parts it contributes $(q/m)\int f\,(\vv\times\BB)\!\cdot\!\nabla_v\varphi\,\dd^3v$. In components $(\vv\times\BB)_i\partial_{v_i}\varphi=\epsilon_{ijl}v_jB_l\partial_{v_i}\varphi$, and the Levi-Civita symbol forces $j\neq i$, so the multiplication by $v_j=u_j+a_j\xi_j$ acts on a different axis than the lowering $\partial_{v_i}$ and the two operators commute. The magnetic term is thus a sum over index pairs of a ladder on axis $j$ times a lowering on axis $i$ times $B_l$, and it does no work because $\vv\cdot(\vv\times\BB)=0$ identically. This last statement is a test in the ladder (zero magnetic work to round-off, A00 and B08). The commutation property fails in the relativistic model of Sec.~\ref{sec:relativistic}, where $v_j$ depends on all three momentum components.
+
+\subsection{A moving and rescaled basis}\label{sec:pump}
+
+A large coherent quiver, as produced by a resonant uniform drive, would populate very high Hermite indices if the basis were fixed. Dark-SPECTRAX instead lets the centre and the width follow the solution, in two different ways.
+
+The centre can move continuously. Let $u=u(t)$ and write $f=\sum_nC_n\psi_n(\xi)/\sqrt\pi$ with $\xi=(v-u(t))/a$. The time derivative of $f$ at fixed $v$ acquires $-(\dot u/a)\sum_nC_n\psi_n'/\sqrt\pi$, and by the third relation of Eq.~\eqref{eq:hermrules} this equals $+(\dot u/a)\sum_n\sqrt{2n}\,C_{n-1}\psi_n/\sqrt\pi$ after shifting the index. Comparing coefficients, the moving centre adds $-(\sqrt{2n}/a)\dot u\,C_{n-1}$ to the right-hand side of Eq.~\eqref{eq:hier}, which cancels exactly against the force term when $\dot u=(q/m)\bar E$. The net force on index $n$ is then $(q/m)(\sqrt{2n}/a)(E-\bar E)C_{n-1}$ with $\bar E$ the box average. In three dimensions the same argument with a uniform magnetic field gives $\dot{\mathbf u}_s=(q/m)_s(\bar{\mathbf E}+\mathbf u_s\times\bar{\mathbf B})$ and the kernel sees $\EE-\bar\EE$ and $\BB-\bar\BB$. This is the \emph{pump frame}: the coherent $k=0$ quiver sits in $\mathbf u_s(t)$ and not in high indices, and the change of variables is exact because a uniform force translates the distribution in velocity. The box average includes the dark force $\eta\ED$ and the prescribed drive. The state of the pump-frame model is therefore the Hermite coefficients together with the pairs $(u_s,\alpha_s)$.
+
+The width and the residual drift change only between integration segments, through a remap of the coefficients. Suppose the same $f$ is to be expanded in a new basis with centre $u'$ and width $a'$. The new test polynomial $\varphi_n'$ has degree $n$ in $v$, hence it is a linear combination of $\varphi_0,\dots,\varphi_n$ of the old basis, $\varphi'_n=\sum_{m\le n}T_{nm}\varphi_m$, with $T$ determined by the identity $\xi'=s\xi+d$, $s=a/a'$, $d=(u-u')/a'$. The new coefficients are $C'_n=a'^{-1}\!\int f\varphi'_n\,\dd v=(a/a')\sum_{m\le n}T_{nm}C_m$. The first two rows are $C_0'=(a/a')C_0$ and $C_1'=(a/a')(sC_1+\sqrt2\,dC_0)$. The remap is lower triangular. Consequently the coefficient $C'_n$ depends only on $C_m$ with $m\le n$, the truncation of $f$ at index $N-1$ does not contaminate any retained new coefficient, and every moment below the truncation is preserved exactly: the remap of the retained part is exact, and only the discarded tail is lost. The remaps are triggered between segments when the residual drift exceeds a fraction of the width, $|U-u|/a>0.3$, or the thermal width departs from the basis width, $|a'/a-1|>0.05$, with hysteresis and caps $|\Delta u|\le a'$, $a/a'\le1.1$ and $a'\ge1.1\sigma$, where $\sigma$ is the thermal speed. All events are recorded and can be replayed as a frozen schedule. In the production studies of Chapter~\ref{ch:limits} the width is fixed at the initial thermal width, since the coherent quiver is carried by $u_s$; the remap is then used for the drift only.
+
+\section{The energy and work ledger}\label{sec:ledger}
+
+The energy theorem of the continuous system is the reference against which the discrete scheme is audited, and its derivation also fixes the dark-sector definitions. Let $\langle\cdot\rangle$ denote the box average. For the ordinary fields $\partial_t\tfrac12(E^2+B^2)=-\JJ\!\cdot\!\EE/\Omega_0-\nabla\!\cdot\!(\EE\times\BB)$ in the normalization of Sec.~\ref{sec:units-parent}. For the Proca fields, taking the scalar product of the first two lines of Eq.~\eqref{eq:proca} with $\ED$ and $\BD$, adding $\OmD^2\AD\cdot\partial_t\AD=-\OmD^2\AD\!\cdot\!\ED-\OmD^2\AD\!\cdot\!\nabla\phiD$ and $\OmD^2\phiD\partial_t\phiD/c^2=-\OmD^2\phiD\nabla\!\cdot\!\AD$, the terms in $\AD\!\cdot\!\ED$ cancel and what remains is a divergence:
+\begin{equation}
+\partial_tu_D+\nabla\!\cdot\!\mathbf S_D=-\eta\,\JJ\!\cdot\!\ED,\qquad
+u_D=\tfrac{\epsilon_0}{2}\big[E_D^2+c^2B_D^2+\OmD^2(A_D^2+\phiD^2/c^2)\big],
+\label{eq:procaenergy}
+\end{equation}
+with the flux $\mathbf S_D=\epsilon_0c^2\ED\times\BD+\epsilon_0\OmD^2\phiD\AD$. The second term of the flux is peculiar to the massive field. Dropping it breaks the flux budget in any packet with a longitudinal part: in the packet tests of B08 the pointwise residual of the budget is $10^{-14}$ with the term and $0.02$ to $1.4$ of the input without it. The particles gain energy from the total force, $\dot K=\Omega_0\avg{\JJ\!\cdot\!\EE}+\Omega_0\eta\avg{\JJ\!\cdot\!\ED}+\Omega_0\bar\JJ\!\cdot\!\EE_{\rm drive}$, and so, defining the powers and works
+\begin{equation}
+P_\gamma=\Omega_0\avg{\JJ\!\cdot\!\EE},\quad P_D=\Omega_0\eta\avg{\JJ\!\cdot\!\ED},\quad P_{\rm ext}=\Omega_0\bar\JJ\!\cdot\!\EE_{\rm drive},\quad W_x=\int_0^tP_x\,\dd t',
+\end{equation}
+and the energies $U_\gamma=\tfrac12\Omega_0^2\avg{E^2+B^2}$ and $U_D=\tfrac12\Omega_0^2\avg{E_D^2+B_D^2+\OmD^2(A_D^2+\phiD^2)}$, the ledger is
+\begin{equation}
+K-K_0=W_\gamma+W_D+\Wext,\qquad U_\gamma-U_{\gamma0}=-W_\gamma,\qquad U_D-U_{D0}=-W_D .
+\label{eq:ledger}
+\end{equation}
+The averages are evaluated from the real-FFT coefficients with weights $1$ for $k_x=0$, $1$ for the Nyquist mode of even grids and $2$ otherwise, so that the Parseval sums are exact on odd and even grids. (On the parent code before the corresponding fix the electromagnetic energy of an odd grid was undercounted, with a ratio $0.898$ at $N_x=7$.)
+
+The three works are carried as three extra ODE states whose right-hand sides are the powers evaluated from the same stage values as the fields. Two consequences follow. The ledger depends on how the energies are computed from the state but not on how the integrator advances it, so it audits the right-hand side for consistency without being weakened by the time stepping. And because the energy is quadratic in the state of the pump-frame model (Eq.~\eqref{eq:v2moment}, with the centre carried in $u_s$), an explicit scheme closes the ledger to the solver tolerance rather than to round-off. The tests check Eq.~\eqref{eq:ledger} on random states satisfying both Gauss laws (C00), with the particle, Maxwell and Proca energy theorems separately, the continuity equation, the preservation of both constraints and of $\BD=\nabla\times\AD$, and zero magnetic work. In the physical runs the ledger defect is typically $10^{-9}$ to $10^{-12}$ of the work, and in the collisionless Landau records of Chapter~\ref{ch:verification} it is $\le3\times10^{-18}$.
+
+For a homogeneous plasma under the uniform drive the work has a closed form that serves as the \emph{linear resonant law} throughout. Only Hermite indices $0$ and $1$ enter the mean current, so the mean fields obey the oscillator
+\begin{equation}
+\dot{\bar E}=-\bar J,\qquad \dot{\bar J}=\omega_L^2\big(\bar E+E_0\cos\omega t\big),\qquad \dot W=\bar JE_0\cos\omega t ,
+\label{eq:linlaw}
+\end{equation}
+with $\omega_L=\sqrt{1+m_e/m_i}\,\wpe$ for a hydrogen plasma. At resonance the particular solution is $\bar E=-\tfrac12E_0\omega t\sin\omega t$, as follows by substituting $\bar E=At\sin\omega t$ into $\ddot{\bar E}+\omega^2\bar E=-\omega^2E_0\cos\omega t$, which gives $2A\omega=-\omega^2E_0$. The current is $\bar J=\tfrac12E_0\omega(\sin\omega t+\omega t\cos\omega t)$, the work grows as $\Wext\simeq\omega^2E_0^2t^2/8$ in these units, and half of it is stored in the mean field and half in coherent electron motion, a split that is recorded in the strong-drive study ($\mathrm d K_e/\Wext=0.496$ to $0.503$). The electron quiver speed grows linearly, $u_q(t)\simeq v_q\wpe t/2$ with $v_q=E_0/\wpe=\vq\,\vte$, which for $\vq=0.03$ reaches $0.1c$ at $\wpe t=200$ and $0.2c$ at 500. The law is exact in the discrete Hermite system if the closure leaves indices $0$ to $2$ untouched (test A07; in the homogeneous HHS check it agrees to $10^{-9}$ up to $\wpe t=1000$ even at quiver speeds of $15\,\vte$). With fluctuations present it is the baseline against which the transfer is measured, and the departure from it contains the $\langle\delta n\,\delta E\rangle$ back-reaction term of the mean-field identity. This is also where relativity enters: an electron population quivering coherently at a few tenths of $c$ has a mass larger than its rest mass. For a cold electron fluid in uniform motion $\dot p=-E$, $\dot E=np/\gamma$ with $\gamma=\sqrt{1+p^2}$, so the oscillation frequency is $\omega^2=n/\gamma$; averaged over a cycle of amplitude $p_0$ this is $\omega\simeq\wpe(1-p_0^2/8)$. With $p_0\simeq u_q(t)$ the accumulated phase error is $\int\wpe p_0^2/8\,\dd t=v_q^2(\wpe t)^3/96$, which reaches one radian at $\wpe t\simeq470$ for $v_q=0.03\,\vte=9.5\times10^{-4}c$. The measured departure of $\Wext$ from the nonrelativistic law by $10\,\%$ occurs at $\wpe t=392.5$ in the Hermite model, so the estimate fixes the right scale. It cannot be pushed further: at the weak drive $10^{-3}\vte$ the same expression would give a time ten times longer, while the models give about 1310, and the thermal relativistic shift of a $10^{-3}mc^2$ plasma, which we have not computed from the records, is of the order of one radian at that time.
+
+\section{Closures}\label{sec:closure}
+
+Truncating the hierarchy at index $N-1$ sets $C_N=0$ and, in a non-uniform field, produces the instability analysed in Chapter~\ref{ch:limits}. The parent code supplies a hypercollisional closure, a diagonal damping $-\nu\,s(n)\,C_n$ with the shape $s(n)\propto n(n-1)(n-2)$, which vanishes on indices $0,1,2$ and therefore leaves density, momentum and energy untouched. Such a damping does not change the resolved physics as long as the coefficients with $n\ge3$ it acts on are small, and it is a regulariser as soon as they are not. Our implementation adds a field-scaled rate. The force term in Eq.~\eqref{eq:hier} couples index $n-1$ to $n$ with the strength $(q/m)\sqrt{2n}\,E/a$, whose largest value on the ladder is $(q/m)\sqrt{2N}\max|E|/a$ at the top. A damping of that size is the natural scale on which the force can inject amplitude into the top indices, and so we take
+\begin{equation}
+\nu_s=c\,\Big|\frac qm\Big|_s\frac{\sqrt{2N}\,\max_x|E-\langle E\rangle|}{a_s}\;\frac{n(n-1)(n-2)}{(N-1)(N-2)(N-3)}
+\label{eq:closure}
+\end{equation}
+in index $n$ with a dimensionless strength $c$. The shape equals unity at the top index, rows $0$ to $2$ are untouched, and the mean field $\bar E$, which is removed by the pump frame, is excluded from the maximum. The factor $\max|E-\bar E|$ is a field reduction evaluated once per right-hand side. For magnetized runs a second variant replaces $|E_i-\bar E_i|$ by $|E_i-\bar E_i|+\sum_jV_j|B_l-\bar B_l|$, with $V_j=|u_j|+a_j\sqrt{2N_j}$ the largest streaming speed on axis $j$; it is enabled by SPECTRAX \#72 and was needed for the nonlinear Weibel runs, where the instability is driven by $\vv\times\BB$ and the purely electric rate hardly changes it. Both variants were derived from this single heuristic and none of them removes the instability: Chapter~\ref{ch:limits} shows that no strength $c$ brings the frozen-field growth below $10^{-3}$ at all tested points. The closure is a numerical regulariser, declared as such. Before the loss of positivity the production observables do not depend on it: $c=0.5$, 2 and a doubled $N_n$ agree with $c=1$ under the $10\,\%$ rule, and before $\wpe t\simeq550$ a run with the closure equals the unregularized run to five digits.
+
+\section{The Lawson integrating factor for the closure}\label{sec:lawson}
+
+At large strength the closure rate $\nu$ is the stiffest eigenvalue of the system. The tangent-linear analysis of the record on stiffness (Chapter~\ref{ch:limits}) shows that the spectral radius of the Jacobian equals the closure rate to the printed precision, real and negative, so that the explicit Dopri8 step is bounded by $5.17/\nu_e$, the extent of the real stability interval of the method. Because the stiff operator is diagonal, it can be exponentiated exactly. We write the right-hand side as $f(t,y)=-R\,y+g(t,y)$ with $R=\mathrm{diag}(r)$, the closure rate frozen at the start of the step, $r=\nu(t_0,y_0)\,s(n)$, and $g=f+Ry$. For any constant $R$ this is an identity. With $w=e^{R(t-t_0)}y$ we have
+\begin{equation}
+w'=e^{R(t-t_0)}\big(y'+Ry\big)=e^{R(t-t_0)}\,g\big(t,e^{-R(t-t_0)}w\big),
+\label{eq:lawson}
+\end{equation}
+and the step is an explicit Runge--Kutta step for $w$ over $[t_0,t_0+h]$ followed by $y_1=e^{-Rh}w_1$. This is the interaction-picture form of Lawson's scheme~\cite{Lawson1967}; integrating-factor and exponential Runge--Kutta methods are reviewed in Ref.~\cite{Hochbruck2010}, and their use for hyperbolic kinetic problems in Ref.~\cite{Crouseilles2020}. The streaming, the force, the fields and the variation of $\nu$ over the step stay explicit; the work states of the ledger are placed outside the exponent. Since each step is its own exact identity, freezing the rate at the step start causes no splitting error, and the rate may change from one step to the next; this is Lawson's second construction, in which $A$ is re-evaluated from the local Jacobian.
+
+The order statement requires care. Lawson shows that for $h\to0$ at fixed $R$ the scheme retains the order of the underlying Runge--Kutta method if the exponential is exact, which it is here, and that it is stable for $y'=By+u(t,y)$ when the Lipschitz constant of $u$ is small relative to the spectral radius of $B$~\cite{Lawson1967}. For $rh\gg1$ the picture is different. Take the scalar problem $y'=-ry+\gamma(t)$ with slowly varying $\gamma$. The exact step from $y_0$ is $y_1=e^{-rh}y_0+\int_0^he^{-r(h-s)}\gamma(t_0+s)\,\dd s\to\gamma/r$ for $rh\to\infty$, the slaved response. The Lawson--Euler step gives $y_1=e^{-rh}(y_0+h\gamma(t_0))\to0$: it misses the slaved response completely, with an error of $\gamma/r$ that does not decrease with the step. Hochbruck and Ostermann make this precise through the stiff order of exponential methods, which for Lawson--Runge schemes drops to one~\cite{Hochbruck2010} (Theorem 2.17, Example 2.32). We therefore do not claim that the order of Dopri8 is retained when $rh\gg1$. The relevance to our application rests on an argument and on a measurement. The argument is that the damped coefficients are driven from below with an amplitude proportional to the lower coefficients times the force rate, so their slaved response $\gamma/r$ is of the order of the force-to-closure ratio, which is small when the closure is strong. The measurement is that for $c=64$ the Lawson record agrees with the plain Dopri8 record to $5\times10^{-10}$ in $\Delta K_e$ and $\Wext$ over $\wpe t\le500$, with the same number of positivity failures at the same time.
+
+The gain depends on whether the closure is the step-limiting mode. For $c=64$, where the closure is stiff from $\wpe t\simeq100$, the factor reduces the step count by $5.0$ to $\wpe t=500$ and $4.3$ to 740 at an equal cost per step. For $c=4$ the step ratio is $0.96$ to $\wpe t=500$ because the closure is not stiff before $t\sim540$, and the declared gate (at least three times fewer steps in both cases) failed as declared; the gate is recorded, not amended. A Lawson interpolant is only accurate for $rh$ of order one, since dense output of a stiff damped mode is meaningless, so steps are clipped onto the save times; this was discovered by a failing test, not by design. An exact Hermite streaming factor was also built, using one real eigendecomposition of the Hermite Jacobi matrix per axis shared by all wavenumbers, species and widths, composed with the closure by a Strang product, SPECTRAX \#83. It reproduces the analytic front and gains a factor $5$--$36$ on smooth streaming-limited problems, but in the strong-drive regime it gave the same step count as the closure-only factor (9652 against 9606 at $c=64$) at $2.7$ times the cost per step, and it made the $c=4$ run collapse onto the step budget at $\wpe t=456.5$. The leftover that remains explicit is $\mathcal O((h|G|)^2|r|)$ by the symmetric Baker--Campbell--Hausdorff expansion, where $G$ is the streaming generator, and it is stiff in the transformed variable. The streaming factor is rejected for the production runs and kept as a tested option.
+
+\section{Dougherty collisions in the moving Hermite basis}\label{sec:collisions}
+
+\subsection{The projected operator}
+
+The Lenard--Bernstein--Dougherty operator~\cite{Dougherty1964} is $C[f]=\nu\,\partial_v[(v-U)f+\theta\,\partial_vf]$ with a velocity-independent frequency $\nu$, a flow $U=\int vf/n$ and a thermal speed squared $\theta=\int(v-U)^2f/n$ computed from $f$ itself. Its conservative Hermite discretization follows Hakim et al.~\cite{Hakim2020}; the projection onto the moving basis is short enough to derive here, and the derivation shows why the moving basis is no obstacle. Multiply by $a^{-1}\varphi_n$ and integrate by parts:
+\begin{equation}
+\frac1a\!\int C\varphi_n\,\dd v=-\nu\,\frac1a\!\int\big[(v-U)f+\theta\partial_vf\big]\partial_v\varphi_n\,\dd v .
+\end{equation}
+With $v-U=(u-U)+a\xi$ and the rules of Eq.~\eqref{eq:hermrules}, $\partial_v\varphi_n=a^{-1}\sqrt{2n}\,\varphi_{n-1}$ and $\partial_v^2\varphi_n=2a^{-2}\sqrt{n(n-1)}\,\varphi_{n-2}$, the coefficient equation is
+\begin{equation}
+\partial_tC_n\big|_{\rm coll}=-\nu\Big\{n\,C_n+\sqrt{2n}\,\frac{u-U}{a}\,C_{n-1}+\sqrt{n(n-1)}\,\Big(1-\frac{2\theta}{a^2}\Big)C_{n-2}\Big\}.
+\label{eq:lbo}
+\end{equation}
+The operator is lower triangular in $n$ with diagonal $-\nu n$. For a Maxwellian whose width matches the basis ($\theta=a^2/2$, $U=u$) the two off-diagonal terms vanish and each coefficient simply decays as $e^{-n\nu t}$, the reference for the two-beam relaxation test (B11, case A).
+
+\subsection{Conservation}
+
+Rows $n=0,1,2$ must be unchanged for number, momentum and energy to be conserved. The row $n=0$ vanishes identically. For $n=1$ the flow computed from the first two coefficients is $U=u+aC_1/(\sqrt2C_0)$, and then $C_1+\sqrt2\,(u-U)C_0/a=0$. For $n=2$ we need $\theta$ in terms of the coefficients. From Eq.~\eqref{eq:v2moment} and $n_{\rm den}\theta=\int v^2f-n_{\rm den}U^2$, with $n_{\rm den}=aC_0$,
+\begin{equation}
+\theta=a^2\Big[\frac12+\frac{C_2}{\sqrt2\,C_0}-\frac{C_1^2}{2C_0^2}\Big].
+\end{equation}
+Inserting these into the $n=2$ bracket of Eq.~\eqref{eq:lbo}, $2C_2+2\frac{u-U}{a}C_1+\sqrt2\big(1-\frac{2\theta}{a^2}\big)C_0=2C_2-\frac{\sqrt2C_1^2}{C_0}+\sqrt2C_0\big(-\frac{\sqrt2C_2}{C_0}+\frac{C_1^2}{C_0^2}\big)=0$. The three conservation laws hold exactly in the truncated space for any width and centre of the basis, because the first three rows of the projected operator involve only $C_0,C_1,C_2$ and the operator is lower triangular, so the truncation at $N\ge3$ is exact for them. The discrete equations are nonlinear through $U[C]$ and $\theta[C]$. Linearized about a Maxwellian and acting on the perturbation, the operator reduces to the diagonal $-\nu n$ for $n\ge3$ with the restoring terms cancelling rows $1$ and $2$; this is the form of the collisional Landau susceptibility used as reference in Chapter~\ref{ch:verification}.
+
+For two species $s,r$ the cross-collision operator uses $\nu_{sr}$, a drift $u_{sr}$ and a temperature $T_{sr}$ in place of $\nu$, $U$ and $m\theta$. The momentum density it deposits in species $s$ is $m_sn_s\nu_{sr}(u_{sr}-U_s)$ and the energy gained is $\nu_{sr}n_s[T_{sr}-T_s-m_sU_s(U_s-u_{sr})]$ per dimension. Momentum conservation requires $m_sn_s\nu_{sr}(u_{sr}-U_s)+m_rn_r\nu_{rs}(u_{rs}-U_r)=0$ and energy conservation requires the analogous sum to vanish. With the symmetry $m_sn_s\nu_{sr}=m_rn_r\nu_{rs}$ both are satisfied by a single shared drift $u_{sr}=(U_s+U_r)/2$ and a shared temperature $T_{sr}$ fixed by $2T_{sr}=T_s+T_r+m_sU_s(U_s-u_{sr})+m_rU_r(U_r-u_{sr})$, which contains the frictional heating. The relative drift then decays at the rate $(\nu_{sr}+\nu_{rs})/2$, and the two-species relaxation tests confirm this rate to $1.3\times10^{-13}$. The family of conservative cross-species forms is not unique: a different weighting of the two drifts changes the momentum relaxation rate, and a different shared temperature changes the temperature-difference rate, and both can be tuned independently without breaking the conservation laws. This freedom is the difference between the two conventions in the code. The default LBO-EM (the form of Francisquez et al.~\cite{Francisquez2022}, their Eqs.~2.18--2.20; SPECTRAX \#71) has a momentum rate equal to the Morse rate and a temperature-difference rate equal to twice the Morse rate. The variant LBO-G with $\beta=0$ (SPECTRAX \#73) has both equal to the Morse rates. The collision frequencies in the strong-drive study are $\nu_{ee}=\nu_{ei}$, $\nu_{ii}=\nu_{ei}\sqrt{m_e/m_i}$ and $m_e\nu_{ei}=m_i\nu_{ie}$, velocity independent; this follows Dougherty's model and is a limitation for any cosmological statement, since the Coulomb frequency scales as $T_e^{-3/2}$. The records show that the absorbed power, set by the momentum friction, is identical in the two conventions to $2.5\times10^{-6}$ in $\Wext$, while the electron--ion energy exchange is halved in LBO-G and the ion temperature differs by up to $31\,\%$. Collisions do no net work, and in the homogeneous controls the ledger closes to round-off. Dougherty collisions are not available in the relativistic model.
+
+\section{The relativistic Hermite model}\label{sec:relativistic}
+
+A nonrelativistic model cannot describe an electron population that quivers at a few tenths of the speed of light. The relativistic variant keeps the Hermite machinery and changes only the places where the velocity $\vv$ appears. We take the momentum per unit mass $\mathbf u=\gamma\vv$, $\gamma=\sqrt{1+u^2/c^2}$, as the kinetic variable. The Vlasov equation is $\partial_tf+\vv(\mathbf u)\!\cdot\!\nabla f+(q/m)(\EE+c\,\vv\times\BB)\!\cdot\!\nabla_uf=0$ with $\vv=\mathbf u/\gamma$; the electric force term is the one of Eq.~\eqref{eq:hier} with $v$ replaced by $u$, unchanged by relativity because the force changes the momentum at the rate $qE$ regardless of the speed. Only three objects contain $\vv(\mathbf u)$: the streaming term, the current and the kinetic energy.
+
+In the Hermite basis in $u$, multiplication by a function $g(u)$ is the Galerkin matrix $G_{nm}=\pi^{-1/2}\int g(u_0+a\xi)\varphi_n\varphi_m e^{-\xi^2}\dd\xi$, since $(a^{-1}\!\int g f\varphi_n\,\dd u)=\sum_mG_{nm}C_m$. Let $T$ be the real symmetric Jacobi matrix of the recurrence in Eq.~\eqref{eq:hermrules}, which represents multiplication by $\xi$ in the retained space, with $T_{n,n+1}=\sqrt{(n+1)/2}$. Its eigenvalues $\xi_j$ are the roots of $H_N$, the Gauss--Hermite nodes, and its orthogonal eigenvector matrix $P_{nj}=\sqrt{w_j}\,\varphi_n(\xi_j)$ carries the Gauss weights $w_j$. Gauss--Hermite quadrature evaluates the integral defining $G$ exactly for polynomials of degree up to $2N-1$ and gives
+\begin{equation}
+G=P\,\mathrm{diag}\big(g(u_0+a\xi_j)\big)\,P^{T}=g\big(u_0+aT\big).
+\label{eq:nodal}
+\end{equation}
+The same matrix $P$ serves every species, width and shift; only the nodal diagonal changes. The streaming becomes $\partial_tC=-\ii k\,V C$ with $V=P\,\mathrm{diag}(v(u_0+a\xi_j))P^T$, the current is $J=qa\,(VC)_0$ and the kinetic energy density is $mc^2a\,(\Gamma C)_0$ with $\Gamma=P\,\mathrm{diag}(\gamma_j-1)P^T$. The nonrelativistic limit $v(u)=u$ gives $V=u_0+aT$, the existing ladder, and the code takes the limit as a static branch, bitwise equal to the previous path. $V$ is real symmetric, so $-\ii kV$ is skew-Hermitian and its exponential is unitary; the exact streaming factor of the integrating-factor wrappers would be $P\,\mathrm{diag}(e^{-\ii\tau kv_j})P^T$, but we do not use it relativistically (the factor refuses $\gamma\ne1$), so the relativistic streaming stays inside the explicit stages. In three dimensions $v_i=u_i/\gamma(\mathbf u)$ couples the axes and no tensor product of one-dimensional factors exists; on the tensor Gauss--Hermite grid $V_i$ is diagonal and is applied by three successive contractions at $\mathcal O(N^4)$ per spatial mode instead of $\mathcal O(N^3)$. The magnetic term in the divergence-free form contracts the lowering with the nodal $V_i$ and $\epsilon_{ijl}B_l$ and the order of the factors matters now, since $v_j$ depends on all components. It was sketched but not prototyped in three dimensions; the one-dimensional-two-velocity checks (gyration, work of the magnetic force) are in the records.
+
+The functions $v(u)$ and $\gamma(u)$ are analytic with branch points at $u=\pm\ii c$, so their Hermite coefficients decay super-exponentially up to $n\sim2\rho^2/a^2$ with $\rho=|u_0\pm\ii c|$; this is several thousand for the electron width, and the nodal projection is spectrally accurate for any resolvable $N$. What the projection does not do is dealiasing in $x$, which stays with the $2/3$ rule. The weight limits hot plasmas: J\"uttner tails decay more slowly than the inverse Gaussian weight, and trouble should be expected at $T\gtrsim0.3\,mc^2$, which the HHS case ($10^{-3}mc^2$) never approaches.
+
+The conservation that survives is as follows. Charge is exact to round-off, since the row $n=0$ has no force term and streaming is a total $x$-derivative. Momentum, the linear row, obeys $\dot P=qnE$ exactly. Energy is more delicate. The streaming contribution to $\dot K$ is $-\ii k\,e_0^T\Gamma VC$, a total derivative, because $\Gamma$ and $V$ are functions of the same symmetric matrix and commute. The force contributes $(q/m)E\,e_0^T\Gamma DC$ with $D$ the lowering ladder, while the work is $qEa\,e_0^TVC$. Their difference is $\epsilon=(q/m)E\sum_nr_nC_n$ with $r_n=\sqrt{2(n+1)}\,\Gamma_{0,n+1}/a-V_{0n}$ for $n\le N-2$ and $r_{N-1}=-V_{0,N-1}$: it measures the failure of the derivative of the projected $\gamma$ to equal the projection of $v=\gamma'$, which exists only in the truncated top indices. The work identity is therefore exact for polynomial $v$ (the nonrelativistic case with $N\ge3$) and otherwise holds to the spectral projection error. The defect $\epsilon$ can be evaluated per right-hand side with one dot product; measured values are $6.6\times10^{-10}$ of the energy scale for a pumped electron at about $0.13c$ and $8\times10^{-9}$ at $v=0.83c$ (gates d and d2). Positivity is not guaranteed, as in the nonrelativistic basis. The pump frame survives with one change: a uniform force still translates $f$ in $u$ exactly, $\dot u_0=(q/m)\bar E$, but a Lorentz boost is not a Galilean shift, so only the momentum translation is exact and the box is not boosted. Because the relativistic velocity is the nodal $v(u_0+a\xi_j)$, the drift velocity of a shifted species is not $u_0$ and the effective parallel thermal spread is $a/\gamma^3$; diagnostics use the nodal $v$. The kinetic energy is no longer quadratic in $(u_0,C)$ and the ledger closes to the integrator and to $\epsilon$ rather than by algebra. The relativistic branch of the parent kernel originally ignored the pump-frame argument, so a basis centre following $(q/m)\bar E$ would have seen the uniform field twice; this was fixed on the integration branch (the force uses $E-\bar E$), with the restriction that the pump frame is electric only, because a uniform $\BB_0$ is not a translation of $\vv(\mathbf u)\times\BB_0$. The closure of Eq.~\eqref{eq:closure} is applied by the Dark-SPECTRAX wrapper as a diagonal damping outside the SPECTRAX kernel and is therefore unchanged; its rate depends only on the force operator.
+
+Table~\ref{tab:relgates} lists the gates declared before the first relativistic run (\texttt{studies/relherm/}\allowbreak\texttt{relherm\_gates.py}); one of them failed, and the failure is informative.
+
+\begin{table}[t]
+\caption{Declared gates of the relativistic Hermite prototype (1D1V unless stated); records in \texttt{studies/relherm/}.}\label{tab:relgates}
+\small
+\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{%
+\begin{tabular}{@{}lL{6.7cm}L{4.3cm}@{}}\toprule
+Gate & Check & Outcome\\\midrule
+a1 & $c\to\infty$ against the parent right-hand side and current, $N=20$, $N_x=8$ & $4.4\times10^{-16}$, $7.3\times10^{-16}$; passed ($\le10^{-12}$)\\
+b & pump frame, $\vq=0.03$, $T=500$, against the exact relativistic ODE & $\bar E$ $1.5\times10^{-8}$, $\Wext$ $1.1\times10^{-8}$; the nonrelativistic ODE misses $\Wext$ by $38\,\%$\\
+c & eigenvalues of the discrete operator against the relativistic Landau root & failed as declared: discrete spectrum real and undamped; nonrelativistic control fails alike\\
+c2 & declared after c: response function against the J\"uttner $\varepsilon$ at $\mathrm{Im}\,\omega=0.1,0.2$ & $3.1\times10^{-5}$ (control $3.8\times10^{-5}$); passed\\
+d, d2 & ledger with $(\gamma-1)mc^2$, nonlinear, then off-resonant drive to $0.83c$ & $6.6\times10^{-10}$ and $8\times10^{-9}$; passed\\
+f4 & 1D2V nonlinear run with transverse field & failed: NaN (truncation instability); variant f4b with closure, $6.8\times10^{-6}$, passed\\\bottomrule
+\end{tabular}}
+\end{table}
+
+Gate c deserves a remark because it is a failure of the declaration and not of the model. The finite Hermite operator has a purely imaginary discrete spectrum, so the continuum Landau damping cannot be seen in its eigenvalues; the nonrelativistic control fails in the same way, with a real-part error of $2\times10^{-3}$ at $k\lambda_D=0.3$. The check was replaced, after the failure and before its run, by the comparison of the Schur-complement response function with the relativistic dielectric function of a J\"uttner plasma on a line of fixed imaginary part, which does converge.
+
+\section{How Dark-SPECTRAX uses SPECTRAX}\label{sec:spectrax}
+
+Dark-SPECTRAX is a thin companion package. It owns the physics of the dark sector, the mode and ledger bookkeeping, the study scripts and the records, and it delegates the velocity-space kernel, the Fourier machinery and the time stepping to SPECTRAX. A single call of the parent \texttt{Hermite\_Fourier\_system} per right-hand-side evaluation receives the physical force fields $\EE+\eta\ED+\EE_{\rm drive}$ and $\BB+\eta\BD$, and the current is evaluated once and feeds both Ampère laws. The Maxwell equations of the ordinary mode use only $(\EE,\BB)$. Time integration is Diffrax Dopri8 with a PID controller on a complex state, as in the parent.
+
+The parent features that the companion needs were developed as focused pull requests on SPECTRAX, none of which is merged into its main branch at the time of the paper except where stated, and the companion is pinned to an integration branch that collects them. The pin is \texttt{integration/dark-baseline-2} at \texttt{6a6606b}, built on SPECTRAX main \texttt{32f7d81}, which already contains the pull requests \#48, \#46, \#13, \#12, \#50 and \#86 (Python 3.10 support). The branch is a convenience for reproducibility and not a release. Table~\ref{tab:prs} maps the features used in this note to the pull requests.
+
+\begin{table}[t]
+\caption{SPECTRAX pull requests included in the integration branch and the model feature each provides. All are opened against SPECTRAX; the owner decides about merging.}\label{tab:prs}
+\small
+\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{%
+\begin{tabular}{@{}lL{11.5cm}@{}}\toprule
+PR & Feature used by Dark-SPECTRAX\\\midrule
+\#9 & real-FFT Parseval weights and a tail diagnostic, so box averages and energies are exact on odd and even grids\\
+\#12, \#13 & multi-population bookkeeping and the structured $(C_k,F_k)$ state\\
+\#55 & strict $2/3$ dealiasing mask that retains $3|m|<N$, so every grid size is alias-free for quadratic products\\
+\#44, \#68 & autodiff plan for the solver; fixed-step adjoint regression test (see Chapter~\ref{ch:verification})\\
+\#50 & step budget and failure flags of the integrator\\
+\#56--\#60 & moving Hermite basis: uniform acceleration (pump frame), exact lower-triangular remap, adaptive driver and its triggers\\
+\#61 & lane-A width floor and exponential filter (kept open; not used in production)\\
+\#62--\#65 & species TOML interface, automatic plots, examples and documentation\\
+\#66 & field-scaled closure of Eq.~\eqref{eq:closure}; \#72 adds its magnetic variant\\
+\#69, \#70 & separate relative and absolute tolerances with a per-component error floor; public names for the mask and the weights\\
+\#71, \#73 & conservative Dougherty collisions (LBO-EM) and the Francisquez LBO-G cross-species form\\
+\#82, \#83 & Lawson integrating-factor wrapper for the closure and the optional exact Hermite streaming factor\\
+\#88 & opt-in relativistic Hermite model (\texttt{inv\_c2}), plus a small commit that makes the relativistic branch respect the pump-frame argument\\\bottomrule
+\end{tabular}}
+\end{table}
+
+The pull requests that were merged by the owner before the pin was refreshed are \#46, \#48, \#12, \#13, \#50 and \#86. Rewritten branches were updated with explicit lease checks and backups, and in every refresh the companion's reference runs reproduced bitwise: the Landau example and the pump-frame case differ from the earlier pin by exactly zero. The Dark-SPECTRAX code lives in a package of about 470 statements with a test suite that passes at the pinned parent and covers the algebraic rungs of the ladder in the next chapter (72 tests at the time of the status review, coverage $99.8\,\%$ of the package statements, flake8 clean). The relativistic model is exposed as \texttt{Model(..., inv\_c2=1.0)}, with velocities in units of $c$ so that $\theta=10^{-3}mc^2$ is carried by the widths; the default \texttt{inv\_c2=0} is bitwise the previous path, and a model with \texttt{inv\_c2>0} refuses the collision operator and the exact streaming factor with an explicit error. Initial data are produced by \texttt{maxwellian} (basis-matched drifting Maxwellians plus density perturbations), \texttt{consistent\_fields} (the Gauss field and the Yukawa near field $\phiD=\eta\rho_k/[\Omega_0(k^2+\OmD^2)]$ for the dark sector, with a nonzero mean charge refused) and \texttt{proca\_mode} (free vacuum modes with $\omega^2=k^2+\OmD^2$). Every run writes a record with its provenance (repository and parent commits, package versions), the solver statistics, and the ledger and Gauss maxima, so that each number quoted in the next two chapters can be traced to a file in the repository.

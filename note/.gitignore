@@ -1,0 +1,10 @@
+_wrap_*
+allB.*
+!allB.tex
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.pdf
