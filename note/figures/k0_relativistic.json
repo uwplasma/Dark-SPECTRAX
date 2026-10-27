@@ -1,0 +1,14 @@
+{
+ "vq0.03": {
+  "kinetic_k0_10pct": 392.3,
+  "slow_flow_10pct": 397.4000007350666,
+  "slow_flow_cold_10pct": 436.7000007088666,
+  "record": 392.5
+ },
+ "vq0.001": {
+  "kinetic_k0_10pct": 1428.8000000000002,
+  "slow_flow_10pct": 1438.10000042476,
+  "slow_flow_cold_10pct": null,
+  "record": 1309.5
+ }
+}
