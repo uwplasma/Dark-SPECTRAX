@@ -1,0 +1,79 @@
+\begin{thebibliography}{9}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Hook et~al.(2026)Hook, Huang, and Shalaby]{HHS2026}
+Anson Hook, Junwu Huang, and Mohamad Shalaby.
+\newblock No cosmological constraints on dark photon dark matter from resonant
+  conversion: Impact of nonlinear plasma dynamics.
+\newblock \emph{Phys. Rev. Lett.}, 137:\penalty0 071004, 2026.
+\newblock \doi{10.1103/98cx-7t43}.
+\newblock arXiv:2510.13956.
+
+\bibitem[Jorge(2026)]{DarkSPECTRAX}
+Rog{\'e}rio Jorge.
+\newblock {Dark-SPECTRAX}: kinetic {M}axwell--{P}roca simulations with
+  {H}ermite velocity expansions.
+\newblock \url{https://github.com/uwplasma/Dark-SPECTRAX}, 2026.
+
+\bibitem[Silin(1965)]{Silin1965}
+V.~P. Silin.
+\newblock Parametric resonance in a plasma.
+\newblock \emph{Sov. Phys. JETP}, 21\penalty0 (6):\penalty0 1127--1134, 1965.
+\newblock {Zh.} Eksp. Teor. Fiz. 48, 1679--1691 (1965); translated by H.
+  Lashinsky.
+
+\bibitem[Dai(2026)]{Dai2026}
+Ruiyang Dai.
+\newblock A stable and efficient {G}alerkin spectral method with
+  asymmetrically-weighted {H}ermite functions for the {V}lasov--{P}oisson
+  system.
+\newblock \emph{arXiv preprint}, 2026.
+\newblock arXiv:2608.09827 (v2).
+
+\bibitem[Issan et~al.(2024)Issan, Koshkarov, Halpern, Kramer, and
+  Delzanno]{Issan2024a}
+Opal Issan, Oleksandr Koshkarov, Federico~D. Halpern, Boris Kramer, and
+  Gian~Luca Delzanno.
+\newblock Anti-symmetric and positivity preserving formulation of a spectral
+  method for {V}lasov--{P}oisson equations.
+\newblock \emph{J. Comput. Phys.}, 514:\penalty0 113263, 2024.
+\newblock \doi{10.1016/j.jcp.2024.113263}.
+\newblock arXiv:2312.05439.
+
+\bibitem[Issan et~al.(2025)Issan, Chapurin, Koshkarov, and Delzanno]{Issan2025}
+Opal Issan, Oleksandr Chapurin, Oleksandr Koshkarov, and Gian~Luca Delzanno.
+\newblock Effects of artificial collisions, filtering, and nonlocal closure
+  approaches on {H}ermite-based {V}lasov--{P}oisson simulations.
+\newblock \emph{Phys. Plasmas}, 32:\penalty0 033906, 2025.
+\newblock \doi{10.1063/5.0252456}.
+\newblock arXiv:2412.07073.
+
+\bibitem[Francisquez et~al.(2022)Francisquez, Juno, Hakim, Hammett, and
+  Ernst]{Francisquez2022}
+Manaure Francisquez, James Juno, Ammar Hakim, Gregory~W. Hammett, and Darin~R.
+  Ernst.
+\newblock Improved multispecies {D}ougherty collisions.
+\newblock \emph{J. Plasma Phys.}, 88:\penalty0 905880303, 2022.
+\newblock \doi{10.1017/S0022377822000289}.
+\newblock arXiv:2109.10381.
+
+\bibitem[Dubovsky and Hern{\'a}ndez-Chifflet(2015)]{DubovskyHC2015}
+Sergei Dubovsky and Guzm{\'a}n Hern{\'a}ndez-Chifflet.
+\newblock Heating up the galaxy with hidden photons.
+\newblock \emph{J. Cosmol. Astropart. Phys.}, 2015\penalty0 (12):\penalty0 054,
+  2015.
+\newblock \doi{10.1088/1475-7516/2015/12/054}.
+\newblock arXiv:1509.00039.
+
+\bibitem[McDermott and Witte(2020)]{McDermottWitte2020}
+Samuel~D. McDermott and Samuel~J. Witte.
+\newblock The cosmological evolution of light dark photon dark matter.
+\newblock \emph{Phys. Rev. D}, 101:\penalty0 063030, 2020.
+\newblock \doi{10.1103/PhysRevD.101.063030}.
+\newblock arXiv:1911.05086.
+
+\end{thebibliography}
