@@ -170,7 +170,7 @@ def main(argv=None):
     n0, Wx, rec, spec, fsnap, wall0 = 0, 0.0, [], [], {}, 0.0
     fmin_v = fmin_x = 1.0
     if ck.exists():
-        c = np.load(ck, allow_pickle=True)
+        c = np.load(ck, allow_pickle=False)
         fe, fi, Ek, se.U, si.U, Wx, n0 = c["fe"], c["fi"], c["Ek"], float(c["Ue"]), float(c["Ui"]), float(c["Wx"]), int(c["n"])
         rec, spec, wall0 = list(c["rec"]), list(c["spec"]), float(c["wall"])
         fsnap = dict(c["fsnap"].item()) if "fsnap" in c else {}

@@ -261,7 +261,7 @@ class Sim:
                  fmin_v=self.fmin_v, fmin_x=self.fmin_x)
 
     def load_state(self, path):
-        c = np.load(path, allow_pickle=True)
+        c = np.load(path, allow_pickle=False)
         self.fe, self.fi, self.Ek = c["fe"], c["fi"], c["Ek"]
         self.se.U, self.si.U, self.Wx, self.n = float(c["Ue"]), float(c["Ui"]), float(c["Wx"]), int(c["n"])
         self.rec, self.spec = list(c["rec"]), list(c["spec"])
