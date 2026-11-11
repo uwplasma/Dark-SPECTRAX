@@ -1,17 +1,51 @@
 name: tests
 on: [push, pull_request]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+permissions: {contents: read}
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11", "3.13"]
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-      - run: python -m pip install -e '.[test]'
+          python-version: "3.13"
+      - run: python -m pip install flake8
       - run: python -m flake8 darkspectrax tests examples
-      - run: python -m pytest -q -n 2 --cov=darkspectrax --cov-report=term
-      - run: python -m darkspectrax examples/landau.toml --out artifacts/landau
+  test:
+    # self-hosted: never run fork code on our own machines
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, macOS, uwplasma-cpu]
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: false
+      - run: uv venv && uv pip install -e '.[test]'
+      - run: uv run flake8 darkspectrax tests examples
+      - run: uv run pytest -q -n 3 --cov=darkspectrax --cov-report=term
+      - run: uv run python -m darkspectrax examples/landau.toml --out artifacts/landau
+  gpu:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, Linux, uwplasma-gpu]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: false
+      - run: uv venv && uv pip install -e '.[test]' 'jax[cuda12]'
+      - run: uv run python -c "import jax; assert jax.default_backend()=='gpu', jax.devices()"
+      - name: GPU tests
+        timeout-minutes: 1
+        run: uv run pytest -m gpu -q -x -p no:cacheprovider
