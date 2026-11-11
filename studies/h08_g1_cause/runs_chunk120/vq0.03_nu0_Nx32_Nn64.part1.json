@@ -30,5 +30,5 @@
  "wall_time": 10.320878416998312,
  "repository_commit": "5d4132f65aa7168842b6ce579abb648833b58649",
  "parent_commit": "dd80b0fdffa08378d0dc71fc2b0603a5a8ff090b",
- "command": "python studies/h08.py /Users/rogeriojorge/local/spectrax-wt/pinmm-dark/studies/h08_g1_cause/runs_chunk120 120"
+ "command": "python studies/h08.py studies/h08_g1_cause/runs_chunk120 120"
 }

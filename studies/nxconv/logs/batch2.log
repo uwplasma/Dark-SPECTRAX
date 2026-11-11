@@ -6,17 +6,17 @@ bringing up nodes...
 =============================== warnings summary ===============================
 tests/test_ladder.py::test_a10_step_budget_failure_reason
 tests/test_ladder.py::test_a10_nonfinite_initial_state_fails
-  /Users/rogeriojorge/local/spectrax-wt/nxconv/darkspectrax/_simulation.py:200: RuntimeWarning: invalid value encountered in subtract
+  darkspectrax/_simulation.py:200: RuntimeWarning: invalid value encountered in subtract
     W = out["W"] - out["W"][0]  # work done in this segment (a restart carries W(t0) != 0)
 
 tests/test_ladder.py::test_a10_step_budget_failure_reason
 tests/test_ladder.py::test_a10_nonfinite_initial_state_fails
-  /Users/rogeriojorge/local/spectrax-wt/nxconv/darkspectrax/_simulation.py:203: RuntimeWarning: invalid value encountered in subtract
+  darkspectrax/_simulation.py:203: RuntimeWarning: invalid value encountered in subtract
     (out["U_gamma"] - out["U_gamma"][0]) + W[:, 0],
 
 tests/test_ladder.py::test_a10_step_budget_failure_reason
 tests/test_ladder.py::test_a10_nonfinite_initial_state_fails
-  /Users/rogeriojorge/local/spectrax-wt/nxconv/darkspectrax/_simulation.py:204: RuntimeWarning: invalid value encountered in subtract
+  darkspectrax/_simulation.py:204: RuntimeWarning: invalid value encountered in subtract
     (out["U_D"] - out["U_D"][0]) + W[:, 1])
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html

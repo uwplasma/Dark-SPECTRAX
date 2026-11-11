@@ -120,7 +120,7 @@ def probe(closure, c, tmax, case="weibel", OD=None, level=LEVEL, tag=""):
     ck = CKPT / f"{name}.npz"
     chunks, t = [], 0.0
     if ck.exists():
-        z = np.load(ck, allow_pickle=True)
+        z = np.load(ck, allow_pickle=False)
         y = {k: jnp.asarray(z[k]) for k in ("Ck", "Fk", "Dk", "W")}
         t, chunks = float(z["t"]), json.loads(str(z["chunks"]))
         print(f"resume {name} at t={t}", flush=True)
@@ -183,7 +183,7 @@ def spectrum(T):
     m, y = model_and_y0()
     install("none", 0)
     name = f"weibel_ordinary_{LEVEL[0]}_{LEVEL[1]}_{LEVEL[2]}_none_c0"
-    z = np.load(CKPT / f"{name}.npz", allow_pickle=True)
+    z = np.load(CKPT / f"{name}.npz", allow_pickle=False)
     chunks = json.loads(str(z["chunks"]))
     t_ck = float(z["t"])
     y = {k: jnp.asarray(z[k]) for k in ("Ck", "Fk", "Dk", "W")}
