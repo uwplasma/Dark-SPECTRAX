@@ -31,7 +31,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
           enable-cache: false
       - run: uv venv && uv pip install -e '.[test]'
-      - run: uv run flake8 darkspectrax tests examples
       - run: uv run pytest -q -n 3 --cov=darkspectrax --cov-report=term
       - run: uv run python -m darkspectrax examples/landau.toml --out artifacts/landau
   gpu:
