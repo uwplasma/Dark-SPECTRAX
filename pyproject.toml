@@ -37,6 +37,7 @@ packages = ["darkspectrax"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 filterwarnings = ["ignore:Complex dtype support:UserWarning"]
+markers = ["gpu: small-size device smoke tests, run on the GPU runner"]
 
 [tool.coverage.run]
 source = ["darkspectrax"]
