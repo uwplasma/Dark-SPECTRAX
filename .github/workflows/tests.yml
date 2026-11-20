@@ -34,6 +34,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           enable-cache: false
-      - run: uv venv && uv pip install -e '.[test]'
+      - name: Select the job environment
+        run: |
+          echo "VIRTUAL_ENV=$RUNNER_TEMP/venv" >> "$GITHUB_ENV"
+          echo "UV_PROJECT_ENVIRONMENT=$RUNNER_TEMP/venv" >> "$GITHUB_ENV"
+      - run: uv venv "$VIRTUAL_ENV" && uv pip install -e '.[test]'
       - run: uv run pytest -q -n 3 --cov=darkspectrax --cov-report=term
       - run: uv run python -m darkspectrax examples/landau.toml --out artifacts/landau
